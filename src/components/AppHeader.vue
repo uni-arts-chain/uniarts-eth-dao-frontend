@@ -53,8 +53,11 @@ export default defineComponent({
 @import "~@/style/element-variables.scss"
 .logo
   .appName
-    font-family: "Broadway", serif
-    font-size: 30px
+    width: 134px
+    font-size: 25px
+    font-family: 04b_09, 04b_09-Regular
+    font-weight: 400
+    letter-spacing: -1px
     position: absolute
     display: inline-block
     height: 60px
@@ -63,6 +66,7 @@ export default defineComponent({
 
 .app_header
   border-bottom: solid 1px $--border-color-base
+
 .menu
   text-align: right
 </style>

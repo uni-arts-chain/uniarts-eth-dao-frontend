@@ -22,8 +22,8 @@
       </el-button>
     </div>
   </div>
-  <div class="mt15 center describe">To Collect Airdrop & Vote for NFT</div>
-  <div class="mt15 center describe">Coming Sept. 20</div>
+  <div class="mt15 center describe1">To Collect Airdrop & Vote for NFT</div>
+  <div class="mt15 center describe2">Coming Sept. 20</div>
 </template>
 
 <script lang="js">
@@ -57,11 +57,22 @@ export default defineComponent({
 
   .title_text
     .title
-      font-family: "Broadway", serif
-      font-size: 28px
+      opacity: 1
+      font-size: 38px
+      font-family: Megaton, Megaton-Regular
+      font-weight: 400
+      text-align: left
+      color: #040000
+      line-height: 30px
+      letter-spacing: -1px
 
     .text
-      font-size: $--font-size-extra-small
+      opacity: 1
+      font-family: Montserrat, Montserrat-Medium
+      font-weight: 500
+      color: #040000
+      line-height: 22px
+      font-size: $--font-size-base
 
 .card
   position: relative
@@ -72,8 +83,13 @@ export default defineComponent({
   border-radius: $--border-radius-base
 
   .title
-    font-size: $--font-size-extra-large
     line-height: 60px
+    opacity: 1
+    font-size: 22px
+    font-family: Montserrat, Montserrat-Regular
+    font-weight: 400
+    text-align: center
+    color: #000000
 
   .button
     padding: 20px
@@ -81,7 +97,20 @@ export default defineComponent({
     ::v-deep .el-button
       width: 80%
 
-.describe
-  font-size: $--font-size-large
-  font-weight: 600
+.describe1
+  opacity: 1
+  font-size: 26px
+  font-family: Montserrat, Montserrat-Regular
+  font-weight: 400
+  text-align: center
+  color: #000000
+  line-height: 33px
+.describe2
+  opacity: 1
+  font-size: 35px
+  font-family: Montserrat, Montserrat-Light
+  font-weight: 300
+  text-align: center
+  color: #000000
+  line-height: 44px
 </style>
