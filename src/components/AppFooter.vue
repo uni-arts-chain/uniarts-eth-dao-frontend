@@ -8,7 +8,7 @@
     </div>
     <div>
       <el-image :src="require('@/assets/airdrop/UniArts 副本 2.png')"></el-image>
-      <div style="border: 1px solid white;width: 400px;margin-top: 30px">
+      <div style="border: 1px solid white;max-width: 300px;margin-top: 30px">
         <el-button class="width100" type="primary">Get project white papers <i class="el-icon-right"></i></el-button>
       </div>
     </div>

@@ -4,9 +4,13 @@
       <app-header></app-header>
     </div>
     <div id="appBody">
-      <transition name="el-zoom-in-center">
-        <router-view></router-view>
-      </transition>
+      <router-view v-slot="{ Component }">
+        <transition name="el-zoom-in-center">
+          <keep-alive>
+            <component :is="Component"/>
+          </keep-alive>
+        </transition>
+      </router-view>
     </div>
     <div id="appFooter">
       <app-footer></app-footer>
@@ -41,15 +45,12 @@ $footerHeight: 300px
   position: relative
   width: 100%
   height: 100%
-  display: flex
-  flex-direction: column
 
   #appTitle
     height: $titleHeight
     position: relative
 
   #appBody
-    flex: 1
     position: relative
     min-height: calc(100vh - #{$titleHeight + $footerHeight})
 

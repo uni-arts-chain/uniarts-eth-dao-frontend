@@ -5,7 +5,7 @@ import VueX from '@/store';
 
 class MetaMask {
   constructor() {
-    this.ethereum = window.ethereum;
+    this.ethereum = window.ethereum || window.BinanceChain;
     if (!this.ethereum) {
       ElMessage.warning('Please install MetaMask!');
     }

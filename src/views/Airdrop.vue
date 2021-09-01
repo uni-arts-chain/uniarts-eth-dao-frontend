@@ -15,7 +15,7 @@
     </div>
     <div class="button">
       <div v-if="$store.state.wallet.walletAddress" class="el-button">
-        {{ $store.state.wallet.walletPrice }} ETH
+        {{ $store.state.wallet.lockPositionAmount }} UART
       </div>
       <el-button v-else type="primary" @click="connectWallet">
         Connect Wallet
@@ -80,6 +80,7 @@ export default defineComponent({
 
     ::v-deep .el-button
       width: 80%
+
 .describe
   font-size: $--font-size-large
   font-weight: 600

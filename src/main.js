@@ -8,7 +8,7 @@ import ElementPlus from 'element-plus';
 import App from './App.vue';
 import router from './router';
 import store from './store';
-import MetaMask from '@/components/MetaMask';
+import MetaMask from '@/contract/MetaMask';
 
 const app = createApp(App);
 app.use(ElementPlus);
