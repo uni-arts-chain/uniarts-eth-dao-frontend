@@ -55,7 +55,7 @@ export default defineComponent({
   .appName
     width: 134px
     font-size: 25px
-    font-family: 04b_09, 04b_09-Regular
+    font-family: B-1-04, serif
     font-weight: 400
     letter-spacing: -1px
     position: absolute

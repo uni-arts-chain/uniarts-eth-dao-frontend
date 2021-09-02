@@ -22,8 +22,8 @@
       </el-button>
     </div>
   </div>
-  <div class="mt15 center describe1">To Collect Airdrop & Vote for NFT</div>
-  <div class="mt15 center describe2">Coming Sept. 20</div>
+  <div class="mt30 center describe1">To Collect Airdrop & Vote for NFT</div>
+  <div class="mt30 center describe2">Coming Sept. 20</div>
 </template>
 
 <script lang="js">
@@ -56,10 +56,14 @@ export default defineComponent({
   width: 100%
 
   .title_text
+    margin-top: auto
+    margin-bottom: auto
+    margin-left: 10px
+
     .title
       opacity: 1
       font-size: 38px
-      font-family: Megaton, Megaton-Regular
+      font-family: B-1-04, serif
       font-weight: 400
       text-align: left
       color: #040000
@@ -68,7 +72,7 @@ export default defineComponent({
 
     .text
       opacity: 1
-      font-family: Montserrat, Montserrat-Medium
+      font-family: Montserrat, Montserrat-Medium, serif
       font-weight: 500
       color: #040000
       line-height: 22px
@@ -76,17 +80,18 @@ export default defineComponent({
 
 .card
   position: relative
-  margin: 15px auto
-  width: 400px
+  margin: 30px auto
+  width: 490px
+  max-width: 90%
   background-color: $--color-text-placeholder
   box-shadow: $--box-shadow-base
   border-radius: $--border-radius-base
 
   .title
-    line-height: 60px
+    line-height: 100px
     opacity: 1
     font-size: 22px
-    font-family: Montserrat, Montserrat-Regular
+    font-family: Montserrat, Montserrat-Regular, serif
     font-weight: 400
     text-align: center
     color: #000000
@@ -96,19 +101,25 @@ export default defineComponent({
 
     ::v-deep .el-button
       width: 80%
+      font-size: 24px
+      font-family: Montserrat, Montserrat-Regular, serif
+      font-weight: 400
+      color: #000000
+      line-height: 39px
 
 .describe1
   opacity: 1
   font-size: 26px
-  font-family: Montserrat, Montserrat-Regular
+  font-family: Montserrat, Montserrat-Regular, serif
   font-weight: 400
   text-align: center
   color: #000000
   line-height: 33px
+
 .describe2
   opacity: 1
   font-size: 35px
-  font-family: Montserrat, Montserrat-Light
+  font-family: Montserrat, Montserrat-Light, serif
   font-weight: 300
   text-align: center
   color: #000000
