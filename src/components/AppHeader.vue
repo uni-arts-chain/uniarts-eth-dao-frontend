@@ -58,7 +58,9 @@ export default defineComponent({
   display: flex
   flex-direction: row
   height: 100%
-
+  .auto
+    ::v-deep .el-image__inner
+      width: auto
   .appName
     font-size: 25px
     font-family: B-1-04, serif
@@ -92,12 +94,10 @@ export default defineComponent({
 </style>
 <style lang="sass">
 .menuImage
-  //position: relative
   .el-image__inner
     position: relative
     top: 3px
     vertical-align: unset
     height: 16px
     width: 16px
-
 </style>

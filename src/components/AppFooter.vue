@@ -30,12 +30,12 @@
     </div>
     <div>
       <div class="rightLogo">
-        <el-image :src="require('@/assets/airdrop/img_9.png')" class="height100"></el-image>
+        <el-image :src="require('@/assets/airdrop/img_9.png')" class="height100 notinline"></el-image>
         <div class="appName">UniArts</div>
       </div>
       <div class="borderButton">
         Get project white papers
-        <el-image :src="require('@/assets/airdrop/img_10.png')" class="height100"></el-image>
+        <el-image :src="require('@/assets/airdrop/img_10.png')" class="height100 notinline"></el-image>
       </div>
     </div>
   </div>
@@ -82,6 +82,9 @@ export default {
       line-height: 20px
       margin-bottom: 20px
       flex-direction: row
+      ::v-deep .el-image
+        .el-image__inner
+          width: 30px
 
       .appName
         margin-left: 10px
@@ -102,6 +105,9 @@ export default {
         right: 10px
         top: 15px
         height: 30px
+        .el-image__inner
+            width: 30px
+
     .logo
       width: 200px
       margin-bottom: 10px
