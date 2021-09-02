@@ -1,10 +1,10 @@
 <template>
-  <el-row class="app_header">
-    <el-col :offset="1" :span="4" class="logo">
-      <el-image :src="require('@/assets/uniarts_logo.png')" class="mt15"></el-image>
-      <span class="appName">UniArts</span>
-    </el-col>
-    <el-col :offset="5" :span="10" class="hidden-xs-only menu">
+  <div class="app_header">
+    <div class="pc logo">
+      <el-image :src="require('@/assets/uniarts_logo.png')" class="auto"></el-image>
+      <div class="appName">UniArts</div>
+    </div>
+    <div class="pc menu">
       <el-menu :default-active="activeIndex" :router="true" mode="horizontal">
         <el-menu-item index="/">
           <span>HOME PAGE</span>
@@ -25,8 +25,9 @@
           <i class="el-icon-user"></i>
         </el-menu-item>
       </el-menu>
-    </el-col>
-  </el-row>
+    </div>
+    <div class="mobile UniArtsAirdrop">UniArts Airdrop</div>
+  </div>
 </template>
 
 <script>
@@ -52,21 +53,34 @@ export default defineComponent({
 <style lang="sass" scoped>
 @import "~@/style/element-variables.scss"
 .logo
+  display: flex
+  flex-direction: row
+
   .appName
-    width: 134px
     font-size: 25px
     font-family: B-1-04, serif
     font-weight: 400
     letter-spacing: -1px
-    position: absolute
-    display: inline-block
+    //position: absolute
+    //display: inline-block
     height: 60px
     line-height: 60px
     margin-left: 3px
 
 .app_header
-  border-bottom: solid 1px $--border-color-base
+  display: flex
+  height: 100%
+  flex-direction: row
+  justify-content: space-around
+  align-content: stretch
+  flex-wrap: wrap
 
 .menu
   text-align: right
+
+.UniArtsAirdrop
+  line-height: 60px
+  font-family: Montserrat, Montserrat-Light, serif
+  opacity: 1
+  font-size: 20px
 </style>
