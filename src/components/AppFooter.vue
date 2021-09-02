@@ -1,24 +1,41 @@
 <template>
   <div class="appFooter pc">
     <div>
-      <div>
-        <el-image :src="require('@/assets/airdrop/图层 64 副本 3.png')"></el-image>
+      <div class="logo">
+        <el-image :src="require('@/assets/airdrop/img_7.png')"></el-image>
       </div>
-      <div>
-        <el-image
-            :src="require('@/assets/airdrop/Community guidelines•Terms of Service Privacy• Policy•Report co.png')">
-        </el-image>
+      <div class="text2">
+        Community guidelines·Trems of Service
       </div>
-      <div>
-        <el-image :src="require('@/assets/airdrop/图层 68.png')"></el-image>
+      <div class="text2">
+        Privacy· Policy·Report content
+      </div>
+      <div class="text1">
+        2021 The Impossible Art Fromula
+      </div>
+      <div class="icons">
+        <div class="icon">
+          <el-image :src="require('@/assets/airdrop/图层 20.png')"></el-image>
+        </div>
+        <div>
+          <el-image :src="require('@/assets/airdrop/M.png')"></el-image>
+        </div>
+        <div>
+          <el-image :src="require('@/assets/airdrop/图层 22.png')"></el-image>
+        </div>
+        <div>
+          <el-image :src="require('@/assets/airdrop/图层 16.png')"></el-image>
+        </div>
       </div>
     </div>
     <div>
-      <div>
-        <el-image :src="require('@/assets/airdrop/UniArts 副本 2.png')"></el-image>
+      <div class="rightLogo">
+        <el-image :src="require('@/assets/airdrop/img_9.png')" class="height100"></el-image>
+        <div class="appName">UniArts</div>
       </div>
-      <div style="border: 1px solid white;max-width: 300px;margin-top: 30px">
-        <el-button class="width100" type="primary">Get project white papers <i class="el-icon-right"></i></el-button>
+      <div class="borderButton">
+        Get project white papers
+        <el-image :src="require('@/assets/airdrop/img_10.png')" class="height100"></el-image>
       </div>
     </div>
   </div>
@@ -54,12 +71,60 @@ export default {
   > div
     flex: 1
     margin: auto
-    padding-left: 200px
-    display: flex
+    padding-left: 20vw
+    //display: flex
     flex-direction: column
+    color: white
 
-    ::v-deep > div
-      padding-top: 5px
+    .rightLogo
+      display: flex
+      height: 20px
+      line-height: 20px
+      margin-bottom: 20px
+      flex-direction: row
+
+      .appName
+        margin-left: 10px
+        font-family: B-1-04, serif
+        font-weight: 400
+
+    .borderButton
+      position: relative
+      width: 360px
+      height: 60px
+      border: 1px solid white
+      line-height: 60px
+      font-weight: 500
+      font-size: 17px
+      padding-left: 20px
+      ::v-deep .el-image
+        position: absolute
+        right: 10px
+        top: 15px
+        height: 30px
+    .logo
+      width: 200px
+      margin-bottom: 10px
+
+    .text1
+      font-size: 10px
+      font-weight: 5
+
+    .text2
+      font-weight: 500
+      font-size: 16px
+
+    .icons
+      margin-top: 10px
+      display: flex
+      flex-direction: row
+
+      > div
+        margin-right: 40px
+
+        ::v-deep .el-image
+          width: 20px
+          height: 18px
 
 .appFooter2
   width: 100%
@@ -70,7 +135,6 @@ export default {
   > div
     flex: 1
     margin: auto
-    //display: flex
     flex-direction: row
     text-align: center
 

@@ -1,12 +1,12 @@
 <template>
   <div class="app_header">
     <div class="pc logo">
-      <el-image :src="require('@/assets/uniarts_logo.png')" class="auto"></el-image>
+      <el-image :src="require('@/assets/airdrop/img_8.png')" class="auto height40"></el-image>
       <div class="appName">UniArts</div>
     </div>
     <div class="pc menu">
       <el-menu :default-active="activeIndex" :router="true" mode="horizontal">
-        <el-menu-item index="/">
+        <el-menu-item index="/1">
           <span>HOME PAGE</span>
         </el-menu-item>
         <el-menu-item index="/2">
@@ -19,10 +19,12 @@
           <span>AIRDROP</span>
         </el-menu-item>
         <el-menu-item :index="null">
-          <i class="el-icon-search"></i>
+          <el-image :src="require('@/assets/airdrop/图层 50.png')" class="menuImage"></el-image>
+          <!--          <i class="el-icon-search"></i>-->
         </el-menu-item>
         <el-menu-item index="/5">
-          <i class="el-icon-user"></i>
+          <!--          <i class="el-icon-user"></i>-->
+          <el-image :src="require('@/assets/airdrop/图层 52.png')" class="menuImage"></el-image>
         </el-menu-item>
       </el-menu>
     </div>
@@ -55,6 +57,7 @@ export default defineComponent({
 .logo
   display: flex
   flex-direction: row
+  height: 100%
 
   .appName
     font-size: 25px
@@ -65,9 +68,11 @@ export default defineComponent({
     //display: inline-block
     height: 60px
     line-height: 60px
-    margin-left: 3px
+    margin-left: 10px
 
 .app_header
+  @media (max-width: $mobile-pc-width)
+    background-color: #F8F8F8
   display: flex
   height: 100%
   flex-direction: row
@@ -83,4 +88,16 @@ export default defineComponent({
   font-family: Montserrat, Montserrat-Light, serif
   opacity: 1
   font-size: 20px
+
+</style>
+<style lang="sass">
+.menuImage
+  //position: relative
+  .el-image__inner
+    position: relative
+    top: 3px
+    vertical-align: unset
+    height: 16px
+    width: 16px
+
 </style>

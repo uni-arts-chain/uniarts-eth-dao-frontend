@@ -20,15 +20,13 @@
       <div v-if="$store.state.wallet.walletAddress" class="el-button">
         {{ $store.state.wallet.lockPositionAmount }} UART
       </div>
-      <el-button v-else type="primary" @click="connectWallet">
-        Connect Wallet
-      </el-button>
+      <el-button v-else type="primary" @click="connectWallet">Connect Wallet</el-button>
     </div>
   </div>
   <div class="mt30 center describe1">To Collect Airdrop & Vote for NFT</div>
   <div class="page_title mobile">
     <div class="logo">
-      <el-image :src="require('@/assets/art_formula.png')"></el-image>
+      <el-image :src="require('@/assets/art_formula.png')" class="auto"></el-image>
     </div>
     <div class="title_text">
       <div class="title">ART</div>
@@ -36,8 +34,8 @@
       <div class="text">THE IMPOSSIBLE</div>
     </div>
   </div>
-
-  <div class="mt30 center describe2">Coming Sept. 20</div>
+  <div class="center describe3 mobile">By UniArts Network</div>
+  <div class="center describe2">Coming Sept. 20</div>
 </template>
 
 <script lang="js">
@@ -73,9 +71,9 @@ export default defineComponent({
     padding-top: 100px
   @media (max-width: $mobile-pc-width)
     padding-top: 50px
-    height: 70px
+    height: 50px
     ::v-deep .el-image
-      height: 70px
+      height: 100%
 
   .title_text
     margin-top: auto
@@ -93,7 +91,7 @@ export default defineComponent({
         line-height: 30px
         letter-spacing: -1px
       @media (max-width: $mobile-pc-width)
-        font-size: 20px
+        font-size: 15px
 
     .text
       font-family: Montserrat, Montserrat-Medium, serif
@@ -102,19 +100,23 @@ export default defineComponent({
         font-weight: 500
         line-height: 22px
         font-size: $--font-size-base
+      @media (max-width: $mobile-pc-width)
+        line-height: 13px
+        font-size: 14px
 
 .card
+  @media (max-width: $mobile-pc-width)
+    border-radius: 6px
   position: relative
   margin: 30px auto
   width: 490px
   max-width: 70%
-  background-color: $--color-text-placeholder
-  box-shadow: $--box-shadow-base
-  border-radius: $--border-radius-base
+  background-color: #F0F0F0
+  border-radius: 18px
 
   .title
     @media (max-width: $mobile-pc-width)
-      line-height: 40px
+      line-height: 55px
     @media (min-width: $mobile-pc-width)
       line-height: 100px
       opacity: 1
@@ -125,19 +127,23 @@ export default defineComponent({
 
   .button
     @media (max-width: $mobile-pc-width)
-      padding: 10px 0 10px 10px
+      padding: 0px 10px 20px 10px
     @media (min-width: $mobile-pc-width)
-      padding: 20px 20px 40px 20px
+      padding: 0px 20px 40px 20px
 
     ::v-deep .el-button
       font-family: Montserrat, Montserrat-Regular, serif
+      width: 80%
       @media (min-width: $mobile-pc-width)
-        width: 80%
         font-size: 24px
         font-weight: 400
         line-height: 39px
-
+        border-radius: 18px
+      @media (max-width: $mobile-pc-width)
+        border-radius: 6px
 .describe1
+  @media (max-width: $mobile-pc-width)
+    font-size: 15px
   @media (min-width: $mobile-pc-width)
     opacity: 1
     font-size: 26px
@@ -147,13 +153,21 @@ export default defineComponent({
   font-family: Montserrat, Montserrat-Regular, serif
 
 .describe2
+  @media (max-width: $mobile-pc-width)
+    margin-top: 50px
+    font-size: 16px
   @media (min-width: $mobile-pc-width)
     line-height: 44px
     font-weight: 300
     opacity: 1
     font-size: 35px
+    margin-top: 60px
   font-family: Montserrat, Montserrat-Light, serif
   text-align: center
+.describe3
+  font-family: Montserrat, Montserrat-Regular, serif
+  margin-top: 10px
+  font-size: 14px
 .UA-logo-C
   width: 60%
   text-align: center

@@ -51,7 +51,7 @@ $footerHeightMobile: 100px
   #appTitle
     height: $titleHeight
     position: relative
-    border-bottom: solid 1px $--border-color-base
+    //border-bottom: solid 1px $--border-color-base
 
   #appBody
     position: relative
