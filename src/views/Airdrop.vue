@@ -16,6 +16,11 @@
     <div class="title">
       {{ $store.state.wallet.walletAddress ? 'Your Airdrop Result is:' : 'To View Your UART Airdrop Result' }}
     </div>
+    <div v-show="$store.state.wallet.walletAddress" :title="$store.state.wallet.walletAddress"
+         class="address cursor width50 center auto" @click="copyAddress">
+      <span id="left">{{ $store.state.wallet.walletAddress }}</span>
+      <span id="right">{{ $store.state.wallet.walletAddress }}</span>
+    </div>
     <div class="button">
       <div v-if="$store.state.wallet.walletAddress" class="el-button">
         {{ $store.state.wallet.lockPositionAmount }} UART
@@ -36,6 +41,7 @@
   </div>
   <div class="center describe3 mobile">By UniArts Network</div>
   <div class="center describe2">Coming Sept. 20</div>
+  <textarea v-show="false" id="textCopy"/>
 </template>
 
 <script lang="js">
@@ -53,7 +59,13 @@ export default defineComponent({
       await vuex.dispatch('wallet/login');
       console.log(vuex.state.wallet);
     };
-    return { connectWallet };
+    const copyAddress = () => {
+      console.log(vuex.state.wallet.walletAddress);
+    };
+    return {
+      connectWallet,
+      copyAddress,
+    };
   },
 });
 </script>
@@ -125,11 +137,33 @@ export default defineComponent({
     font-family: Montserrat, Montserrat-Regular, serif
     text-align: center
 
+  .address
+    width: 50%
+    margin-left: auto
+    margin-right: auto
+
+    #left
+      display: inline-block
+      width: 50%
+      text-overflow: ellipsis
+      white-space: nowrap
+      overflow: hidden
+      word-break: break-all
+
+    #right
+      display: inline-block
+      width: 50%
+      direction: rtl
+      //text-overflow: ellipsis
+      white-space: nowrap
+      overflow: hidden
+      word-break: break-all
+
   .button
     @media (max-width: $mobile-pc-width)
-      padding: 0px 10px 20px 10px
+      padding: 0 10px 20px 10px
     @media (min-width: $mobile-pc-width)
-      padding: 0px 20px 40px 20px
+      padding: 0 20px 40px 20px
 
     ::v-deep .el-button
       font-family: Montserrat, Montserrat-Regular, serif
@@ -141,6 +175,7 @@ export default defineComponent({
         border-radius: 18px
       @media (max-width: $mobile-pc-width)
         border-radius: 6px
+
 .describe1
   @media (max-width: $mobile-pc-width)
     font-size: 15px
@@ -164,10 +199,12 @@ export default defineComponent({
     margin-top: 60px
   font-family: Montserrat, Montserrat-Light, serif
   text-align: center
+
 .describe3
   font-family: Montserrat, Montserrat-Regular, serif
   margin-top: 10px
   font-size: 14px
+
 .UA-logo-C
   width: 60%
   text-align: center

@@ -15,16 +15,16 @@
       </div>
       <div class="icons">
         <div class="icon">
-          <el-image :src="require('@/assets/airdrop/图层 20.png')"></el-image>
+          <el-image :src="require('@/assets/airdrop/图层 20.png')" class="cursor" @click="toTwitter"></el-image>
         </div>
-        <div>
-          <el-image :src="require('@/assets/airdrop/M.png')"></el-image>
+        <div class="icon">
+          <el-image :src="require('@/assets/airdrop/M.png')" class="cursor" @click="toGithub"></el-image>
         </div>
-        <div>
-          <el-image :src="require('@/assets/airdrop/图层 22.png')"></el-image>
+        <div class="icon">
+          <el-image :src="require('@/assets/airdrop/图层 22.png')" class="cursor" @click="toT"></el-image>
         </div>
-        <div>
-          <el-image :src="require('@/assets/airdrop/图层 16.png')"></el-image>
+        <div class="icon">
+          <el-image :src="require('@/assets/airdrop/图层 16.png')" class="cursor" @click="toMedium"></el-image>
         </div>
       </div>
     </div>
@@ -33,7 +33,7 @@
         <el-image :src="require('@/assets/airdrop/img_9.png')" class="height100 notinline"></el-image>
         <div class="appName">UniArts</div>
       </div>
-      <div class="borderButton">
+      <div class="borderButton cursor" @click="toWhitePapers">
         Get project white papers
         <el-image :src="require('@/assets/airdrop/img_10.png')" class="height100 notinline"></el-image>
       </div>
@@ -41,16 +41,16 @@
   </div>
   <div class="appFooter2 mobile">
     <div>
-      <el-image :src="require('@/assets/airdrop/图层 20.png')"></el-image>
+      <el-image :src="require('@/assets/airdrop/图层 20.png')" class="cursor" @click="toTwitter"></el-image>
     </div>
     <div>
-      <el-image :src="require('@/assets/airdrop/M.png')"></el-image>
+      <el-image :src="require('@/assets/airdrop/M.png')" class="cursor" @click="toGithub"></el-image>
     </div>
     <div>
-      <el-image :src="require('@/assets/airdrop/图层 22.png')"></el-image>
+      <el-image :src="require('@/assets/airdrop/图层 22.png')" class="cursor" @click="toT"></el-image>
     </div>
     <div>
-      <el-image :src="require('@/assets/airdrop/图层 16.png')"></el-image>
+      <el-image :src="require('@/assets/airdrop/图层 16.png')" class="cursor" @click="toMedium"></el-image>
     </div>
   </div>
 </template>
@@ -58,6 +58,30 @@
 <script>
 export default {
   name: 'AppFooter',
+  setup() {
+    const toWhitePapers = () => {
+      window.location.href = 'https://github.com/uni-arts-chain/UniArts-white-paper/blob/master/UniArts_White_Paper.pdf';
+    };
+    const toTwitter = () => {
+      window.location.href = 'https://twitter.com/UniartsNetwork';
+    };
+    const toMedium = () => {
+      window.location.href = 'https://uniartsnetwork.medium.com/';
+    };
+    const toT = () => {
+      window.location.href = 'https://t.me/uniarts';
+    };
+    const toGithub = () => {
+      window.location.href = 'https://github.com/uni-arts-chain';
+    };
+    return {
+      toTwitter,
+      toWhitePapers,
+      toMedium,
+      toT,
+      toGithub,
+    };
+  },
 };
 </script>
 
@@ -67,6 +91,7 @@ export default {
   height: 100%
   display: flex
   flex-direction: row
+
   > div
     flex: 1
     margin: auto
@@ -81,6 +106,7 @@ export default {
       line-height: 20px
       margin-bottom: 20px
       flex-direction: row
+
       ::v-deep .el-image
         .el-image__inner
           width: 30px
@@ -99,13 +125,15 @@ export default {
       font-weight: 500
       font-size: 17px
       padding-left: 20px
+
       ::v-deep .el-image
         position: absolute
         right: 10px
         top: 15px
         height: 30px
+
         .el-image__inner
-            width: 30px
+          width: 30px
 
     .logo
       width: 200px

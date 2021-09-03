@@ -11,6 +11,14 @@ const routes = [
     name: 'Airdrop',
     component: () => import(/* webpackChunkName: "airdrop" */ '../views/Airdrop.vue'),
   },
+  {
+    path: '/vote',
+    component: () => import(/* webpackChunkName: "Building" */ '../components/Building.vue'),
+  },
+  {
+    path: '/marketplace',
+    component: () => import(/* webpackChunkName: "Building" */ '../components/Building.vue'),
+  },
 ];
 
 const router = createRouter({

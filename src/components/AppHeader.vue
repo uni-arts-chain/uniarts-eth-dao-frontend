@@ -6,13 +6,13 @@
     </div>
     <div class="pc menu">
       <el-menu :default-active="activeIndex" :router="true" mode="horizontal">
-        <el-menu-item index="/1">
+        <el-menu-item index="/">
           <span>HOME PAGE</span>
         </el-menu-item>
-        <el-menu-item index="/2">
+        <el-menu-item index="/vote">
           <span>VOTE</span>
         </el-menu-item>
-        <el-menu-item index="/3">
+        <el-menu-item index="/marketplace">
           <span>MARKETPLACE</span>
         </el-menu-item>
         <el-menu-item index="/airdrop">
@@ -22,7 +22,7 @@
           <el-image :src="require('@/assets/airdrop/图层 50.png')" class="menuImage"></el-image>
           <!--          <i class="el-icon-search"></i>-->
         </el-menu-item>
-        <el-menu-item index="/5">
+        <el-menu-item :index="null">
           <!--          <i class="el-icon-user"></i>-->
           <el-image :src="require('@/assets/airdrop/图层 52.png')" class="menuImage"></el-image>
         </el-menu-item>
