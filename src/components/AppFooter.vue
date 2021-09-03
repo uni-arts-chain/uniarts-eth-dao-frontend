@@ -67,7 +67,6 @@ export default {
   height: 100%
   display: flex
   flex-direction: row
-
   > div
     flex: 1
     margin: auto

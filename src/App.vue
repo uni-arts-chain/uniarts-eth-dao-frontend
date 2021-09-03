@@ -41,8 +41,11 @@ export default defineComponent({
 <style lang="sass" scoped>
 @import "~@/style/element-variables.scss"
 $titleHeight: 60px
-$footerHeightPc: 300px
+$footerHeightPc: 200px
 $footerHeightMobile: 100px
+$footerTopPc: 50px
+$footerTopMobile: 20px
+
 .app
   position: relative
   width: 100%
@@ -51,21 +54,22 @@ $footerHeightMobile: 100px
   #appTitle
     height: $titleHeight
     position: relative
-    //border-bottom: solid 1px $--border-color-base
+  //border-bottom: solid 1px $--border-color-base
 
   #appBody
     position: relative
     @media (min-width: $mobile-pc-width)
-      min-height: calc(100vh - #{$titleHeight + $footerHeightPc})
+      min-height: calc(100vh - #{$titleHeight + $footerHeightPc + $footerTopPc})
     @media (max-width: $mobile-pc-width)
-      min-height: calc(100vh - #{$titleHeight + $footerHeightMobile})
+      min-height: calc(100vh - #{$titleHeight + $footerHeightMobile + $footerTopMobile})
 
   #appFooter
     @media (min-width: $mobile-pc-width)
       height: $footerHeightPc
+      margin-top: $footerTopPc
     @media (max-width: $mobile-pc-width)
       height: $footerHeightMobile
-
+      margin-top: $footerTopMobile
     position: relative
     background-color: black
 </style>
