@@ -1,67 +1,74 @@
 @font-face {
-    font-family: "Montserrat-Regular";
-    src: url("~@/assets/fonts/Montserrat-Regular.ttf");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "Montserrat-Regular";
+  src: url("~@/assets/fonts/Montserrat-Regular.ttf");
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: "Montserrat-Bold";
-    src: url("~@/assets/fonts/Montserrat-Bold.ttf");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "Montserrat-Bold";
+  src: url("~@/assets/fonts/Montserrat-Bold.ttf");
+  font-weight: normal;
+  font-style: normal;
 }
 
 @font-face {
-    font-family: "Montserrat-Medium";
-    src: url("~@/assets/fonts/Montserrat-Medium.ttf");
-    font-weight: normal;
-    font-style: normal;
+  font-family: "Montserrat-Medium";
+  src: url("~@/assets/fonts/Montserrat-Medium.ttf");
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: "Montserrat-Light";
+  src: url("~@/assets/fonts/Montserrat-ExtraLight.otf");
+  font-weight: normal;
+  font-style: normal;
 }
 
 * {
-    color: inherit;
-    margin: 0;
-    padding: 0;
-    border: none;
-    outline: none;
-    list-style: none;
-    font-family: "Montserrat-Regular", "system-ui","-apple-system","BlinkMacSystemFont", "segoe ui", "sans-serif";
-    box-sizing: border-box;
-    text-decoration: none;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+  border: none;
+  outline: none;
+  list-style: none;
+  font-family: "Montserrat-Regular", "system-ui", "-apple-system", "BlinkMacSystemFont", "segoe ui",
+    "sans-serif";
+  box-sizing: border-box;
+  text-decoration: none;
 }
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
--webkit-appearance: none;
+  -webkit-appearance: none;
 }
-.createFollowCheck input[type=“number”] {
--moz-appearance: textfield;
+.createFollowCheck input[type="“number”"] {
+  -moz-appearance: textfield;
 }
 
 html,
-body{
-    height: 100%;
+body {
+  height: 100%;
 }
 
 .container {
-    width: 1200px;
-    margin: 0 auto;
+  width: 1231px;
+  margin: 0 auto;
 }
 
-body #nprogress .bar{
-    background: #303133;
+body #nprogress .bar {
+  background: #303133;
 }
 
-body #nprogress .peg{
-    box-shadow: 0 0 10px #303133, 0 0 5px #303133;
+body #nprogress .peg {
+  box-shadow: 0 0 10px #303133, 0 0 5px #303133;
 }
 
 .webkit-ellipsis-2 {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    word-break: break-word;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }

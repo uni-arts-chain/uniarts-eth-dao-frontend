@@ -1,28 +1,35 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view />
+  <nav-bar />
+  <main>
+    <router-view />
+  </main>
+  <footer-bar />
 </template>
+
+<script>
+import { defineComponent } from "vue";
+import NavBar from "@/views/Layout/NavBar";
+import FooterBar from "@/views/Layout/FooterBar";
+export default defineComponent({
+  components: {
+    NavBar,
+    FooterBar,
+  },
+  setup() {},
+});
+</script>
 
 <style lang="scss">
 @import "@/assets/styles/index.scss";
+
 #app {
-  text-align: center;
-  color: #2c3e50;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100vh;
 }
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: $--theme-sub;
-
-    &.router-link-exact-active {
-      color: $--theme-primary;
-    }
-  }
+main {
+  flex: 0 1 auto;
 }
 </style>
