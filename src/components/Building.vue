@@ -21,3 +21,7 @@ export default {
   font-size: 80px
   padding-top: 30vh
 </style>
+<style lang="sass">
+body
+  overflow-y: hidden
+</style>
