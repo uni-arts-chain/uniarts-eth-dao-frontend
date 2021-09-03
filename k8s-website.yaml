@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: uni-arts-airdrop
+  name: uni-arts-airdrop
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: uni-arts-airdrop
+  template:
+    metadata:
+      labels:
+        app: uni-arts-airdrop
+    spec:
+      containers:
+      - name: uni-arts-airdrop
+        image: registry.cn-hongkong.aliyuncs.com/tatmas/uni-arts-airdrop
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "200m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: alireg
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: uni-arts-airdrop
+  name: uni-arts-airdrop
+spec:
+  ports:
+  - name: nginx
+    port: 80
+    targetPort: 80
+  selector:
+    app: uni-arts-airdrop
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+  name: ingress-uni-arts-airdrop
+spec:
+  tls:
+  - hosts:
+    - af.uniarts.network
+    secretName: uni-arts-airdrop-tls
+  rules:
+  - host: af.uniarts.network
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: uni-arts-airdrop
+          servicePort: 80
