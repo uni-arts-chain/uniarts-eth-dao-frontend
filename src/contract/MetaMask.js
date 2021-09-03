@@ -1,14 +1,14 @@
 import detectEthereumProvider from '@metamask/detect-provider';
-import { ElMessage } from 'element-plus';
+import { ElNotification } from 'element-plus';
 import BigNumber from 'bignumber.js';
 import VueX from '@/store';
 
 class MetaMask {
   constructor() {
     this.ethereum = window.ethereum || window.BinanceChain;
-    if (!this.ethereum) {
-      ElMessage.warning('Please install MetaMask!');
-    }
+    // if (!this.ethereum) {
+    //   ElNotification.info('Please install MetaMask!');
+    // }
   }
 
   // 初始化钱包
@@ -16,7 +16,7 @@ class MetaMask {
     // 校验钱包
     const ethereum = await detectEthereumProvider();
     if (!ethereum) {
-      ElMessage.warning('Please install MetaMask!');
+      ElNotification.info('Please install MetaMask!');
       throw new Error('Please install MetaMask!');
     }
     // 添加钱包事件处理
@@ -28,7 +28,7 @@ class MetaMask {
     });
     // 判断钱包是否连接正常 || 链选择正确
     if (!ethereum.isConnected() || ethereum.chainId !== '0x4') {
-      ElMessage.warning('Please choose the correct chain');
+      ElNotification.info('Please choose the correct chain');
       throw new Error('didn\'t Creat Connection');
     }
     this.ethereum = ethereum;
@@ -42,10 +42,11 @@ class MetaMask {
     } catch (error) {
       if (error.code === 4001) {
         // EIP-1193 userRejectedRequest error
-        ElMessage.warning('Please connect to MetaMask.');
+        ElNotification.info('Please connect to MetaMask.');
       } else {
-        ElMessage.error(error);
+        ElNotification.info(error);
       }
+      throw error;
     }
   }
 
