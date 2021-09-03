@@ -1,4 +1,4 @@
-# uniarts-vote-vue3
+# uniarts-eth-dao-frontend
 
 ## Project setup
 ```
