@@ -1,26 +1,30 @@
 import { createRouter, createWebHistory } from "vue-router";
-import Home from "../views/Home.vue";
+import nprogress from "nprogress";
+import "nprogress/nprogress.css";
+import routes from "./routes";
+import { routeFrom, routeTo } from "@/interceptors/router";
 
-const routes = [
-  {
-    path: "/",
-    name: "Home",
-    component: Home,
-  },
-  {
-    path: "/about",
-    name: "About",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
-  },
-];
+nprogress.configure({
+  easing: "ease",
+  speed: 200,
+  showSpinner: false,
+});
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
-  routes,
+  history: createWebHistory("/"),
+  routes: routes,
+});
+
+router.beforeEach((from, to, next) => {
+  nprogress.set(0.0);
+  nprogress.start();
+  routeFrom(from, to);
+  next();
+});
+router.afterEach((from, to) => {
+  nprogress.set(0);
+  nprogress.done();
+  routeTo(from, to);
 });
 
 export default router;

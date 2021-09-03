@@ -7,10 +7,8 @@
 </template>
 
 <style lang="scss">
+@import "@/assets/styles/index.scss";
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
 }
@@ -20,10 +18,10 @@
 
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: $--theme-sub;
 
     &.router-link-exact-active {
-      color: #42b983;
+      color: $--theme-primary;
     }
   }
 }
