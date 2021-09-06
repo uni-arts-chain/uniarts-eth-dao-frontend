@@ -50,6 +50,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .footer-bar {
+  margin-top: 30px;
   padding-top: 70px;
   padding-bottom: 89px;
   height: 401px;

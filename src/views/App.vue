@@ -28,8 +28,13 @@ export default defineComponent({
   justify-content: space-between;
   height: 100vh;
 }
-
+.nav-bar {
+  flex: 0 0 auto;
+}
 main {
-  flex: 0 1 auto;
+  flex: 1 0 auto;
+}
+.footer-bar {
+  flex: 0 0 auto;
 }
 </style>
