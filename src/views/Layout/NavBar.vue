@@ -9,7 +9,9 @@
       <li :class="{ active: currentPath == '/' }"><router-link to="/">Homepage</router-link></li>
       <li :class="{ active: currentPath == '/' }"><router-link to="#">Vote</router-link></li>
       <li :class="{ active: currentPath == '/' }"><router-link to="#">Marketplace</router-link></li>
-      <li :class="{ active: currentPath == '/' }"><router-link to="#">Airdrop</router-link></li>
+      <li :class="{ active: currentPath == '/airdrop' }">
+        <router-link to="/airdrop">Airdrop</router-link>
+      </li>
       <li :class="{ active: currentPath == '/' }">
         <router-link to="#"><img src="@/assets/images/search@2x.png" /></router-link>
       </li>
@@ -21,14 +23,16 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { useRoute } from "vue-router";
 export default defineComponent({
   name: "nav-bar",
   setup() {
     const route = useRoute();
 
-    const currentPath = route.path;
+    const currentPath = computed(() => {
+      return route.path;
+    });
 
     return {
       currentPath,
