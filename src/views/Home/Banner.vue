@@ -21,7 +21,10 @@
       <div class="avatar">
         <div class="label">ARTIST:</div>
         <div class="avatar-image">
-          <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />
+          <router-link to="/artist/1"
+            ><img src="https://avatars.githubusercontent.com/u/87279659?v=4"
+          /></router-link>
+
           <div class="name">Kyle Bighead</div>
         </div>
       </div>
