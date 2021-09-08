@@ -10,7 +10,7 @@
       <div class="title">Buy Now</div>
       <div class="list">
         <div class="item" v-for="v in list" :key="v">
-          <div class="item-img"></div>
+          <router-link to="/marketplace/1"><div class="item-img"></div></router-link>
           <div class="info">
             <div class="name">《 Earth Wisp 》</div>
             <div class="price">Price: 999 Tether</div>

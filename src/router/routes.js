@@ -48,6 +48,12 @@ const routes = [
     component: () => import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Index.vue"),
   },
   {
+    path: "/marketplace/:id",
+    name: "nftDetail",
+    component: () =>
+      import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Detail.vue"),
+  },
+  {
     path: "/vote",
     name: "vote",
     component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/Index.vue"),

@@ -10,11 +10,7 @@
         />
         <div class="info">
           <div class="progress">
-            <div class="progress-bar">
-              <div class="label-number" :style="`left: ${width}%`">{{ width }}%</div>
-              <div class="bar" :style="`width: ${width}%`"></div>
-              <div class="bg"></div>
-            </div>
+            <Progress :value="width" />
             <div class="value-group">
               <span>Number of votes: 30000</span>
               <span>Total: 45000</span>
@@ -33,8 +29,12 @@
 
 <script>
 import { defineComponent } from "vue";
+import Progress from "@/components/Progress";
 export default defineComponent({
   name: "collection",
+  components: {
+    Progress,
+  },
   setup() {
     // TODO
     const list = [1, 2, 3];
@@ -84,49 +84,6 @@ export default defineComponent({
       font-weight: 300;
       text-align: left;
       color: #595757;
-    }
-    .progress-bar {
-      width: 100%;
-      height: 23px;
-      position: relative;
-      margin-top: 27px;
-    }
-    .bar {
-      background-image: url(~@/assets/images/progress-bar@2x.png);
-      background-repeat: no-repeat;
-      background-size: 434px 19px;
-      background-position: 0px 1px;
-      top: 2px;
-      height: 19px;
-      position: absolute;
-      border-radius: 10px;
-    }
-    .bg {
-      background-color: #e6e6e6;
-      border-radius: 20px;
-      height: 100%;
-      width: 100%;
-    }
-    .label-number {
-      position: absolute;
-      font-size: 12px;
-      font-family: Montserrat-Regular;
-      font-weight: 300;
-      text-align: left;
-      color: #595757;
-      line-height: 32px;
-      top: -35px;
-      transform: translateX(-50%);
-    }
-    .label-number::after {
-      content: "";
-      position: absolute;
-      bottom: 1px;
-      left: 50%;
-      transform: translateX(-50%);
-      border-left: 4px solid transparent;
-      border-right: 4px solid transparent;
-      border-top: 6px solid black;
     }
   }
 }
