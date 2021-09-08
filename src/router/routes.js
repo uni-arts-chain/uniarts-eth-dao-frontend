@@ -32,5 +32,10 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/withdraw",
+    name: "/withdraw",
+    component: () => import(/* webpackChunkName: "widthdraw" */ "../views/Profile/Withdraw.vue"),
+  },
 ];
 export default routes;

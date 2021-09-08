@@ -14,14 +14,18 @@
         <el-col :span="4" class="item">1000</el-col>
         <el-col :span="4" class="item">200</el-col>
         <el-col :span="4" class="item">800</el-col>
-        <el-col :span="8" class="item">30 <span>Withdraw</span></el-col>
+        <el-col :span="8" class="item"
+          >30 <router-link to="/withdraw">Withdraw</router-link></el-col
+        >
       </el-row>
       <el-row class="row">
         <el-col :span="4" class="item">Uink</el-col>
         <el-col :span="4" class="item">1000</el-col>
         <el-col :span="4" class="item">200</el-col>
         <el-col :span="4" class="item">800</el-col>
-        <el-col :span="8" class="item">30 <span>Withdraw</span></el-col>
+        <el-col :span="8" class="item"
+          >30 <router-link to="/withdraw">Withdraw</router-link></el-col
+        >
       </el-row>
     </el-row>
   </div>
@@ -68,7 +72,7 @@ export default defineComponent({
       text-align: center;
       color: #000000;
       padding: 15px;
-      span {
+      a {
         color: #a43129;
         cursor: pointer;
       }
