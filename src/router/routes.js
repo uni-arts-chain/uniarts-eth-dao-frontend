@@ -7,7 +7,30 @@ const routes = [
   {
     path: "/airdrop",
     name: "Airdrop",
-    component: () => import(/* webpackChunkName: "home" */ "../views/Airdrop/Index.vue"),
+    component: () => import(/* webpackChunkName: "airdrop" */ "../views/Airdrop/Index.vue"),
+  },
+  {
+    path: "/profile",
+    name: "Profile",
+    component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/Index.vue"),
+    children: [
+      {
+        path: "",
+        name: "assets",
+        component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/Assets.vue"),
+      },
+      {
+        path: "history",
+        name: "history",
+        component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/History.vue"),
+      },
+      {
+        path: "collection",
+        name: "collection",
+        component: () =>
+          import(/* webpackChunkName: "profile" */ "../views/Profile/Collection.vue"),
+      },
+    ],
   },
 ];
 export default routes;

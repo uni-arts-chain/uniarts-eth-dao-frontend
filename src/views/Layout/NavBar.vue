@@ -15,8 +15,8 @@
       <li :class="{ active: currentPath == '/' }">
         <router-link to="#"><img src="@/assets/images/search@2x.png" /></router-link>
       </li>
-      <li :class="{ active: currentPath == '/' }">
-        <router-link to="#"><img src="@/assets/images/profile@2x.png" /></router-link>
+      <li :class="{ active: currentPath == '/profile' }">
+        <router-link to="/profile"><img src="@/assets/images/profile@2x.png" /></router-link>
       </li>
     </ul>
   </nav>
