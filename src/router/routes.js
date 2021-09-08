@@ -34,13 +34,23 @@ const routes = [
   },
   {
     path: "/withdraw",
-    name: "/withdraw",
+    name: "withdraw",
     component: () => import(/* webpackChunkName: "widthdraw" */ "../views/Profile/Withdraw.vue"),
   },
   {
     path: "/artist/:id",
-    name: "/artist",
+    name: "artist",
     component: () => import(/* webpackChunkName: "artist" */ "../views/Artist/Index.vue"),
+  },
+  {
+    path: "/marketplace",
+    name: "marketplace",
+    component: () => import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Index.vue"),
+  },
+  {
+    path: "/vote",
+    name: "vote",
+    component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/Index.vue"),
   },
 ];
 export default routes;

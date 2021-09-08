@@ -7,8 +7,12 @@
     </div>
     <ul class="menu-group">
       <li :class="{ active: currentPath == '/' }"><router-link to="/">Homepage</router-link></li>
-      <li :class="{ active: currentPath == '/' }"><router-link to="#">Vote</router-link></li>
-      <li :class="{ active: currentPath == '/' }"><router-link to="#">Marketplace</router-link></li>
+      <li :class="{ active: currentPath == '/vote' }">
+        <router-link to="/vote">Vote</router-link>
+      </li>
+      <li :class="{ active: currentPath == '/marketplace' }">
+        <router-link to="/marketplace">Marketplace</router-link>
+      </li>
       <li :class="{ active: currentPath == '/airdrop' }">
         <router-link to="/airdrop">Airdrop</router-link>
       </li>
