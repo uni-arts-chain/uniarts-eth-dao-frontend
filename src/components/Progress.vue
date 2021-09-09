@@ -10,7 +10,7 @@
 <script>
 import { defineComponent } from "vue";
 export default defineComponent({
-  name: "progress",
+  name: "vote-progress",
   props: {
     value: {
       type: Number,

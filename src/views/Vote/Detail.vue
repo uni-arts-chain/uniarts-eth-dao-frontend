@@ -1,0 +1,99 @@
+/** * Created by Lay Hunt on 2021-09-09 21:49:35. */
+<template>
+  <div class="detail">
+    <img class="detail-logo" src="@/assets/images/banner-logo@2x.png" />
+    <p class="detail-desc">The right formula for the best art never exists</p>
+    <div class="button-group">
+      <button class="candidate">View All Candidates</button>
+      <button class="auction">View Timed Auctions</button>
+    </div>
+    <div class="list">
+      <div class="item" v-for="(v, i) in list" :key="i">
+        <div class="nft">
+          <div class="nft-assets" style="width: 324px; height: 324px; background: black"></div>
+        </div>
+        <div class="desc">
+          <span>Vote for NFT to gain staking reward during the voting round</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import { defineComponent } from "vue";
+export default defineComponent({
+  name: "detail",
+  setup() {
+    // TODO
+    const list = [1, 2, 3];
+    return {
+      list,
+    };
+  },
+});
+</script>
+
+<style lang="scss" scoped>
+.detail-logo {
+  width: 361px;
+  height: 83px;
+  margin: 0 auto;
+  margin-top: 130px;
+  display: block;
+}
+.detail-desc {
+  font-size: 18px;
+  font-family: Montserrat-Regular;
+  font-weight: 300;
+  text-align: center;
+  color: #040000;
+  margin-top: 40px;
+  margin-bottom: 52px;
+}
+.button-group {
+  display: flex;
+  justify-content: center;
+  button {
+    width: 234px;
+    height: 47px;
+    background: #000000;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 700;
+    text-align: center;
+    color: #ffffff;
+    line-height: 18px;
+    margin: 0 49px;
+    cursor: pointer;
+  }
+}
+.list {
+  margin-top: 112px;
+  display: flex;
+  justify-content: space-between;
+  .item {
+    border: 1px solid #cacbcc;
+  }
+  .nft {
+    padding: 10px;
+  }
+  .desc {
+    border-top: 1px solid #cacbcc;
+    width: 100%;
+    height: 87px;
+    font-size: 12px;
+    font-family: Montserrat-Regular;
+    font-weight: 300;
+    color: #040000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    > span {
+      display: block;
+      max-width: 209px;
+      text-align: center;
+    }
+  }
+}
+</style>
