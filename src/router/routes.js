@@ -58,5 +58,10 @@ const routes = [
     name: "vote",
     component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/Index.vue"),
   },
+  {
+    path: "/:pathMatch(.*)*",
+    name: "comingSoon",
+    component: () => import(/* webpackChunkName: "session" */ "../views/Session/ComingSoon.vue"),
+  },
 ];
 export default routes;
