@@ -4,8 +4,8 @@
     <img class="detail-logo" src="@/assets/images/banner-logo@2x.png" />
     <p class="detail-desc">The right formula for the best art never exists</p>
     <div class="button-group">
-      <button class="candidate">View All Candidates</button>
-      <button class="auction">View Timed Auctions</button>
+      <button class="candidate" @click="goVoteQueue">View All Candidates</button>
+      <button class="auction" @click="goAuctionQueue">View Timed Auctions</button>
     </div>
     <div class="list">
       <div class="item" v-for="(v, i) in list" :key="i">
@@ -22,13 +22,29 @@
 
 <script>
 import { defineComponent } from "vue";
+import { useRouter } from "vue-router";
 export default defineComponent({
   name: "detail",
   setup() {
     // TODO
+
+    const router = useRouter();
+
     const list = [1, 2, 3];
+
+    const goVoteQueue = () => {
+      router.push("/vote/votelist");
+    };
+
+    const goAuctionQueue = () => {
+      router.push("/vote/auctionlist");
+    };
+
     return {
       list,
+
+      goVoteQueue,
+      goAuctionQueue,
     };
   },
 });

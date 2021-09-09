@@ -59,6 +59,21 @@ const routes = [
     component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/Index.vue"),
   },
   {
+    path: "/vote/:id",
+    name: "voteDetail",
+    component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/VoteDetail.vue"),
+  },
+  {
+    path: "/vote/votelist",
+    name: "voteList",
+    component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/VoteList.vue"),
+  },
+  {
+    path: "/vote/auctionlist",
+    name: "auctionList",
+    component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/AuctionList.vue"),
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "comingSoon",
     component: () => import(/* webpackChunkName: "session" */ "../views/Session/ComingSoon.vue"),

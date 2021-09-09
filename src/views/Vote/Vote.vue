@@ -24,7 +24,7 @@
       </div>
       <div class="user-more">More ></div>
       <div class="bid-group">
-        <button>Place a Bid</button>
+        <button @click="onVote">VOTE</button>
       </div>
     </div>
   </div>
@@ -32,13 +32,21 @@
 
 <script>
 import { defineComponent } from "vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "vote",
   setup() {
     // TODO
+    const router = useRouter();
 
-    return {};
+    const onVote = () => {
+      router.push("/vote/1");
+    };
+
+    return {
+      onVote,
+    };
   },
 });
 </script>

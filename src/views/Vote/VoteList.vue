@@ -3,7 +3,7 @@
   <div class="index">
     <div class="info">
       <div class="container">
-        <button class="auction-button">View Auction Round</button>
+        <button class="auction-button" @click="goAuctionQueue">View Auction Round</button>
         <div class="content">
           <h2>Vote Round</h2>
           <div class="date">
@@ -13,7 +13,7 @@
             <span class="label">Vote Payouts</span> 30.000 <span class="unit">Uink</span>
           </div>
         </div>
-        <button class="back">Back</button>
+        <button class="back" @click="onBack">Back</button>
       </div>
     </div>
     <div class="list">
@@ -59,16 +59,32 @@
 
 <script>
 import { defineComponent } from "vue";
+import { useRouter } from "vue-router";
 export default defineComponent({
   name: "list",
   setup() {
     // TODO
+
+    const router = useRouter();
+
     const list = [1, 2, 3];
 
     const width = 50;
+
+    const onBack = () => {
+      router.push("/vote");
+    };
+
+    const goAuctionQueue = () => {
+      router.push("/vote/auctionlist");
+    };
+
     return {
       list,
       width,
+
+      goAuctionQueue,
+      onBack,
     };
   },
 });
@@ -134,6 +150,7 @@ export default defineComponent({
       }
     }
     .auction-button {
+      cursor: pointer;
       width: 229px;
       height: 49px;
       border: 3px solid black;
