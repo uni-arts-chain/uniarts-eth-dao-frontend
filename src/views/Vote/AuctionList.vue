@@ -35,7 +35,7 @@
             </div>
             <div class="number-vote">Number of votes: 30000</div>
           </div>
-          <button class="vote-button">Place a bid</button>
+          <button class="vote-button" @click="goAuction(1)">Place a bid</button>
         </div>
       </div>
     </div>
@@ -78,12 +78,17 @@ export default defineComponent({
       router.push("/vote/votelist");
     };
 
+    const goAuction = (id) => {
+      router.push("/marketplace/auction/" + id);
+    };
+
     return {
       list,
       width,
 
       goVoteQueue,
       onBack,
+      goAuction,
     };
   },
 });

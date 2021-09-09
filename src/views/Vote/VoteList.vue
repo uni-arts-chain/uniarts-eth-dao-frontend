@@ -35,7 +35,7 @@
             </div>
             <div class="number-vote">Number of votes: 30000</div>
           </div>
-          <button class="vote-button">VOTE</button>
+          <button class="vote-button" @click="goVoteDetail(1)">VOTE</button>
         </div>
       </div>
     </div>
@@ -79,12 +79,17 @@ export default defineComponent({
       router.push("/vote/auctionlist");
     };
 
+    const goVoteDetail = (id) => {
+      router.push("/vote/" + id);
+    };
+
     return {
       list,
       width,
 
       goAuctionQueue,
       onBack,
+      goVoteDetail,
     };
   },
 });

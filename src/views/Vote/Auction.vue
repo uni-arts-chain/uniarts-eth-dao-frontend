@@ -27,7 +27,7 @@
           <span>Bid History</span>
           <span>Total 4 Bids</span>
         </div>
-        <button>Place a Bid</button>
+        <button @click="goAuction(1)">Place a Bid</button>
       </div>
     </div>
   </div>
@@ -35,6 +35,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import { useRouter } from "vue-router";
 import Progress from "@/components/Progress";
 export default defineComponent({
   name: "auction",
@@ -44,7 +45,14 @@ export default defineComponent({
   setup() {
     // TODO
 
-    return {};
+    const router = useRouter();
+
+    const goAuction = (id) => {
+      router.push("/marketplace/auction/" + id);
+    };
+    return {
+      goAuction,
+    };
   },
 });
 </script>
