@@ -10,7 +10,7 @@
         </div>
         <div class="airdrop-content connected" v-else>
           <span class="title">Your Airdrop Result is:</span>
-          <button class="connect-wallet">8888 UART</button>
+          <button class="connect-wallet">{{ airDropBalance }} UART</button>
         </div>
       </div>
       <div class="action-notice">To Collect Airdrop & Vote for NFT</div>
@@ -20,8 +20,9 @@
 </template>
 
 <script>
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
+import TokenLocker from "@/contracts/TokenLocker";
 import store from "@/store";
 export default defineComponent({
   name: "index",
@@ -34,15 +35,21 @@ export default defineComponent({
     const onLogin = () => {
       router.push("/login?back=" + encodeURIComponent(route.path));
     };
-
     const isLogin = computed(() => {
       return store.state.user.info.address;
+    });
+
+    const airDropBalance = ref(0);
+    onMounted(async () => {
+      airDropBalance.value = await TokenLocker.queryLockPosition();
     });
 
     return {
       onLogin,
 
       isLogin,
+
+      airDropBalance,
     };
   },
 });

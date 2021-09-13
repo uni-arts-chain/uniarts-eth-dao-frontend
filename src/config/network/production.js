@@ -1,25 +1,20 @@
 "use strict";
 module.exports = {
   contracts: {
-    BitflixPoint: "0x7768c5e38Ad2DF9aFf54E1e36219dB968CEaccA7",
-    MarketPlace: "0xad3b1EC016347931769B327f7b6d705e5698D920",
+    TokenLocker: "0x9aE4B33676A1E4f02FeC7B868e73C38C2f5Cf2f0",
+    VoteMining: "0xb0c4F6Bd7F3242b0456C61B56f3cbB9D6beE9ce4",
   },
   nfts: {
-    BitflixNFT: {
-      address: "0x3C4Ed7d7CF1c405e19E2F7b0050549Ad7022E18D",
-      symbol: "BNFT",
+    UniartsNFT: {
+      address: "0x4c195e61416702F678b1ACEe72f36A5986c205df",
+      symbol: "UANFT",
     },
   },
-  tokens: [
-    {
-      symbol: "BTFLX",
+  tokens: {
+    UART: {
+      symbol: "UART",
       decimals: 18,
-      address: "0x2bDD4c2207837A3c82C65664cFE19889803de6D0",
+      address: "0x3E62aC82c9C3c7525A7Ec10b254C1ee1b1695996",
     },
-    {
-      symbol: "USDT",
-      decimals: 18,
-      address: "0x19d130656dE1c3f29B3F476D65fBE562a06fFcbf",
-    },
-  ],
+  },
 };
