@@ -1,11 +1,11 @@
 /** * Created by Lay Hunt on 2021-09-13 16:02:21. */
 <template>
   <div class="login container">
-    <!-- <div class="select-wallet">
+    <div class="select-wallet">
       <img src="@/assets/images/banner-logo@2x.png" />
       <p>Welcome ! Please select your wallet</p>
-      <button>Select a Wallet</button>
-    </div> -->
+      <button v-loading="isLoading" @click="onConnectMetaMask">Select a Wallet</button>
+    </div>
     <!-- <div class="sign-in">
       <p>Welcome back</p>
       <p>@scorpiocat14!</p>
@@ -15,7 +15,7 @@
         <button class="sign-in-button">SIGN IN</button>
       </div>
     </div> -->
-    <div class="register">
+    <!-- <div class="register">
       <img src="@/assets/images/banner-logo@2x.png" />
       <div class="info">
         <div class="label">ADDRESS</div>
@@ -32,18 +32,86 @@
         </div>
       </div>
       <button class="register-button">REGISTER</button>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { notification } from "@/components/Notification";
+import http from "@/plugins/http";
+import wallet from "@/plugins/wallet";
+import store from "@/store";
 export default defineComponent({
   name: "login",
   setup() {
     // TODO
 
-    return {};
+    const router = useRouter();
+
+    const route = useRoute();
+
+    const back = route.query.back ? decodeURIComponent(route.query.back) : "";
+
+    const isLoading = ref(false);
+
+    const onConnectMetaMask = () => {
+      isLoading.value = true;
+      store
+        .dispatch("user/ConnectWallet")
+        .then(async () => {
+          let response = await http.userLoginMessage({});
+          setTimeout(async () => {
+            let notifyId;
+            try {
+              notifyId = notification.notice(
+                {
+                  type: "loading",
+                  message: "Please wait for the wallet's response",
+                },
+                {
+                  timeout: 0,
+                }
+              );
+              let signatureData = await wallet.signature(response.message);
+              notification.dismiss(notifyId);
+              let info = await http.userLogin({
+                address: wallet.connectedAccount,
+                message: response.message,
+                signature: signatureData,
+              });
+              await store.dispatch("user/SetInfo", info);
+              isLoading.value = true;
+              notification.success("Logged");
+              if (back) {
+                router.push(back);
+              } else {
+                router.push("/");
+              }
+            } catch (error) {
+              notification.dismiss(notifyId);
+              isLoading.value = false;
+              notification.error(error.head ? error.head.msg : error.message);
+            }
+          }, 500);
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          if (err.code === 100) {
+            notification.error("Please install the selected wallet");
+          } else {
+            notification.error(err.head ? err.head.msg : err.message);
+          }
+        });
+    };
+
+    return {
+      isLoading,
+
+      onConnectMetaMask,
+    };
   },
 });
 </script>

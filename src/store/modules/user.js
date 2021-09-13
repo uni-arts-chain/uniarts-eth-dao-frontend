@@ -24,15 +24,20 @@ export default {
       await Wallet.init();
     },
     GetInfo({ commit }) {
-      http.userGetInfo({}).then((info) => {
-        let tokens = {
-          token: info.token,
-          expire_at: info.expire_at,
-          address: info.address,
-        };
-        setLocalStore("user_token", tokens);
-        commit("SET_INFO", info);
-      });
+      http
+        .userGetInfo({})
+        .then((info) => {
+          let tokens = {
+            token: info.token,
+            expire_at: info.expire_at,
+            address: info.address,
+          };
+          setLocalStore("user_token", tokens);
+          commit("SET_INFO", info);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
     SetInfo({ commit }, info) {
       let tokens = {

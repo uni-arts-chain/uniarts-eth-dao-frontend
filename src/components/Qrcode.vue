@@ -4,8 +4,9 @@
 </template>
 
 <script>
+import { defineComponent } from "vue";
 import QrCode from "@/plugins/qrcode";
-export default {
+export default defineComponent({
   props: ["data", "scale", "typeNumber", "errorCorrectionLevel", "noflex"],
   mounted() {
     this.init();
@@ -25,7 +26,7 @@ export default {
       this.$refs.qrcode.innerHTML = qr.createSvgTag(this.scale ? this.scale : 4, this.typeNumber);
     },
   },
-};
+});
 </script>
 
 <style lang="scss" scoped>

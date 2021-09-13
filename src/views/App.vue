@@ -10,17 +10,23 @@
 import { defineComponent } from "vue";
 import NavBar from "@/views/Layout/NavBar";
 import FooterBar from "@/views/Layout/FooterBar";
+import store from "@/store";
 export default defineComponent({
   components: {
     NavBar,
     FooterBar,
   },
-  setup() {},
+  setup() {
+    if (store.state.user.info.address) {
+      store.dispatch("user/GetInfo");
+    }
+  },
 });
 </script>
 
 <style lang="scss">
 @import "@/assets/styles/index.scss";
+@import "@/assets/styles/reset.scss";
 
 #app {
   display: flex;

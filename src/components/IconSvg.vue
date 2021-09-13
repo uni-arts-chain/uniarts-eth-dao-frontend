@@ -5,7 +5,8 @@
 </template>
 
 <script>
-export default {
+import { defineComponent } from "vue";
+export default defineComponent({
   name: "icon-svg",
   props: {
     iconClass: {
@@ -18,7 +19,7 @@ export default {
       return `#icon-${this.iconClass}`;
     },
   },
-};
+});
 </script>
 <style lang="scss" scoped>
 .svg-icon {

@@ -2,65 +2,64 @@
 $--color-primary: black;
 
 /* 改变 icon 字体路径变量，必需 */
-$--font-path: '~element-ui/lib/theme-chalk/fonts';
-
-@import "~element-ui/packages/theme-chalk/src/index";
-
-.el-notification{
-    .el-notification__content{
-        text-align: inherit;
-    }
+$--font-path: "~element-plus/theme-chalk/fonts";
+@import "~element-plus/packages/theme-chalk/src/index";
+.el-notification {
+  .el-notification__content {
+    text-align: inherit;
+  }
 }
 
-.el-loading-mask{
-    .el-loading-spinner{
-        // margin-top: -15px;
-        .circular .path{
-            stroke: black;
-        }
-        .el-icon-loading{
-            color:  white;
-        }
+.el-loading-mask {
+  .el-loading-spinner {
+    // margin-top: -15px;
+    .circular .path {
+      stroke: black;
     }
+    .el-icon-loading {
+      color: white;
+    }
+  }
 }
 
-.el-tooltip__popper.balance{
-    background-color: #020202;
-    font-size: 16px;
+.el-tooltip__popper.balance {
+  background-color: #020202;
+  font-size: 16px;
 }
 
-.uniarts-toast {
-    &.Vue-Toastification__toast {
-        background-color: #225590;
-        font-size: 20px;
-        color: white;
-    }
-    &.Vue-Toastification__toast--error .Vue-Toastification__icon{
-        color: red;
-    }
-    & .Vue-Toastification__close-button {
-        color: white;
-    }
-    & .Vue-Toastification__progress-bar {
-        background-color: white;
-    }
+.vote-toast {
+  &.Vue-Toastification__toast,
+  &.Vue-Toastification__toast--default {
+    background-color: #e0e0e0;
+    font-size: 20px;
+    color: black;
+  }
+  &.Vue-Toastification__toast--error .Vue-Toastification__icon {
+    color: red;
+  }
+  & .Vue-Toastification__close-button {
+    color: black;
+  }
+  & .Vue-Toastification__progress-bar {
+    background-color: black;
+  }
 }
 
-.el-menu--horizontal{
-    padding-left: 40px;
+.el-menu--horizontal {
+  padding-left: 40px;
+  background-color: #00000000 !important;
+  ul {
     background-color: #00000000 !important;
-    ul{
-        background-color: #00000000 !important;
-        li{
-            height: 48px !important;
-            line-height: 48px !important;
-            border-top: white 1px solid;
-            margin-left: 40px;
-            text-align: center;
-            background-color: #0c306199 !important;
-            &:first-child {
-                border-top: unset !important;
-            }
-        }
+    li {
+      height: 48px !important;
+      line-height: 48px !important;
+      border-top: white 1px solid;
+      margin-left: 40px;
+      text-align: center;
+      background-color: #0c306199 !important;
+      &:first-child {
+        border-top: unset !important;
+      }
     }
+  }
 }

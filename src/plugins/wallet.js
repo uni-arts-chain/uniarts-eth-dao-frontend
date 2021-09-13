@@ -100,6 +100,7 @@ class Wallet {
       from: this.state.connectedAccount,
     });
     console.log(result);
+
     return result;
   }
   async signature(message) {

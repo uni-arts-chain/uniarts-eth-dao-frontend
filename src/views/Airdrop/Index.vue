@@ -4,9 +4,9 @@
     <div class="content">
       <img class="logo" src="@/assets/images/banner-logo@2x.png" />
       <div class="airdrop-body">
-        <div class="airdrop-content" v-if="!isConnected">
+        <div class="airdrop-content" v-if="!isLogin">
           <span class="title">To View Your UART Airdrop Result</span>
-          <button class="connect-wallet">Connect Wallet</button>
+          <button class="connect-wallet" @click="onLogin">Login</button>
         </div>
         <div class="airdrop-content connected" v-else>
           <span class="title">Your Airdrop Result is:</span>
@@ -20,14 +20,29 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import store from "@/store";
 export default defineComponent({
   name: "index",
   setup() {
     // TODO
-    const isConnected = false;
+
+    const router = useRouter();
+    const route = useRoute();
+
+    const onLogin = () => {
+      router.push("/login?back=" + encodeURIComponent(route.path));
+    };
+
+    const isLogin = computed(() => {
+      return store.state.user.info.address;
+    });
+
     return {
-      isConnected,
+      onLogin,
+
+      isLogin,
     };
   },
 });

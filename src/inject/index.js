@@ -4,12 +4,14 @@ import Icon from "@/plugins/icon";
 import detect from "@/plugins/detect";
 import Element from "@/plugins/element";
 import http from "@/plugins/http";
+import Notify from "@/components/Notification";
 import copy from "clipboard-copy";
 
 export default {
   install: async (vue) => {
     vue.use(Icon);
     vue.use(Element);
+    vue.use(Notify);
     vue.config.globalProperties.$browser = detect.browser;
     vue.config.globalProperties.$http = http;
     vue.config.globalProperties.$wallet = Wallet;

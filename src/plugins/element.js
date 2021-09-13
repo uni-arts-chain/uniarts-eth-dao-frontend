@@ -3,7 +3,7 @@ import "element-plus/dist/index.css";
 
 export default {
   install: (vue) => {
-    vue.use(ElLoading.directive);
+    vue.use(ElLoading);
     vue.use(ElRow);
     vue.use(ElCol);
     vue.use(ElPopover);
