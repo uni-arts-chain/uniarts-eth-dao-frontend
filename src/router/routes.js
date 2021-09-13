@@ -80,6 +80,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/AuctionList.vue"),
   },
   {
+    path: "/login",
+    name: "login",
+    component: () => import(/* webpackChunkName: "session" */ "../views/Session/Login.vue"),
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "comingSoon",
     component: () => import(/* webpackChunkName: "session" */ "../views/Session/ComingSoon.vue"),
