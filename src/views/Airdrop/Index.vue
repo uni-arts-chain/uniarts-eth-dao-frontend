@@ -6,7 +6,7 @@
       <div class="airdrop-body">
         <div class="airdrop-content" v-if="!isLogin">
           <span class="title">To View Your UART Airdrop Result</span>
-          <button class="connect-wallet" @click="onLogin">Login</button>
+          <button class="connect-wallet" @click="onLogin">SIGN IN</button>
         </div>
         <div class="airdrop-content connected" v-else>
           <span class="title">Your Airdrop Result is:</span>

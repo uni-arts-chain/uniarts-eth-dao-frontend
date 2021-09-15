@@ -70,13 +70,13 @@ module.exports = {
     port: 8080,
     proxy: {
       "/test/api": {
-        target: "https://dapp.btflx.com",
+        target: "https://dapp.uniarts.network",
         pathRewrite: {
           "^/test/api": "/api",
         },
       },
       "/api": {
-        target: "https://dapp.btflx.com",
+        target: "https://dapp.uniarts.network",
         pathRewrite: {
           "^api": "/api",
         },

@@ -5,7 +5,7 @@
       <div class="info-wrapper">
         <div class="avatar-body">
           <img src="@/assets/images/avatar@2x.png" />
-          <span class="nickname">Kyle Bighead</span>
+          <span class="nickname">{{ userInfo.nickname }}</span>
         </div>
         <ul class="menu">
           <li class="menu-li"><router-link class="link" to="/profile">My Assets</router-link></li>
@@ -16,6 +16,9 @@
             <router-link class="link" to="/profile/collection">My Collection</router-link>
           </li>
         </ul>
+        <ul class="menu" style="margin-top: 0px">
+          <li class="menu-li" style="cursor: pointer" @click="onLogout">Log out</li>
+        </ul>
       </div>
     </div>
     <div class="content">
@@ -25,13 +28,36 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
+import { useRouter } from "vue-router";
+import store from "@/store";
+// import notification from "@/components/notification";
 export default defineComponent({
   name: "index",
   setup() {
     // TODO
+    const router = useRouter();
 
-    return {};
+    const onLogout = () => {
+      store.dispatch("user/Quit");
+      router.push("/");
+    };
+
+    const userInfo = computed(() => {
+      return store.state.user.info;
+    });
+
+    return {
+      userInfo,
+      onLogout,
+    };
+  },
+  beforeRouteEnter(to, from, next) {
+    if (store.state.user.info.address) {
+      next();
+    } else {
+      next({ path: "/login" });
+    }
   },
 });
 </script>
@@ -40,6 +66,7 @@ export default defineComponent({
 .index {
   display: flex;
   justify-content: center;
+  padding-bottom: 200px;
 }
 .info {
   margin-top: 129px;
@@ -59,7 +86,6 @@ export default defineComponent({
     height: 82px;
     overflow: hidden;
     border-radius: 50%;
-    margin-left: 7px;
     /* border: 2px solid black; */
   }
   .nickname {
@@ -79,14 +105,15 @@ export default defineComponent({
   margin-top: 61px;
   display: flex;
   flex-direction: column;
-  li {
+  li,
+  li a {
     display: block;
     font-size: 14px;
     font-family: Montserrat-Medium, Montserrat-Light;
     font-weight: 300;
     text-align: left;
     color: #000000;
-    margin-bottom: 45px;
+    margin-bottom: 23px;
   }
 }
 .content {

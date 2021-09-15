@@ -32,6 +32,7 @@ class Wallet {
         code: 100,
       };
     }
+    if (this.isConnected) return;
     this.setListener();
     let account = await this.provider.request({
       method: "eth_accounts",
@@ -41,6 +42,7 @@ class Wallet {
         code: 300,
       };
     }
+    console.log(1);
     let address = account[0];
     this.state.connectedAccount = address;
     this.state.chainId = parseInt(this.provider.chainId);

@@ -1,43 +1,51 @@
 /** * Created by Lay Hunt on 2021-09-13 16:02:21. */
 <template>
   <div class="login container">
-    <div class="select-wallet">
+    <div class="select-wallet" v-if="!isChecked">
       <img src="@/assets/images/banner-logo@2x.png" />
-      <p>Welcome ! Please select your wallet</p>
-      <button v-loading="isLoading" @click="onConnectMetaMask">Select a Wallet</button>
+      <p>Welcome ! Please sign in</p>
+      <button v-loading="isLoading" @click="onConnectMetaMask">Sign in</button>
     </div>
-    <!-- <div class="sign-in">
+    <div class="sign-in" v-if="!isNeedSignUp && isChecked">
       <p>Welcome back</p>
-      <p>@scorpiocat14!</p>
+      <p>@{{ userIntro.nickname }}!</p>
       <div class="info">
         <div class="label">ADDRESS</div>
-        <div class="address">0x123fsdf1342dwsd23423424</div>
-        <button class="sign-in-button">SIGN IN</button>
+        <div class="address">{{ userIntro.address }}</div>
+        <button v-loading="isLoading" class="sign-in-button" @click="onLogin">SIGN IN</button>
       </div>
-    </div> -->
-    <!-- <div class="register">
+    </div>
+    <div class="register" v-else-if="isNeedSignUp && isChecked">
       <img src="@/assets/images/banner-logo@2x.png" />
       <div class="info">
         <div class="label">ADDRESS</div>
-        <div class="address">0x123fsdf1342dwsd23423424</div>
+        <div class="address">{{ address }}</div>
       </div>
       <div class="form">
         <div class="item">
           <p>Please enter your email address:</p>
-          <input type="text" placeholder="Please enter your email address" />
+          <input
+            type="text"
+            v-model="registerForm.email"
+            placeholder="Please enter your email address"
+          />
         </div>
         <div class="item">
           <p>Please enter your nickname:</p>
-          <input type="text" placeholder="Please enter your nickname" />
+          <input
+            type="text"
+            v-model="registerForm.nickname"
+            placeholder="Please enter your nickname"
+          />
         </div>
       </div>
-      <button class="register-button">REGISTER</button>
-    </div> -->
+      <button class="register-button" @click="onLogin">SIGN UP</button>
+    </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, reactive } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { notification } from "@/components/Notification";
 import http from "@/plugins/http";
@@ -49,58 +57,97 @@ export default defineComponent({
     // TODO
 
     const router = useRouter();
-
     const route = useRoute();
-
     const back = route.query.back ? decodeURIComponent(route.query.back) : "";
 
     const isLoading = ref(false);
+    const isChecked = ref(false);
+    const isNeedSignUp = ref(false);
+    const address = ref("");
+    const onLogin = async () => {
+      isLoading.value = true;
+      let response = await http.userLoginMessage({});
+      let notifyId;
+      try {
+        notifyId = notification.notice(
+          {
+            type: "loading",
+            message: "Please wait for the wallet's response",
+          },
+          {
+            timeout: 0,
+          }
+        );
+        let signatureData = await wallet.signature(response.message);
+        notification.dismiss(notifyId);
+        let info;
+        if (isNeedSignUp.value) {
+          if (!registerForm.email || !registerForm.nickname) {
+            notification.error("Please enter the correct information");
+            return;
+          }
+          info = await http.userPostSignUp({
+            address: wallet.connectedAccount,
+            message: response.message,
+            signature: signatureData,
+            email: registerForm.email,
+            nickname: registerForm.nickname,
+          });
+        } else {
+          info = await http.userLogin({
+            address: wallet.connectedAccount,
+            message: response.message,
+            signature: signatureData,
+          });
+        }
 
+        await store.dispatch("user/SetInfo", info);
+        isLoading.value = true;
+        notification.success("Logged");
+        isLoading.value = false;
+        if (back) {
+          router.push(back);
+        } else {
+          router.push("/");
+        }
+      } catch (error) {
+        notification.dismiss(notifyId);
+        isLoading.value = false;
+        notification.error(error.head ? error.head.msg : error.message);
+      }
+    };
+    const checkAddress = () => {
+      return http.userCheckAddress({
+        address: address.value,
+      });
+    };
+
+    const registerForm = reactive({
+      email: "",
+      nickname: "",
+    });
+
+    const userIntro = reactive({});
     const onConnectMetaMask = () => {
       isLoading.value = true;
       store
         .dispatch("user/ConnectWallet")
         .then(async () => {
-          let response = await http.userLoginMessage({});
-          setTimeout(async () => {
-            let notifyId;
-            try {
-              notifyId = notification.notice(
-                {
-                  type: "loading",
-                  message: "Please wait for the wallet's response",
-                },
-                {
-                  timeout: 0,
-                }
-              );
-              let signatureData = await wallet.signature(response.message);
-              notification.dismiss(notifyId);
-              let info = await http.userLogin({
-                address: wallet.connectedAccount,
-                message: response.message,
-                signature: signatureData,
-              });
-              await store.dispatch("user/SetInfo", info);
-              isLoading.value = true;
-              notification.success("Logged");
-              if (back) {
-                router.push(back);
-              } else {
-                router.push("/");
-              }
-            } catch (error) {
-              notification.dismiss(notifyId);
-              isLoading.value = false;
-              notification.error(error.head ? error.head.msg : error.message);
-            }
-          }, 500);
+          address.value = wallet.connectedAccount;
+          const intro = await checkAddress();
+          userIntro.nickname = intro.nickname;
+          userIntro.address = intro.address;
+          isChecked.value = true;
+          isLoading.value = false;
         })
         .catch((err) => {
           console.log(err);
           isLoading.value = false;
           if (err.code === 100) {
             notification.error("Please install the selected wallet");
+          } else if (err.head && err.head.code === 6010) {
+            isNeedSignUp.value = true;
+            isChecked.value = true;
           } else {
             notification.error(err.head ? err.head.msg : err.message);
           }
@@ -109,9 +156,22 @@ export default defineComponent({
 
     return {
       isLoading,
-
+      isNeedSignUp,
+      isChecked,
       onConnectMetaMask,
+      onLogin,
+
+      address,
+      userIntro,
+      registerForm,
     };
+  },
+  beforeRouteEnter(to, from, next) {
+    if (store.state.user.info.address) {
+      next(from);
+    } else {
+      next();
+    }
   },
 });
 </script>

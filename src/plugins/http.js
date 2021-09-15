@@ -6,6 +6,7 @@ import assert from "assert";
 import { HTTP_DEFAULT_CONFIG } from "@/config";
 
 function _normoalize(options, data) {
+  if (!data) return options;
   if (options.method === "POST") {
     options.data = data;
   } else if (options.method === "GET" || options.method === "DELETE") {
@@ -47,13 +48,14 @@ export class MakeApi {
       Object.defineProperty(this.request, apiName, {
         value(outerParams, outerOptions) {
           let _data = outerParams;
+          let keysList = Object.keys(outerParams);
           if (api.method == "POST") {
             if (api.options && !api.options.unSignature) {
               api.options.paramsObj = outerParams;
             }
             const formData = new FormData();
             if (api.options.upload) {
-              Object.keys(outerParams).forEach((v) => {
+              keysList.forEach((v) => {
                 let uploadFile = api.options.upload.find((f) => f == v);
                 if (uploadFile && outerParams[v]) {
                   formData.append(
@@ -66,11 +68,11 @@ export class MakeApi {
                 }
               });
             } else {
-              Object.keys(outerParams).forEach((v) => {
+              keysList.forEach((v) => {
                 formData.append(v, outerParams[v]);
               });
             }
-            _data = formData;
+            _data = keysList.length > 0 ? formData : null;
           }
           const URL = url.replace(/\{:[a-zA-Z]{1,}\}/g, (match) => {
             let fieldsName = match.slice(2, match.length - 1);
