@@ -12,32 +12,38 @@
         Auction
       </div>
     </div>
-    <div class="banner" v-if="currentTab == 1">
+    <div class="banner" v-if="currentTab == 1" v-loading="isLoading">
+      <div class="banner no-data" v-if="voteList.length == 0">No vote</div>
       <el-carousel
+        v-else
         @change="onCarouselChange"
         trigger="click"
         height="600px"
+        :arrow="voteList.length > 0 ? 'hover' : 'never'"
         indicator-position="outside"
         :autoplay="false"
       >
-        <el-carousel-item v-for="item in 4" :key="item">
+        <el-carousel-item v-for="(item, i) in voteList" :key="i">
           <div class="container">
-            <VoteItem />
+            <VoteItem :item="item" />
           </div>
         </el-carousel-item>
       </el-carousel>
     </div>
-    <div class="banner" v-if="currentTab == 2">
+    <div class="banner" v-if="currentTab == 2" v-loading="isLoading">
+      <div class="banner no-data" v-if="auctionList.length == 0">No auction</div>
       <el-carousel
+        v-else
         @change="onCarouselChange"
         trigger="click"
+        :arrow="auctionList.length > 0 ? 'hover' : 'never'"
         height="600px"
         indicator-position="outside"
         :autoplay="false"
       >
-        <el-carousel-item v-for="item in 4" :key="item">
+        <el-carousel-item v-for="(item, v) in auctionList" :key="v">
           <div class="container">
-            <AuctionItem />
+            <AuctionItem :item="item" />
           </div>
         </el-carousel-item>
       </el-carousel>
@@ -46,9 +52,12 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
-import VoteItem from "./Vote";
+import { defineComponent, ref, onMounted } from "vue";
+import VoteItem from "./VoteItem";
 import AuctionItem from "./Auction";
+import notification from "@/components/Notification";
+import http from "@/plugins/http";
+
 export default defineComponent({
   name: "tabs",
   components: {
@@ -59,12 +68,40 @@ export default defineComponent({
     // TODO
     const currentTab = ref(1);
 
+    const isLoading = ref(false);
+
     const onCarouselChange = (curItem, prevItem) => {
       console.log(curItem);
       console.log(prevItem);
       return;
     };
+
+    const voteList = ref([]);
+    const auctionList = ref([]);
+    const onRequestData = () => {
+      isLoading.value = true;
+      http
+        .globalGetVoteList({})
+        .then((res) => {
+          isLoading.value = false;
+          voteList.value = res.list;
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(err.head ? err.head.msg : err.message);
+        });
+    };
+
+    onMounted(() => {
+      onRequestData();
+    });
+
     return {
+      voteList,
+      auctionList,
+
+      isLoading,
       currentTab,
       onCarouselChange,
     };
@@ -103,6 +140,10 @@ export default defineComponent({
     }
   }
 }
-.banner {
+.banner.no-data {
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

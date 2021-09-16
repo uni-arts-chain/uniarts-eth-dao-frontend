@@ -1,0 +1,296 @@
+/** * Created by Lay Hunt on 2021-01-26 10:20:17. */
+<template>
+  <div
+    class="video"
+    ref="videoPlay"
+    v-loading="isLoading"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0)"
+  >
+    <div class="video-player-container" :class="{ responsive: isResponsive }" ref="videoContainer">
+      <video
+        v-if="!isPreview"
+        :preload="preload"
+        :src="source"
+        ref="video"
+        :class="{
+          'responsive-horizontal': isResponsive && isResponsiveHorizontal,
+          'responsive-vertical': isResponsive && !isResponsiveHorizontal,
+          horizontal: isHorizontal && !isResponsive,
+        }"
+        @canplay="canplay"
+        :loop="isLoop"
+        :muted="isMute"
+      ></video>
+      <img
+        v-else
+        :src="cover"
+        ref="video"
+        @load="imgLoad"
+        :class="{
+          'responsive-horizontal': isResponsive && isResponsiveHorizontal,
+          'responsive-vertical': isResponsive && !isResponsiveHorizontal,
+          horizontal: isHorizontal && !isResponsive,
+        }"
+      />
+    </div>
+    <div class="video-control" :style="`bottom: ${bottomHeight}px`" v-if="isPlay && !isCover">
+      <div class="icon" @click.stop="replay">
+        <icon-svg icon-class="replay" />
+      </div>
+      <div class="icon" @click.stop="mute">
+        <icon-svg v-if="!isMute" icon-class="volume" class="volume" />
+        <icon-svg v-else icon-class="mute" class="volume" />
+      </div>
+      <div class="icon" @click.stop="fullscreen" v-if="!isFullscreen">
+        <icon-svg icon-class="fullscreen" class="fullscreen" />
+      </div>
+      <div class="icon" @click.stop="smallscreen" v-else>
+        <icon-svg icon-class="smallscreen" class="fullscreen" />
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  name: "video-player",
+  props: {
+    source: {
+      type: String,
+      required: true,
+      default: "",
+    },
+    preload: {
+      type: String,
+      default: "metadata",
+    },
+    isPreview: {
+      type: Boolean,
+      default: false,
+    },
+    isPlay: {
+      type: Boolean,
+      default: false,
+    },
+    isLoop: {
+      type: Boolean,
+      default: true,
+    },
+    cover: {
+      type: String,
+      default: "",
+    },
+    isCover: {
+      type: Boolean,
+      default: false,
+    },
+    isResponsive: {
+      type: Boolean,
+      default: true,
+    },
+  },
+  data() {
+    return {
+      isHorizontal: false,
+      isMute: true,
+      isFullscreen: false,
+      isLoading: true,
+      isResponsiveHorizontal: false,
+      bottomHeight: 0,
+      isOpting: false,
+    };
+  },
+  methods: {
+    imgLoad() {
+      if (!this.isResponsive) {
+        let width = this.$refs.video.offsetWidth;
+        let height = this.$refs.video.offsetHeight;
+        this.isHorizontal = width > height ? true : false;
+      } else {
+        let obj = this.$refs.video;
+        let width = obj ? obj.offsetWidth : "100%";
+        let height = obj ? obj.offsetHeight : "230px";
+        let boxWidth = this.width;
+        let boxHeight = this.height;
+        boxWidth = this.$refs.videoContainer ? this.$refs.videoContainer.offsetWidth : 0;
+        boxHeight = this.$refs.videoContainer ? this.$refs.videoContainer.offsetHeight : 0;
+        if (width < height) {
+          this.isResponsiveHorizontal = height <= boxHeight ? false : true;
+        } else {
+          this.isResponsiveHorizontal = width <= boxWidth ? true : false;
+        }
+      }
+      this.$emit("ImgLoaded", {
+        height: this.$refs.videoPlay.offsetHeight,
+        width: this.$refs.videoPlay.offsetWidth,
+      });
+      this.isLoading = false;
+    },
+    canplay() {
+      if (!this.isResponsive) {
+        let width = this.$refs.video.offsetWidth;
+        let height = this.$refs.video.offsetHeight;
+        this.isHorizontal = width > height ? true : false;
+      } else {
+        let obj = this.$refs.video;
+        let width = obj ? obj.offsetWidth : "100%";
+        let height = obj ? obj.offsetHeight : "230px";
+        let boxWidth = this.width;
+        let boxHeight = this.height;
+        boxWidth = this.$refs.videoContainer ? this.$refs.videoContainer.offsetWidth : 0;
+        boxHeight = this.$refs.videoContainer ? this.$refs.videoContainer.offsetHeight : 0;
+        if (width < height) {
+          this.isResponsiveHorizontal = height <= boxHeight ? false : true;
+        } else {
+          this.isResponsiveHorizontal = width <= boxWidth ? true : false;
+        }
+      }
+      let width = this.$refs.video.offsetWidth;
+      let height = this.$refs.video.offsetHeight;
+
+      if (width < height) {
+        if (this.$refs.video.offsetHeight > this.$refs.videoContainer.offsetHeight) {
+          let rato = this.$refs.video.offsetHeight / this.$refs.video.offsetWidth;
+          this.$emit("ImgLoaded", {
+            height: this.$refs.videoContainer.offsetHeight,
+            width: this.$refs.videoContainer.offsetHeight / rato,
+          });
+        } else {
+          this.$emit("ImgLoaded", {
+            height: this.$refs.video.offsetHeight,
+            width: this.$refs.video.offsetWidth,
+          });
+        }
+      } else {
+        if (this.$refs.video.offsetWidth > this.$refs.videoContainer.offsetWidth) {
+          let rato = this.$refs.video.offsetWidth / this.$refs.video.offsetHeight;
+          this.$emit("ImgLoaded", {
+            height: this.$refs.videoContainer.offsetWidth / rato,
+            width: this.$refs.videoContainer.offsetWidth,
+          });
+          this.bottomHeight = Math.floor(
+            (this.$refs.videoContainer.offsetHeight -
+              this.$refs.videoContainer.offsetWidth / rato) /
+              2
+          );
+        } else {
+          this.$emit("ImgLoaded", {
+            height: this.$refs.video.offsetHeight,
+            width: this.$refs.video.offsetWidth,
+          });
+        }
+      }
+      if (this.isPlay) {
+        this.$refs.video.play();
+      }
+      this.isLoading = false;
+    },
+    replay() {
+      this.$refs.video.currentTime = 0;
+    },
+    mute() {
+      this.isMute = !this.isMute;
+    },
+    fullscreen() {
+      this.$refs.videoPlay.requestFullscreen();
+      this.isFullscreen = true;
+    },
+    smallscreen() {
+      document.exitFullscreen();
+      this.isFullscreen = false;
+    },
+  },
+};
+</script>
+<style lang="scss" scoped>
+.video {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+.video-player-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  video {
+    height: 100%;
+    width: auto;
+  }
+  video.horizontal {
+    height: auto;
+    width: 100%;
+  }
+}
+.video-player-container.responsive {
+  video {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    transition: opacity 0.3s ease;
+    opacity: 1;
+  }
+
+  video.responsive-horizontal {
+    width: 100%;
+    height: auto;
+  }
+
+  video.responsive-vertical {
+    height: 100%;
+    width: auto;
+  }
+
+  img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    transition: opacity 0.3s ease;
+    opacity: 1;
+  }
+
+  img.responsive-horizontal {
+    width: 100%;
+    height: auto;
+  }
+
+  img.responsive-vertical {
+    height: 100%;
+    width: auto;
+  }
+}
+.video-control {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 40px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  padding-right: 10px;
+  background: linear-gradient(
+    180deg,
+    transparent 0,
+    rgb(0, 0, 0, 0.02) 10%,
+    rgb(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  .icon {
+    font-size: 22px;
+    color: white;
+    margin: 0 5px;
+    cursor: pointer;
+  }
+}
+
+.video:hover .video-control {
+  opacity: 1;
+}
+</style>

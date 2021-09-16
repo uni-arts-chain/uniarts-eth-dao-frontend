@@ -63,3 +63,80 @@ $--font-path: "~element-plus/theme-chalk/fonts";
     }
   }
 }
+
+.dialog {
+  &.el-dialog {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    width: 780px;
+    height: 586px;
+    background: #ffffff;
+    box-shadow: 0px 5px 31px 0px rgba(135, 135, 135, 0.73);
+    padding: 10px 100px 66px;
+  }
+  &.el-dialog .el-dialog__header {
+    padding: 0;
+  }
+  &.el-dialog .el-dialog__close {
+    font-size: 24px;
+  }
+  & .el-dialog .el-dialog__headerbtn:hover .el-dialog__close {
+    color: #020202;
+  }
+  &.el-dialog .el-dialog__close:hover {
+    color: #020202;
+  }
+  
+  &.el-dialog {
+    display: inline-block;
+    width: auto;
+    height: auto;
+  }
+  
+  &.el-dialog.medium {
+    width: 780px;
+    min-height: 506px;
+  }
+  
+  &.el-dialog.small {
+    width: 500px;
+    min-height: 300px;
+  }
+  
+  &.el-dialog.fullscreen,
+  &.el-dialog.fullscreen .el-dialog__body {
+    width: 100% !important;
+    height: 100%;
+    top: 0;
+    left: 0;
+    transform: none;
+    padding: 0;
+    margin: 0;
+  }
+  &.el-dialog.fullscreen .el-dialog__close {
+    position: relative;
+    z-index: 2001;
+  }
+  &.el-dialog.fullscreen .el-dialog__headerbtn:hover .el-dialog__close {
+    color: #999;
+  }
+  &.el-dialog.fullscreen .el-dialog__close:hover {
+    color: #999;
+  }
+  
+  &.el-dialog.message {
+    width: 400px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    padding: 20px 20px;
+  }
+  &.el-dialog {
+    background-color: black;
+    .dialog-content {
+      height: 100%;
+    }
+  }
+}

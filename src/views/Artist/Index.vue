@@ -2,37 +2,70 @@
 <template>
   <div class="index container">
     <div class="artist">
-      <img class="avatar" src="https://avatars.githubusercontent.com/u/87279659?v=4" />
-      <div class="username">Artist Name</div>
+      <img class="avatar" :src="info.artist_avatar ? info.artist_avatar : Avatar" />
+      <div class="username">{{ info.artist_name }}</div>
       <p class="desc">
-        "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
-        aroused great repercussions and won great recognition in the circle, which also led to the
-        introduction of the work, introduction... repercussions and won great recognition in the
-        circle, which also led to the introduction of the work, introduction... repercussions and
-        won great recognition in the circle, which also led to the introduction of the work,
-        introduction...
+        {{ info.artist_info }}
       </p>
     </div>
     <div class="collection">
       <div class="title">CREATIONS</div>
       <div class="list">
-        <div class="item" v-for="(v, i) in list" :key="i"></div>
+        <div class="item" v-for="(v, i) in list" :key="i">
+          <AdaptiveView width="100%" height="100%" :nft="v" />
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref, onMounted, reactive } from "vue";
+import { useRoute } from "vue-router";
+import http from "@/plugins/http";
+import notification from "@/components/Notification";
+import Avatar from "@/assets/images/avatar@2x.png";
+import AdaptiveView from "@/components/AdaptiveView";
 export default defineComponent({
   name: "index",
+  components: {
+    AdaptiveView,
+  },
   setup() {
     // TODO
+    const route = useRoute();
+    const isLoading = ref(false);
+    let info = reactive({});
+    const list = ref([]);
 
-    const list = [1, 2, 3, 4];
+    const requestData = () => {
+      http
+        .globalGetArtistDetail({
+          uid: route.params.id,
+        })
+        .then((res) => {
+          isLoading.value = false;
+          info.artist_name = res.artist_avatar;
+          info.artist_info = res.artist_info;
+          info.artist_name = res.artist_name;
+          list.value = res.arts;
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(err.head ? err.head.msg : err.message);
+        });
+    };
+
+    onMounted(() => {
+      requestData();
+    });
 
     return {
       list,
+      info,
+
+      Avatar,
     };
   },
 });
@@ -69,6 +102,7 @@ export default defineComponent({
   }
   .desc {
     width: 290px;
+    min-height: 180px;
     font-size: 12px;
     font-family: Montserrat-Regular;
     font-weight: 300;
@@ -79,7 +113,7 @@ export default defineComponent({
 }
 .collection {
   float: left;
-  max-width: 680px;
+  width: 680px;
   margin-left: 50px;
   .title {
     font-size: 21px;
@@ -100,7 +134,7 @@ export default defineComponent({
     .item {
       width: 331px;
       height: 331px;
-      background-color: black;
+      /* background-color: black; */
       margin-bottom: 16px;
     }
   }

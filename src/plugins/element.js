@@ -1,4 +1,4 @@
-import { ElLoading, ElRow, ElCol, ElPopover, ElCarousel } from "element-plus";
+import { ElLoading, ElRow, ElCol, ElPopover, ElCarousel, ElDialog } from "element-plus";
 import "element-plus/dist/index.css";
 
 export default {
@@ -8,5 +8,6 @@ export default {
     vue.use(ElCol);
     vue.use(ElPopover);
     vue.use(ElCarousel);
+    vue.use(ElDialog);
   },
 };

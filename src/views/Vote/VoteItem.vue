@@ -1,28 +1,26 @@
 /** * Created by Lay Hunt on 2021-09-09 18:08:37. */
 <template>
   <div class="item">
-    <div class="nft"></div>
+    <div class="nft">
+      <AdaptiveView width="100%" height="100%" :nft="item" />
+    </div>
     <div class="info">
-      <div class="title">NFT Name</div>
+      <div class="title">{{ item.name }}</div>
       <div class="artwork">
         <div class="artwork-label">Artwork Description</div>
         <div class="artwork-desc">
-          "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
-          aroused great repercussions and won great recognition in the circle, which also led to the
-          introduction of the work, introduction...
+          {{ item.details }}
         </div>
-        <div class="artwork-more">More ></div>
+        <div class="artwork-more"></div>
       </div>
       <div class="user-info">
-        <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />
-        <div class="username">Kyle Bighead</div>
+        <img :src="item.artist_avatar ? item.artist_avatar : Avatar" />
+        <div class="username">{{ item.artist_name }}</div>
       </div>
       <div class="user-desc">
-        "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
-        aroused great repercussions and won great recognition in the circle, which also led to the
-        introduction of the work, introduction...
+        {{ item.info }}
       </div>
-      <div class="user-more">More ></div>
+      <div class="user-more" @click="goArtistDetail(item.artist_uid)">More ></div>
       <div class="bid-group">
         <button @click="onVote">VOTE</button>
       </div>
@@ -33,9 +31,20 @@
 <script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import Avatar from "@/assets/images/avatar@2x.png";
+import AdaptiveView from "@/components/AdaptiveView";
 
 export default defineComponent({
   name: "vote",
+  components: {
+    AdaptiveView,
+  },
+  props: {
+    item: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   setup() {
     // TODO
     const router = useRouter();
@@ -44,8 +53,14 @@ export default defineComponent({
       router.push("/vote/1");
     };
 
+    const goArtistDetail = (id) => {
+      router.push("/artist/" + id);
+    };
+
     return {
       onVote,
+      goArtistDetail,
+      Avatar,
     };
   },
 });
@@ -58,7 +73,7 @@ export default defineComponent({
 .nft {
   width: 520px;
   height: 573px;
-  background-color: black;
+  /* background-color: black; */
 }
 .info {
   width: 500px;
@@ -123,6 +138,7 @@ export default defineComponent({
     text-align: left;
     color: #898989;
     line-height: 18px;
+    min-height: 54px;
     margin-bottom: 13px;
   }
   .user-desc {
@@ -136,6 +152,7 @@ export default defineComponent({
     text-align: left;
     color: #231815;
     margin-bottom: 19px;
+    cursor: pointer;
   }
   .user-more {
     margin-bottom: 20px;
