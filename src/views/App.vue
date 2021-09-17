@@ -3,11 +3,11 @@
   <main>
     <router-view />
   </main>
-  <footer-bar />
+  <footer-bar v-if="!isMobile" />
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import NavBar from "@/views/Layout/NavBar";
 import FooterBar from "@/views/Layout/FooterBar";
 import store from "@/store";
@@ -20,6 +20,18 @@ export default defineComponent({
     if (store.state.user.info.address) {
       store.dispatch("user/GetInfo");
     }
+
+    const isMobile = computed(() => {
+      return store.state.global.isMobile;
+    });
+
+    window.onresize = () => {
+      store.dispatch("global/WindowResize");
+    };
+
+    return {
+      isMobile,
+    };
   },
 });
 </script>

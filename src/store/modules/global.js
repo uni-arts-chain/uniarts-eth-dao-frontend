@@ -1,8 +1,10 @@
+import Detect from "@/plugins/detect";
 export default {
   namespaced: true,
   state: {
     lang: "en",
     theme: "light",
+    isMobile: Detect.device.type === "mobile",
   },
   mutations: {
     SET_CHAIN(state, data) {
@@ -14,6 +16,9 @@ export default {
     SET_SYMBOL(state, obj) {
       state.symbol = obj.symbol ? obj.symbol : "uart";
     },
+    SET_DEVICE(state, status) {
+      state.isMobile = status === "mobile";
+    },
   },
   actions: {
     SetChain({ commit }, data) {
@@ -24,6 +29,9 @@ export default {
     },
     SetSymbol({ commit }, symbol) {
       commit("SET_SYMBOL", symbol);
+    },
+    WindowResize({ commit }) {
+      commit("SET_DEVICE", Detect.getInstance().getDevice().type);
     },
   },
 };

@@ -1,10 +1,14 @@
 /** * Created by Lay Hunt on 2021-09-06 16:29:38. */
 <template>
   <div class="info">
-    <img class="bg" src="@/assets/images/home-info-bg@2x.png" />
+    <img
+      class="bg"
+      v-if="!$store.state.global.isMobile"
+      src="@/assets/images/home-info-bg@2x.png"
+    />
     <ul class="info-list">
       <li class="info-item">
-        <h5>Staking & Voting Staking</h5>
+        <h5>Staking & Voting</h5>
         <span>Vote and gain for the NFTs that you think are most in-demand</span>
       </li>
       <li class="info-item">
@@ -21,7 +25,7 @@
           period</span
         >
       </li>
-      <button class="learn-more">LEARN MORE</button>
+      <button class="learn-more" v-if="!$store.state.global.isMobile">LEARN MORE</button>
     </ul>
   </div>
 </template>
@@ -97,6 +101,35 @@ export default defineComponent({
     font-weight: 500;
     color: #ffffff;
     line-height: 16px;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .info {
+    padding-top: 20px;
+    padding-bottom: 20px;
+  }
+  .info-list {
+    display: flex;
+    flex-direction: column;
+  }
+  li.info-item {
+    margin-bottom: 82px;
+    max-width: 100%;
+    width: 100%;
+    border-left: none;
+    margin: 0;
+    padding: 25px;
+    h5 {
+      font-size: 23px;
+      max-width: 100%;
+    }
+    span {
+      font-size: 18px;
+      max-width: 100%;
+      line-height: 27px;
+      font-family: Montserrat-Light;
+    }
   }
 }
 </style>
