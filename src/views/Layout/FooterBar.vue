@@ -57,19 +57,19 @@ export default defineComponent({
 }
 .container {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
 }
 .bottom-logo {
   img.logo-bt {
-    width: 292px;
-    height: 67px;
+    width: 207px;
+    height: 48px;
     margin-bottom: 15px;
   }
   .intro {
     width: 495px;
-    font-size: 20px;
-    font-family: Montserrat, Montserrat-Bold;
+    font-size: 19px;
+    font-family: Montserrat-Regular;
     font-weight: 700;
     text-align: left;
     color: #ffffff;
@@ -93,6 +93,7 @@ export default defineComponent({
 }
 .info {
   img.uniarts-logo {
+    margin-top: 30px;
     width: 125px;
     height: 20px;
   }
