@@ -49,6 +49,17 @@ const apiList = [
     },
     options: {},
   },
+  {
+    name: "getArtDetail",
+    method: "GET",
+    desc: "获取艺术品详情",
+    path: "/arts/{:id}",
+    mockPath: "/members/artist/{:id}",
+    params: {
+      uid: "",
+    },
+    options: {},
+  },
 ];
 
 export default apiList;

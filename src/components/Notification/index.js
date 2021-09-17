@@ -89,7 +89,12 @@ function loading(string) {
   let Component = getComponent();
   Component.props.noticeType = "loading";
   Component.props.noticeMessage = string;
-  return toast(Component);
+  return toast(Component, {
+    timeout: 0,
+    closeOnClick: false,
+    closeButton: false,
+    draggable: false,
+  });
 }
 
 export default {

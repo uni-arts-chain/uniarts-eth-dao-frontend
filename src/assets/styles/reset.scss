@@ -1,9 +1,3 @@
-/* 改变主题色变量 */
-$--color-primary: black;
-
-/* 改变 icon 字体路径变量，必需 */
-$--font-path: "~element-plus/theme-chalk/fonts";
-@import "~element-plus/packages/theme-chalk/src/index";
 .el-notification {
   .el-notification__content {
     text-align: inherit;
@@ -64,6 +58,13 @@ $--font-path: "~element-plus/theme-chalk/fonts";
   }
 }
 
+.el-dropdown-menu {
+  .el-dropdown-menu__item:focus, .el-dropdown-menu__item:not(.is-disabled):hover {
+    color: black;
+    background-color: #ebebeb;
+  }
+}
+
 .dialog {
   &.el-dialog {
     position: absolute;
@@ -88,23 +89,23 @@ $--font-path: "~element-plus/theme-chalk/fonts";
   &.el-dialog .el-dialog__close:hover {
     color: #020202;
   }
-  
+
   &.el-dialog {
     display: inline-block;
     width: auto;
     height: auto;
   }
-  
+
   &.el-dialog.medium {
     width: 780px;
     min-height: 506px;
   }
-  
+
   &.el-dialog.small {
     width: 500px;
     min-height: 300px;
   }
-  
+
   &.el-dialog.fullscreen,
   &.el-dialog.fullscreen .el-dialog__body {
     width: 100% !important;
@@ -125,7 +126,7 @@ $--font-path: "~element-plus/theme-chalk/fonts";
   &.el-dialog.fullscreen .el-dialog__close:hover {
     color: #999;
   }
-  
+
   &.el-dialog.message {
     width: 400px;
     height: 200px;

@@ -2,21 +2,16 @@
 <template>
   <div class="vote-detail container">
     <div class="left">
-      <div class="title">NFT Name</div>
+      <div class="title">{{ artInfo.name }}</div>
       <div class="desc-title">Artwork description</div>
       <div class="desc-content">
-        "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
-        aroused great repercussions and won great recognition in the circle, which also led to the
-        introduction of the work, introduction...
+        {{ artInfo.details }}
       </div>
-      <div class="more">More ></div>
+      <div class="more"></div>
     </div>
     <div class="center">
-      <div class="nft">
-        <img
-          style="width: 520px; height: 515px"
-          src="https://ipfs.pixura.io/ipfs/QmbBmVPHkXQFcUHUw1ETKsq3m51iUjCNkJwop9L44uiAmV/FinalWithGradient.jpg"
-        />
+      <div class="nft" v-loading="isLoading">
+        <AdaptiveView width="520px" height="515px" :nft="artInfo" />
       </div>
       <div class="progress">
         <VoteProgress :value="52" />
@@ -28,17 +23,32 @@
       <div class="vote-body">
         <div class="tabs">
           <div :class="{ active: curTab == 1 }" @click="curTab = 1">Stake&Vote</div>
-          <div :class="{ active: curTab == 2 }" @click="curTab = 2">Pending Vote</div>
+          <div :class="{ active: curTab == 2 }" @click="curTab = 2">Vote with Bonded</div>
         </div>
         <div class="form-body" v-if="curTab == 1">
           <div class="amount-input">
-            <input type="amount" placeholder="Amount" />
-            <div class="unit">Uink</div>
+            <input type="number" v-model="stakeAmount" placeholder="Amount" />
+            <el-dropdown trigger="click" @command="onItemClick">
+              <span class="unit">
+                {{ currentToken.symbol }}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item v-for="(v, i) in tokenList" :key="i" :command="v">{{
+                    v.symbol
+                  }}</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </div>
-          <button class="submit">Approve</button>
+          <button class="submit" v-if="isApproved" v-loading="isVoting" @click="onVote">
+            Vote
+          </button>
+          <button class="submit" v-else v-loading="isApproving" @click="onApprove">Approve</button>
           <div class="balance">
             <span>Wallet Balance</span>
-            <span>5000.00 Uink</span>
+            <span>{{ currentTokenBalance }} {{ currentToken.symbol }}</span>
           </div>
           <div class="notice">
             Notice： <br />
@@ -52,40 +62,39 @@
             <div class="info-list">
               <div class="item">
                 <span>Staking</span>
-                <span>1000 Uink</span>
-              </div>
-              <div class="item">
-                <span>Staking</span>
-                <span>1000 Uink</span>
+                <span>1000 {{ currentToken.symbol }}</span>
               </div>
               <div class="item">
                 <span>- Voted</span>
-                <span>800 Uink</span>
+                <span>800 {{ currentToken.symbol }}</span>
               </div>
               <div class="item">
-                <span>- Pending to vote</span>
-                <span>200 Uink</span>
+                <span>- Vote with bonded</span>
+                <span>200 {{ currentToken.symbol }}</span>
               </div>
               <div class="item">
                 <span>Avaliable to withdraw</span>
-                <span>30 Uink</span>
+                <span>30 {{ currentToken.symbol }}</span>
               </div>
               <div class="item end">
                 <span>Total</span>
-                <span>1030 Uink</span>
+                <span>1030 {{ currentToken.symbol }}</span>
               </div>
             </div>
           </div>
         </div>
         <div class="form-body" v-else>
           <div class="amount-input">
-            <input type="amount" placeholder="Amount" />
-            <div class="unit">Uink</div>
+            <input type="number" v-model="bondAmount" placeholder="Amount" />
+            <div class="unit">UART</div>
           </div>
-          <button class="submit">Pending</button>
+          <button class="submit" v-if="isApproved" v-loading="isBonding" @click="onBonded">
+            Bonded
+          </button>
+          <button class="submit" v-else v-loading="isApproving" @click="onApprove">Approve</button>
           <div class="balance">
             <span>Wallet Balance</span>
-            <span>5000.00 Uink</span>
+            <span>{{ currentTokenBalance }} UART</span>
           </div>
           <div class="notice">
             Notice： <br />
@@ -99,27 +108,23 @@
             <div class="info-list">
               <div class="item">
                 <span>Staking</span>
-                <span>1000 Uink</span>
-              </div>
-              <div class="item">
-                <span>Staking</span>
-                <span>1000 Uink</span>
+                <span>1000 {{ currentToken.symbol }}</span>
               </div>
               <div class="item">
                 <span>- Voted</span>
-                <span>800 Uink</span>
+                <span>800 {{ currentToken.symbol }}</span>
               </div>
               <div class="item">
                 <span>- Pending to vote</span>
-                <span>200 Uink</span>
+                <span>200 {{ currentToken.symbol }}</span>
               </div>
               <div class="item">
                 <span>Avaliable to withdraw</span>
-                <span>30 Uink</span>
+                <span>30 {{ currentToken.symbol }}</span>
               </div>
               <div class="item end">
                 <span>Total</span>
-                <span>1030 Uink</span>
+                <span>1030 {{ currentToken.symbol }}</span>
               </div>
             </div>
           </div>
@@ -131,39 +136,263 @@
         <button>Back</button>
       </div>
       <div class="user">
-        <img class="avatar" src="https://avatars.githubusercontent.com/u/87279659?v=4" />
-        <span class="username">Kyle Bighead</span>
+        <img class="avatar" :src="artInfo.artist_avatar ? artInfo.artist_avatar : Avatar" />
+        <span class="username">{{ artInfo.artist_name }}</span>
       </div>
       <div class="user-desc">
-        "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
-        aroused great repercussions and won great recognition in the circle, which also led to the
-        introduction of the work, introduction...
+        {{ artInfo.artist_info }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted, computed, reactive, watch } from "vue";
+import { useRoute } from "vue-router";
+import { BigNumber } from "bignumber.js";
 import VoteProgress from "@/components/Progress";
+import { notification } from "@/components/Notification";
+import http from "@/plugins/http";
+import Avatar from "@/assets/images/avatar@2x.png";
+import AdaptiveView from "@/components/AdaptiveView";
+import { DAPP_CONFIG } from "@/config";
+import store from "@/store";
+import Erc20 from "@/contracts/Erc20";
+import VoteMining from "@/contracts/VoteMining";
 export default defineComponent({
   name: "vote-detail",
   components: {
     VoteProgress,
+    AdaptiveView,
   },
   setup() {
     // TODO
-
+    const route = useRoute();
     const curTab = ref(1);
+    const isLoading = ref(false);
+    let artInfo = reactive({});
 
     const onBack = () => {
       history.go(-1);
     };
 
-    return {
-      curTab,
+    const tokenList = Object.values(DAPP_CONFIG.tokens);
+    let currentToken = reactive({});
+    tokenList.length > 0
+      ? Object.keys(tokenList[0]).forEach((v) => (currentToken[v] = tokenList[0][v]))
+      : null;
+    const onItemClick = (token) => {
+      currentToken.symbol = token.symbol;
+      currentToken.address = token.address;
+      currentToken.decimals = token.decimals;
+    };
 
+    const isApproving = ref(false);
+    const currentTokenBalance = ref(0);
+    const tokenAllowance = ref(0);
+    const connectedAccount = store.state.user.info.address;
+    const voteMiningAddress = DAPP_CONFIG.contracts.VoteMining;
+    const getTokenAllowance = async () => {
+      tokenAllowance.value = (
+        await currentErc20.value.allowance(connectedAccount, voteMiningAddress)
+      ).toNumber();
+    };
+    const getTokenBalance = async () => {
+      currentTokenBalance.value = (await currentErc20.value.balanceOf(connectedAccount)).toNumber();
+    };
+    const isApproved = computed(() => {
+      return new BigNumber(tokenAllowance.value).gte(9999999);
+    });
+    const currentErc20 = computed(() => {
+      return new Erc20(currentToken.address, currentToken.symbol, currentToken.decimals);
+    });
+    watch(currentErc20, () => {
+      getTokenBalance();
+      getTokenAllowance();
+    });
+    const onApprove = () => {
+      isApproving.value = true;
+      console.log(connectedAccount, voteMiningAddress);
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      currentErc20.value
+        .approveMax(connectedAccount, voteMiningAddress, async (err, txHash) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          if (txHash) {
+            console.log(txHash);
+            isApproving.value = false;
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+          }
+        })
+        .then(async (receipt) => {
+          console.log("receipt: ", receipt);
+          getTokenAllowance();
+        })
+        .catch((err) => {
+          console.log(err);
+          isApproving.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+    onMounted(() => {
+      getTokenAllowance();
+      getTokenBalance();
+    });
+
+    const isVoting = ref(false);
+    const stakeAmount = ref(null);
+    const onVote = () => {
+      isVoting.value = true;
+      console.log(connectedAccount, voteMiningAddress);
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      VoteMining.stake(
+        connectedAccount,
+        DAPP_CONFIG.nfts.UniartsNFT.address,
+        artInfo.token_id,
+        currentToken.address,
+        new BigNumber(stakeAmount.value).shiftedBy(currentToken.decimals),
+        async (err, txHash) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          if (txHash) {
+            console.log(txHash);
+            isVoting.value = false;
+            stakeAmount.value = null;
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+          }
+        }
+      )
+        .then(async (receipt) => {
+          console.log("receipt: ", receipt);
+          getTokenAllowance();
+        })
+        .catch((err) => {
+          console.log(err);
+          isVoting.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+
+    const totalVoted = ref(0);
+    const currentBalance = async () => {
+      totalVoted.value = await VoteMining.getBalances(
+        connectedAccount,
+        currentToken.address,
+        artInfo.token_id
+      );
+    };
+
+    const init = () => {
+      currentBalance();
+    };
+
+    const artId = route.params.id;
+    const requestData = () => {
+      isLoading.value = true;
+      http
+        .globalGetArtDetail(
+          {},
+          {
+            id: artId,
+          }
+        )
+        .then((res) => {
+          Object.keys(res).forEach((key) => (artInfo[key] = res[key]));
+          isLoading.value = false;
+          init();
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(err.head ? err.head.msg : err.message);
+        });
+    };
+
+    const isBonding = ref(false);
+    const bondAmount = ref(null);
+    const onBonded = () => {
+      isBonding.value = true;
+      console.log(connectedAccount, voteMiningAddress);
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      VoteMining.voteBonded(
+        connectedAccount,
+        DAPP_CONFIG.nfts.UniartsNFT.address,
+        artInfo.token_id,
+        new BigNumber(bondAmount.value).shiftedBy(currentToken.decimals),
+        async (err, txHash) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          if (txHash) {
+            console.log(txHash);
+            isBonding.value = false;
+            bondAmount.value = null;
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+          }
+        }
+      )
+        .then(async (receipt) => {
+          console.log("receipt: ", receipt);
+          getTokenAllowance();
+        })
+        .catch((err) => {
+          console.log(err);
+          isBonding.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+
+    onMounted(() => {
+      requestData();
+    });
+
+    watch(curTab, () => {
+      onItemClick(DAPP_CONFIG.tokens.UART);
+    });
+
+    return {
+      Avatar,
+      isLoading,
+
+      artInfo,
+      curTab,
       onBack,
+
+      tokenList,
+
+      onItemClick,
+      currentToken,
+      isApproving,
+      onApprove,
+      isApproved,
+      tokenAllowance,
+      currentTokenBalance,
+
+      onVote,
+      stakeAmount,
+      isVoting,
+      totalVoted,
+
+      onBonded,
+      isBonding,
+      bondAmount,
     };
   },
 });
@@ -198,11 +427,13 @@ export default defineComponent({
       font-size: 12px;
       font-family: Montserrat-Regular;
       font-weight: 300;
+      min-height: 180px;
       color: #898989;
       line-height: 18px;
       margin-bottom: 17px;
     }
     .more {
+      min-height: 30px;
       font-size: 12px;
       font-family: Montserrat-Regular;
       font-weight: 300;
@@ -258,9 +489,9 @@ export default defineComponent({
           align-items: center;
           margin-bottom: 36px;
           input {
-            width: 404px;
+            width: 389px;
             height: 59px;
-            font-size: 14px;
+            font-size: 16px;
             font-family: Montserrat-Regular;
             font-weight: 300;
             text-align: left;
@@ -269,10 +500,11 @@ export default defineComponent({
             border: 2px solid #ccc;
           }
           .unit {
+            display: flex;
+            align-items: center;
             font-size: 18px;
             font-family: Montserrat-Regular;
             font-weight: 300;
-            text-align: left;
             color: #595757;
             margin-left: 16px;
           }
@@ -292,6 +524,7 @@ export default defineComponent({
           background: black;
           border-radius: 30px;
           margin-bottom: 24px;
+          overflow: hidden;
         }
         .balance {
           display: flex;
@@ -382,6 +615,7 @@ export default defineComponent({
       color: #231815;
     }
     .user-desc {
+      min-height: 90px;
       font-size: 12px;
       font-family: Montserrat-Regular;
       font-weight: 300;

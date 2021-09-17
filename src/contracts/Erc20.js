@@ -4,7 +4,7 @@ import { MAX_UINT256 } from "./constants";
 import { BigNumber } from "bignumber.js";
 import Wallet from "@/plugins/wallet";
 // import config from "@/config/network";
-const ERC20_ABI = require("@/config/abi/Erc20.json");
+const ERC20_ABI = require("@/contracts/abi/Erc20.json");
 
 export class Erc20 {
   constructor(address, symbol, decimals) {

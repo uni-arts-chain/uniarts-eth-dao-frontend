@@ -45,12 +45,12 @@ export default defineComponent({
       default: () => ({}),
     },
   },
-  setup() {
+  setup(props) {
     // TODO
     const router = useRouter();
 
     const onVote = () => {
-      router.push("/vote/1");
+      router.push("/vote/" + props.item.id);
     };
 
     const goArtistDetail = (id) => {
