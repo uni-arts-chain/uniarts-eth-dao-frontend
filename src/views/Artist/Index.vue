@@ -12,7 +12,7 @@
       <div class="title">CREATIONS</div>
       <div class="list">
         <div class="item" v-for="(v, i) in list" :key="i">
-          <AdaptiveView width="100%" height="100%" :nft="v" />
+          <AdaptiveView width="100%" height="100%" :isPreview="true" :nft="v" />
         </div>
       </div>
     </div>
@@ -21,6 +21,7 @@
 
 <script>
 import { defineComponent, ref, onMounted, reactive } from "vue";
+import store from "@/store";
 import { useRoute } from "vue-router";
 import http from "@/plugins/http";
 import notification from "@/components/Notification";
@@ -34,6 +35,9 @@ export default defineComponent({
   setup() {
     // TODO
     const route = useRoute();
+
+    store.dispatch("global/SetNavText", "Artist");
+
     const isLoading = ref(false);
     let info = reactive({});
     const list = ref([]);
@@ -136,6 +140,51 @@ export default defineComponent({
       height: 331px;
       /* background-color: black; */
       margin-bottom: 16px;
+    }
+  }
+}
+
+@media (max-width: 750px) {
+  .index {
+    margin-top: 20px;
+    margin-bottom: 50px;
+    .artist {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      .avatar {
+        width: 80px;
+        height: 80px;
+      }
+      .username {
+        width: auto;
+        font-size: 25px;
+        font-family: Montserrat-Medium;
+        line-height: 80px;
+        margin-left: 20px;
+      }
+      .desc {
+        width: 100%;
+        margin-top: 40px;
+        font-size: 16px;
+        line-height: 1.5;
+        min-height: 80px;
+      }
+    }
+    .collection {
+      width: 100%;
+      margin-left: 0;
+      .title {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+      .list .item {
+        width: 340px;
+        height: 200px;
+        margin: 0 auto;
+        margin-bottom: 40px;
+      }
     }
   }
 }

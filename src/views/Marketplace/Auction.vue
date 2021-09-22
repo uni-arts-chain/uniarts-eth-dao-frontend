@@ -72,6 +72,7 @@
 <script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import store from "@/store";
 import Progress from "@/components/Progress";
 export default defineComponent({
   name: "auction",
@@ -81,6 +82,8 @@ export default defineComponent({
   setup() {
     // TODO
     const router = useRouter();
+
+    store.dispatch("global/SetNavText", "Auction");
 
     const onBack = () => {
       router.push("/vote");

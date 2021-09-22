@@ -1,19 +1,66 @@
 /** * Created by Lay Hunt on 2021-09-08 18:13:44. */
 <template>
-  <div class="index container">
+  <div class="index container" v-if="!$store.state.global.isMobile">
     <h3 class="title">Market</h3>
     <div class="search">
       <input type="text" placeholder="Please enter keywords to search work" />
       <img src="@/assets/images/market-search@2x.png" />
     </div>
     <div class="buy-now">
-      <div class="title">Buy Now</div>
+      <div class="title">Timed Auctions</div>
       <div class="list">
-        <div class="item" v-for="v in list" :key="v">
+        <div class="item" v-for="v in auctionList" :key="v">
           <router-link to="/marketplace/1"><div class="item-img"></div></router-link>
           <div class="info">
             <div class="name">《 Earth Wisp 》</div>
-            <div class="price">Price: 999 Tether</div>
+            <div class="price">Price: 999 USDT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="buy-now">
+      <div class="title">Buy Now</div>
+      <div class="list">
+        <div class="item" v-for="v in buyList" :key="v">
+          <router-link to="/marketplace/1"><div class="item-img"></div></router-link>
+          <div class="info">
+            <div class="name">《 Earth Wisp 》</div>
+            <div class="price">Price: 999 USDT</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="index container" v-else>
+    <h3 class="title">Market</h3>
+    <div class="search">
+      <input type="text" placeholder="Please enter keywords..." />
+      <img src="@/assets/images/market-search@2x.png" />
+    </div>
+    <div class="buy-now">
+      <div class="title">
+        <di class="title-tab" @click="currentTab = 1" :class="{ active: currentTab == 1 }">
+          Timed Auctions
+        </di>
+        <di class="title-tab" @click="currentTab = 2" :class="{ active: currentTab == 2 }">
+          Buy Now
+        </di>
+      </div>
+      <div class="list" v-if="currentTab == 1">
+        <div class="item" v-for="v in auctionList" :key="v">
+          <router-link to="/marketplace/1"><div class="item-img"></div></router-link>
+          <div class="info">
+            <div class="name">《 Earth Wisp 》</div>
+            <div class="price">Highest Bid: 999 USDT</div>
+          </div>
+        </div>
+      </div>
+      <div class="list" v-else>
+        <div class="item" v-for="v in buyList" :key="v">
+          <router-link to="/marketplace/1"><div class="item-img"></div></router-link>
+          <div class="info">
+            <div class="name">《 Earth Wisp 》</div>
+            <div class="price">Price: 999 USDT</div>
           </div>
         </div>
       </div>
@@ -22,14 +69,24 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
+import store from "@/store";
 export default defineComponent({
   name: "index",
   setup() {
     // TODO
-    const list = [1, 2, 3, 4];
+
+    store.dispatch("global/SetNavText", "Details");
+
+    const auctionList = [1, 2, 3];
+    const buyList = [1, 2, 3];
+
+    const currentTab = ref(1);
+
     return {
-      list,
+      auctionList,
+      buyList,
+      currentTab,
     };
   },
 });
@@ -114,19 +171,78 @@ h3.title {
     margin-top: 25px;
   }
   .name {
-    font-size: 14px;
+    font-size: 15px;
     text-align: left;
     font-family: Montserrat-Regular;
     color: #040000;
     line-height: 23px;
   }
   .price {
-    font-size: 12px;
+    font-size: 14px;
     font-family: Montserrat-Regular;
     font-weight: 300;
     text-align: left;
     color: #595757;
     line-height: 23px;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .index {
+    width: 100%;
+    h3.title {
+      margin-top: 20px;
+      font-size: 27px;
+      font-family: Montserrat-Medium;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .search {
+      width: 100%;
+      border-color: #ddd;
+      border-radius: 26px;
+      overflow: hidden;
+      margin-bottom: 30px;
+      input {
+        font-size: 16px;
+      }
+      img {
+        width: 20px;
+        height: 20px;
+      }
+    }
+    .buy-now .title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .buy-now .title-tab {
+      padding: 17px 10px;
+      width: 50%;
+      text-align: center;
+      border-bottom: 2px solid #ddd;
+      font-family: Montserrat-Medium;
+    }
+    .buy-now .title-tab.active {
+      border-bottom-color: black;
+    }
+    .buy-now .list .item {
+      width: 100%;
+      margin-right: 0;
+      .item-img {
+        width: 100%;
+        height: 200px;
+      }
+      .info {
+        margin-top: 15px;
+      }
+      .info .name {
+        font-size: 15px;
+      }
+      .info .price {
+        font-size: 15px;
+      }
+    }
   }
 }
 </style>

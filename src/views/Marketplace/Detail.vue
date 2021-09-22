@@ -1,6 +1,6 @@
 /** * Created by Lay Hunt on 2021-09-08 23:08:43. */
 <template>
-  <div class="detail">
+  <div class="detail" v-if="!$store.state.global.isMobile">
     <div class="head">
       <span>NFT Name</span>
       <button @click="onBack">Back</button>
@@ -69,11 +69,76 @@
       </div>
     </div>
   </div>
+  <div class="detail container" v-else>
+    <div class="nft">
+      <img
+        class="img"
+        src="https://ipfs.pixura.io/ipfs/QmbBmVPHkXQFcUHUw1ETKsq3m51iUjCNkJwop9L44uiAmV/FinalWithGradient.jpg"
+      />
+    </div>
+    <div class="info">
+      <div class="nft-info">
+        <div class="title">Additional Info</div>
+        <div class="address">
+          <span>NFT Address:</span>
+          <span class="address-span">0xsbd354sdf42354sdf441d354s54</span>
+          <div class="copy" @click="onCopy(1)">Copy</div>
+          <el-popover placement="top" width="80" trigger="hover">
+            <template #reference>
+              <img class="qr" src="@/assets/images/qr@2x.png" />
+            </template>
+            <Qrcode
+              class="qr-code"
+              style="border: none"
+              :scale="5"
+              :typeNumber="7"
+              data="0xsbd354sdf42354sdf441d354s54"
+            />
+          </el-popover>
+        </div>
+        <div class="votes">
+          <div class="title">Number of votes obtained</div>
+          <div class="progress">
+            <Progress :value="52" />
+            <div class="label">3000 of 45000</div>
+          </div>
+          <div class="nft-desc">
+            <div class="title">ARTWORK INFORMATION</div>
+            <div class="nft-desc-body">
+              <div class="name-body">
+                <div class="name">Name</div>
+                <div class="artist-name">Artist: XYZ</div>
+              </div>
+              <div class="desc-body">
+                "Planet spirit" is an oil painting created by in 2010. After successful creation, it
+                has aroused great repercussions and won great recognition in the circle, which also
+                led to the introduction of the work, introduction...
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="artist-info">
+          <div class="title">ABOUT ARTIST</div>
+          <div class="avatar">
+            <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />
+          </div>
+          <div class="username">Kyle Bighead</div>
+          <div class="user-desc">
+            "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
+            aroused great repercussions and won great recognition in the circle, which also led to
+            the introduction of the work, introduction...
+          </div>
+          <router-link class="more" to="/artist/1">More ></router-link>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import store from "@/store";
 import Qrcode from "@/components/Qrcode";
 import Progress from "@/components/Progress";
 import copy from "clipboard-copy";
@@ -87,6 +152,8 @@ export default defineComponent({
     // TODO
 
     const router = useRouter();
+
+    store.dispatch("global/SetNavText", "Detail");
 
     const onCopy = (value) => {
       copy(value);
@@ -317,6 +384,92 @@ export default defineComponent({
       text-align: left;
       color: #231815;
       line-height: 31px;
+    }
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .detail {
+    width: 100%;
+    padding-top: 0px;
+    padding-bottom: 60px;
+  }
+  .nft {
+    margin-top: 0;
+    width: 100%;
+    height: 270px;
+  }
+  .info {
+    margin-top: 20px;
+    .nft-info {
+      width: 100%;
+      .title {
+        font-size: 20px;
+        font-family: Montserrat-Medium;
+        font-weight: 800;
+      }
+      .address {
+        font-size: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 8px;
+        .address-span {
+          width: 120px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+      }
+      .copy {
+        margin-left: 0;
+        width: 50px;
+      }
+      .qr {
+        margin-left: 0;
+      }
+      .votes {
+        .title {
+          font-size: 16px;
+        }
+        .progress {
+          width: 100%;
+          .label {
+            font-size: 14px;
+          }
+        }
+        .nft-desc-body .desc-body {
+          width: 55%;
+        }
+        .nft-desc-body .name-body {
+          width: 45%;
+        }
+      }
+    }
+    .artist-info {
+      margin-top: 70px;
+      width: 100%;
+      padding-left: 0;
+      .title {
+        text-align: center;
+        font-size: 16px;
+      }
+      .avatar {
+        margin: 0 auto;
+        margin-top: 10px;
+      }
+      .username {
+        margin-top: 20px;
+        text-align: center;
+      }
+      .user-desc {
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .more {
+        text-align: center;
+        font-size: 15px;
+      }
     }
   }
 }
