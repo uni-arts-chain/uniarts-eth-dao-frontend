@@ -72,7 +72,7 @@
 </template>
 
 <script>
-import { defineComponent, computed, ref } from "vue";
+import { defineComponent, computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import store from "@/store";
 export default defineComponent({
@@ -82,6 +82,10 @@ export default defineComponent({
 
     const currentPath = computed(() => {
       return route.path;
+    });
+
+    watch(currentPath, () => {
+      store.dispatch("global/SetNavText", null);
     });
 
     const isMobile = computed(() => {
