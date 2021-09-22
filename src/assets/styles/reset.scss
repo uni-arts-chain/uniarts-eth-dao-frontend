@@ -156,8 +156,7 @@
 }
 
 @media screen and (max-width: 750px) {
-  .Vue-Toastification__container  {
-    
+  .Vue-Toastification__container {
   }
   .Vue-Toastification__container .Vue-Toastification__toast.vote-toast-mobile {
     width: 90%;
@@ -166,5 +165,36 @@
     left: 5%;
     padding: 10px 20px;
     border-radius: 6px;
+  }
+
+  .mobile-confirm-modal {
+    &.el-drawer-fade-enter-active,
+    &.el-drawer-fade-leave-active {
+      animation-duration: 0.3s;
+    }
+    &.el-drawer-fade-enter-active .mobile-confirm.el-drawer.btt {
+      animation: btt-drawer-animation1 0.3s ease reverse;
+    }
+    &.el-drawer-fade-leave-active .mobile-confirm.el-drawer.btt {
+      animation: btt-drawer-animation1 0.3s ease;
+    }
+    @keyframes btt-drawer-animation1 {
+      0% {
+        transform: translate(0, 0);
+      }
+      100% {
+        transform: translate(0, 100%);
+      }
+    }
+    .mobile-confirm {
+      overflow: hidden;
+      border-top-left-radius: 30px;
+      border-top-right-radius: 30px;
+      height: auto !important;
+      min-height: 80px;
+    }
+    .mobile-confirm section.el-drawer__body {
+      padding: 26px 15px 26px 15px;
+    }
   }
 }

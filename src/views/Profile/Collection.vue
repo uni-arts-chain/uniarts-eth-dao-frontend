@@ -16,29 +16,36 @@
             </div>
           </div>
           <div class="operate">
-            <button>List</button>
+            <button @click="visible = true">List</button>
             <button>Send</button>
             <button disabled>Pin</button>
           </div>
         </div>
       </div>
     </div>
+    <MobileConfirm v-model="visible">
+      <div style="height: 300px"></div>
+    </MobileConfirm>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import Progress from "@/components/Progress";
+import MobileConfirm from "@/components/MobileConfirm";
 export default defineComponent({
   name: "collection",
   components: {
     Progress,
+    MobileConfirm,
   },
   setup() {
     // TODO
     const list = [1, 2, 3];
     const width = 70;
+    const visible = ref(false);
     return {
+      visible,
       list,
       width,
     };
