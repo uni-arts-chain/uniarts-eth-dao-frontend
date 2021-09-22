@@ -266,13 +266,13 @@ export default defineComponent({
         currentToken.address,
         new BigNumber(stakeAmount.value).shiftedBy(currentToken.decimals),
         async (err, txHash) => {
+          isVoting.value = false;
           if (err) {
             console.log(err);
             throw err;
           }
           if (txHash) {
             console.log(txHash);
-            isVoting.value = false;
             stakeAmount.value = null;
             notification.dismiss(notifyId);
             notification.success(txHash);
@@ -340,13 +340,13 @@ export default defineComponent({
         artInfo.token_id,
         new BigNumber(bondAmount.value).shiftedBy(currentToken.decimals),
         async (err, txHash) => {
+          isBonding.value = false;
           if (err) {
             console.log(err);
             throw err;
           }
           if (txHash) {
             console.log(txHash);
-            isBonding.value = false;
             bondAmount.value = null;
             notification.dismiss(notifyId);
             notification.success(txHash);
@@ -366,6 +366,9 @@ export default defineComponent({
           );
         });
     };
+    const getBondedBalance = async () => {
+      currentTokenBalance.value = await VoteMining.getBondedBalance(connectedAccount);
+    };
 
     onMounted(() => {
       requestData();
@@ -373,6 +376,7 @@ export default defineComponent({
 
     watch(curTab, () => {
       onItemClick(DAPP_CONFIG.tokens.UART);
+      getBondedBalance();
     });
 
     return {
