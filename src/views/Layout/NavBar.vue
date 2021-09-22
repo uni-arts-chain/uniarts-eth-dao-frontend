@@ -28,7 +28,8 @@
       <img class="menu" src="@/assets/images/menu@2x.png" @click="onOpenDrawer" />
     </div>
     <div class="nav-center">
-      <img src="@/assets/images/logo@2x.png" />
+      <span v-if="$store.state.global.navText">{{ $store.state.global.navText }}</span>
+      <img v-else src="@/assets/images/logo@2x.png" />
     </div>
     <div class="nav-right"></div>
   </nav>

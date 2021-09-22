@@ -3,7 +3,9 @@
   <div class="index">
     <div class="info">
       <div class="container">
-        <button class="auction-button" @click="goVoteQueue">View Vote Round</button>
+        <button class="auction-button" v-if="!$store.state.global.isMobile" @click="goVoteQueue">
+          View Vote Round
+        </button>
         <div class="content">
           <h2>Auction Round</h2>
           <div class="date">
@@ -12,8 +14,11 @@
           <div class="amount">
             <span class="label">Prize Available with Higher Deal Price</span>
           </div>
+          <button class="auction-button" v-if="$store.state.global.isMobile" @click="goVoteQueue">
+            View Vote Round
+          </button>
         </div>
-        <button class="back" @click="onBack">Back</button>
+        <button class="back" v-if="!$store.state.global.isMobile" @click="onBack">Back</button>
       </div>
     </div>
     <div class="list">
@@ -60,11 +65,14 @@
 <script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import store from "@/store";
 export default defineComponent({
   name: "list",
   setup() {
     // TODO
     const router = useRouter();
+
+    store.dispatch("global/SetNavText", "View Timed Auctions");
 
     const list = [1, 2, 3];
 
@@ -313,6 +321,78 @@ export default defineComponent({
       font-weight: 300;
       text-align: left;
       color: #231815;
+    }
+  }
+}
+@media screen and (max-width: 750px) {
+  .index .info {
+    .container {
+      justify-content: space-between;
+    }
+    .content {
+      margin: 0 auto;
+      margin-top: 0;
+      h2 {
+        font-size: 27px;
+      }
+      .date {
+        margin-top: 31px;
+        font-size: 15px;
+      }
+      .amount {
+        margin-top: 5px;
+        .label {
+          font-size: 15px;
+        }
+        font-size: 15px;
+      }
+      .auction-button {
+        margin-top: 35px;
+      }
+    }
+  }
+  .list .item-list {
+    padding-top: 20px;
+    padding-bottom: 50px;
+    .item {
+      flex-direction: column;
+      margin-bottom: 50px;
+      .nft {
+        width: 100%;
+        height: 235px;
+      }
+      .nft-info {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 20px;
+        .number-vote {
+          font-size: 15px;
+        }
+      }
+      .vote-button {
+        margin-top: 20px;
+        width: 80%;
+      }
+    }
+  }
+  .notice {
+    padding-top: 0;
+  }
+  .notice .container {
+    height: auto;
+    padding-top: 30px;
+    padding-bottom: 50px;
+    h2 {
+      font-size: 22px;
+      font-family: Montserrat-Medium;
+    }
+    p {
+      color: black;
+    }
+    .more {
+      font-family: Montserrat-Medium;
+      font-weight: 800;
+      color: black;
     }
   }
 }

@@ -156,12 +156,15 @@
 }
 
 @media screen and (max-width: 750px) {
-    .Vue-Toastification__container .Vue-Toastification__toast.vote-toast-mobile {
-      width: 90%;
-      top: 10px;
-      left: 50%;
-      padding: 10px 20px;
-      border-radius: 6px;
-      transform: translateX(-50%);
-    }
+  .Vue-Toastification__container  {
+    
+  }
+  .Vue-Toastification__container .Vue-Toastification__toast.vote-toast-mobile {
+    width: 90%;
+    max-width: 90%;
+    top: 10px;
+    left: 5%;
+    padding: 10px 20px;
+    border-radius: 6px;
+  }
 }

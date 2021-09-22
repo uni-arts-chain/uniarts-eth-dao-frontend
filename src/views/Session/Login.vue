@@ -55,7 +55,6 @@ export default defineComponent({
   name: "login",
   setup() {
     // TODO
-
     const router = useRouter();
     const route = useRoute();
     const back = route.query.back ? decodeURIComponent(route.query.back) : "";
@@ -296,6 +295,55 @@ export default defineComponent({
     background: black;
     color: white;
     cursor: pointer;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .login {
+    margin-top: 50px;
+  }
+  .select-wallet {
+    img {
+      width: 240px;
+      height: auto;
+    }
+    p {
+      margin-top: 40px;
+      font-size: 20px;
+      margin-bottom: 40px;
+    }
+    button {
+      height: 50px;
+      font-size: 18px;
+    }
+  }
+  .register {
+    img {
+      width: 240px;
+      height: auto;
+    }
+  }
+  .sign-in p {
+    font-size: 22px;
+  }
+  .sign-in .info .sign-in-button {
+    height: 50px;
+    font-size: 17px;
+    padding: 10px;
+  }
+  .register {
+    .form {
+      .item {
+        p {
+          font-size: 18px;
+        }
+      }
+    }
+    .register-button {
+      height: 50px;
+      font-size: 17px;
+      padding: 10px;
+    }
   }
 }
 </style>

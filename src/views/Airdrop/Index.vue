@@ -136,4 +136,54 @@ export default defineComponent({
   color: #000000;
   line-height: 44px;
 }
+
+@media screen and (max-width: 750px) {
+  .index {
+    margin-top: 80px;
+  }
+  .logo {
+    width: 230px;
+    height: auto;
+  }
+  .airdrop-body {
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    height: 200px;
+  }
+  .connect-wallet {
+    width: 100%;
+  }
+  .airdrop-content {
+    .connect-wallet {
+      width: 100%;
+      height: 50px;
+      font-size: 18px;
+      padding: 5px;
+    }
+  }
+
+  .airdrop-content.connected {
+    .connect-wallet {
+      width: 100%;
+      background-color: white;
+      color: black;
+      font-family: Montserrat-Medium;
+      font-weight: 400;
+      text-align: center;
+      color: #000000;
+      line-height: 39px;
+      letter-spacing: -1px;
+    }
+  }
+  .label {
+    margin-top: 30px;
+    font-size: 20px;
+  }
+  .action-notice {
+    font-size: 20px;
+  }
+}
 </style>
