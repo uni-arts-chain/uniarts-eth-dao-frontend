@@ -19,7 +19,7 @@
         @change="onCarouselChange"
         trigger="click"
         :height="isMobile ? `700px` : `600px`"
-        :arrow="voteList.length > 1 ? 'hover' : 'never'"
+        :arrow="isShowVoteArrow"
         indicator-position="outside"
         :autoplay="false"
       >
@@ -37,7 +37,7 @@
         v-else
         @change="onCarouselChange"
         trigger="click"
-        :arrow="auctionList.length > 0 ? 'hover' : 'never'"
+        :arrow="isShowAuctionArrow"
         height="600px"
         indicator-position="outside"
         :autoplay="false"
@@ -105,6 +105,17 @@ export default defineComponent({
       return store.state.global.isMobile;
     });
 
+    const isShowVoteArrow = computed(() => {
+      return store.state.global.isMobile ? "always" : voteList.value.length > 0 ? "hover" : "never";
+    });
+    const isShowAuctionArrow = computed(() => {
+      return store.state.global.isMobile
+        ? "always"
+        : auctionList.value.length > 0
+        ? "hover"
+        : "never";
+    });
+
     return {
       voteList,
       auctionList,
@@ -114,6 +125,8 @@ export default defineComponent({
       onCarouselChange,
 
       isMobile,
+      isShowVoteArrow,
+      isShowAuctionArrow,
     };
   },
 });
