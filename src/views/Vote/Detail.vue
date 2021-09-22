@@ -1,6 +1,6 @@
 /** * Created by Lay Hunt on 2021-09-09 21:49:35. */
 <template>
-  <div class="detail">
+  <div class="detail" :class="{ mobile: $store.state.global.isMobile }">
     <img class="detail-logo" src="@/assets/images/banner-logo@2x.png" />
     <p class="detail-desc">The right formula for the best art never exists</p>
     <div class="button-group">
@@ -10,7 +10,7 @@
     <div class="list">
       <div class="item" v-for="(v, i) in list" :key="i">
         <div class="nft">
-          <div class="nft-assets" style="width: 324px; height: 324px; background: black"></div>
+          <div class="nft-assets" style="background: black"></div>
         </div>
         <div class="desc">
           <span>Vote for NFT to gain staking reward during the voting round</span>
@@ -110,6 +110,37 @@ export default defineComponent({
       max-width: 209px;
       text-align: center;
     }
+  }
+  .nft-assets {
+    width: 324px;
+    height: 324px;
+  }
+}
+.mobile {
+  .detail-logo {
+    width: 240px;
+    height: auto;
+  }
+  .list {
+    flex-direction: column;
+  }
+  .item {
+    margin-bottom: 50px;
+  }
+  .candidate,
+  .auction {
+    width: 46%;
+    margin: 0 2%;
+    font-size: 12px;
+    height: 45px;
+  }
+  .detail-desc {
+    font-family: Montserrat-Medium;
+  }
+  .nft-assets {
+    margin: 0 auto;
+    width: 313px;
+    height: 313px;
   }
 }
 </style>

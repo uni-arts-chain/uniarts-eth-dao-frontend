@@ -73,4 +73,19 @@ export default defineComponent({
     }
   }
 }
+@media screen and (max-width: 750px) {
+  .notification {
+    .logo {
+      font-size: 16px;
+    }
+    .body {
+      > h1 {
+        font-size: 17px;
+      }
+      > p {
+        font-size: 16px;
+      }
+    }
+  }
+}
 </style>

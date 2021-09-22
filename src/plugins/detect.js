@@ -2,7 +2,8 @@ import UAParser from "ua-parser-js";
 const uaParser = new UAParser(window.navigator.userAgent);
 
 export function getInstance() {
-  return new UAParser(window.navigator.userAgent);
+  uaParser.setUA(window.navigator.userAgent);
+  return uaParser;
 }
 
 export default {

@@ -79,3 +79,10 @@ body #nprogress .peg {
   text-overflow: ellipsis;
   word-break: break-word;
 }
+
+@media screen and (max-width: 750px) {
+  .container {
+    width: 100%;
+    padding: 0 20px;
+  }
+}

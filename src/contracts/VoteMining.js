@@ -57,6 +57,10 @@ class VoteMining {
     console.log(balances);
     return balances;
   }
+  async getBondedBalance(userAddress) {
+    let balances = await this.contract.methods.getBondedBalance(userAddress).call();
+    return balances;
+  }
   async getTotalVotedBalances(userAddress) {
     let totalVotedBalances = await this.contract.methods.totalVotedBalances(userAddress).call();
     console.log(totalVotedBalances);

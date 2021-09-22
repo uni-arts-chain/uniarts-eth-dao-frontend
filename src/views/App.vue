@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, onMounted } from "vue";
 import NavBar from "@/views/Layout/NavBar";
 import FooterBar from "@/views/Layout/FooterBar";
 import store from "@/store";
@@ -28,6 +28,10 @@ export default defineComponent({
     window.onresize = () => {
       store.dispatch("global/WindowResize");
     };
+
+    onMounted(() => {
+      store.dispatch("global/WindowResize");
+    });
 
     return {
       isMobile,

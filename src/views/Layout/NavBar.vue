@@ -179,8 +179,8 @@ export default defineComponent({
     align-items: center;
     justify-content: center;
     img {
-      width: 124px;
-      height: 18px;
+      width: 154px;
+      height: 24px;
     }
   }
 }

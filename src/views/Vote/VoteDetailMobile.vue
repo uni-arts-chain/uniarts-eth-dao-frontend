@@ -1,17 +1,25 @@
 /** * Created by Lay Hunt on 2021-09-09 22:08:39. */
 <template>
-  <div class="vote-detail container" v-if="!$store.state.global.isMobile">
-    <div class="left">
-      <div class="title">{{ artInfo.name }}</div>
-      <div class="desc-title">Artwork description</div>
-      <div class="desc-content">
-        {{ artInfo.details }}
-      </div>
-      <div class="more"></div>
-    </div>
+  <div class="vote-detail container">
     <div class="center">
       <div class="nft" v-loading="isLoading">
-        <AdaptiveView width="520px" height="515px" :nft="artInfo" />
+        <AdaptiveView :nft="artInfo" />
+      </div>
+      <div class="left">
+        <div class="title">{{ artInfo.name }}</div>
+        <div class="desc-content">
+          {{ artInfo.details }}
+        </div>
+        <div class="more"></div>
+      </div>
+      <div class="right">
+        <div class="user">
+          <img class="avatar" :src="artInfo.artist_avatar ? artInfo.artist_avatar : Avatar" />
+          <span class="username">{{ artInfo.artist_name }}</span>
+        </div>
+        <div class="user-desc">
+          {{ artInfo.artist_info }}
+        </div>
       </div>
       <div class="progress">
         <VoteProgress :value="52" />
@@ -20,10 +28,11 @@
           <span>Total：45000</span>
         </div>
       </div>
+
       <div class="vote-body">
         <div class="tabs">
           <div :class="{ active: curTab == 1 }" @click="curTab = 1">Stake&Vote</div>
-          <div :class="{ active: curTab == 2 }" @click="curTab = 2">Vote with Bonded</div>
+          <div :class="{ active: curTab == 2 }" @click="curTab = 2">Pending Vote</div>
         </div>
         <div class="form-body" v-if="curTab == 1">
           <div class="amount-input">
@@ -51,7 +60,10 @@
             <span>{{ currentTokenBalance }} {{ currentToken.symbol }}</span>
           </div>
           <div class="notice">
-            Notice： <br />
+            <span style="font-weight: 800; font-size: 16px; font-family: Montserrat-Medium"
+              >Notice：</span
+            >
+            <br />
             1. Vote for NFT won’t cost any token, but voted&nbsp;token can only be retrieved 7 days
             after the end of the voted round. <br />
             2. Vote reward will be distributed at UTC 00:00 everyday during the voting period, and
@@ -97,7 +109,10 @@
             <span>{{ currentTokenBalance }} UART</span>
           </div>
           <div class="notice">
-            Notice： <br />
+            <span style="font-weight: 800; font-size: 16px; font-family: Montserrat-Medium"
+              >Notice：</span
+            >
+            <br />
             1. Vote for NFT won’t cost any token, but voted&nbsp;token can only be retrieved 7 days
             after the end of the voted round. <br />
             2. Vote reward will be distributed at UTC 00:00 everyday during the voting period, and
@@ -131,27 +146,13 @@
         </div>
       </div>
     </div>
-    <div class="right">
-      <div class="back" @click="onBack">
-        <button>Back</button>
-      </div>
-      <div class="user">
-        <img class="avatar" :src="artInfo.artist_avatar ? artInfo.artist_avatar : Avatar" />
-        <span class="username">{{ artInfo.artist_name }}</span>
-      </div>
-      <div class="user-desc">
-        {{ artInfo.artist_info }}
-      </div>
-    </div>
   </div>
-  <VoteDetailMobile v-else />
 </template>
 
 <script>
 import { defineComponent, ref, onMounted, computed, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
 import { BigNumber } from "bignumber.js";
-import VoteDetailMobile from "@/views/Vote/VoteDetailMobile";
 import VoteProgress from "@/components/Progress";
 import { notification } from "@/components/Notification";
 import http from "@/plugins/http";
@@ -166,7 +167,6 @@ export default defineComponent({
   components: {
     VoteProgress,
     AdaptiveView,
-    VoteDetailMobile,
   },
   setup() {
     // TODO
@@ -266,13 +266,13 @@ export default defineComponent({
         currentToken.address,
         new BigNumber(stakeAmount.value).shiftedBy(currentToken.decimals),
         async (err, txHash) => {
-          isVoting.value = false;
           if (err) {
             console.log(err);
             throw err;
           }
           if (txHash) {
             console.log(txHash);
+            isVoting.value = false;
             stakeAmount.value = null;
             notification.dismiss(notifyId);
             notification.success(txHash);
@@ -340,13 +340,13 @@ export default defineComponent({
         artInfo.token_id,
         new BigNumber(bondAmount.value).shiftedBy(currentToken.decimals),
         async (err, txHash) => {
-          isBonding.value = false;
           if (err) {
             console.log(err);
             throw err;
           }
           if (txHash) {
             console.log(txHash);
+            isBonding.value = false;
             bondAmount.value = null;
             notification.dismiss(notifyId);
             notification.success(txHash);
@@ -366,9 +366,6 @@ export default defineComponent({
           );
         });
     };
-    const getBondedBalance = async () => {
-      currentTokenBalance.value = await VoteMining.getBondedBalance(connectedAccount);
-    };
 
     onMounted(() => {
       requestData();
@@ -376,7 +373,6 @@ export default defineComponent({
 
     watch(curTab, () => {
       onItemClick(DAPP_CONFIG.tokens.UART);
-      getBondedBalance();
     });
 
     return {
@@ -411,24 +407,28 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.vote-detail.container {
+  padding-top: 20px;
+}
 .vote-detail {
   padding-top: 132px;
   display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  padding-bottom: 131px;
+  padding-bottom: 61px;
   .left {
-    width: 309px;
+    margin-top: 40px;
     .title {
       width: 100%;
-      font-size: 32px;
-      font-family: Montserrat-Medium;
-      font-weight: 500;
+      font-size: 23px;
+      font-family: Montserrat-Bold;
+
       text-align: left;
       color: #000000;
-      margin-bottom: 85px;
+      margin-bottom: 15px;
     }
     .desc-title {
-      font-size: 14px;
+      font-size: 15px;
       font-family: Montserrat-Medium;
       font-weight: 500;
       text-align: left;
@@ -436,10 +436,10 @@ export default defineComponent({
       margin-bottom: 14px;
     }
     .desc-content {
-      font-size: 12px;
+      font-size: 15px;
       font-family: Montserrat-Regular;
       font-weight: 300;
-      min-height: 180px;
+      min-height: 50px;
       color: #898989;
       line-height: 18px;
       margin-bottom: 17px;
@@ -454,7 +454,11 @@ export default defineComponent({
     }
   }
   .center {
-    width: 521px;
+    width: 100%;
+    .nft {
+      width: 100%;
+      height: 350px;
+    }
     .progress {
       padding-top: 33px;
       margin-bottom: 61px;
@@ -464,7 +468,7 @@ export default defineComponent({
       justify-content: space-between;
       align-items: center;
       margin-top: 9px;
-      font-size: 12px;
+      font-size: 14px;
       font-family: Montserrat-Regular;
       font-weight: 300;
       text-align: left;
@@ -482,7 +486,7 @@ export default defineComponent({
           width: 50%;
           height: 63px;
           opacity: 0.2;
-          font-size: 24px;
+          font-size: 20px;
           font-family: Montserrat-Regular;
           font-weight: 400;
           text-align: center;
@@ -499,11 +503,11 @@ export default defineComponent({
         .amount-input {
           display: flex;
           align-items: center;
-          margin-bottom: 36px;
+          margin-bottom: 26px;
           input {
             width: 389px;
-            height: 59px;
-            font-size: 16px;
+            height: 44px;
+            font-size: 14px;
             font-family: Montserrat-Regular;
             font-weight: 300;
             text-align: left;
@@ -514,7 +518,7 @@ export default defineComponent({
           .unit {
             display: flex;
             align-items: center;
-            font-size: 18px;
+            font-size: 14px;
             font-family: Montserrat-Regular;
             font-weight: 300;
             color: #595757;
@@ -529,13 +533,13 @@ export default defineComponent({
           font-weight: 400;
           text-align: center;
           color: #ffffff;
-          line-height: 51px;
-          width: 403px;
-          height: 51px;
+          line-height: 45px;
+          width: 100%;
+          height: 45px;
           cursor: pointer;
           background: black;
           border-radius: 30px;
-          margin-bottom: 24px;
+          margin-bottom: 0px;
           overflow: hidden;
         }
         .balance {
@@ -558,14 +562,14 @@ export default defineComponent({
         font-family: Montserrat-Regular;
         font-weight: 400;
         text-align: left;
-        color: #595757;
+        color: black;
         line-height: 24px;
       }
       .info {
         margin-top: 27px;
         .info-title {
-          font-size: 14px;
-          font-family: Montserrat-Regular;
+          font-size: 16px;
+          font-family: Montserrat-Medium;
           font-weight: 400;
           text-align: left;
           color: #000000;
@@ -576,11 +580,11 @@ export default defineComponent({
             display: flex;
             align-items: center;
             justify-content: space-between;
-            font-size: 12px;
+            font-size: 15px;
             font-family: Montserrat-Regular;
             font-weight: 300;
             text-align: left;
-            color: #595757;
+            color: black;
             line-height: 24px;
           }
           .end {
@@ -592,21 +596,9 @@ export default defineComponent({
     }
   }
   .right {
-    width: 292px;
-    .back {
-      text-align: right;
-      margin-bottom: 67px;
-      button {
-        font-size: 14px;
-        cursor: pointer;
-        font-family: Montserrat-Regular;
-        font-weight: 300;
-        text-align: left;
-        color: #231815;
-        line-height: 24px;
-        background: transparent;
-      }
-    }
+    width: 100%;
+    display: flex;
+    flex-direction: column;
     .user {
       display: flex;
       align-items: center;
@@ -614,21 +606,21 @@ export default defineComponent({
     }
     .avatar {
       border-radius: 50%;
-      width: 36px;
-      height: 36px;
+      width: 60px;
+      height: 60px;
       box-shadow: 3px 4px 9px 0px rgba(34, 24, 20, 0.52);
     }
     .username {
       margin-left: 14px;
-      font-size: 14px;
-      font-family: Montserrat-Regular;
+      font-size: 19px;
+      font-family: Montserrat-Medium;
       font-weight: 300;
       text-align: right;
       color: #231815;
     }
     .user-desc {
-      min-height: 90px;
-      font-size: 12px;
+      min-height: 50px;
+      font-size: 16px;
       font-family: Montserrat-Regular;
       font-weight: 300;
       color: #898989;

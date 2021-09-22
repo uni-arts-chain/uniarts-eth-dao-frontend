@@ -18,14 +18,15 @@
         v-else
         @change="onCarouselChange"
         trigger="click"
-        height="600px"
-        :arrow="voteList.length > 0 ? 'hover' : 'never'"
+        :height="isMobile ? `700px` : `600px`"
+        :arrow="voteList.length > 1 ? 'hover' : 'never'"
         indicator-position="outside"
         :autoplay="false"
       >
         <el-carousel-item v-for="(item, i) in voteList" :key="i">
           <div class="container">
-            <VoteItem :item="item" />
+            <VoteItem v-if="!isMobile" :item="item" />
+            <VoteItemMobile v-else :item="item" />
           </div>
         </el-carousel-item>
       </el-carousel>
@@ -52,17 +53,20 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, computed, ref, onMounted } from "vue";
 import VoteItem from "./VoteItem";
+import VoteItemMobile from "./VoteItemMobile";
 import AuctionItem from "./Auction";
 import notification from "@/components/Notification";
 import http from "@/plugins/http";
+import store from "@/store";
 
 export default defineComponent({
   name: "tabs",
   components: {
     VoteItem,
     AuctionItem,
+    VoteItemMobile,
   },
   setup() {
     // TODO
@@ -97,6 +101,10 @@ export default defineComponent({
       onRequestData();
     });
 
+    const isMobile = computed(() => {
+      return store.state.global.isMobile;
+    });
+
     return {
       voteList,
       auctionList,
@@ -104,6 +112,8 @@ export default defineComponent({
       isLoading,
       currentTab,
       onCarouselChange,
+
+      isMobile,
     };
   },
 });

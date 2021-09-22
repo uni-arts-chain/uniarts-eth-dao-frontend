@@ -1,5 +1,6 @@
 import Notification from "./Notification";
 import { createToastInterface } from "vue-toastification";
+import store from "@/store";
 // Import the CSS or use your own!
 import "vue-toastification/dist/index.css";
 
@@ -36,7 +37,7 @@ export const notification = {
 function install(vue) {
   toast = createToastInterface({
     icon: false,
-    toastClassName: "vote-toast",
+    toastClassName: store.state.global.isMobile ? "vote-toast vote-toast-mobile" : "vote-toast",
     timeout: 3000,
     hideProgressBar: true,
     closeOnClick: false,

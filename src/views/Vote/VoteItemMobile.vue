@@ -7,20 +7,23 @@
     <div class="info">
       <div class="title">{{ item.name }}</div>
       <div class="artwork">
-        <div class="artwork-label">Artwork Description</div>
         <div class="artwork-desc">
           {{ item.details }}
         </div>
         <div class="artwork-more"></div>
       </div>
-      <div class="user-info">
-        <img :src="item.artist_avatar ? item.artist_avatar : Avatar" />
-        <div class="username">{{ item.artist_name }}</div>
+      <div class="user">
+        <div class="user-info">
+          <img :src="item.artist_avatar ? item.artist_avatar : Avatar" />
+          <div class="username">{{ item.artist_name }}</div>
+        </div>
+        <div class="user-desc">
+          <div class="desc-text">
+            {{ item.artist_info }}
+          </div>
+          <div class="user-more" @click="goArtistDetail(item.artist_uid)">More ></div>
+        </div>
       </div>
-      <div class="user-desc">
-        {{ item.artist_info }}
-      </div>
-      <div class="user-more" @click="goArtistDetail(item.artist_uid)">More ></div>
       <div class="bid-group">
         <button @click="onVote">VOTE</button>
       </div>
@@ -168,12 +171,71 @@ export default defineComponent({
       text-align: left;
       color: #898989;
       line-height: 18px;
-      width: 376px;
+      width: 90%;
       height: 48px;
       text-align: center;
       cursor: pointer;
       background: transparent;
       border: 2px solid #898989;
+    }
+  }
+}
+
+.item {
+  flex-direction: column;
+}
+.nft {
+  margin: 0 auto;
+  width: 335px;
+  height: 335px;
+}
+.info {
+  margin-left: 0;
+  width: 100%;
+  .title {
+    border-bottom: none;
+    font-size: 23px;
+    font-weight: 600;
+    font-family: Montserrat-Medium;
+    padding-bottom: 0;
+  }
+  .artwork-desc {
+    font-size: 16px;
+    margin-bottom: 50px;
+  }
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .user-info {
+    margin-top: 0;
+    flex-direction: column;
+    align-items: center;
+    img {
+      width: 60px;
+      height: 60px;
+    }
+    .username {
+      margin-left: 0;
+      margin-top: 15px;
+      font-size: 17px;
+    }
+  }
+  .user-desc {
+    height: 100%;
+    margin-left: 30px;
+    margin-top: 0;
+    margin-bottom: 0;
+    .desc-text {
+      font-size: 16px;
+      height: 80px;
+      overflow: hidden;
+    }
+    .user-more {
+      text-align: right;
+      margin-bottom: 0;
     }
   }
 }

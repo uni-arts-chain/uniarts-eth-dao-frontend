@@ -17,7 +17,7 @@ export default {
       state.symbol = obj.symbol ? obj.symbol : "uart";
     },
     SET_DEVICE(state, status) {
-      state.isMobile = status === "mobile";
+      state.isMobile = status === "mobile" || window.innerWidth <= 750;
     },
   },
   actions: {

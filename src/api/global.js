@@ -60,6 +60,17 @@ const apiList = [
     },
     options: {},
   },
+  {
+    name: "getVotedDetail",
+    method: "GET",
+    desc: "获取投票详情",
+    path: "/arts/voted",
+    mockPath: "/arts/voted",
+    params: {
+      sn: "",
+    },
+    options: {},
+  },
 ];
 
 export default apiList;
