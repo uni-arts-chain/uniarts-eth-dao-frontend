@@ -1,6 +1,6 @@
 /** * Created by Lay Hunt on 2021-09-09 22:08:39. */
 <template>
-  <div class="auction container">
+  <div class="auction container" v-if="!$store.state.global.isMobile">
     <div class="left">
       <div class="title">NFT Name</div>
       <div class="desc-title">Artwork description</div>
@@ -65,6 +65,68 @@
         introduction of the work, introduction...
       </div>
       <router-link class="more" to="/artist/1">More ></router-link>
+    </div>
+  </div>
+  <div class="auction container" v-else>
+    <div class="center">
+      <div class="nft">
+        <img
+          src="https://ipfs.pixura.io/ipfs/QmbBmVPHkXQFcUHUw1ETKsq3m51iUjCNkJwop9L44uiAmV/FinalWithGradient.jpg"
+        />
+      </div>
+      <div class="notice">
+        <img src="@/assets/images/date-clock.png" />
+        6 Days 23 Hour 59 Minute 59 Second
+      </div>
+    </div>
+    <div class="left">
+      <div class="title">NFT Name</div>
+      <div class="desc-content">
+        "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
+        aroused great repercussions and won great recognition in the circle, which also led to the
+        introduction of the work, introduction...
+      </div>
+      <div class="more">More ></div>
+      <div class="right">
+        <div class="title">ABOUT ARTIST</div>
+        <div class="avatar">
+          <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />
+        </div>
+        <div class="username">Kyle Bighead</div>
+        <div class="user-desc">
+          "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
+          aroused great repercussions and won great recognition in the circle, which also led to the
+          introduction of the work, introduction...
+        </div>
+        <router-link class="more" to="/artist/1">More ></router-link>
+      </div>
+      <div class="number-votes">Number of votes obtained</div>
+      <Progress :value="52" />
+      <div class="number-vote-value">3000 of 45000</div>
+      <div class="token-info">
+        <div class="token">
+          <span>Token mint:&nbsp;&nbsp;</span>
+          <span class="value">251</span>Uink
+        </div>
+        <div class="bid">
+          <span>Current High Bid: &nbsp;&nbsp;</span>
+          <span class="value">1500</span>Tether
+        </div>
+      </div>
+      <div class="bid-history">
+        <div class="button-group">
+          <button>Make an Offer</button>
+          <button>Collect Now</button>
+        </div>
+        <div class="bid-title">
+          <span>Bid History</span>
+          <span>Total 4 Bids</span>
+        </div>
+        <div class="bid-list">
+          <div class="item">@Bighead made an offer of 1500 USDC</div>
+          <div class="item">@Smallhead made an offer of 1200 USDC</div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -296,6 +358,102 @@ export default defineComponent({
         background: #c9caca;
         border-radius: 6px;
         cursor: pointer;
+      }
+    }
+  }
+}
+
+@media (max-width: 750px) {
+  .auction {
+    margin-top: 10px;
+    flex-direction: column;
+    padding-bottom: 70px;
+    .center {
+      width: 100%;
+      .nft {
+        width: 100%;
+        img {
+          width: 100%;
+          height: 290px;
+        }
+      }
+      .notice {
+        margin-top: 10px;
+        padding-left: 0;
+        font-size: 14px;
+      }
+    }
+    .left {
+      width: 100%;
+      > .title {
+        width: 100%;
+        margin-top: 40px;
+        font-size: 22px;
+        font-family: Montserrat-Medium;
+        margin-bottom: 20px;
+      }
+      .desc-content {
+        font-size: 15px;
+        color: black;
+      }
+      .more {
+        color: #aaa;
+        font-size: 14px;
+        margin-bottom: 60px;
+      }
+      .number-votes {
+        font-size: 16px;
+      }
+      .number-vote-value {
+        font-size: 15px;
+      }
+      .token {
+        color: black;
+      }
+      .bid-history .button-group {
+        margin-top: 69px;
+        button {
+          width: 100%;
+          height: 60px;
+          font-size: 16px;
+        }
+      }
+      .bid-history .bid-title {
+        margin-top: 0;
+        margin-bottom: 30px;
+        font-size: 14px;
+        font-family: Montserrat-Medium;
+        font-weight: 600;
+      }
+      .bid-history .bid-list .item {
+        font-size: 14px;
+        margin-bottom: 10px;
+      }
+    }
+    .right {
+      width: 100%;
+      .title {
+        font-size: 15px;
+        font-family: Montserrat-Regular;
+        text-align: center;
+        margin-bottom: 40px;
+      }
+      .avatar {
+        margin: 0 auto;
+      }
+      .username {
+        text-align: center;
+        font-size: 18px;
+        margin-top: 20px;
+      }
+      .user-desc {
+        font-size: 16px;
+        line-height: 1.5;
+        color: black;
+      }
+      .more {
+        text-align: center;
+        color: black;
       }
     }
   }
