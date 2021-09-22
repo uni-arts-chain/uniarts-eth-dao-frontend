@@ -2,23 +2,23 @@
 <template>
   <div class="history">
     <el-row class="head">
-      <el-col :span="6" class="item">Token</el-col>
+      <el-col :span="4" class="item">Token</el-col>
       <el-col :span="6" class="item">Staking</el-col>
       <el-col :span="6" class="item">Amount</el-col>
-      <el-col :span="6" class="item">Date</el-col>
+      <el-col :span="8" class="item">Date</el-col>
     </el-row>
     <el-row class="body">
       <el-row class="row">
-        <el-col :span="6" class="item">Uink</el-col>
+        <el-col :span="4" class="item">Uink</el-col>
         <el-col :span="6" class="item">Vote</el-col>
         <el-col :span="6" class="item">30</el-col>
-        <el-col :span="6" class="item">2021-03-21</el-col>
+        <el-col :span="8" class="item">2021-03-21</el-col>
       </el-row>
       <el-row class="row">
-        <el-col :span="6" class="item">Uink</el-col>
+        <el-col :span="4" class="item">Uink</el-col>
         <el-col :span="6" class="item">Vote</el-col>
         <el-col :span="6" class="item">30</el-col>
-        <el-col :span="6" class="item">2021-03-21</el-col>
+        <el-col :span="8" class="item">2021-03-21</el-col>
       </el-row>
     </el-row>
   </div>
@@ -70,6 +70,30 @@ export default defineComponent({
         cursor: pointer;
       }
     }
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .history {
+    width: 100%;
+  }
+  .head {
+    margin-top: 20px;
+  }
+  .head .item {
+    margin-bottom: 13px;
+    font-size: 15px;
+    font-family: Montserrat-Medium;
+  }
+  .body .row {
+    border-radius: 6px;
+  }
+
+  .body .row .item {
+    padding: 15px 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 </style>

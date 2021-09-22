@@ -1,7 +1,7 @@
 /** * Created by Lay Hunt on 2021-09-07 16:17:29. */
 <template>
   <div class="index container">
-    <div class="info">
+    <div class="info" v-if="!$store.state.global.isMobile">
       <div class="info-wrapper">
         <div class="avatar-body">
           <img src="@/assets/images/avatar@2x.png" />
@@ -21,6 +21,37 @@
         </ul>
       </div>
     </div>
+    <div class="info" v-else>
+      <div class="info-wrapper">
+        <el-tabs v-model="curTab" @tab-click="handleClick">
+          <el-tab-pane label="My Assets" name="1">
+            <template #label>
+              <router-link class="link" to="/profile">My Assets</router-link>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane label="Rewards History" name="2">
+            <template #label>
+              <router-link class="link" to="/profile/history">Reward History</router-link>
+            </template>
+          </el-tab-pane>
+          <!-- <el-tab-pane label="Unbonded History" name="3">
+            <template #label>
+              <router-link class="link" to="/profile/collection">Unbonded History</router-link>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane label="Vote History" name="4">
+            <template #label>
+              <router-link class="link" to="/profile/collection">Vote History</router-link>
+            </template>
+          </el-tab-pane> -->
+          <el-tab-pane label="My Colloection" name="5">
+            <template #label>
+              <router-link class="link" to="/profile/collection">My Collection</router-link>
+            </template>
+          </el-tab-pane>
+        </el-tabs>
+      </div>
+    </div>
     <div class="content">
       <router-view />
     </div>
@@ -28,7 +59,7 @@
 </template>
 
 <script>
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import store from "@/store";
 // import notification from "@/components/notification";
@@ -38,6 +69,9 @@ export default defineComponent({
     // TODO
     const router = useRouter();
 
+    store.dispatch("global/SetNavText", "Account");
+
+    const curTab = ref("1");
     const onLogout = () => {
       store.dispatch("user/Quit");
       router.push("/");
@@ -50,6 +84,7 @@ export default defineComponent({
     return {
       userInfo,
       onLogout,
+      curTab,
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -121,5 +156,40 @@ export default defineComponent({
   margin-top: 129px;
   margin-left: 68px;
   padding-top: 184px;
+}
+
+@media screen and (max-width: 750px) {
+  .index {
+    flex-direction: column;
+    padding-bottom: 40px;
+    .content {
+      width: 100%;
+      margin: 0;
+      padding-top: 0;
+    }
+    .info {
+      width: 100%;
+      margin-top: 10px;
+      .info-wrapper {
+        width: 100%;
+        :deep .el-tabs__nav-wrap::after {
+          display: none;
+        }
+        :deep .el-tabs__item a {
+          color: #a1a1a1;
+          font-size: 15px;
+        }
+        :deep .el-tabs__item.is-active a,
+        :deep .el-tabs__item:hover a {
+          color: black;
+          font-weight: 600;
+          font-family: Montserrat-Medium;
+        }
+        :deep .el-tabs__active-bar.is-top {
+          background-color: black;
+        }
+      }
+    }
+  }
 }
 </style>

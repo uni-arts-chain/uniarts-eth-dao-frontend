@@ -4,7 +4,6 @@
     <div class="list" v-for="v in list" :key="v">
       <div class="item">
         <img
-          style="width: 400px; height: 233px"
           src="https://ipfs.pixura.io/ipfs/QmbBmVPHkXQFcUHUw1ETKsq3m51iUjCNkJwop9L44uiAmV/FinalWithGradient.jpg"
           alt=""
         />
@@ -84,6 +83,35 @@ export default defineComponent({
       font-weight: 300;
       text-align: left;
       color: #595757;
+    }
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .list .item {
+    display: flex;
+    flex-direction: column;
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+  .list .info {
+    margin-top: 20px;
+    width: 100%;
+    margin-left: 0;
+  }
+  .list .info .value-group {
+    width: 100%;
+    margin-top: 10px;
+    font-size: 15px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .list .info .operate {
+    margin-top: 20px;
+    button {
+      width: 30%;
     }
   }
 }

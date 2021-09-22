@@ -7,6 +7,8 @@ import {
   ElDialog,
   ElDropdown,
   ElDrawer,
+  ElTabPane,
+  ElTabs,
 } from "element-plus";
 import "element-plus/dist/index.css";
 
@@ -20,5 +22,7 @@ export default {
     vue.use(ElDialog);
     vue.use(ElDropdown);
     vue.use(ElDrawer);
+    vue.use(ElTabPane);
+    vue.use(ElTabs);
   },
 };

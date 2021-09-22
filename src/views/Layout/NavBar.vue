@@ -67,18 +67,22 @@
       <li>
         <router-link to="/profile" @click="onClickItem">Account</router-link>
       </li>
+      <li v-if="$store.state.user.info.address">
+        <span @click="onLogout">Log out</span>
+      </li>
     </ul>
   </el-drawer>
 </template>
 
 <script>
 import { defineComponent, computed, ref, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import store from "@/store";
 export default defineComponent({
   name: "nav-bar",
   setup() {
     const route = useRoute();
+    const router = useRouter();
 
     const currentPath = computed(() => {
       return route.path;
@@ -104,6 +108,12 @@ export default defineComponent({
       drawer.value = false;
     };
 
+    const onLogout = () => {
+      store.dispatch("user/Quit");
+      drawer.value = false;
+      router.push("/");
+    };
+
     return {
       currentPath,
       isMobile,
@@ -111,6 +121,7 @@ export default defineComponent({
       handleClose,
       onOpenDrawer,
       onClickItem,
+      onLogout,
     };
   },
 });

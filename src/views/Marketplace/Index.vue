@@ -76,7 +76,7 @@ export default defineComponent({
   setup() {
     // TODO
 
-    store.dispatch("global/SetNavText", "Details");
+    store.dispatch("global/SetNavText", "Market");
 
     const auctionList = [1, 2, 3];
     const buyList = [1, 2, 3];
