@@ -9,9 +9,9 @@
         </div>
         <ul class="menu">
           <li class="menu-li"><router-link class="link" to="/profile">My Assets</router-link></li>
-          <li class="menu-li">
+          <!-- <li class="menu-li">
             <router-link class="link" to="/profile/history">Reward History</router-link>
-          </li>
+          </li> -->
           <li class="menu-li">
             <router-link class="link" to="/profile/collection">My Collection</router-link>
           </li>
@@ -29,11 +29,11 @@
               <router-link class="link" to="/profile">My Assets</router-link>
             </template>
           </el-tab-pane>
-          <el-tab-pane label="Rewards History" name="2">
+          <!-- <el-tab-pane label="Rewards History" name="2">
             <template #label>
               <router-link class="link" to="/profile/history">Reward History</router-link>
             </template>
-          </el-tab-pane>
+          </el-tab-pane> -->
           <!-- <el-tab-pane label="Unbonded History" name="3">
             <template #label>
               <router-link class="link" to="/profile/collection">Unbonded History</router-link>

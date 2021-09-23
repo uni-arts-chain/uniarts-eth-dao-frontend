@@ -2,19 +2,17 @@
 <template>
   <div class="assets" v-if="!$store.state.global.isMobile">
     <el-row class="head">
-      <el-col :span="4" class="item">Token</el-col>
-      <el-col :span="4" class="item">Staking</el-col>
-      <el-col :span="5" class="item">Pending</el-col>
-      <el-col :span="5" class="item">Voted</el-col>
-      <el-col :span="6" class="item">Avaliable</el-col>
+      <el-col :span="3" class="item">Token</el-col>
+      <el-col :span="7" class="item">Voted</el-col>
+      <el-col :span="7" class="item">Bonded</el-col>
+      <el-col :span="7" class="item">Avaliable</el-col>
     </el-row>
     <el-row class="body">
       <el-row class="row">
-        <el-col :span="4" class="item">Uink</el-col>
-        <el-col :span="4" class="item">1000</el-col>
-        <el-col :span="5" class="item"><span>2232323200</span> <button>Retrieve</button></el-col>
-        <el-col :span="5" class="item"><span>60231231230</span> <button>unBond</button></el-col>
-        <el-col :span="6" class="item"
+        <el-col :span="3" class="item">Uink</el-col>
+        <el-col :span="7" class="item"><span style="text-align: center">2232323200</span></el-col>
+        <el-col :span="7" class="item"><span>60231231230</span> <button>unBond</button></el-col>
+        <el-col :span="7" class="item"
           ><span>45231231232323130</span> <button>Withdraw</button></el-col
         >
       </el-row>
@@ -27,24 +25,17 @@
         <span class="value">UART</span>
       </div>
       <div class="item-col" style="margin-bottom: 20px">
-        <span class="label">Staking</span>
+        <span class="label">Voted</span>
         <span class="value">100</span>
       </div>
-      <div class="item-col" style="margin-bottom: 20px">
-        <span class="label">Pending</span>
-        <span class="value">30</span>
-      </div>
       <div class="item-col">
-        <span class="label">Voted</span>
+        <span class="label">Bonded</span>
         <span class="value">800</span>
+        <button>unBond</button>
       </div>
       <div class="item-col">
         <span class="label">Avaliable</span>
         <span class="value">12000</span>
-      </div>
-      <div class="item-col">
-        <button>Retrieve</button>
-        <button>unBond</button>
         <button>Withdraw</button>
       </div>
     </div>
@@ -129,7 +120,7 @@ export default defineComponent({
       padding: 20px 10px;
       margin-bottom: 20px;
       .item-col {
-        width: 33%;
+        width: 50%;
         display: flex;
         flex-direction: column;
         span {
