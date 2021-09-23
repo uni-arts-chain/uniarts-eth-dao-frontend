@@ -53,7 +53,12 @@ class VoteMining {
     );
   }
   async getBalances(userAddress, tokenAddress, nftId) {
-    let balances = await this.contract.methods.balances(userAddress, tokenAddress, nftId).call();
+    const nftInternalId = await this.contract.methods
+      .nfts(DAPP_CONFIG.nfts.UniartsNFT.address, nftId)
+      .call();
+    const balances = await this.contract.methods
+      .balances(userAddress, tokenAddress, nftInternalId)
+      .call();
     console.log(balances);
     return balances;
   }

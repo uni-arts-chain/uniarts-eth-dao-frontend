@@ -52,7 +52,7 @@
             </el-dropdown>
           </div>
           <button class="submit" v-if="isApproved" v-loading="isVoting" @click="onVote">
-            Vote
+            Stake
           </button>
           <button class="submit" v-else v-loading="isApproving" @click="onApprove">Approve</button>
           <div class="balance">
@@ -73,24 +73,8 @@
             <div class="info-title">My Account</div>
             <div class="info-list">
               <div class="item">
-                <span>Staking</span>
-                <span>1000 {{ currentToken.symbol }}</span>
-              </div>
-              <div class="item">
                 <span>- Voted</span>
-                <span>800 {{ currentToken.symbol }}</span>
-              </div>
-              <div class="item">
-                <span>- Vote with bonded</span>
-                <span>200 {{ currentToken.symbol }}</span>
-              </div>
-              <div class="item">
-                <span>Avaliable to withdraw</span>
-                <span>30 {{ currentToken.symbol }}</span>
-              </div>
-              <div class="item end">
-                <span>Total</span>
-                <span>1030 {{ currentToken.symbol }}</span>
+                <span>1000 {{ currentToken.symbol }}</span>
               </div>
             </div>
           </div>
@@ -105,8 +89,8 @@
           </button>
           <button class="submit" v-else v-loading="isApproving" @click="onApprove">Approve</button>
           <div class="balance">
-            <span>Wallet Balance</span>
-            <span>{{ currentTokenBalance }} UART</span>
+            <span>Bonded Balance</span>
+            <span>{{ bondedBalance }} UART</span>
           </div>
           <div class="notice">
             <span style="font-weight: 800; font-size: 16px; font-family: Montserrat-Medium"
@@ -122,24 +106,8 @@
             <div class="info-title">My Account</div>
             <div class="info-list">
               <div class="item">
-                <span>Staking</span>
-                <span>1000 {{ currentToken.symbol }}</span>
-              </div>
-              <div class="item">
                 <span>- Voted</span>
-                <span>800 {{ currentToken.symbol }}</span>
-              </div>
-              <div class="item">
-                <span>- Pending to vote</span>
-                <span>200 {{ currentToken.symbol }}</span>
-              </div>
-              <div class="item">
-                <span>Avaliable to withdraw</span>
-                <span>30 {{ currentToken.symbol }}</span>
-              </div>
-              <div class="item end">
-                <span>Total</span>
-                <span>1030 {{ currentToken.symbol }}</span>
+                <span>1000 {{ currentToken.symbol }}</span>
               </div>
             </div>
           </div>
@@ -201,7 +169,7 @@ export default defineComponent({
       ).toNumber();
     };
     const getTokenBalance = async () => {
-      currentTokenBalance.value = (await currentErc20.value.balanceOf(connectedAccount)).toNumber();
+      currentTokenBalance.value = (await currentErc20.value.balanceOf(connectedAccount)).toString();
     };
     const isApproved = computed(() => {
       return new BigNumber(tokenAllowance.value).gte(9999999);
@@ -293,14 +261,15 @@ export default defineComponent({
         });
     };
 
-    const totalVoted = ref(0);
+    const stakeTotal = ref(0);
     const currentBalance = async () => {
-      totalVoted.value = await VoteMining.getBalances(
+      stakeTotal.value = await VoteMining.getBalances(
         connectedAccount,
         currentToken.address,
         artInfo.token_id
       );
     };
+    console.log(stakeTotal);
 
     const init = () => {
       currentBalance();
@@ -366,17 +335,26 @@ export default defineComponent({
           );
         });
     };
+
+    const bondedBalance = ref(0);
     const getBondedBalance = async () => {
-      currentTokenBalance.value = await VoteMining.getBondedBalance(connectedAccount);
+      bondedBalance.value = (await VoteMining.getBondedBalance(connectedAccount))
+        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .toFixed(8, 1);
     };
 
     onMounted(() => {
       requestData();
     });
 
-    watch(curTab, () => {
+    watch(curTab, (value) => {
+      console.log(value);
       onItemClick(DAPP_CONFIG.tokens.UART);
-      getBondedBalance();
+      if (value == 1) {
+        getTokenBalance();
+      } else {
+        getBondedBalance();
+      }
     });
 
     return {
@@ -400,10 +378,11 @@ export default defineComponent({
       onVote,
       stakeAmount,
       isVoting,
-      totalVoted,
+      stakeTotal,
 
       onBonded,
       isBonding,
+      bondedBalance,
       bondAmount,
     };
   },

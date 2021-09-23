@@ -1,5 +1,5 @@
 import Web3 from "web3";
-import BigNumber from "@/plugins/bignumber";
+import { BigNumber } from "@/plugins/bignumber";
 import Wallet from "@/plugins/wallet";
 import { DAPP_CONFIG } from "@/config";
 import TokenLockerABI from "@/contracts/abi/TokenLocker";

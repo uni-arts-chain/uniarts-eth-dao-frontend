@@ -10,7 +10,7 @@
         </div>
         <div class="airdrop-content connected" v-else>
           <span class="title">Your Airdrop Result is:</span>
-          <button class="connect-wallet">{{ airDropBalance }} UART</button>
+          <button class="connect-wallet">Collect {{ airDropBalance }} UART</button>
         </div>
       </div>
       <div class="action-notice">To Collect Airdrop & Vote for NFT</div>
