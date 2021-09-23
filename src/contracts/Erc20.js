@@ -1,7 +1,7 @@
 import Web3 from "web3";
 // import { toBN, BN, isBN } from "web3-utils";
 import { MAX_UINT256 } from "./constants";
-import { BigNumber } from "bignumber.js";
+import { BigNumber } from "@/plugins/bignumber";
 import Wallet from "@/plugins/wallet";
 // import config from "@/config/network";
 const ERC20_ABI = require("@/contracts/abi/Erc20.json");

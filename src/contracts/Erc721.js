@@ -2,7 +2,7 @@
 import Web3 from "web3";
 import { toBN, BN, isBN } from "web3-utils";
 import { MAX_UINT256 } from "./constants";
-import { BigNumber } from "bignumber.js";
+import { BigNumber } from "@/plugins/bignumber";
 // import config from "@/config/network";
 import ABI from "@/config/abi/Erc721.json";
 import Wallet from "@/plugins/wallet";

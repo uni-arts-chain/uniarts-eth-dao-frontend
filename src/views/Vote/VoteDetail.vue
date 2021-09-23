@@ -150,7 +150,7 @@
 <script>
 import { defineComponent, ref, onMounted, computed, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
-import { BigNumber } from "bignumber.js";
+import { BigNumber } from "@/plugins/bignumber";
 import VoteDetailMobile from "@/views/Vote/VoteDetailMobile";
 import VoteProgress from "@/components/Progress";
 import { notification } from "@/components/Notification";
@@ -201,7 +201,7 @@ export default defineComponent({
       ).toNumber();
     };
     const getTokenBalance = async () => {
-      currentTokenBalance.value = (await currentErc20.value.balanceOf(connectedAccount)).toNumber();
+      currentTokenBalance.value = (await currentErc20.value.balanceOf(connectedAccount)).toString();
     };
     const isApproved = computed(() => {
       return new BigNumber(tokenAllowance.value).gte(9999999);
@@ -367,7 +367,9 @@ export default defineComponent({
         });
     };
     const getBondedBalance = async () => {
-      currentTokenBalance.value = await VoteMining.getBondedBalance(connectedAccount);
+      currentTokenBalance.value = (await VoteMining.getBondedBalance(connectedAccount))
+        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .toString();
     };
 
     onMounted(() => {

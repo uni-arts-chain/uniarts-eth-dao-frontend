@@ -58,6 +58,9 @@ export default defineComponent({
   .item {
     display: flex;
     margin-bottom: 72px;
+    img {
+      max-width: 400px;
+    }
   }
   .info {
     width: 434px;

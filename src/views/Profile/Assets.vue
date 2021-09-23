@@ -4,27 +4,18 @@
     <el-row class="head">
       <el-col :span="4" class="item">Token</el-col>
       <el-col :span="4" class="item">Staking</el-col>
-      <el-col :span="4" class="item">Pending</el-col>
-      <el-col :span="4" class="item">Voted</el-col>
-      <el-col :span="8" class="item">Avaliable</el-col>
+      <el-col :span="5" class="item">Pending</el-col>
+      <el-col :span="5" class="item">Voted</el-col>
+      <el-col :span="6" class="item">Avaliable</el-col>
     </el-row>
     <el-row class="body">
       <el-row class="row">
         <el-col :span="4" class="item">Uink</el-col>
         <el-col :span="4" class="item">1000</el-col>
-        <el-col :span="4" class="item">200</el-col>
-        <el-col :span="4" class="item">800</el-col>
-        <el-col :span="8" class="item"
-          >30 <router-link to="/withdraw">Withdraw</router-link></el-col
-        >
-      </el-row>
-      <el-row class="row">
-        <el-col :span="4" class="item">Uink</el-col>
-        <el-col :span="4" class="item">1000</el-col>
-        <el-col :span="4" class="item">200</el-col>
-        <el-col :span="4" class="item">800</el-col>
-        <el-col :span="8" class="item"
-          >30 <router-link to="/withdraw">Withdraw</router-link></el-col
+        <el-col :span="5" class="item"><span>2232323200</span> <button>Retrieve</button></el-col>
+        <el-col :span="5" class="item"><span>60231231230</span> <button>unBond</button></el-col>
+        <el-col :span="6" class="item"
+          ><span>45231231232323130</span> <button>Withdraw</button></el-col
         >
       </el-row>
     </el-row>
@@ -52,6 +43,8 @@
         <span class="value">12000</span>
       </div>
       <div class="item-col">
+        <button>Retrieve</button>
+        <button>unBond</button>
         <button>Withdraw</button>
       </div>
     </div>
@@ -76,7 +69,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .assets {
-  width: 720px;
+  width: 100%;
 }
 .head {
   width: 100%;
@@ -103,9 +96,22 @@ export default defineComponent({
       text-align: center;
       color: #000000;
       padding: 15px;
-      a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      span {
+        display: block;
+        width: calc(100% - 70px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: right;
+      }
+      button {
         color: #a43129;
         cursor: pointer;
+        margin-left: 5px;
+        background-color: transparent;
       }
     }
   }
@@ -141,8 +147,11 @@ export default defineComponent({
           font-size: 16px;
         }
         button {
+          margin-top: 5px;
           background-color: transparent;
-          font-size: 16px;
+          font-size: 14px;
+          color: #a43129;
+          cursor: pointer;
         }
       }
     }

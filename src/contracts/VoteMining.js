@@ -1,5 +1,5 @@
 import Web3 from "web3";
-// import BigNumber from "bignumber.js";
+import { BigNumber } from "@/plugins/bignumber";
 import { toBN } from "web3-utils";
 import Wallet from "@/plugins/wallet";
 import { DAPP_CONFIG } from "@/config";
@@ -59,7 +59,7 @@ class VoteMining {
   }
   async getBondedBalance(userAddress) {
     let balances = await this.contract.methods.getBondedBalance(userAddress).call();
-    return balances;
+    return new BigNumber(balances);
   }
   async getTotalVotedBalances(userAddress) {
     let totalVotedBalances = await this.contract.methods.totalVotedBalances(userAddress).call();

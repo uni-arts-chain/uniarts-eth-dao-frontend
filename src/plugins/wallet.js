@@ -1,4 +1,4 @@
-import { BigNumber } from "bignumber.js";
+import { BigNumber } from "@/plugins/bignumber";
 import Web3Utils from "web3-utils";
 import { reactive } from "vue";
 import store from "@/store";

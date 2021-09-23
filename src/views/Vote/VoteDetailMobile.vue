@@ -152,7 +152,7 @@
 <script>
 import { defineComponent, ref, onMounted, computed, reactive, watch } from "vue";
 import { useRoute } from "vue-router";
-import { BigNumber } from "bignumber.js";
+import { BigNumber } from "@/plugins/bignumber";
 import VoteProgress from "@/components/Progress";
 import { notification } from "@/components/Notification";
 import http from "@/plugins/http";
