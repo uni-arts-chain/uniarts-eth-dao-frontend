@@ -14,10 +14,10 @@
         <AdaptiveView width="520px" height="515px" :nft="artInfo" />
       </div>
       <div class="progress">
-        <VoteProgress :value="52" />
+        <VoteProgress :value="votePercent" />
         <div class="progress-value">
-          <span>Number of votes：30000</span>
-          <span>Total：45000</span>
+          <span>Number of votes：{{ curNftTotalVotes }}</span>
+          <span>Total：{{ curGroupTotalVotes }}</span>
         </div>
       </div>
       <div class="vote-body">
@@ -62,7 +62,7 @@
             <div class="info-list">
               <div class="item">
                 <span>- Voted</span>
-                <span>1000 {{ currentToken.symbol }}</span>
+                <span>{{ stakeTotal }} {{ currentToken.symbol }}</span>
               </div>
             </div>
           </div>
@@ -92,7 +92,7 @@
             <div class="info-list">
               <div class="item">
                 <span>- Voted</span>
-                <span>1000 {{ currentToken.symbol }}</span>
+                <span>{{ bondedTotal }} {{ currentToken.symbol }}</span>
               </div>
             </div>
           </div>
@@ -180,6 +180,7 @@ export default defineComponent({
     watch(currentErc20, () => {
       getTokenBalance();
       getTokenAllowance();
+      getStakeVoted();
     });
     const onApprove = () => {
       isApproving.value = true;
@@ -262,17 +263,48 @@ export default defineComponent({
     };
 
     const stakeTotal = ref(0);
-    const currentBalance = async () => {
-      stakeTotal.value = await VoteMining.getBalances(
+    const bondedTotal = ref(0);
+    const getStakeVoted = async () => {
+      let votedBalance = await VoteMining.getBalances(
         connectedAccount,
         currentToken.address,
         artInfo.token_id
       );
+      stakeTotal.value = new BigNumber(votedBalance.available)
+        .plus(votedBalance.freezed)
+        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .toString();
     };
-    console.log(stakeTotal);
+    const getBondedVoted = async () => {
+      let votedBalance = await VoteMining.getVotedBalances(connectedAccount, artInfo.token_id);
+      bondedTotal.value = new BigNumber(votedBalance.available)
+        .plus(votedBalance.freezed)
+        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .toString();
+    };
+
+    const curNftTotalVotes = ref(0);
+    const curGroupTotalVotes = ref(0);
+    const getTotalNftVotes = async (nftId) => {
+      curNftTotalVotes.value = new BigNumber(await VoteMining.getNftVotes(nftId))
+        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .toString();
+    };
+    const getTotalGroupVotes = async (nftId) => {
+      curGroupTotalVotes.value = new BigNumber(await VoteMining.getGroupVotes(nftId))
+        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .toString();
+    };
+    const votePercent = computed(() => {
+      return new BigNumber(curNftTotalVotes.value || 0)
+        .div(curGroupTotalVotes.value || 1)
+        .times(100)
+        .toFixed(2, 1);
+    });
 
     const init = () => {
-      currentBalance();
+      getStakeVoted();
+      getBondedVoted();
     };
 
     const artId = route.params.id;
@@ -289,6 +321,8 @@ export default defineComponent({
           Object.keys(res).forEach((key) => (artInfo[key] = res[key]));
           isLoading.value = false;
           init();
+          getTotalNftVotes(res.token_id);
+          getTotalGroupVotes(res.token_id);
         })
         .catch((err) => {
           console.log(err);
@@ -379,6 +413,11 @@ export default defineComponent({
       stakeAmount,
       isVoting,
       stakeTotal,
+      bondedTotal,
+
+      curNftTotalVotes,
+      curGroupTotalVotes,
+      votePercent,
 
       onBonded,
       isBonding,

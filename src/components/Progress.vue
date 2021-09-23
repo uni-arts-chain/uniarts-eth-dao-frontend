@@ -1,7 +1,7 @@
 /** * Created by Lay Hunt on 2021-09-08 23:58:32. */
 <template>
   <div class="progress-bar">
-    <div class="label-number" :style="`left: ${value}%`">{{ value }}%</div>
+    <div class="label-number" :style="`left: ${value}%`">{{ format(value) }}%</div>
     <div class="bar" :style="`width: ${value}%`"></div>
     <div class="bg"></div>
   </div>
@@ -9,6 +9,7 @@
 
 <script>
 import { defineComponent } from "vue";
+import { BigNumber } from "bignumber.js";
 export default defineComponent({
   name: "vote-progress",
   props: {
@@ -19,6 +20,14 @@ export default defineComponent({
   },
   setup() {
     // TODO
+    const format = (value) => {
+      let percent = new BigNumber(value);
+      return percent.eq(100) ? 100 : percent.toString();
+    };
+
+    return {
+      format,
+    };
   },
 });
 </script>
