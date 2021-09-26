@@ -65,6 +65,15 @@ const apiList = [
     },
     options: {},
   },
+  {
+    name: "getAssets",
+    method: "GET",
+    desc: "我的资产",
+    path: "/arts/assets",
+    mockPath: "/arts/assets",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;

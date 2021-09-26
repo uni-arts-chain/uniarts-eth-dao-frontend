@@ -8,7 +8,8 @@
       <el-col :span="7" class="item">Available</el-col>
     </el-row>
     <el-row class="body">
-      <el-row class="row">
+      <div class="no-data" v-if="assetsList.length == 0">No data</div>
+      <el-row class="row" v-for="(v, i) in assetsList" :key="i">
         <el-col :span="3" class="item">Uink</el-col>
         <el-col :span="7" class="item"><span style="text-align: center">2232323200</span></el-col>
         <el-col :span="7" class="item"
@@ -26,6 +27,7 @@
     </div>
   </div>
   <div class="assets" v-else>
+    <div class="no-data" v-if="assetsList.length == 0">No data</div>
     <div class="item" v-for="(v, i) in assetsList" :key="i">
       <div class="item-col" style="margin-bottom: 20px">
         <span class="label">Token</span>
@@ -119,6 +121,7 @@ import { defineComponent, ref, computed, onMounted } from "vue";
 import { BigNumber } from "@/plugins/bignumber";
 import { DAPP_CONFIG } from "@/config";
 import store from "@/store";
+import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
 import MobileConfirm from "@/components/MobileConfirm";
 import Dialog from "@/components/Dialog";
@@ -131,8 +134,28 @@ export default defineComponent({
   },
   setup() {
     // TODO
+    const isLoading = ref(false);
+    const assetsList = ref([]);
+    const requestData = () => {
+      isLoading.value = true;
+      http
+        .userGetAssets({})
+        .then((res) => {
+          isLoading.value = false;
+          assetsList.value.splice(0, 0, ...res.list);
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
 
-    const assetsList = ref([1, 2, 3]);
+    onMounted(() => {
+      requestData();
+    });
 
     const connectedAccount = computed(() => {
       return store.state.user.info.address;
@@ -286,6 +309,16 @@ export default defineComponent({
       }
     }
   }
+}
+
+.no-data {
+  color: #aaa;
+  font-size: 13px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
 .notices {

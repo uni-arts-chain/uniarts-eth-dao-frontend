@@ -28,23 +28,30 @@
     <div class="list">
       <div class="container item-list">
         <div class="item" v-for="(v, i) in list" :key="i">
-          <div class="nft"></div>
+          <div class="nft">
+            <img :src="v.img" />
+          </div>
           <div class="nft-info">
             <div class="my-votes">
-              <span class="value">My Votes : 200</span>
+              <span class="value">My Votes : {{ v.mine }}</span>
               <div class="bar">
-                <div class="progress" :style="`width: ${width}%;`"></div>
+                <div
+                  class="progress"
+                  :style="`width: ${parseInt(v.mine / v.group_mine) * 100}%;`"
+                ></div>
               </div>
             </div>
             <div class="vote-progress">
               <div class="bar"></div>
-              <div class="vote-bar" :style="`width: ${width}%`"></div>
-              <div class="current-per" :style="`left: ${width}%`">50%</div>
-              <div class="total-per">Total: 45000</div>
+              <div class="vote-bar" :style="`width: ${parseInt(v.number / v.total) * 100}%`"></div>
+              <div class="current-per" :style="`left: ${parseInt(v.number / v.total) * 100}%`">
+                {{ parseInt(v.number / v.total) * 100 }}%
+              </div>
+              <div class="total-per">Total: {{ v.total }}</div>
             </div>
-            <div class="number-vote">Number of votes: 30000</div>
+            <div class="number-vote">Number of votes: {{ v.number }}</div>
           </div>
-          <button class="vote-button" @click="goVoteDetail(1)">VOTE</button>
+          <button class="vote-button" @click="goVoteDetail(v.id)">VOTE</button>
         </div>
       </div>
     </div>
@@ -69,9 +76,11 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import store from "@/store";
 import { useRouter } from "vue-router";
+import http from "@/plugins/http";
+import { notification } from "@/components/Notification";
 export default defineComponent({
   name: "list",
   setup() {
@@ -81,7 +90,51 @@ export default defineComponent({
 
     store.dispatch("global/SetNavText", "View all Candidates");
 
-    const list = [1, 2, 3];
+    const isLoading = ref(false);
+    const list = ref([]);
+    const requestData = () => {
+      isLoading.value = true;
+      http
+        .globalGetGroupList({
+          type: "voting",
+        })
+        .then((res) => {
+          isLoading.value = false;
+          list.value.splice(0, 0, ...res.list);
+          if (res.list.length > 0) {
+            http
+              .globalGetGroupVoted({
+                sn: res.list[0].sn,
+              })
+              .then((result) => {
+                result.list.forEach((v, i) => {
+                  list.value[i].mine = v.mine;
+                  list.value[i].group_mine = v.group_mine;
+                  list.value[i].total = v.total;
+                  list.value[i].number = v.number;
+                  list.value[i].id = v.id;
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+                notification.error(
+                  (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+                );
+              });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+
+    onMounted(() => {
+      requestData();
+    });
 
     const width = 50;
 
@@ -196,8 +249,8 @@ export default defineComponent({
 
 .list {
   .item-list {
-    padding-top: 121px;
-    padding-bottom: 135px;
+    padding-top: 100px;
+    padding-bottom: 200px;
   }
   .item {
     margin-bottom: 27px;
@@ -212,7 +265,13 @@ export default defineComponent({
   .nft {
     width: 212px;
     height: 124px;
-    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* background: black; */
+    img {
+      width: 100%;
+    }
   }
   .my-votes {
     display: flex;

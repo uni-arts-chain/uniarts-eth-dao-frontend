@@ -22,7 +22,7 @@ export default defineComponent({
     // TODO
     const format = (value) => {
       let percent = new BigNumber(value);
-      return percent.eq(100) ? 100 : percent.toString();
+      return percent.eq(100) ? 100 : percent.isNaN() ? 0 : percent.toString();
     };
 
     return {
