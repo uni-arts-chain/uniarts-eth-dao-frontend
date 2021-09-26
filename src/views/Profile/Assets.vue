@@ -20,6 +20,10 @@
         >
       </el-row>
     </el-row>
+    <div class="notices">
+      Notice:<br />
+      Rewarded and airdrop UARTs unbond will start from 30th Oct.
+    </div>
   </div>
   <div class="assets" v-else>
     <div class="item" v-for="(v, i) in assetsList" :key="i">
@@ -42,6 +46,10 @@
         <button @click="onShowWithdrawDialog">Withdraw</button>
       </div>
     </div>
+    <div class="notices">
+      Notice:<br />
+      Rewarded and airdrop UARTs unbond will start from 30th Oct.
+    </div>
   </div>
   <Dialog v-model="dialogTableVisible" v-if="!$store.state.global.isMobile" type="small">
     <div class="dialog-content">
@@ -54,7 +62,7 @@
       <button @click="unBond" v-loading="isUnbonding">UnBond</button>
       <div class="notice">
         Notice: <br />
-        Unbond UARTs will be release linearly in 60 days.
+        Unbonding uarts can not be used for NFT vote.
       </div>
     </div>
   </Dialog>
@@ -69,7 +77,7 @@
       <button @click="unBond" v-loading="isUnbonding">UnBond</button>
       <div class="notice">
         Notice: <br />
-        Unbond UARTs will be release linearly in 60 days.
+        Unbonding uarts can not be used for NFT vote.
       </div>
     </div>
   </MobileConfirm>
@@ -85,7 +93,7 @@
       <button @click="unBond" v-loading="isUnbonding">Withdraw</button>
       <div class="notice">
         Notice: <br />
-        Unbond UARTs will be release linearly in 60 days.
+        Unbonded UARTs need to be withdraw from unbond history.
       </div>
     </div>
   </Dialog>
@@ -100,7 +108,7 @@
       <button @click="unBond" v-loading="isUnbonding">Withdraw</button>
       <div class="notice">
         Notice: <br />
-        Unbond UARTs will be release linearly in 60 days.
+        Unbonded UARTs need to be withdraw from unbond history.
       </div>
     </div>
   </MobileConfirm>
@@ -280,7 +288,16 @@ export default defineComponent({
   }
 }
 
-.dialog-unbond {
+.notices {
+  font-size: 14px;
+  font-family: Montserrat-Regular;
+  font-weight: 300;
+  text-align: left;
+  color: black;
+  line-height: 18px;
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 41px;
 }
 
 @media screen and (max-width: 750px) {

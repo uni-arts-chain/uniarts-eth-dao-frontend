@@ -9,11 +9,14 @@
         </div>
         <ul class="menu">
           <li class="menu-li"><router-link class="link" to="/profile">My Assets</router-link></li>
-          <!-- <li class="menu-li">
-            <router-link class="link" to="/profile/history">Reward History</router-link>
-          </li> -->
+          <li class="menu-li">
+            <router-link class="link" to="/profile/votes">My Votes</router-link>
+          </li>
           <li class="menu-li">
             <router-link class="link" to="/profile/collection">My Collection</router-link>
+          </li>
+          <li class="menu-li">
+            <router-link class="link" to="/profile/unbond">Unbond History</router-link>
           </li>
         </ul>
         <ul class="menu" style="margin-top: 0px">
@@ -27,6 +30,11 @@
           <el-tab-pane label="My Assets" name="1">
             <template #label>
               <router-link class="link" to="/profile">My Assets</router-link>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane label="My Votes" name="2">
+            <template #label>
+              <router-link class="link" to="/profile/votes">My Votes</router-link>
             </template>
           </el-tab-pane>
           <!-- <el-tab-pane label="Rewards History" name="2">
@@ -44,9 +52,14 @@
               <router-link class="link" to="/profile/collection">Vote History</router-link>
             </template>
           </el-tab-pane> -->
-          <el-tab-pane label="My Colloection" name="5">
+          <el-tab-pane label="My Colloection" name="3">
             <template #label>
               <router-link class="link" to="/profile/collection">My Collection</router-link>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane label="Unbond History" name="4">
+            <template #label>
+              <router-link class="link" to="/profile/unbond">Unbond History</router-link>
             </template>
           </el-tab-pane>
         </el-tabs>
@@ -60,7 +73,7 @@
 
 <script>
 import { defineComponent, computed, ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import store from "@/store";
 // import notification from "@/components/notification";
 export default defineComponent({
@@ -68,10 +81,26 @@ export default defineComponent({
   setup() {
     // TODO
     const router = useRouter();
+    const route = useRoute();
 
     store.dispatch("global/SetNavText", "Account");
 
     const curTab = ref("1");
+    switch (route.path) {
+      case "/profile/assets":
+        curTab.value = "1";
+        break;
+      case "/profile/voted":
+        curTab.value = "2";
+        break;
+      case "/profile/unbond":
+        curTab.value = "4";
+        break;
+      case "/profile/collection":
+        curTab.value = "3";
+        break;
+    }
+
     const onLogout = () => {
       store.dispatch("user/Quit");
       router.push("/");

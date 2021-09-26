@@ -20,9 +20,20 @@ const routes = [
         component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/Assets.vue"),
       },
       {
+        path: "votes",
+        name: "votes",
+        component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/Votes.vue"),
+      },
+      {
         path: "history",
         name: "history",
         component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/History.vue"),
+      },
+      {
+        path: "unbond",
+        name: "unbondHistory",
+        component: () =>
+          import(/* webpackChunkName: "profile" */ "../views/Profile/UnbondHistory.vue"),
       },
       {
         path: "collection",
