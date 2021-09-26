@@ -196,6 +196,9 @@
     .mobile-confirm section.el-drawer__body {
       padding: 26px 15px 26px 15px;
     }
+    .mobile-confirm.retrieve-confirm section.el-drawer__body {
+      padding: 0;
+    }
   }
 }
 
@@ -292,6 +295,14 @@
   .el-dialog__body {
     padding: 20px 20px;
     
+  }
+}
+
+.el-dialog.vote-dialog.retrieve-dialog {
+  padding: 0;
+  overflow: hidden;
+  .el-dialog__body {
+    padding: 0;
   }
 }
 

@@ -12,7 +12,8 @@
         <el-col :span="4" class="item"> <span>UART</span></el-col>
         <el-col :span="6" class="item"><span>Unbonding</span></el-col>
         <el-col :span="6" class="item">
-          <span>30</span><button class="operate" @click="onShowDialog">Withdraw</button>
+          <span style="text-align: right">30</span
+          ><button class="operate" @click="onShowDialog">Withdraw</button>
         </el-col>
         <el-col :span="8" class="item"><span>2021-03-21</span></el-col>
       </el-row>
@@ -96,8 +97,8 @@ export default defineComponent({
       color: #000000;
       padding: 15px;
       display: flex;
+      justify-content: center;
       align-items: center;
-      flex-direction: column;
       span {
         overflow: hidden;
         text-overflow: ellipsis;
@@ -108,6 +109,7 @@ export default defineComponent({
       button.operate {
         color: #a43129;
         cursor: pointer;
+        margin-left: 10px;
         background-color: transparent;
       }
     }

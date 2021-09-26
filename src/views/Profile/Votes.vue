@@ -20,29 +20,156 @@
             </div>
             <div class="number-vote">Number of votes: 30000</div>
           </div>
-          <button class="vote-button" @click="goVoteDetail(1)">Retrieve</button>
+          <button class="vote-button" @click="onRetrieve(1)">Retrieve</button>
         </div>
       </div>
     </div>
+    <Dialog
+      v-model="dialogTableVisible"
+      customClass="retrieve-dialog"
+      v-if="!$store.state.global.isMobile"
+      type="small"
+    >
+      <div class="dialog-content">
+        <div class="tab">
+          <div class="tab-head">
+            <div class="tab-head-item" :class="{ active: dialogTab == 1 }" @click="dialogTab = 1">
+              Retrieve to Wallet
+            </div>
+            <div class="tab-head-item" :class="{ active: dialogTab == 2 }" @click="dialogTab = 2">
+              Retrieve to Bonded
+            </div>
+          </div>
+          <div class="tab-content" v-if="dialogTab == 1">
+            <div class="input-body">
+              <input type="number" placeholder="amount" v-model="inputUnbondAmount" />
+              <el-dropdown trigger="click" @command="onItemClick">
+                <span class="unit">
+                  {{ currentToken.symbol }}
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-for="(v, i) in tokenList" :key="i" :command="v">{{
+                      v.symbol
+                    }}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+            <div class="balance">{{ availableBalance || 0 }} UART</div>
+            <button @click="unBond" v-loading="isUnbonding">Retrieve</button>
+          </div>
+          <div class="tab-content" v-if="dialogTab == 2">
+            <div class="input-body">
+              <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span
+                class="unit"
+                >UART</span
+              >
+            </div>
+            <div class="balance">{{ availableBalance || 0 }} UART</div>
+            <button @click="unBond" v-loading="isUnbonding">Retrieve</button>
+          </div>
+        </div>
+      </div>
+    </Dialog>
+    <MobileConfirm v-else v-model="dialogTableVisible" customClass="retrieve-confirm">
+      <div class="confirm-content">
+        <div class="tab">
+          <div class="tab-head">
+            <div class="tab-head-item" :class="{ active: dialogTab == 1 }" @click="dialogTab = 1">
+              Retrieve to Wallet
+            </div>
+            <div class="tab-head-item" :class="{ active: dialogTab == 2 }" @click="dialogTab = 2">
+              Retrieve to Bonded
+            </div>
+          </div>
+          <div class="tab-content" v-if="dialogTab == 1">
+            <div class="input-body">
+              <input type="number" placeholder="amount" v-model="inputRetrieveAmount" />
+              <el-dropdown trigger="click" @command="onItemClick">
+                <span class="unit">
+                  {{ currentToken.symbol }}
+                  <i class="el-icon-arrow-down el-icon--right"></i>
+                </span>
+                <template #dropdown>
+                  <el-dropdown-menu>
+                    <el-dropdown-item v-for="(v, i) in tokenList" :key="i" :command="v">{{
+                      v.symbol
+                    }}</el-dropdown-item>
+                  </el-dropdown-menu>
+                </template>
+              </el-dropdown>
+            </div>
+            <div class="balance">{{ availableBalance || 0 }} UART</div>
+            <button @click="unBond" v-loading="isUnbonding">Retrieve</button>
+          </div>
+          <div class="tab-content" v-if="dialogTab == 2">
+            <div class="input-body">
+              <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span
+                class="unit"
+                >UART</span
+              >
+            </div>
+            <div class="balance">{{ availableBalance || 0 }} UART</div>
+            <button @click="unBond" v-loading="isUnbonding">Retrieve</button>
+          </div>
+        </div>
+      </div>
+    </MobileConfirm>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref, reactive } from "vue";
+import Dialog from "@/components/Dialog";
+import MobileConfirm from "@/components/MobileConfirm";
+import { DAPP_CONFIG } from "@/config";
 export default defineComponent({
   name: "votes",
+  components: {
+    MobileConfirm,
+    Dialog,
+  },
   setup() {
     // TODO
     const list = [1, 2, 3, 4];
     const width = 52;
-    const goVoteDetail = (id) => {
-      console.log(id);
+    const onRetrieve = () => {
+      dialogTableVisible.value = true;
       // router.push("/vote/" + id);
     };
+    const dialogTab = ref(1);
+    const dialogTableVisible = ref(false);
+
+    const tokenList = Object.values(DAPP_CONFIG.tokens);
+    let currentToken = reactive({});
+    tokenList.length > 0
+      ? Object.keys(tokenList[0]).forEach((v) => (currentToken[v] = tokenList[0][v]))
+      : null;
+    const onItemClick = (token) => {
+      currentToken.symbol = token.symbol;
+      currentToken.address = token.address;
+      currentToken.decimals = token.decimals;
+    };
+
+    const inputRetrieveAmount = ref(null);
+    const inputUnbondAmount = ref(null);
+
     return {
       list,
       width,
-      goVoteDetail,
+      onRetrieve,
+      dialogTableVisible,
+      dialogTab,
+
+      currentToken,
+      tokenList,
+
+      onItemClick,
+
+      inputRetrieveAmount,
+      inputUnbondAmount,
     };
   },
 });
@@ -151,6 +278,156 @@ export default defineComponent({
     background: transparent;
   }
 }
+
+.tab-head {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  .tab-head-item {
+    cursor: pointer;
+    width: 50%;
+    text-align: center;
+    line-height: 50px;
+    font-size: 18px;
+    font-family: Montserrat-Medium;
+    font-weight: 500;
+    text-align: center;
+    color: #898989;
+    background-color: #e4e4e4;
+    padding: 5px 20px;
+  }
+  .tab-head-item.active {
+    color: #000000;
+    background-color: #dad9d9;
+  }
+}
+
+.dialog-content {
+  .tab-content {
+    padding: 40px 100px 80px 100px;
+  }
+  .input-body {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    border: 1px solid #e3e4e5;
+    input {
+      height: 100%;
+      width: calc(100% - 80px);
+      outline: none;
+      background-color: white;
+      font-size: 17px;
+      border: none;
+      padding: 0 15px;
+    }
+    .unit {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      background-color: transparent;
+      font-family: Montserrat-Regular;
+      font-weight: 300;
+      color: #595757;
+      width: 80px;
+      cursor: pointer;
+      margin-left: 16px;
+    }
+  }
+  .balance {
+    font-size: 14px;
+    font-family: Montserrat-Regular;
+    font-weight: 300;
+    text-align: left;
+    color: #000000;
+    line-height: 50px;
+    padding-left: 20px;
+  }
+  button {
+    width: 343px;
+    height: 48px;
+    background-color: black;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    font-family: Montserrat-Regular;
+    font-weight: 400;
+    text-align: center;
+    color: #ffffff;
+    line-height: 32px;
+    margin: 0 auto;
+    margin-top: 33px;
+    display: block;
+    cursor: pointer;
+  }
+}
+
+.confirm-content {
+  padding: 0;
+  .tab-head .tab-head-item {
+    font-size: 14px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .tab-content {
+    padding: 40px;
+  }
+  .input-body {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    border: 1px solid #e3e4e5;
+    input {
+      height: 100%;
+      width: calc(100% - 80px);
+      outline: none;
+      background-color: white;
+      font-size: 17px;
+      border: none;
+      padding: 0 15px;
+    }
+    .unit {
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      background-color: transparent;
+      font-family: Montserrat-Regular;
+      font-weight: 300;
+      color: #595757;
+      width: 80px;
+      cursor: pointer;
+      margin-left: 16px;
+    }
+  }
+  .balance {
+    font-size: 14px;
+    font-family: Montserrat-Regular;
+    font-weight: 300;
+    text-align: left;
+    color: #000000;
+    line-height: 50px;
+    padding-left: 20px;
+  }
+  button {
+    width: 100%;
+    height: 48px;
+    background-color: black;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    font-family: Montserrat-Regular;
+    font-weight: 400;
+    text-align: center;
+    color: #ffffff;
+    line-height: 32px;
+    margin: 0 auto;
+    margin-top: 33px;
+    display: block;
+    cursor: pointer;
+  }
+}
+
 @media screen and (max-width: 750px) {
   .list .item-list {
     padding-top: 20px;

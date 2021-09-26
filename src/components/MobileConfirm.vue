@@ -6,7 +6,7 @@
     :close-delay="0"
     :with-header="false"
     modal-class="mobile-confirm-modal"
-    custom-class="mobile-confirm"
+    :custom-class="`mobile-confirm ${customClass}`"
     direction="btt"
     :before-close="handleClose"
   >
@@ -18,6 +18,12 @@
 import { defineComponent, ref } from "vue";
 export default defineComponent({
   name: "mobilecomfirm",
+  props: {
+    customClass: {
+      type: String,
+      default: "",
+    },
+  },
   model: {
     value: "visible",
     event: "update",

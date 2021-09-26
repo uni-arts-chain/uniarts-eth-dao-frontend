@@ -8,7 +8,7 @@
     :close-on-press-escape="false"
     :show-close="false"
     :close="close"
-    custom-class="vote-dialog"
+    :custom-class="`vote-dialog ${customClass}`"
   >
     <slot></slot>
   </el-dialog>
@@ -27,6 +27,10 @@ export default defineComponent({
     visible: {
       type: Boolean,
       default: false,
+    },
+    customClass: {
+      type: String,
+      default: "",
     },
   },
   setup(props) {
