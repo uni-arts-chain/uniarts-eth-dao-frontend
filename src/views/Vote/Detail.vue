@@ -8,12 +8,37 @@
       <button class="auction" @click="goAuctionQueue">View Timed Auctions</button>
     </div>
     <div class="list">
-      <div class="item" v-for="(v, i) in list" :key="i">
+      <div class="item">
         <div class="nft">
-          <div class="nft-assets" style="background: black"></div>
+          <div class="nft-assets">
+            <img src="@/assets/images/art-info1.jpeg" alt="" />
+          </div>
         </div>
         <div class="desc">
           <span>Vote for NFT to gain staking reward during the voting round</span>
+        </div>
+      </div>
+      <div class="item">
+        <div class="nft">
+          <div class="nft-assets">
+            <img src="@/assets/images/art-info2.jpeg" alt="" />
+          </div>
+        </div>
+        <div class="desc">
+          <span
+            >Token cast into NFT with number of votes received and can be retrieved by its
+            owner</span
+          >
+        </div>
+      </div>
+      <div class="item">
+        <div class="nft">
+          <div class="nft-assets">
+            <img src="@/assets/images/art-info3.png" alt="" />
+          </div>
+        </div>
+        <div class="desc">
+          <span>Higher bidding price, More reward available</span>
         </div>
       </div>
     </div>
@@ -113,7 +138,10 @@ export default defineComponent({
   }
   .nft-assets {
     width: 324px;
-    height: 324px;
+    height: 296px;
+    img {
+      width: 100%;
+    }
   }
 }
 .mobile {

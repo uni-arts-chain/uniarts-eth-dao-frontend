@@ -5,15 +5,18 @@
       <el-col :span="3" class="item">Token</el-col>
       <el-col :span="7" class="item">Voted</el-col>
       <el-col :span="7" class="item">Bonded</el-col>
-      <el-col :span="7" class="item">Avaliable</el-col>
+      <el-col :span="7" class="item">Available</el-col>
     </el-row>
     <el-row class="body">
       <el-row class="row">
         <el-col :span="3" class="item">Uink</el-col>
         <el-col :span="7" class="item"><span style="text-align: center">2232323200</span></el-col>
-        <el-col :span="7" class="item"><span>60231231230</span> <button>unBond</button></el-col>
         <el-col :span="7" class="item"
-          ><span>45231231232323130</span> <button>Withdraw</button></el-col
+          ><span>60231231230</span> <button @click="onShowDialog">unBond</button></el-col
+        >
+        <el-col :span="7" class="item"
+          ><span>45231231232323130</span>
+          <button @click="onShowWithdrawDialog">Withdraw</button></el-col
         >
       </el-row>
     </el-row>
@@ -31,28 +34,197 @@
       <div class="item-col">
         <span class="label">Bonded</span>
         <span class="value">800</span>
-        <button>unBond</button>
+        <button @click="onShowDialog">unBond</button>
       </div>
       <div class="item-col">
-        <span class="label">Avaliable</span>
+        <span class="label">Available</span>
         <span class="value">12000</span>
-        <button>Withdraw</button>
+        <button @click="onShowWithdrawDialog">Withdraw</button>
       </div>
     </div>
   </div>
+  <Dialog v-model="dialogTableVisible" v-if="!$store.state.global.isMobile" type="small">
+    <div class="dialog-content">
+      <div class="input-body">
+        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
+          >UART</span
+        >
+      </div>
+      <div class="balance">{{ bondedBalance }} UART</div>
+      <button @click="unBond" v-loading="isUnbonding">UnBond</button>
+      <div class="notice">
+        Notice: <br />
+        Unbond UARTs will be release linearly in 60 days.
+      </div>
+    </div>
+  </Dialog>
+  <MobileConfirm v-else v-model="dialogTableVisible">
+    <div class="confirm-content">
+      <div class="input-body">
+        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
+          >UART</span
+        >
+      </div>
+      <div class="balance">{{ bondedBalance }} UART</div>
+      <button @click="unBond" v-loading="isUnbonding">UnBond</button>
+      <div class="notice">
+        Notice: <br />
+        Unbond UARTs will be release linearly in 60 days.
+      </div>
+    </div>
+  </MobileConfirm>
+
+  <Dialog v-model="dialogWithdrawVisible" v-if="!$store.state.global.isMobile" type="small">
+    <div class="dialog-content">
+      <div class="input-body">
+        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
+          >UART</span
+        >
+      </div>
+      <div class="balance">{{ availableBalance }} UART</div>
+      <button @click="unBond" v-loading="isUnbonding">Withdraw</button>
+      <div class="notice">
+        Notice: <br />
+        Unbond UARTs will be release linearly in 60 days.
+      </div>
+    </div>
+  </Dialog>
+  <MobileConfirm v-else v-model="dialogWithdrawVisible">
+    <div class="confirm-content">
+      <div class="input-body">
+        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
+          >UART</span
+        >
+      </div>
+      <div class="balance">{{ availableBalance }} UART</div>
+      <button @click="unBond" v-loading="isUnbonding">Withdraw</button>
+      <div class="notice">
+        Notice: <br />
+        Unbond UARTs will be release linearly in 60 days.
+      </div>
+    </div>
+  </MobileConfirm>
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
+import { BigNumber } from "@/plugins/bignumber";
+import { DAPP_CONFIG } from "@/config";
+import store from "@/store";
+import { notification } from "@/components/Notification";
+import MobileConfirm from "@/components/MobileConfirm";
+import Dialog from "@/components/Dialog";
+import VoteMining from "@/contracts/VoteMining";
 export default defineComponent({
   name: "assets",
+  components: {
+    Dialog,
+    MobileConfirm,
+  },
   setup() {
     // TODO
 
     const assetsList = ref([1, 2, 3]);
 
+    const connectedAccount = computed(() => {
+      return store.state.user.info.address;
+    });
+    const isUnbonding = ref(false);
+
+    const inputUnbondAmount = ref(null);
+    const unBond = async () => {
+      const amount = new BigNumber(inputUnbondAmount.value);
+      if (amount.isNaN() || amount.lt(0)) {
+        notification.error("Invalid amount");
+        return;
+      }
+      isUnbonding.value = true;
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      VoteMining.unbond(
+        connectedAccount.value,
+        new BigNumber(inputUnbondAmount.value)
+          .shiftedBy(DAPP_CONFIG.tokens.UART.decimals)
+          .toNumber(),
+        async (err, txHash) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          if (txHash) {
+            console.log(txHash);
+            isUnbonding.value = false;
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+            onCloseDialog();
+          }
+        }
+      )
+        .then(async (receipt) => {
+          console.log("receipt: ", receipt);
+        })
+        .catch((err) => {
+          console.log(err);
+          isUnbonding.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+
+    const onShowDialog = () => {
+      dialogTableVisible.value = true;
+    };
+    const onCloseDialog = () => {
+      dialogTableVisible.value = false;
+      inputUnbondAmount.value = null;
+    };
+    const onShowWithdrawDialog = () => {
+      dialogWithdrawVisible.value = true;
+    };
+    const onCloseWithdrawDialog = () => {
+      dialogWithdrawVisible.value = false;
+      inputUnbondAmount.value = null;
+    };
+
+    const dialogTableVisible = ref(false);
+    const bondedBalance = ref(0);
+    const getBondedBalance = async () => {
+      bondedBalance.value = (await VoteMining.getBondedBalance(connectedAccount.value))
+        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .toString();
+    };
+
+    const dialogWithdrawVisible = ref(false);
+    const availableBalance = ref(0);
+    const getAvailableBalance = async () => {
+      availableBalance.value = (await VoteMining.getUnbondedBalance(connectedAccount.value))
+        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .toString();
+    };
+
+    onMounted(() => {
+      getBondedBalance();
+      getAvailableBalance();
+    });
+
     return {
       assetsList,
+      unBond,
+      connectedAccount,
+      dialogTableVisible,
+      onShowDialog,
+      isUnbonding,
+
+      dialogWithdrawVisible,
+
+      getBondedBalance,
+      bondedBalance,
+      inputUnbondAmount,
+      availableBalance,
+
+      onShowWithdrawDialog,
+      onCloseWithdrawDialog,
     };
   },
 });
@@ -108,6 +280,9 @@ export default defineComponent({
   }
 }
 
+.dialog-unbond {
+}
+
 @media screen and (max-width: 750px) {
   .assets {
     width: 100%;
@@ -146,6 +321,143 @@ export default defineComponent({
         }
       }
     }
+  }
+}
+
+.dialog-content {
+  .input-body {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    border: 1px solid #e3e4e5;
+    input {
+      height: 100%;
+      width: calc(100% - 50px);
+      outline: none;
+      background-color: white;
+      font-size: 17px;
+      border: none;
+      padding: 0 15px;
+    }
+    .unit {
+      width: 70px;
+      font-size: 16px;
+      background-color: white;
+      font-family: Montserrat-Regular;
+      font-weight: 300;
+      text-align: left;
+      color: #000000;
+      line-height: 48px;
+      padding: 0 10px;
+      border-left: 1px solid #e3e4e5;
+    }
+  }
+  .balance {
+    font-size: 14px;
+    font-family: Montserrat-Regular;
+    font-weight: 300;
+    text-align: left;
+    color: #000000;
+    line-height: 50px;
+    padding-left: 20px;
+  }
+  button {
+    width: 343px;
+    height: 48px;
+    background-color: black;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    font-family: Montserrat-Regular;
+    font-weight: 400;
+    text-align: center;
+    color: #ffffff;
+    line-height: 32px;
+    margin: 0 auto;
+    margin-top: 33px;
+    display: block;
+    cursor: pointer;
+  }
+  .notice {
+    font-size: 12px;
+    font-family: Montserrat-Regular;
+    font-weight: 300;
+    text-align: left;
+    color: #898989;
+    line-height: 18px;
+    width: 343px;
+    margin: 0 auto;
+    margin-top: 21px;
+  }
+}
+
+.confirm-content {
+  padding: 30px 15px 60px 15px;
+  .input-body {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    border: 1px solid #e3e4e5;
+    input {
+      height: 100%;
+      width: calc(100% - 50px);
+      outline: none;
+      background-color: white;
+      font-size: 17px;
+      border: none;
+      padding: 0 15px;
+    }
+    .unit {
+      width: 70px;
+      font-size: 16px;
+      background-color: white;
+      font-family: Montserrat-Regular;
+      font-weight: 300;
+      text-align: left;
+      color: #000000;
+      line-height: 48px;
+      padding: 0 10px;
+      border-left: 1px solid #e3e4e5;
+    }
+  }
+  .balance {
+    font-size: 14px;
+    font-family: Montserrat-Regular;
+    font-weight: 300;
+    text-align: left;
+    color: #000000;
+    line-height: 50px;
+    padding-left: 20px;
+  }
+  button {
+    width: 100%;
+    height: 48px;
+    background-color: black;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    font-family: Montserrat-Regular;
+    font-weight: 400;
+    text-align: center;
+    color: #ffffff;
+    line-height: 32px;
+    margin: 0 auto;
+    margin-top: 33px;
+    display: block;
+    cursor: pointer;
+  }
+  .notice {
+    font-size: 12px;
+    font-family: Montserrat-Regular;
+    font-weight: 300;
+    text-align: left;
+    color: #898989;
+    line-height: 18px;
+    width: 343px;
+    margin: 0 auto;
+    margin-top: 21px;
   }
 }
 </style>
