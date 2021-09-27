@@ -10,13 +10,15 @@
     <el-row class="body">
       <div class="no-data" v-if="assetsList.length == 0">No data</div>
       <el-row class="row" v-for="(v, i) in assetsList" :key="i">
-        <el-col :span="3" class="item">Uink</el-col>
-        <el-col :span="7" class="item"><span style="text-align: center">2232323200</span></el-col>
+        <el-col :span="3" class="item">{{ v.token }}</el-col>
         <el-col :span="7" class="item"
-          ><span>60231231230</span> <button @click="onShowDialog">unBond</button></el-col
+          ><span style="text-align: center">{{ v.voted }}</span></el-col
         >
         <el-col :span="7" class="item"
-          ><span>45231231232323130</span>
+          ><span>{{ v.bound }}</span> <button @click="onShowDialog">unBond</button></el-col
+        >
+        <el-col :span="7" class="item"
+          ><span>{{ v.available }}</span>
           <button @click="onShowWithdrawDialog">Withdraw</button></el-col
         >
       </el-row>
@@ -31,20 +33,20 @@
     <div class="item" v-for="(v, i) in assetsList" :key="i">
       <div class="item-col" style="margin-bottom: 20px">
         <span class="label">Token</span>
-        <span class="value">UART</span>
+        <span class="value">{{ v.token }}</span>
       </div>
       <div class="item-col" style="margin-bottom: 20px">
         <span class="label">Voted</span>
-        <span class="value">100</span>
+        <span class="value">{{ v.voted }}</span>
       </div>
       <div class="item-col">
         <span class="label">Bonded</span>
-        <span class="value">800</span>
+        <span class="value">{{ v.bound }}</span>
         <button @click="onShowDialog">unBond</button>
       </div>
       <div class="item-col">
         <span class="label">Available</span>
-        <span class="value">12000</span>
+        <span class="value">{{ v.available }}</span>
         <button @click="onShowWithdrawDialog">Withdraw</button>
       </div>
     </div>
@@ -295,7 +297,7 @@ export default defineComponent({
       justify-content: center;
       span {
         display: block;
-        width: calc(100% - 70px);
+        width: calc(100% - 120px);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;

@@ -3,7 +3,6 @@ import crypto from "crypto";
 import routerInstance from "@/router";
 import { getLocalStore } from "@/plugins/storage";
 import store from "@/store";
-import { HTTP_DEFAULT_CONFIG } from "@/config";
 
 function _isJSON(str) {
   try {
@@ -26,8 +25,8 @@ export function requestSuccessFunc(config) {
     tokenObj = config.signature;
   }
   if (!config.unSignature && tokenObj) {
-    let url =
-      (config.baseURL.replace("/test/api/", "/api/") || HTTP_DEFAULT_CONFIG.baseURL) + config.url;
+    const url = config.url;
+
     let queryStr = "";
     let tonce = Date.parse(new Date()) / 1000;
     if (method === "GET" || method === "DELETE") {

@@ -40,9 +40,10 @@ export class MakeApi {
   apiBuilder(options) {
     options.api.forEach((api) => {
       const apiName = `${options.namespace}${_firstUpperCase(api.name)}`;
-      const url = api.path;
+      let prefix = api.prefix || options.config.prefix;
+      prefix = options.config.isProd ? prefix : `/test${prefix}`;
+      const url = prefix + api.path;
       api.baseURL = api.baseURL ? api.baseURL : options.config.baseURL;
-      api.baseURL = options.config.isProd ? api.baseURL : `/test${api.baseURL}`;
       options.config.debug && assert(api.name, `${url} :接口name属性不能为空`);
       options.config.debug && assert(url.indexOf("/") === 0, `${url} :接口路径path，首字符应为/`);
       Object.defineProperty(this.request, apiName, {

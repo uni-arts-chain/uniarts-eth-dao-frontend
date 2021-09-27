@@ -3,7 +3,10 @@
   <div class="index">
     <div class="info">
       <div class="container">
-        <button class="auction-button" v-if="!$store.state.global.isMobile" @click="goAuctionQueue">
+        <!-- <button class="auction-button" v-if="!$store.state.global.isMobile" @click="goAuctionQueue">
+          View Auction Round
+        </button> -->
+        <button class="auction-button" style="color: #aaa" v-if="!$store.state.global.isMobile">
           View Auction Round
         </button>
         <div class="content">
@@ -14,11 +17,14 @@
           <div class="amount">
             <span class="label">Vote Payouts</span> 30.000 <span class="unit">Uink</span>
           </div>
-          <button
+          <!-- <button
             v-if="$store.state.global.isMobile"
             class="auction-button"
             @click="goAuctionQueue"
           >
+            View Auction Round
+          </button> -->
+          <button v-if="$store.state.global.isMobile" class="auction-button" style="color: #aaa">
             View Auction Round
           </button>
         </div>
@@ -439,6 +445,9 @@ export default defineComponent({
       .vote-button {
         margin-top: 20px;
         width: 80%;
+      }
+      .vote-bar {
+        background-size: 100% 22px;
       }
     }
   }

@@ -2,7 +2,7 @@
 module.exports = {
   contracts: {
     TokenLocker: "0x59eD992BC4403FAF2a83C0D9E2213DF4d8d8Eb86",
-    VoteMining: "0x146fb34b61ef8900969f440AbcBF46A203519234",
+    VoteMining: "0x7043276512f45F36593D0B2a755608ba3BF45f68",
   },
   nfts: {
     UniartsNFT: {

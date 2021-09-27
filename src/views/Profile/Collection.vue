@@ -1,6 +1,7 @@
 /** * Created by Lay Hunt on 2021-09-08 14:14:13. */
 <template>
   <div class="collection">
+    <div class="no-data" v-if="list.length <= 0">No data</div>
     <div class="list" v-for="v in list" :key="v">
       <div class="item">
         <img
@@ -30,9 +31,14 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import Progress from "@/components/Progress";
 import MobileConfirm from "@/components/MobileConfirm";
+// import { BigNumber } from "@/plugins/bignumber";
+// import { DAPP_CONFIG } from "@/config";
+// import store from "@/store";
+import http from "@/plugins/http";
+import { notification } from "@/components/Notification";
 export default defineComponent({
   name: "collection",
   components: {
@@ -41,9 +47,32 @@ export default defineComponent({
   },
   setup() {
     // TODO
-    const list = [1, 2, 3];
     const width = 70;
     const visible = ref(false);
+
+    const isLoading = ref(false);
+    const list = ref([]);
+    const requestData = () => {
+      isLoading.value = true;
+      http
+        .userGetMineNFT({})
+        .then((res) => {
+          isLoading.value = false;
+          list.value.splice(0, 0, ...res.list);
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+
+    onMounted(() => {
+      requestData();
+    });
+
     return {
       visible,
       list,
@@ -124,5 +153,13 @@ export default defineComponent({
       width: 30%;
     }
   }
+}
+
+.no-data {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  color: #aaa;
 }
 </style>

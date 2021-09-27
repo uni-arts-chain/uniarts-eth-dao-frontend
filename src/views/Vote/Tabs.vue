@@ -6,8 +6,8 @@
       <div
         class="auction"
         :class="{ active: currentTab == 2 }"
-        @click="currentTab = 2"
-        style="margin-left: 87px"
+        @click="currentTab = 1"
+        style="margin-left: 87px; color: #aaa"
       >
         Auction
       </div>

@@ -1,8 +1,10 @@
 /** * Created by Lay Hunt on 2021-09-08 23:58:32. */
 <template>
   <div class="progress-bar">
-    <div class="label-number" :style="`left: ${value}%`">{{ format(value) }}%</div>
-    <div class="bar" :style="`width: ${value}%`"></div>
+    <div class="label-number" v-if="showLabel" :style="`left: ${value - 1}%`">
+      {{ format(value) }}%
+    </div>
+    <div class="bar" v-if="parseInt(value) > 0" :style="`width: ${value}%`"></div>
     <div class="bg"></div>
   </div>
 </template>
@@ -16,6 +18,10 @@ export default defineComponent({
     value: {
       type: Number,
       default: 0,
+    },
+    showLabel: {
+      type: Boolean,
+      default: true,
     },
   },
   setup() {
@@ -40,9 +46,12 @@ export default defineComponent({
   margin-top: 27px;
 }
 .bar {
+  width: 100%;
+  max-width: 100%;
+  height: 90%;
   background-image: url(~@/assets/images/progress-bar@2x.png);
   background-repeat: no-repeat;
-  background-size: 100% 99%;
+  background-size: 99% 100%;
   background-position: 0px 1px;
   top: 5%;
   left: 2px;

@@ -474,6 +474,7 @@ export default defineComponent({
   .center {
     width: 521px;
     .progress {
+      width: 100%;
       padding-top: 33px;
       margin-bottom: 61px;
     }
