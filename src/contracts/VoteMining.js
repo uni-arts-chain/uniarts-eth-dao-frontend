@@ -70,6 +70,27 @@ class VoteMining {
       callback
     );
   }
+  async getGroupId(nftId) {
+    const uid = await this.getUID(nftId);
+    const groupId = await this.contract.methods.nftGroup(uid).call();
+    return groupId;
+  }
+  async getGroupStartTime(nftId) {
+    const groupId = await this.getGroupId(nftId);
+    const startTime = await this.contract.methods.groups(groupId).call();
+    return startTime;
+  }
+  async getGroupHasFinished(nftId) {
+    const groupId = await this.getGroupId(nftId);
+    const hasFinished = await this.contract.methods.hasFinished(groupId).call();
+    return hasFinished;
+  }
+  async getUID(nftId) {
+    const nftInternalId = await this.contract.methods
+      .nfts(DAPP_CONFIG.nfts.UniartsNFT.address, nftId)
+      .call();
+    return nftInternalId;
+  }
   async getBalances(userAddress, tokenAddress, nftId) {
     const nftInternalId = await this.contract.methods
       .nfts(DAPP_CONFIG.nfts.UniartsNFT.address, nftId)

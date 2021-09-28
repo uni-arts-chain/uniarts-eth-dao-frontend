@@ -51,7 +51,13 @@
               </template>
             </el-dropdown>
           </div>
-          <button class="submit" v-if="isApproved" v-loading="isVoting" @click="onVote">
+          <button
+            class="submit"
+            :disabled="!voteTime || hasFinished"
+            v-if="isApproved"
+            v-loading="isVoting"
+            @click="onVote"
+          >
             Stake
           </button>
           <button class="submit" v-else v-loading="isApproving" @click="onApprove">Approve</button>
@@ -84,7 +90,13 @@
             <input type="number" v-model="bondAmount" placeholder="Amount" />
             <div class="unit">UART</div>
           </div>
-          <button class="submit" v-if="isApproved" v-loading="isBonding" @click="onBonded">
+          <button
+            class="submit"
+            :disabled="!voteTime || hasFinished"
+            v-if="isApproved"
+            v-loading="isBonding"
+            @click="onBonded"
+          >
             Bonded
           </button>
           <button class="submit" v-else v-loading="isApproving" @click="onApprove">Approve</button>
@@ -307,6 +319,15 @@ export default defineComponent({
       getBondedVoted();
     };
 
+    const voteTime = ref(null);
+    const getVoteTime = async (nftId) => {
+      voteTime.value = (await VoteMining.getGroupStartTime(nftId)).toNumber();
+    };
+    const hasFinished = ref(true);
+    const voteHasFinished = async (nftId) => {
+      hasFinished.value = await VoteMining.getGroupHasFinished(nftId);
+    };
+
     const artId = route.params.id;
     const requestData = () => {
       isLoading.value = true;
@@ -323,6 +344,8 @@ export default defineComponent({
           init();
           getTotalNftVotes(res.token_id);
           getTotalGroupVotes(res.token_id);
+          voteHasFinished(res.token_id);
+          getVoteTime(res.token_id);
         })
         .catch((err) => {
           console.log(err);
@@ -423,6 +446,9 @@ export default defineComponent({
       isBonding,
       bondedBalance,
       bondAmount,
+
+      voteTime,
+      hasFinished,
     };
   },
 });
@@ -546,6 +572,10 @@ export default defineComponent({
             color: #595757;
             margin-left: 16px;
           }
+        }
+        .submit[disabled] {
+          opacity: 0.4;
+          cursor: not-allowed;
         }
         .submit {
           display: block;
