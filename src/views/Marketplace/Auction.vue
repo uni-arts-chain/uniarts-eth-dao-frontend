@@ -21,7 +21,6 @@
         <div class="token">
           <span>Token mint:&nbsp;&nbsp;</span>
           <span class="value">{{ auction.auction_min_bid }}</span>
-          Uink
         </div>
         <div class="bid">
           <span>Current High Bid: &nbsp;&nbsp;</span>
@@ -181,22 +180,32 @@ export default defineComponent({
     const startEnd = reactive({});
     const isApproving = ref(false);
     store.dispatch("global/SetNavText", "Auction");
-
-    const makeAnOffer = async () => {
-      isLoading.value = true;
-      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
-
+    const filter = () => {
       if (
-        Number(bidAmount.value) <
+        Number(bidAmount.value) <=
         Number(auction.value.auction_latest_price) + Number(auction.value.auction_min_bid)
       ) {
         isLoading.value = false;
-        return notification.error(
-          `amount cannot be less than${
-            Number(auction.value.auction_latest_price) + Number(auction.value.auction_min_bid)
-          }`
-        );
+        const message = `amount cannot be less than${
+          Number(auction.value.auction_latest_price) + Number(auction.value.auction_min_bid)
+        }`;
+        notification.error(message);
+        throw new Error(message);
       }
+      if (
+        Number(auction.value.auction_latest_price) &&
+        Number(bidAmount.value) >= Number(auction.value.auction_latest_price) * 2
+      ) {
+        isLoading.value = false;
+        const message = "Cannot be greater than 2 times the current bid";
+        notification.error(message);
+        throw new Error(message);
+      }
+    };
+    const makeAnOffer = async () => {
+      filter();
+      isLoading.value = true;
+      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
       const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals);
       const connectedAccount = store.state.user.info.address;
       const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
@@ -204,6 +213,7 @@ export default defineComponent({
       const notifyId = notification.loading("Please wait for the wallet's response");
       console.log("初始化erc20", token);
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
+      // 查看链上权限
       try {
         const data = await currentErc20.allowance(connectedAccount, AuctionMiningAddress);
         if (data.toNumber() !== 0) {
@@ -224,18 +234,31 @@ export default defineComponent({
           auction.value.auction_match_id,
           auction.value.auction_token_index,
           toBN(amount),
-          (a, b) => {
-            console.log(a, b);
+          async (err, txHash) => {
+            if (err) {
+              console.log(err);
+              throw err;
+            }
+            if (txHash) {
+              isLoading.value = true;
+              console.log(txHash);
+              dialogTableVisible.value = false;
+              isApproving.value = false;
+              notification.dismiss(notifyId);
+              notification.success(txHash);
+              router.go(0);
+            }
           }
         )
           .then((res) => {
             console.log(res);
           })
           .catch((error) => {
-            console.log(error);
+            notification.error(error);
           });
       } else {
         try {
+          // 授权
           const receipt = await currentErc20.approveMax(
             connectedAccount,
             AuctionMiningAddress,
@@ -265,6 +288,8 @@ export default defineComponent({
           );
         }
       }
+      isLoading.value = false;
+      notification.dismiss(notifyId);
     };
     // const makeAnOffer = () => {
     //   isLoading.value = true;
