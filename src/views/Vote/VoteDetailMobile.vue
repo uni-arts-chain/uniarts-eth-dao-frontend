@@ -608,7 +608,7 @@ export default defineComponent({
           font-weight: 300;
           text-align: left;
           color: #595757;
-          line-height: 56px;
+          padding: 20px 0;
         }
       }
       .notice {

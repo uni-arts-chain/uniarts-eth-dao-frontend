@@ -22,7 +22,7 @@ export default defineComponent({
     prop: "visible",
     emit: "update",
   },
-  emit: ["update"],
+  emit: ["update", "close"],
   props: {
     visible: {
       type: Boolean,
@@ -43,6 +43,7 @@ export default defineComponent({
 
     const onClose = () => {
       emit("update:visible", false);
+      emit("close");
       dialogVisible.value = false;
     };
     return {

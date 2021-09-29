@@ -4,23 +4,36 @@
     <div class="list">
       <div class="item-list">
         <div class="item" v-for="(v, i) in list" :key="i">
-          <div class="nft"></div>
+          <div class="nft">
+            <img style="max-height: 100%; max-width: 100%" :src="v.img_main_file1" />
+          </div>
           <div class="nft-info">
             <div class="my-votes">
-              <span class="value">My Votes : 200</span>
+              <span class="value">My Votes : {{ v.mine }}</span>
               <div class="bar">
-                <div class="progress" :style="`width: ${width}%;`"></div>
+                <div
+                  class="progress"
+                  :style="`width: ${parseInt((v.mine / (v.group_mine || 1)) * 100)}%;`"
+                ></div>
               </div>
             </div>
             <div class="vote-progress">
               <div class="bar"></div>
-              <div class="vote-bar" :style="`width: ${width}%`"></div>
-              <div class="current-per" :style="`left: ${width}%`">50%</div>
-              <div class="total-per">Total: 45000</div>
+              <div
+                class="vote-bar"
+                :style="`width: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
+              ></div>
+              <!-- <div
+                class="current-per"
+                :style="`left: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
+              >
+                {{ parseInt((v.number / (v.total || 1)) * 100) }}%
+              </div> -->
+              <div class="total-per">Total: {{ v.total }}</div>
             </div>
-            <div class="number-vote">Number of votes: 30000</div>
+            <div class="number-vote">Number of votes: {{ v.number }}</div>
           </div>
-          <button class="vote-button" @click="onRetrieve(1)">Retrieve</button>
+          <button class="vote-button" @click="onRetrieve(v)">Retrieve</button>
         </div>
       </div>
     </div>
@@ -28,6 +41,7 @@
       v-model="dialogTableVisible"
       customClass="retrieve-dialog"
       v-if="!$store.state.global.isMobile"
+      @close="onClose"
       type="small"
     >
       <div class="dialog-content">
@@ -42,7 +56,7 @@
           </div>
           <div class="tab-content" v-if="dialogTab == 1">
             <div class="input-body">
-              <input type="number" placeholder="amount" v-model="inputUnbondAmount" />
+              <input type="number" placeholder="amount" v-model="inputRetrieveAmount" />
               <el-dropdown trigger="click" @command="onItemClick">
                 <span class="unit">
                   {{ currentToken.symbol }}
@@ -57,8 +71,8 @@
                 </template>
               </el-dropdown>
             </div>
-            <div class="balance">{{ availableBalance || 0 }} UART</div>
-            <button @click="unBond" v-loading="isUnbonding">Retrieve</button>
+            <div class="balance">{{ availableVotedBalance || 0 }} UART</div>
+            <button @click="unStake" v-loading="isUnstaking">Retrieve</button>
           </div>
           <div class="tab-content" v-if="dialogTab == 2">
             <div class="input-body">
@@ -67,8 +81,8 @@
                 >UART</span
               >
             </div>
-            <div class="balance">{{ availableBalance || 0 }} UART</div>
-            <button @click="unBond" v-loading="isUnbonding">Retrieve</button>
+            <div class="balance">{{ availableBondedVotedBalance || 0 }} UART</div>
+            <button @click="unVoteBonded" v-loading="isUnBonding">Retrieve</button>
           </div>
         </div>
       </div>
@@ -101,8 +115,8 @@
                 </template>
               </el-dropdown>
             </div>
-            <div class="balance">{{ availableBalance || 0 }} UART</div>
-            <button @click="unBond" v-loading="isUnbonding">Retrieve</button>
+            <div class="balance">{{ availableVotedBalance || 0 }} UART</div>
+            <button @click="unStake" v-loading="isUnstaking">Retrieve</button>
           </div>
           <div class="tab-content" v-if="dialogTab == 2">
             <div class="input-body">
@@ -111,8 +125,8 @@
                 >UART</span
               >
             </div>
-            <div class="balance">{{ availableBalance || 0 }} UART</div>
-            <button @click="unBond" v-loading="isUnbonding">Retrieve</button>
+            <div class="balance">{{ availableBondedVotedBalance || 0 }} UART</div>
+            <button @click="unVoteBonded" v-loading="isUnBonding">Retrieve</button>
           </div>
         </div>
       </div>
@@ -121,10 +135,16 @@
 </template>
 
 <script>
-import { defineComponent, ref, reactive } from "vue";
+import { defineComponent, ref, reactive, onMounted, watch, computed } from "vue";
+import http from "@/plugins/http";
 import Dialog from "@/components/Dialog";
 import MobileConfirm from "@/components/MobileConfirm";
+import { notification } from "@/components/Notification";
 import { DAPP_CONFIG } from "@/config";
+import { Erc20 } from "@/contracts";
+import VoteMining from "@/contracts/VoteMining";
+import { BigNumber } from "bignumber.js";
+import store from "@/store";
 export default defineComponent({
   name: "votes",
   components: {
@@ -133,17 +153,32 @@ export default defineComponent({
   },
   setup() {
     // TODO
-    const list = [1, 2, 3, 4];
-    const width = 52;
-    const onRetrieve = () => {
-      dialogTableVisible.value = true;
-      // router.push("/vote/" + id);
+    const list = ref([]);
+    const isLoading = ref(false);
+    const onRequestData = () => {
+      isLoading.value = true;
+      http
+        .userGetMyVotes({})
+        .then((res) => {
+          isLoading.value = false;
+          list.value.splice(0, 0, ...res.list);
+        })
+        .catch((err) => {
+          isLoading.value = false;
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
     };
-    const dialogTab = ref(1);
-    const dialogTableVisible = ref(false);
 
+    onMounted(() => {
+      onRequestData();
+    });
+
+    const connectedAccount = store.state.user.info.address;
     const tokenList = Object.values(DAPP_CONFIG.tokens);
     let currentToken = reactive({});
+    const availableVotedBalance = ref(0);
     tokenList.length > 0
       ? Object.keys(tokenList[0]).forEach((v) => (currentToken[v] = tokenList[0][v]))
       : null;
@@ -153,12 +188,134 @@ export default defineComponent({
       currentToken.decimals = token.decimals;
     };
 
+    const curNft = ref({});
+    const getStakeVoted = async () => {
+      let votedBalance = await VoteMining.getBalances(
+        connectedAccount,
+        currentToken.address,
+        curNft.value.token_id
+      );
+      availableVotedBalance.value = new BigNumber(votedBalance.available)
+        .plus(votedBalance.freezed)
+        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .toString();
+    };
+    const availableBondedVotedBalance = ref(0);
+    const getBondedVoted = async () => {
+      let votedBalance = await VoteMining.getVotedBalances(connectedAccount, curNft.value.token_id);
+      availableBondedVotedBalance.value = new BigNumber(votedBalance.available)
+        .plus(votedBalance.freezed)
+        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .toString();
+    };
+
+    const currentErc20 = computed(() => {
+      return new Erc20(currentToken.address, currentToken.symbol, currentToken.decimals);
+    });
+
+    watch(currentErc20, () => {
+      getStakeVoted();
+    });
+
+    const onRetrieve = (nft) => {
+      curNft.value = nft;
+      getBondedVoted();
+      getStakeVoted();
+      dialogTableVisible.value = true;
+    };
+    const dialogTab = ref(1);
+    const dialogTableVisible = ref(false);
+
     const inputRetrieveAmount = ref(null);
     const inputUnbondAmount = ref(null);
 
+    const isUnstaking = ref(false);
+    const unStake = async () => {
+      isUnstaking.value = true;
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      console.log(
+        connectedAccount,
+        DAPP_CONFIG.nfts.UniartsNFT.address,
+        curNft.value.token_id,
+        currentToken.address,
+        new BigNumber(inputRetrieveAmount.value).shiftedBy(currentToken.decimals)
+      );
+      VoteMining.unstake(
+        connectedAccount,
+        DAPP_CONFIG.nfts.UniartsNFT.address,
+        curNft.value.token_id,
+        currentToken.address,
+        inputRetrieveAmount.value,
+        async (err, txHash) => {
+          isUnstaking.value = false;
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          if (txHash) {
+            console.log(txHash);
+            inputRetrieveAmount.value = null;
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+          }
+        }
+      )
+        .then(async (receipt) => {
+          console.log("receipt: ", receipt);
+        })
+        .catch((err) => {
+          console.log(err);
+          isUnstaking.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+
+    const isUnBonding = ref(false);
+    const unVoteBonded = async () => {
+      isUnBonding.value = true;
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      VoteMining.unvoteBonded(
+        connectedAccount,
+        DAPP_CONFIG.nfts.UniartsNFT.address,
+        curNft.value.token_id,
+        new BigNumber(inputUnbondAmount.value).shiftedBy(currentToken.decimals),
+        async (err, txHash) => {
+          isUnBonding.value = false;
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          if (txHash) {
+            console.log(txHash);
+            inputUnbondAmount.value = null;
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+          }
+        }
+      )
+        .then(async (receipt) => {
+          console.log("receipt: ", receipt);
+        })
+        .catch((err) => {
+          console.log(err);
+          isUnBonding.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+
+    const onClose = () => {
+      inputRetrieveAmount.value = null;
+      inputUnbondAmount.value = null;
+    };
+
     return {
       list,
-      width,
       onRetrieve,
       dialogTableVisible,
       dialogTab,
@@ -170,6 +327,16 @@ export default defineComponent({
 
       inputRetrieveAmount,
       inputUnbondAmount,
+      availableBondedVotedBalance,
+      availableVotedBalance,
+
+      curNft,
+      unStake,
+      unVoteBonded,
+      isUnstaking,
+      isUnBonding,
+
+      onClose,
     };
   },
 });
@@ -190,7 +357,10 @@ export default defineComponent({
   .nft {
     width: 180px;
     height: 124px;
-    background: black;
+    /* background: black; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .my-votes {
     display: flex;
@@ -232,7 +402,7 @@ export default defineComponent({
       height: 100%;
       width: 40%;
       background: url(~@/assets/images/vote-progress@2x.png) no-repeat;
-      background-size: 707px 22px;
+      background-size: 390px 22px;
     }
     .current-per {
       font-size: 12px;
@@ -452,6 +622,9 @@ export default defineComponent({
         width: 80%;
       }
     }
+  }
+  .list .vote-progress .vote-bar {
+    background-size: 335px 22px;
   }
 }
 </style>

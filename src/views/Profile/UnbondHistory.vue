@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
+import http from "@/plugins/http";
 import Dialog from "@/components/Dialog";
 import MobileConfirm from "@/components/MobileConfirm";
 export default defineComponent({
@@ -49,6 +50,21 @@ export default defineComponent({
     const isUnbonding = ref(false);
     const bondedBalance = ref(0);
 
+    const onRequestData = () => {
+      http
+        .userGetUnbindHistory({})
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
+
+    onMounted(() => {
+      onRequestData();
+    });
+
     const onShowDialog = () => {
       dialogTableVisible.value = true;
     };
@@ -56,6 +72,7 @@ export default defineComponent({
     const onWithdraw = () => {
       // dialogTableVisible.value = true;
     };
+
     return {
       dialogTableVisible,
       isUnbonding,
