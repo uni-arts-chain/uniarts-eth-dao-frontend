@@ -43,6 +43,10 @@ export class Erc20 {
     return new BigNumber(allowedBalance).div(precision);
   }
 
+  async getApproved(tokenId) {
+    return await this.contract.methods.getApproved(tokenId).call();
+  }
+
   async approveMax(sender, spender, callback) {
     var gasPrice = await this.gasPrice();
     var tx = this.contract.methods.approve(spender, MAX_UINT256);

@@ -82,6 +82,50 @@ const apiList = [
     },
     options: {},
   },
+  {
+    name: "getAuctions",
+    method: "GET",
+    desc: "获取市场-定时拍卖",
+    path: "/auctions",
+    mockPath: "/auctions",
+    params: {
+      sn: "",
+    },
+    options: {},
+  },
+  {
+    name: "getAuctionById",
+    method: "GET",
+    desc: "通过id获取市场-定时拍卖",
+    path: "/auctions/{:id}",
+    mockPath: "/auctions/{:id}",
+    params: {
+      sn: "",
+    },
+    options: {},
+  },
+  {
+    name: "getAuctionBidsById",
+    method: "GET",
+    desc: "通过id获取市场定时拍卖的竞价历史记录",
+    path: "/auctions/{:id}/bids",
+    mockPath: "/auctions/{:id}/bids",
+    params: {
+      sn: "",
+    },
+    options: {},
+  },
+  {
+    name: "getAuctionsGroup",
+    method: "GET",
+    desc: "通过id获取市场定时拍卖的竞价历史记录",
+    path: "/auctions/group",
+    mockPath: "/auctions/group",
+    params: {
+      sn: "",
+    },
+    options: {},
+  },
 ];
 
 export default apiList;
