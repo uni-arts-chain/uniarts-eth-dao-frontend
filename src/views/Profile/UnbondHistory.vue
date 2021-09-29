@@ -3,40 +3,51 @@
   <div class="history">
     <el-row class="head">
       <el-col :span="4" class="item">Token</el-col>
-      <el-col :span="6" class="item">State</el-col>
-      <el-col :span="6" class="item">Amount</el-col>
-      <el-col :span="8" class="item">Date</el-col>
+      <el-col :span="5" class="item">State</el-col>
+      <el-col :span="8" class="item">Amount</el-col>
+      <el-col :span="7" class="item">Date</el-col>
     </el-row>
     <el-row class="body">
-      <el-row class="row">
-        <el-col :span="4" class="item"> <span>UART</span></el-col>
-        <el-col :span="6" class="item"><span>Unbonding</span></el-col>
-        <el-col :span="6" class="item">
-          <span style="text-align: right">30</span
+      <el-row class="row" v-for="(v, i) in list" :key="i">
+        <el-col :span="4" class="item">
+          <span>{{ v.token }}</span></el-col
+        >
+        <el-col :span="5" class="item"
+          ><span>{{ v.state }}</span></el-col
+        >
+        <el-col :span="8" class="item">
+          <span style="text-align: right">{{ v.amount }}</span
           ><button class="operate" @click="onShowDialog">Withdraw</button>
         </el-col>
-        <el-col :span="8" class="item"><span>2021-03-21</span></el-col>
+        <el-col :span="7" class="item"
+          ><span>{{ format(v.date) }}</span></el-col
+        >
       </el-row>
     </el-row>
     <Dialog v-model="dialogTableVisible" v-if="!$store.state.global.isMobile" type="small">
       <div class="dialog-content">
         <div class="balance">{{ bondedBalance }} UART</div>
-        <button @click="onWithdraw" v-loading="isUnbonding">Withdraw</button>
+        <button @click="onWithdraw(v.index)" v-loading="isWithdrawing">Withdraw</button>
       </div>
     </Dialog>
     <MobileConfirm v-else v-model="dialogTableVisible">
       <div class="confirm-content">
         <div class="balance">{{ bondedBalance }} UART</div>
-        <button @click="onWithdraw" v-loading="isUnbonding">Withdraw</button>
+        <button @click="onWithdraw(v.index)" v-loading="isWithdrawing">Withdraw</button>
       </div>
     </MobileConfirm>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
+import http from "@/plugins/http";
+import { notification } from "@/components/Notification";
 import Dialog from "@/components/Dialog";
 import MobileConfirm from "@/components/MobileConfirm";
+import { DateFormat } from "@/utils";
+import store from "@/store";
+import VoteMining from "@/contracts/VoteMining";
 export default defineComponent({
   name: "history",
   components: {
@@ -49,19 +60,80 @@ export default defineComponent({
     const isUnbonding = ref(false);
     const bondedBalance = ref(0);
 
-    const onShowDialog = () => {
-      dialogTableVisible.value = true;
+    const list = ref([]);
+    const isLoading = ref(false);
+    const currentIndex = ref(null);
+    const onRequestData = () => {
+      isLoading.value = true;
+      http
+        .userGetUnbindHistory({})
+        .then((res) => {
+          isLoading.value = false;
+          list.value = res.list;
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
     };
 
-    const onWithdraw = () => {
-      // dialogTableVisible.value = true;
+    onMounted(() => {
+      onRequestData();
+    });
+
+    const onShowDialog = (index) => {
+      dialogTableVisible.value = true;
+      currentIndex.value = index;
     };
+
+    const connectedAccount = store.state.user.info.address;
+    const isWithdrawing = ref(false);
+    const onWithdraw = async () => {
+      isWithdrawing.value = true;
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      VoteMining.redeemUnbonding(connectedAccount, currentIndex.value, async (err, txHash) => {
+        isWithdrawing.value = false;
+        if (err) {
+          console.log(err);
+          throw err;
+        }
+        if (txHash) {
+          console.log(txHash);
+          notification.dismiss(notifyId);
+          notification.success(txHash);
+        }
+      })
+        .then(async (receipt) => {
+          console.log("receipt: ", receipt);
+        })
+        .catch((err) => {
+          console.log(err);
+          isWithdrawing.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+
+    const format = (time) => {
+      return DateFormat(time);
+    };
+
     return {
       dialogTableVisible,
       isUnbonding,
       bondedBalance,
       onWithdraw,
       onShowDialog,
+
+      format,
+      list,
+      currentIndex,
+      isWithdrawing,
     };
   },
 });

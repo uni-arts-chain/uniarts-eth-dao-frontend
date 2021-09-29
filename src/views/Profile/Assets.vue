@@ -168,6 +168,10 @@ export default defineComponent({
     const inputUnbondAmount = ref(null);
     const unBond = async () => {
       const amount = new BigNumber(inputUnbondAmount.value);
+      if (amount.isNaN() || amount.isZero()) {
+        notification.error("Invalid value");
+        return;
+      }
       if (amount.isNaN() || amount.lt(0)) {
         notification.error("Invalid amount");
         return;

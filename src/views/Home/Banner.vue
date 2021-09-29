@@ -5,48 +5,80 @@
     <div class="body">
       <div class="art">
         <div class="art-resource">
-          <img
+          <AdaptiveImage
             class="banner-image"
-            src="https://ipfs.pixura.io/ipfs/QmbBmVPHkXQFcUHUw1ETKsq3m51iUjCNkJwop9L44uiAmV/FinalWithGradient.jpg"
+            width="100%"
+            height="100%"
+            :isOrigin="false"
+            :cover="recommmedInfo.img_main_file1"
+            :url="recommmedInfo.property_url"
           />
         </div>
       </div>
       <div class="text">
         <img src="@/assets/images/banner-logo@2x.png" />
         <h4>Select the most in demand artwork NFT</h4>
-        <button>START VOTE</button>
+        <router-link :to="`/vote/${recommmedInfo.id}`">START VOTE</router-link>
       </div>
     </div>
     <div class="artist-info">
       <div class="avatar">
         <div class="label">ARTIST:</div>
         <div class="avatar-image">
-          <router-link to="/artist/1"
-            ><img src="https://avatars.githubusercontent.com/u/87279659?v=4"
-          /></router-link>
-
-          <div class="name">Kyle Bighead</div>
+          <router-link to="/artist/1">
+            <img v-if="recommmedInfo.artist_avatar" :src="recommmedInfo.artist_avatar" />
+            <img v-else src="@/assets/images/avatar@2x.png" />
+          </router-link>
+          <div class="name">{{ recommmedInfo.artist_name }}</div>
         </div>
       </div>
-      <div class="info">
+      <!-- <div class="info">
         <div class="vote-number">Number of votes: 500 Voting period:</div>
         <div class="vote-date">
           <img src="@/assets/images/date-clock.png" />
           <div class="date">2021/09/01-2021/09/08</div>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
+import http from "@/plugins/http";
+import { notification } from "@/components/Notification";
+import AdaptiveImage from "@/components/AdaptiveImage";
 export default defineComponent({
   name: "banner",
+  components: {
+    AdaptiveImage,
+  },
   setup() {
     // TODO
 
-    return {};
+    const isLoading = ref(false);
+    const recommmedInfo = ref({});
+    const requestData = () => {
+      isLoading.value = false;
+      http
+        .globalGetRecommend({})
+        .then((res) => {
+          isLoading.value = false;
+          recommmedInfo.value = res;
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(err.head ? err.head.msg : err.message);
+        });
+    };
+
+    onMounted(() => {
+      requestData();
+    });
+    return {
+      recommmedInfo,
+    };
   },
 });
 </script>
@@ -89,7 +121,7 @@ export default defineComponent({
       line-height: 41px;
       margin-bottom: 81px;
     }
-    button {
+    a {
       background: #000000;
       border-radius: 7px;
       font-size: 12px;
@@ -103,10 +135,8 @@ export default defineComponent({
   }
 }
 .art-resource {
-  .banner-image {
-    width: 468px;
-    height: 468px;
-  }
+  width: 468px;
+  height: 468px;
 }
 .artist-info {
   padding-left: 30px;

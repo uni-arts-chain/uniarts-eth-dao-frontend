@@ -237,6 +237,11 @@ export default defineComponent({
     const isVoting = ref(false);
     const stakeAmount = ref(null);
     const onVote = () => {
+      const amount = new BigNumber(stakeAmount.value);
+      if (amount.isNaN() || amount.isZero()) {
+        notification.error("Invalid value");
+        return;
+      }
       isVoting.value = true;
       console.log(
         connectedAccount,
@@ -250,7 +255,7 @@ export default defineComponent({
         DAPP_CONFIG.nfts.UniartsNFT.address,
         artInfo.token_id,
         currentToken.address,
-        new BigNumber(stakeAmount.value).shiftedBy(currentToken.decimals),
+        amount.shiftedBy(currentToken.decimals),
         async (err, txHash) => {
           isVoting.value = false;
           if (err) {
@@ -362,6 +367,11 @@ export default defineComponent({
     const isBonding = ref(false);
     const bondAmount = ref(null);
     const onBonded = () => {
+      const amount = new BigNumber(bondAmount.value);
+      if (amount.isNaN() || amount.isZero()) {
+        notification.error("Invalid value");
+        return;
+      }
       isBonding.value = true;
       console.log(connectedAccount, voteMiningAddress);
       const notifyId = notification.loading("Please wait for the wallet's response");
@@ -369,7 +379,7 @@ export default defineComponent({
         connectedAccount,
         DAPP_CONFIG.nfts.UniartsNFT.address,
         artInfo.token_id,
-        new BigNumber(bondAmount.value).shiftedBy(currentToken.decimals),
+        amount.shiftedBy(currentToken.decimals),
         async (err, txHash) => {
           isBonding.value = false;
           if (err) {

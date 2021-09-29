@@ -44,11 +44,6 @@ const routes = [
     ],
   },
   {
-    path: "/withdraw",
-    name: "withdraw",
-    component: () => import(/* webpackChunkName: "widthdraw" */ "../views/Profile/Withdraw.vue"),
-  },
-  {
     path: "/artist/:id",
     name: "artist",
     component: () => import(/* webpackChunkName: "artist" */ "../views/Artist/Index.vue"),

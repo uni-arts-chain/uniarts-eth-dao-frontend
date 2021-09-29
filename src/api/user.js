@@ -84,6 +84,24 @@ const apiList = [
     params: {},
     options: {},
   },
+  {
+    name: "getUnbindHistory",
+    method: "GET",
+    desc: "我的解绑",
+    path: "/arts/unbind",
+    mockPath: "/arts/unbind",
+    params: {},
+    options: {},
+  },
+  {
+    name: "getMyVotes",
+    method: "GET",
+    desc: "我的解绑",
+    path: "/arts/my_voting",
+    mockPath: "/arts/my_voting",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;

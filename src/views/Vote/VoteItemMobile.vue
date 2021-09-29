@@ -115,6 +115,10 @@ export default defineComponent({
       box-shadow: 3px 4px 9px 0px rgba(34, 24, 20, 0.52);
     }
     .username {
+      width: 67px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-size: 14px;
       font-family: Montserrat-Regular;
       font-weight: 300;
@@ -193,6 +197,7 @@ export default defineComponent({
   margin-left: 0;
   width: 100%;
   .title {
+    margin-top: 20px;
     border-bottom: none;
     font-size: 23px;
     font-weight: 600;
@@ -232,6 +237,9 @@ export default defineComponent({
       font-size: 16px;
       height: 80px;
       overflow: hidden;
+      width: 220px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     .user-more {
       text-align: right;

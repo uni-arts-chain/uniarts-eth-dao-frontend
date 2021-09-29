@@ -126,6 +126,15 @@ const apiList = [
     },
     options: {},
   },
+  {
+    name: "getRecommend",
+    method: "GET",
+    desc: "获取首页推荐",
+    path: "/arts/recommend",
+    mockPath: "/arts/recommend",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;
