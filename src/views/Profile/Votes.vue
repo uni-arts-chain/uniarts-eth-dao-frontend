@@ -231,6 +231,11 @@ export default defineComponent({
 
     const isUnstaking = ref(false);
     const unStake = async () => {
+      const amount = new BigNumber(inputRetrieveAmount.value);
+      if (amount.isNaN() || amount.isZero()) {
+        notification.error("Invalid value");
+        return;
+      }
       isUnstaking.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       console.log(
@@ -238,14 +243,14 @@ export default defineComponent({
         DAPP_CONFIG.nfts.UniartsNFT.address,
         curNft.value.token_id,
         currentToken.address,
-        new BigNumber(inputRetrieveAmount.value).shiftedBy(currentToken.decimals)
+        amount.shiftedBy(currentToken.decimals)
       );
       VoteMining.unstake(
         connectedAccount,
         DAPP_CONFIG.nfts.UniartsNFT.address,
         curNft.value.token_id,
         currentToken.address,
-        inputRetrieveAmount.value,
+        amount.shiftedBy(currentToken.decimals),
         async (err, txHash) => {
           isUnstaking.value = false;
           if (err) {
@@ -275,13 +280,18 @@ export default defineComponent({
 
     const isUnBonding = ref(false);
     const unVoteBonded = async () => {
+      const amount = new BigNumber(inputUnbondAmount.value);
+      if (amount.isNaN() || amount.isZero()) {
+        notification.error("Invalid value");
+        return;
+      }
       isUnBonding.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       VoteMining.unvoteBonded(
         connectedAccount,
         DAPP_CONFIG.nfts.UniartsNFT.address,
         curNft.value.token_id,
-        new BigNumber(inputUnbondAmount.value).shiftedBy(currentToken.decimals),
+        amount.shiftedBy(currentToken.decimals),
         async (err, txHash) => {
           isUnBonding.value = false;
           if (err) {

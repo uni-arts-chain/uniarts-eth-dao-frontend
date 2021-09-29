@@ -463,7 +463,7 @@ export default defineComponent({
         width: 80%;
       }
       .vote-bar {
-        background-size: 100% 22px;
+        background-size: 335px 22px;
       }
     }
   }

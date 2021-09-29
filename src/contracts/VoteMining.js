@@ -106,9 +106,28 @@ class VoteMining {
       callback
     );
   }
+  async redeemUnbonding(sender, index, callback) {
+    var gasPrice = await this.gasPrice();
+    var tx = this.contract.methods.redeemUnbonding(index);
+
+    var gasLimit = await tx.estimateGas({
+      value: 0,
+      from: sender,
+      to: this.address,
+    });
+    return tx.send(
+      {
+        from: sender,
+        gasPrice: gasPrice,
+        gas: Math.round(gasLimit * 1.1),
+      },
+      callback
+    );
+  }
   async getGroupId(nftId) {
     const uid = await this.getUID(nftId);
     const groupId = await this.contract.methods.nftGroup(uid).call();
+    console.log("groupId: ", groupId);
     return groupId;
   }
   async getGroupStartTime(nftId) {

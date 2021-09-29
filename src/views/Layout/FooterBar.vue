@@ -24,7 +24,12 @@
         </div>
       </div>
       <div class="info">
-        <img class="uniarts-logo" src="@/assets/images/bottom-uniarts@2x.png" />
+        <div class="uniarts-logo">
+          <img style="height: 25px" src="@/assets/images/uniarts.png" />
+          <img style="height: 25px" src="@/assets/images/polygon.png" />
+          <img style="height: 25px" src="@/assets/images/acid.png" />
+          <img style="height: 34px" src="@/assets/images/art.png" />
+        </div>
         <a
           href="https://github.com/uni-arts-chain/UniArts-white-paper/blob/master/UniArts_White_Paper.pdf"
           target="_blank"
@@ -92,19 +97,25 @@ export default defineComponent({
   }
 }
 .info {
-  img.uniarts-logo {
-    margin-top: 30px;
-    width: 125px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  .uniarts-logo {
     height: 20px;
+    display: flex;
+    align-items: center;
+    img {
+      margin: 0 20px;
+    }
   }
   .white-page {
+    margin-top: 20px;
     display: block;
     width: 422px;
     height: 71px;
     background: url(~@/assets/images/white-page@2x.png);
     background-size: 100% 111px;
     position: relative;
-    left: -50px;
     padding: 30px 50px 0 50px;
     color: white;
   }
