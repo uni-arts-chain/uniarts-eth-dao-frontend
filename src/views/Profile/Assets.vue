@@ -15,12 +15,13 @@
           ><span style="text-align: center">{{ v.voted }}</span></el-col
         >
         <el-col :span="7" class="item"
-          ><span>{{ v.bound }}</span> <button @click="onShowDialog">unBond</button></el-col
+          ><span style="text-align: center">{{ v.bound }}</span>
+          <button v-if="v.token === 'UART'" @click="onShowDialog">unBond</button></el-col
         >
         <el-col :span="7" class="item"
-          ><span>{{ v.available }}</span>
-          <button @click="onShowWithdrawDialog">Withdraw</button></el-col
-        >
+          ><span style="text-align: center">{{ v.available }}</span>
+          <!-- <button @click="onShowWithdrawDialog">Withdraw</button> -->
+        </el-col>
       </el-row>
     </el-row>
     <div class="notices">
@@ -47,7 +48,7 @@
       <div class="item-col">
         <span class="label">Available</span>
         <span class="value">{{ v.available }}</span>
-        <button @click="onShowWithdrawDialog">Withdraw</button>
+        <!-- <button @click="onShowWithdrawDialog">Withdraw</button> -->
       </div>
     </div>
     <div class="notices">

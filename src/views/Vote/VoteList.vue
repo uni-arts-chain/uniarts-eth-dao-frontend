@@ -11,12 +11,13 @@
         </button>
         <div class="content">
           <h2>Vote Round</h2>
-          <div class="date">
-            <img src="@/assets/images/date-clock.png" /> 6 Days 23 Hour 59 Minute 59 Second
+          <div class="date" v-if="countdownTime(voteInfo.start_at, voteInfo.end_at)">
+            <img src="@/assets/images/date-clock.png" />
+            {{ countdownTime(voteInfo.start_at, voteInfo.end_at) }}
           </div>
-          <div class="amount">
+          <!-- <div class="amount">
             <span class="label">Vote Payouts</span> 30.000 <span class="unit">Uink</span>
-          </div>
+          </div> -->
           <!-- <button
             v-if="$store.state.global.isMobile"
             class="auction-button"
@@ -35,7 +36,7 @@
       <div class="container item-list">
         <div class="item" v-for="(v, i) in list" :key="i">
           <div class="nft">
-            <img :src="v.img" />
+            <img :src="v.img_main_file1" />
           </div>
           <div class="nft-info">
             <div class="my-votes">
@@ -43,15 +44,21 @@
               <div class="bar">
                 <div
                   class="progress"
-                  :style="`width: ${parseInt(v.mine / v.group_mine) * 100}%;`"
+                  :style="`width: ${parseInt((v.mine / (v.group_mine || 1)) * 100)}%;`"
                 ></div>
               </div>
             </div>
             <div class="vote-progress">
               <div class="bar"></div>
-              <div class="vote-bar" :style="`width: ${parseInt(v.number / v.total) * 100}%`"></div>
-              <div class="current-per" :style="`left: ${parseInt(v.number / v.total) * 100}%`">
-                {{ parseInt(v.number / v.total) * 100 }}%
+              <div
+                class="vote-bar"
+                :style="`width: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
+              ></div>
+              <div
+                class="current-per"
+                :style="`left: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
+              >
+                {{ parseInt((v.number / (v.total || 1)) * 100) }}%
               </div>
               <div class="total-per">Total: {{ v.total }}</div>
             </div>
@@ -82,11 +89,12 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, reactive } from "vue";
 import store from "@/store";
 import { useRouter } from "vue-router";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
+import { DateFormatCountdown } from "@/utils";
 export default defineComponent({
   name: "list",
   setup() {
@@ -98,6 +106,7 @@ export default defineComponent({
 
     const isLoading = ref(false);
     const list = ref([]);
+    const voteInfo = reactive({});
     const requestData = () => {
       isLoading.value = true;
       http
@@ -106,20 +115,17 @@ export default defineComponent({
         })
         .then((res) => {
           isLoading.value = false;
-          list.value.splice(0, 0, ...res.list);
           if (res.list.length > 0) {
+            voteInfo.end_at = res.list[0].end_at;
+            voteInfo.img = res.list[0].img;
+            voteInfo.start_at = res.list[0].start_at;
+            voteInfo.title = res.list[0].title;
             http
               .globalGetGroupVoted({
                 sn: res.list[0].sn,
               })
               .then((result) => {
-                result.list.forEach((v, i) => {
-                  list.value[i].mine = v.mine;
-                  list.value[i].group_mine = v.group_mine;
-                  list.value[i].total = v.total;
-                  list.value[i].number = v.number;
-                  list.value[i].id = v.id;
-                });
+                list.value.splice(0, 0, ...result.list);
               })
               .catch((err) => {
                 console.log(err);
@@ -156,6 +162,12 @@ export default defineComponent({
       router.push("/vote/" + id);
     };
 
+    const countdownTime = (startTime, endTime) => {
+      let value = DateFormatCountdown(startTime * 10, endTime * 10);
+      console.log(value);
+      return value ? `${value.day} Day ${value.hour} Hours ${value.minute} Minute` : "";
+    };
+
     return {
       list,
       width,
@@ -163,6 +175,9 @@ export default defineComponent({
       goAuctionQueue,
       onBack,
       goVoteDetail,
+      voteInfo,
+
+      countdownTime,
     };
   },
 });
@@ -276,7 +291,8 @@ export default defineComponent({
     justify-content: center;
     /* background: black; */
     img {
-      width: 100%;
+      /* width: 100%; */
+      height: 100%;
     }
   }
   .my-votes {

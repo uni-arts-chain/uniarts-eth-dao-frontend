@@ -129,7 +129,7 @@
 
 <script>
 import { defineComponent, ref, onMounted, computed, reactive, watch } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { BigNumber } from "@/plugins/bignumber";
 import VoteDetailMobile from "@/views/Vote/VoteDetailMobile";
 import VoteProgress from "@/components/Progress";
@@ -151,6 +151,7 @@ export default defineComponent({
   setup() {
     // TODO
     const route = useRoute();
+    const router = useRouter();
     const curTab = ref(1);
     const isLoading = ref(false);
     let artInfo = reactive({});
@@ -195,6 +196,10 @@ export default defineComponent({
       getStakeVoted();
     });
     const onApprove = () => {
+      if (!connectedAccount) {
+        router.push("/login");
+        return;
+      }
       isApproving.value = true;
       console.log(connectedAccount, voteMiningAddress);
       const notifyId = notification.loading("Please wait for the wallet's response");
@@ -321,7 +326,7 @@ export default defineComponent({
 
     const voteTime = ref(null);
     const getVoteTime = async (nftId) => {
-      voteTime.value = (await VoteMining.getGroupStartTime(nftId)).toNumber();
+      voteTime.value = new BigNumber(await VoteMining.getGroupStartTime(nftId)).toNumber();
     };
     const hasFinished = ref(true);
     const voteHasFinished = async (nftId) => {

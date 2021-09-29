@@ -85,7 +85,9 @@ export default defineComponent({
     const onRequestData = () => {
       isLoading.value = true;
       http
-        .globalGetVoteList({})
+        .globalGetVoteList({
+          type: "voting",
+        })
         .then((res) => {
           isLoading.value = false;
           voteList.value = res.list;
