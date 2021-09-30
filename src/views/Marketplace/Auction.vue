@@ -67,16 +67,16 @@
       </div>
       <div class="username">{{ auction.artist_name }}</div>
       <div class="user-desc">{{ auction.artist_info }}</div>
-      <router-link class="more" :to="`/artist/${auction.artist_uid}`">More ></router-link>
+      <router-link :to="`/artist/${auction.artist_uid}`" class="more">More ></router-link>
     </div>
     <Dialog v-model="buyDialogVisible" type="small">
       <div class="dialog-content">
         <div class="input-body">
-          <input v-model="bidAmount" placeholder="amount" type="number" />
+          <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
-        <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "OFFER" : "APPROVE" }}
+        <button v-loading="isLoading" @click="buyAuction">
+          {{ isApproving ? "BUY" : "APPROVE" }}
         </button>
       </div>
     </Dialog>
@@ -265,7 +265,76 @@ export default defineComponent({
               isApproving.value = false;
               notification.dismiss(notifyId);
               notification.success(txHash);
-              router.go(0);
+              setTimeout(() => router.go(0), 3000);
+            }
+          }
+        )
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((error) => {
+            notification.dismiss(notification);
+            notification.error(error);
+          });
+      } else {
+        try {
+          // 授权
+          const receipt = await currentErc20.approveMax(
+            connectedAccount,
+            AuctionMiningAddress,
+            async (err, txHash) => {
+              if (err) {
+                console.log(err);
+                throw err;
+              }
+              if (txHash) {
+                isLoading.value = true;
+                console.log(txHash);
+                isApproving.value = false;
+                notification.dismiss(notifyId);
+                notification.success(txHash);
+              }
+            }
+          );
+          console.log("receipt: ", receipt);
+          this.makeAnOffer();
+        } catch (err) {
+          console.log(err);
+          isApproving.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        }
+      }
+      isLoading.value = false;
+      notification.dismiss(notifyId);
+    };
+    const buyAuction = async () => {
+      isLoading.value = true;
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      const connectedAccount = store.state.user.info.address;
+      const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
+      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
+
+      const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
+      if (isApproving.value) {
+        Auction.playerFixedPrice(
+          auction.value.auction_match_id,
+          auction.value.auction_token_index,
+          async (err, txHash) => {
+            if (err) {
+              console.log(err);
+              throw err;
+            }
+            if (txHash) {
+              isLoading.value = true;
+              console.log(txHash);
+              buyDialogVisible.value = false;
+              isApproving.value = false;
+              notification.dismiss(notifyId);
+              notification.success(txHash);
+              setTimeout(() => router.go(-1), 3000);
             }
           }
         )
@@ -364,6 +433,7 @@ export default defineComponent({
       openMakeOfferDialog,
       openByeDiaLog,
       buyDialogVisible,
+      buyAuction,
     };
   },
 });

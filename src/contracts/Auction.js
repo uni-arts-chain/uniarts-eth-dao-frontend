@@ -38,24 +38,24 @@ class Auction {
     );
   }
 
-  // async playerFixedPrice(matchId, tokenIndex, amount, callback) {
-  //   const gasPrice = await this.gasPrice();
-  //   const tx = this.contract.methods.player_fixed_price(matchId, tokenIndex);
-  //   const sender = store.state.user.info.address;
-  //   const gasLimit = await tx.estimateGas({
-  //     value: 0,
-  //     from: sender,
-  //     to: this.address,
-  //   });
-  //   return tx.send(
-  //     {
-  //       from: sender,
-  //       gasPrice: gasPrice,
-  //       gas: Math.round(gasLimit * 1.1),
-  //     },
-  //     callback
-  //   );
-  // }
+  async playerFixedPrice(matchId, tokenIndex, callback) {
+    const gasPrice = await this.gasPrice();
+    const tx = this.contract.methods.player_fixed_price(matchId, tokenIndex);
+    const sender = store.state.user.info.address;
+    const gasLimit = await tx.estimateGas({
+      value: 0,
+      from: sender,
+      to: this.address,
+    });
+    return tx.send(
+      {
+        from: sender,
+        gasPrice: gasPrice,
+        gas: Math.round(gasLimit * 1.1),
+      },
+      callback
+    );
+  }
 
   async gasPrice() {
     return await this.web3.eth.getGasPrice();

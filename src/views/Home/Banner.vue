@@ -64,6 +64,7 @@ export default defineComponent({
         .globalGetRecommend({})
         .then((res) => {
           isLoading.value = false;
+          console.log(res);
           recommmedInfo.value = res;
         })
         .catch((err) => {
