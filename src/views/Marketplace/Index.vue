@@ -10,12 +10,14 @@
       <div class="title">Timed Auctions</div>
       <div class="list">
         <div v-for="item in auctionList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/auction/${item.auction_id}`">
+          <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
             <img :src="item.img_main_file1" class="item-img" />
           </router-link>
           <div class="info">
             <div class="name">《 {{ item.name }} 》</div>
-            <div class="price">Price: {{ item.price }} {{ item.currency_code?.toUpperCase() }}</div>
+            <div class="price">
+              Price: {{ item.auction_latest_price }} {{ item.currency_code?.toUpperCase() }}
+            </div>
           </div>
         </div>
       </div>
@@ -43,21 +45,23 @@
     </div>
     <div class="buy-now">
       <div class="title">
-        <di :class="{ active: currentTab == 1 }" class="title-tab" @click="currentTab = 1">
+        <div :class="{ active: currentTab == 1 }" class="title-tab" @click="currentTab = 1">
           Timed Auctions
-        </di>
-        <di :class="{ active: currentTab == 2 }" class="title-tab" @click="currentTab = 2">
-          Buy Now
-        </di>
+        </div>
+        <!--        <div :class="{ active: currentTab == 2 }" class="title-tab" @click="currentTab = 2">-->
+        <!--          Buy Now-->
+        <!--        </div>-->
       </div>
       <div v-if="currentTab == 1" class="list">
         <div v-for="item in auctionList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/auction/${item.auction_id}`">
-            <img :src="item.artist_avatar" class="item-img" />
+          <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
+            <img :src="item.img_main_file1" class="item-img" />
           </router-link>
           <div class="info">
             <div class="name">《 {{ item.name }} 》</div>
-            <div class="price">Price: {{ item.price }} {{ item.currency_code?.toUpperCase() }}</div>
+            <div class="price">
+              Price: {{ item.auction_latest_price }} {{ item.currency_code?.toUpperCase() }}
+            </div>
           </div>
         </div>
       </div>

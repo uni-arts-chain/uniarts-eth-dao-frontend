@@ -100,6 +100,7 @@ const apiList = [
     path: "/auctions/{:id}",
     mockPath: "/auctions/{:id}",
     params: {
+      aid: "",
       sn: "",
     },
     options: {},
@@ -111,6 +112,7 @@ const apiList = [
     path: "/auctions/{:id}/bids",
     mockPath: "/auctions/{:id}/bids",
     params: {
+      aid: "",
       sn: "",
     },
     options: {},

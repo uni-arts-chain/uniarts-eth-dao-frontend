@@ -24,8 +24,8 @@
         </div>
         <div class="bid">
           <span>Current High Bid: &nbsp;&nbsp;</span>
-          <span class="value">{{ auction.auction_latest_price }}</span
-          >Tether
+          <span class="value">{{ auction.auction_latest_price }}</span>
+          <span>{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -38,8 +38,8 @@
           <button @click="openByeDiaLog">Collect Now</button>
         </div>
         <div class="bid-list">
-          <div v-for="item of auctionBids" :key="item" class="item">
-            @Bighead made an offer of 1500 USDC
+          <div v-for="item of auctionBids" :key="item.address" class="item">
+            made an offer of {{ item.bid }} {{ auction.currency_code?.toUpperCase() }}
           </div>
         </div>
       </div>
@@ -54,7 +54,7 @@
       </div>
       <div class="notice">
         <img src="@/assets/images/date-clock.png" />
-        6 Days 23 Hour 59 Minute 59 Second
+        {{ getAuctionDateString }}
       </div>
     </div>
     <div class="right">
@@ -95,35 +95,25 @@
   <div v-else class="auction container">
     <div class="center">
       <div class="nft">
-        <img
-          src="https://ipfs.pixura.io/ipfs/QmbBmVPHkXQFcUHUw1ETKsq3m51iUjCNkJwop9L44uiAmV/FinalWithGradient.jpg"
-        />
+        <img v-if="auction.property_url" :src="auction.property_url" />
       </div>
       <div class="notice">
         <img src="@/assets/images/date-clock.png" />
-        6 Days 23 Hour 59 Minute 59 Second
+        {{ getAuctionDateString }}
       </div>
     </div>
     <div class="left">
-      <div class="title">NFT Name</div>
-      <div class="desc-content">
-        "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
-        aroused great repercussions and won great recognition in the circle, which also led to the
-        introduction of the work, introduction...
-      </div>
+      <div class="title">{{ auction.name }}</div>
+      <div class="desc-content">{{ auction.details || auction.artist_info }}</div>
       <div class="more">More ></div>
       <div class="right">
         <div class="title">ABOUT ARTIST</div>
         <div class="avatar">
-          <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />
+          <img v-if="auction.artist_avatar" :src="auction.artist_avatar" />
         </div>
-        <div class="username">Kyle Bighead</div>
-        <div class="user-desc">
-          "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
-          aroused great repercussions and won great recognition in the circle, which also led to the
-          introduction of the work, introduction...
-        </div>
-        <router-link class="more" to="/artist/1">More ></router-link>
+        <div class="username">{{ auction.artist_name }}</div>
+        <div class="user-desc">{{ auction.artist_info }}</div>
+        <router-link :to="`/artist/${auction.artist_uid}`" class="more">More ></router-link>
       </div>
       <!--      <div class="number-votes">Number of votes obtained</div>-->
       <!--      <Progress :value="52" />-->
@@ -131,33 +121,57 @@
       <div class="token-info">
         <div class="token">
           <span>Token mint:&nbsp;&nbsp;</span>
-          <span class="value">251</span>Uink
+          <span class="value">{{ auction.auction_min_bid }}</span>
         </div>
         <div class="bid">
           <span>Current High Bid: &nbsp;&nbsp;</span>
-          <span class="value">1500</span>Tether
+          <span class="value">{{ auction.auction_latest_price }}</span>
+          <span>{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
       </div>
       <div class="bid-history">
         <div class="button-group">
-          <button>Make an Offer</button>
-          <button>Collect Now</button>
+          <button @click="openMakeOfferDialog">Make an Offer</button>
+          <button @click="openByeDiaLog">Collect Now</button>
         </div>
         <div class="bid-title">
           <span>Bid History</span>
-          <span>Total 4 Bids</span>
+          <span>Total {{ auctionBids.length }} Bids</span>
         </div>
         <div class="bid-list">
-          <div class="item">@Bighead made an offer of 1500 USDC</div>
-          <div class="item">@Smallhead made an offer of 1200 USDC</div>
+          <div v-for="item of auctionBids" :key="item.address" class="item">
+            made an offer of {{ item.bid }} {{ auction.currency_code?.toUpperCase() }}
+          </div>
         </div>
       </div>
     </div>
+    <Mobilecomfirm v-model="buyDialogVisible" type="small">
+      <div class="dialog-content">
+        <div class="input-body">
+          <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
+          <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
+        </div>
+        <button v-loading="isLoading" @click="buyAuction">
+          {{ isApproving ? "BUY" : "APPROVE" }}
+        </button>
+      </div>
+    </Mobilecomfirm>
+    <Mobilecomfirm v-model="offerDialogVisible" type="small">
+      <div class="dialog-content">
+        <div class="input-body">
+          <input v-model="bidAmount" placeholder="amount" type="number" />
+          <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
+        </div>
+        <button v-loading="isLoading" @click="makeAnOffer">
+          {{ isApproving ? "OFFER" : "APPROVE" }}
+        </button>
+      </div>
+    </Mobilecomfirm>
   </div>
 </template>
 
 <script>
-import { defineComponent, onMounted, reactive, ref } from "vue";
+import { computed, defineComponent, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import store from "@/store";
 // import Progress from "@/components/Progress";
@@ -169,10 +183,13 @@ import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
 import Erc20 from "../../contracts/Erc20";
 import { toBN } from "web3-utils";
+import moment from "moment";
+import Mobilecomfirm from "@/components/MobileConfirm";
 
 export default defineComponent({
   name: "auction",
   components: {
+    Mobilecomfirm,
     // Progress,
     Dialog,
   },
@@ -188,7 +205,6 @@ export default defineComponent({
     const isLoading = ref(false);
     const startEnd = reactive({});
     const isApproving = ref(false);
-
     store.dispatch("global/SetNavText", "Auction");
     const openMakeOfferDialog = async () => {
       const connectedAccount = store.state.user.info.address;
@@ -270,6 +286,7 @@ export default defineComponent({
           }
         )
           .then((res) => {
+            router.go(0);
             console.log(res);
           })
           .catch((error) => {
@@ -334,12 +351,12 @@ export default defineComponent({
               isApproving.value = false;
               notification.dismiss(notifyId);
               notification.success(txHash);
-              setTimeout(() => router.go(-1), 3000);
             }
           }
         )
           .then((res) => {
             console.log(res);
+            router.go(0);
           })
           .catch((error) => {
             notification.dismiss(notification);
@@ -390,7 +407,6 @@ export default defineComponent({
         const data = await currentErc20.allowance(connectedAccount, AuctionMiningAddress);
         if (data.toNumber() !== 0) {
           isApproving.value = true;
-          console.log("Authorized", data.toNumber());
         }
       } catch (e) {
         isApproving.value = false;
@@ -401,27 +417,65 @@ export default defineComponent({
     const onBack = () => {
       router.back();
     };
-    onMounted(() => {
-      const { id } = route.params;
-      http.globalGetAuctionById({}, { id }).then((res) => {
-        console.log(res);
-        auction.value = res.list[0] || {};
-        Auction.dater.getBlockWrapper(auction.value.auction_open_block).then((res) => {
-          console.log(res);
-          startEnd.startDate = new Date(res.timestamp * 1000);
-          console.log(startEnd);
-        });
-        Auction.dater.getBlockWrapper(auction.value.auction_expiry_block).then((res) => {
-          startEnd.endDate = new Date(res.timestamp * 1000);
-          console.log(startEnd);
-        });
-      });
-      http.globalGetAuctionBidsById({}, { id }).then((res) => {
-        console.log(res);
+    const now = ref(0);
+    const dataMessage = ref("");
+    const getAuctionDate = async () => {
+      if (!startEnd.startDate) {
+        dataMessage.value = "Auction not started";
+      } else if (!startEnd.endDate) {
+        const blockHeight = await Auction.dater.getDate(new moment());
+        now.value =
+          ((new Date() - startEnd.startDate) *
+            (auction.value.auction_expiry_block - blockHeight.block)) /
+          (blockHeight.block - auction.value.auction_open_block);
+      } else {
+        dataMessage.value = "Auction is over";
+      }
+    };
+    const getAuctionDateString = computed(() => {
+      if (dataMessage.value) {
+        return dataMessage;
+      } else {
+        let second = now.value / 1000;
+        const day = (second / (60 * 60 * 24)).toFixed(0);
+        second = second % (60 * 60 * 24);
+        const hour = (second / (60 * 60)).toFixed(0);
+        second = second % (60 * 60);
+        const minute = (second / 60).toFixed(0);
+        second = (second % 60).toFixed(0);
+        return `${day} Days ${hour} Hour ${minute} Minute ${second} Second`;
+      }
+    });
+    onMounted(async () => {
+      // eslint-disable-next-line no-unused-vars
+      const { id, id2 } = route.params;
+      http.globalGetAuctionBidsById({ aid: id2 }, { id }).then((res) => {
         auctionBids.value = res.list;
       });
+      const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
+      auction.value = list[0] || {};
+      try {
+        const { timestamp: startDate } = await Auction.dater.getBlockWrapper(
+          auction.value.auction_open_block
+        );
+        startEnd.startDate = new Date(startDate * 1000);
+      } catch (e) {
+        console.log(e);
+      }
+      try {
+        const { timestamp: endDate } = await Auction.dater.getBlockWrapper(
+          auction.value.auction_expiry_block
+        );
+        startEnd.endDate = new Date(endDate * 1000);
+      } catch (e) {
+        console.log(e);
+      }
+      await getAuctionDate();
+      setInterval(() => (now.value -= 1000), 1000);
     });
     return {
+      getAuctionDateString,
+      getAuctionDate,
       isLoading,
       isApproving,
       bidAmount,
