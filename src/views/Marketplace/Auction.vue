@@ -6,17 +6,17 @@
       <div class="desc-title">Artwork description</div>
       <div class="desc-content">{{ auction.details || auction.artist_info }}</div>
       <div class="more">More ></div>
-      <div class="number-votes">Number of votes obtained</div>
-      <Progress
-        :value="
-          (
-            new Number(auction.auction_latest_price) / new Number(auction.auction_fixed_price)
-          ).toFixed(2)
-        "
-      />
-      <div class="number-vote-value">
-        {{ auction.auction_latest_price }} of {{ auction.auction_fixed_price }}
-      </div>
+      <!--      <div class="number-votes">Number of votes obtained</div>-->
+      <!--      <Progress-->
+      <!--        :value="-->
+      <!--          (-->
+      <!--            new Number(auction.auction_latest_price) / new Number(auction.auction_fixed_price)-->
+      <!--          ).toFixed(2)-->
+      <!--        "-->
+      <!--      />-->
+      <!--      <div class="number-vote-value">-->
+      <!--        {{ auction.auction_latest_price }} of {{ auction.auction_fixed_price }}-->
+      <!--      </div>-->
       <div class="token-info">
         <div class="token">
           <span>Token mint:&nbsp;&nbsp;</span>
@@ -34,8 +34,8 @@
           <span>Total {{ auctionBids.length }} Bids</span>
         </div>
         <div class="button-group">
-          <button @click="dialogTableVisible = true">Make an Offer</button>
-          <button>Collect Now</button>
+          <button @click="openMakeOfferDialog">Make an Offer</button>
+          <button @click="openByeDiaLog">Collect Now</button>
         </div>
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item" class="item">
@@ -67,20 +67,28 @@
       </div>
       <div class="username">{{ auction.artist_name }}</div>
       <div class="user-desc">{{ auction.artist_info }}</div>
-      <router-link class="more" to="/artist/1">More ></router-link>
+      <router-link class="more" :to="`/artist/${auction.artist_uid}`">More ></router-link>
     </div>
-    <Dialog v-model="dialogTableVisible" type="small">
+    <Dialog v-model="buyDialogVisible" type="small">
       <div class="dialog-content">
         <div class="input-body">
           <input v-model="bidAmount" placeholder="amount" type="number" />
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
-        <!--        <div class="balance">{{ auction.bondedBalance }} {{ auction.currency_code }}</div>-->
-        <button v-loading="isLoading" @click="makeAnOffer">offer</button>
-        <!--        <div class="notice">-->
-        <!--          Notice: <br />-->
-        <!--          Unbonding uarts can not be used for NFT vote.-->
-        <!--        </div>-->
+        <button v-loading="isLoading" @click="makeAnOffer">
+          {{ isApproving ? "OFFER" : "APPROVE" }}
+        </button>
+      </div>
+    </Dialog>
+    <Dialog v-model="offerDialogVisible" type="small">
+      <div class="dialog-content">
+        <div class="input-body">
+          <input v-model="bidAmount" placeholder="amount" type="number" />
+          <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
+        </div>
+        <button v-loading="isLoading" @click="makeAnOffer">
+          {{ isApproving ? "OFFER" : "APPROVE" }}
+        </button>
       </div>
     </Dialog>
   </div>
@@ -117,9 +125,9 @@
         </div>
         <router-link class="more" to="/artist/1">More ></router-link>
       </div>
-      <div class="number-votes">Number of votes obtained</div>
-      <Progress :value="52" />
-      <div class="number-vote-value">3000 of 45000</div>
+      <!--      <div class="number-votes">Number of votes obtained</div>-->
+      <!--      <Progress :value="52" />-->
+      <!--      <div class="number-vote-value">3000 of 45000</div>-->
       <div class="token-info">
         <div class="token">
           <span>Token mint:&nbsp;&nbsp;</span>
@@ -152,7 +160,7 @@
 import { defineComponent, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import store from "@/store";
-import Progress from "@/components/Progress";
+// import Progress from "@/components/Progress";
 import http from "@/plugins/http";
 import Auction from "@/contracts/Auction";
 import Dialog from "@/components/Dialog";
@@ -165,7 +173,7 @@ import { toBN } from "web3-utils";
 export default defineComponent({
   name: "auction",
   components: {
-    Progress,
+    // Progress,
     Dialog,
   },
   setup() {
@@ -175,11 +183,32 @@ export default defineComponent({
     const route = useRoute();
     const auction = ref({});
     const auctionBids = ref([]);
-    const dialogTableVisible = ref(false);
+    const offerDialogVisible = ref(false);
+    const buyDialogVisible = ref(false);
     const isLoading = ref(false);
     const startEnd = reactive({});
     const isApproving = ref(false);
+
     store.dispatch("global/SetNavText", "Auction");
+    const openMakeOfferDialog = async () => {
+      const connectedAccount = store.state.user.info.address;
+      const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
+      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
+
+      const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
+      // 查看链上权限
+      try {
+        const data = await currentErc20.allowance(connectedAccount, AuctionMiningAddress);
+        if (data.toNumber() !== 0) {
+          isApproving.value = true;
+          console.log("Authorized", data.toNumber());
+        }
+      } catch (e) {
+        isApproving.value = false;
+      } finally {
+        offerDialogVisible.value = true;
+      }
+    };
     const filter = () => {
       if (
         Number(bidAmount.value) <=
@@ -203,27 +232,17 @@ export default defineComponent({
       }
     };
     const makeAnOffer = async () => {
-      filter();
-      isLoading.value = true;
-      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
-      const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals);
       const connectedAccount = store.state.user.info.address;
       const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
-      console.log(connectedAccount, AuctionMiningAddress);
-      const notifyId = notification.loading("Please wait for the wallet's response");
-      console.log("初始化erc20", token);
+      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
+
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
-      // 查看链上权限
-      try {
-        const data = await currentErc20.allowance(connectedAccount, AuctionMiningAddress);
-        if (data.toNumber() !== 0) {
-          isApproving.value = true;
-          console.log("Authorized", data.toNumber());
-        }
-      } catch (e) {
-        isApproving.value = false;
-      }
+      filter();
+
+      isLoading.value = true;
+      const notifyId = notification.loading("Please wait for the wallet's response");
       if (isApproving.value) {
+        const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals);
         console.log(
           auction.value.auction_match_id,
           auction.value.auction_token_index,
@@ -242,7 +261,7 @@ export default defineComponent({
             if (txHash) {
               isLoading.value = true;
               console.log(txHash);
-              dialogTableVisible.value = false;
+              offerDialogVisible.value = false;
               isApproving.value = false;
               notification.dismiss(notifyId);
               notification.success(txHash);
@@ -254,6 +273,7 @@ export default defineComponent({
             console.log(res);
           })
           .catch((error) => {
+            notification.dismiss(notification);
             notification.error(error);
           });
       } else {
@@ -277,7 +297,6 @@ export default defineComponent({
             }
           );
           console.log("receipt: ", receipt);
-          console.log(auction.value.auction_match_id, auction.value.auction_token_index, amount);
           this.makeAnOffer();
         } catch (err) {
           console.log(err);
@@ -291,16 +310,25 @@ export default defineComponent({
       isLoading.value = false;
       notification.dismiss(notifyId);
     };
-    // const makeAnOffer = () => {
-    //   isLoading.value = true;
-    //   console.log(bidAmount);
-    //   const nftId = auction;
-    //   const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
-    //   const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals);
-    //   Auction.playerBid(nftId, token.address, amount, (a, b) => {
-    //     console.log(a, b);
-    //   });
-    // };
+    const openByeDiaLog = async () => {
+      const connectedAccount = store.state.user.info.address;
+      const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
+      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
+
+      const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
+      // 查看链上权限
+      try {
+        const data = await currentErc20.allowance(connectedAccount, AuctionMiningAddress);
+        if (data.toNumber() !== 0) {
+          isApproving.value = true;
+          console.log("Authorized", data.toNumber());
+        }
+      } catch (e) {
+        isApproving.value = false;
+      } finally {
+        buyDialogVisible.value = true;
+      }
+    };
     const onBack = () => {
       router.back();
     };
@@ -326,12 +354,16 @@ export default defineComponent({
     });
     return {
       isLoading,
+      isApproving,
       bidAmount,
-      dialogTableVisible,
+      offerDialogVisible,
       auctionBids,
       auction,
       onBack,
       makeAnOffer,
+      openMakeOfferDialog,
+      openByeDiaLog,
+      buyDialogVisible,
     };
   },
 });
