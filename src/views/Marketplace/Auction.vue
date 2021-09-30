@@ -291,7 +291,7 @@ export default defineComponent({
           })
           .catch((error) => {
             notification.dismiss(notification);
-            notification.error(error);
+            notification.error(error.message);
           });
       } else {
         try {
@@ -316,11 +316,13 @@ export default defineComponent({
           console.log("receipt: ", receipt);
           this.makeAnOffer();
         } catch (err) {
-          console.log(err);
           isApproving.value = false;
           notification.dismiss(notifyId);
           notification.error(
-            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
           );
         }
       }
@@ -341,7 +343,7 @@ export default defineComponent({
           auction.value.auction_token_index,
           async (err, txHash) => {
             if (err) {
-              console.log(err);
+              console.log(err.message);
               throw err;
             }
             if (txHash) {
@@ -360,7 +362,7 @@ export default defineComponent({
           })
           .catch((error) => {
             notification.dismiss(notification);
-            notification.error(error);
+            notification.error(error.message.split("{")[0] || error.message);
           });
       } else {
         try {
