@@ -72,15 +72,14 @@
       <div class="container">
         <h2>Art Formula NFT Vote</h2>
         <p>
-          - Vote for NFTs that you think are most in-demand- According to the number of votes
-          obtained by each NFT, Uink rewards will be continuously cast into NFTs, which can be
-          retrieved by the owner.<br />
-          - Vote for NFT won't cost any token, but voted token can only be retrieved 7 days after
-          the end of the voted round.<br />
-          - Vote reward will be distributed at UTC 00:00 everyday during the voting period, and can
-          be withdraw at anytime once available.<br />
-          - Extra benefit from prize pool will be distributed after the end of auction. The higher
-          the deal price, the more benefit will be available for the voters of the NFT.
+          - Vote for NFTs that you think are most in-demand<br />
+          - According to the number of votes obtained by each NFT, UART rewards will be continuously
+          cast into NFTs, which can be retrieved by the owner.<br />
+          - Vote for NFT won't cost any token, voted token can be retrieved at UTC 00:00 next day.
+          <br />
+          - Vote reward will be distributed at UTC 00:00 everyday during the voting period. <br />
+          - Auction reward will be distributed after the auction round. The higher the deal price,
+          the more benefit will be available for the voters of the NFT.
         </p>
         <div class="more">More ></div>
       </div>

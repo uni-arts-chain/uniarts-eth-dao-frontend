@@ -43,7 +43,7 @@
               <div class="name-body">
                 <div class="name">Name</div>
                 <div class="artist-name">Artist: XYZ</div>
-                <div class="token-mint">Token mint: 251 Uink</div>
+                <div class="token-mint">Token mint: 251</div>
               </div>
               <div class="desc-body">
                 "Planet spirit" is an oil painting created by in 2010. After successful creation, it

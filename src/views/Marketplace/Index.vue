@@ -46,7 +46,7 @@
     <div class="buy-now">
       <div class="title">
         <div :class="{ active: currentTab == 1 }" class="title-tab" @click="currentTab = 1">
-          Timed Auctions
+          Auctions
         </div>
         <!--        <div :class="{ active: currentTab == 2 }" class="title-tab" @click="currentTab = 2">-->
         <!--          Buy Now-->

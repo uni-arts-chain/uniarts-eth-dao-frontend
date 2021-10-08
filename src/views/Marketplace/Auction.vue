@@ -20,7 +20,7 @@
       <div class="token-info">
         <div class="token">
           <span>Token mint:&nbsp;&nbsp;</span>
-          <span class="value">{{ auction.auction_min_bid }}</span>
+          <span class="value">{{ auction.token_mint }}</span>
         </div>
         <div class="bid">
           <span>Current High Bid: &nbsp;&nbsp;</span>
@@ -121,7 +121,7 @@
       <div class="token-info">
         <div class="token">
           <span>Token mint:&nbsp;&nbsp;</span>
-          <span class="value">{{ auction.auction_min_bid }}</span>
+          <span class="value">{{ auction.token_mint }}</span>
         </div>
         <div class="bid">
           <span>Current High Bid: &nbsp;&nbsp;</span>

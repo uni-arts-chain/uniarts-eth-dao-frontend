@@ -80,6 +80,7 @@ export default defineComponent({
 }
 .nft {
   width: 520px;
+  max-width: 100%;
   height: 573px;
   /* background-color: black; */
 }

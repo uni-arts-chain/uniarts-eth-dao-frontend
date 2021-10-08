@@ -9,7 +9,7 @@
     <ul class="info-list">
       <li class="info-item">
         <h5>Staking & Voting</h5>
-        <span>Vote and gain for the NFTs that you think are most in-demand</span>
+        <span>Staking, vote and gain for the NFTs that you think are most in-demand</span>
       </li>
       <li class="info-item">
         <h5>Mint & Retrieve</h5>
@@ -19,10 +19,10 @@
         >
       </li>
       <li class="info-item">
-        <h5>Extra Benefit</h5>
+        <h5>Auction Rewards</h5>
         <span
-          >Receive extra rewards from prize pool with the actual deal price of NFTs after the voting
-          period</span
+          >Auction rewards from prize pool with the actual auction deal price of NFTs after the
+          voting period.</span
         >
       </li>
       <button class="learn-more" v-if="!$store.state.global.isMobile">LEARN MORE</button>

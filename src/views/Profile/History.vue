@@ -9,13 +9,13 @@
     </el-row>
     <el-row class="body">
       <el-row class="row">
-        <el-col :span="4" class="item">Uink</el-col>
+        <el-col :span="4" class="item">USDT</el-col>
         <el-col :span="6" class="item">Vote</el-col>
         <el-col :span="6" class="item">30</el-col>
         <el-col :span="8" class="item">2021-03-21</el-col>
       </el-row>
       <el-row class="row">
-        <el-col :span="4" class="item">Uink</el-col>
+        <el-col :span="4" class="item">USDT</el-col>
         <el-col :span="6" class="item">Vote</el-col>
         <el-col :span="6" class="item">30</el-col>
         <el-col :span="8" class="item">2021-03-21</el-col>

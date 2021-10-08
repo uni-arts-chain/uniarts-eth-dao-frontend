@@ -5,8 +5,7 @@
     <p class="detail-desc">The right formula for the best art never exists</p>
     <div class="button-group">
       <button class="candidate" @click="goVoteQueue">View All Candidates</button>
-      <!-- <button class="auction" @click="goAuctionQueue">View Timed Auctions</button> -->
-      <button class="auction" style="color: #aaa">View Timed Auctions</button>
+      <button class="auction" @click="goAuctionQueue">View Timed Auctions</button>
     </div>
     <div class="list">
       <div class="item">
@@ -139,6 +138,7 @@ export default defineComponent({
   }
   .nft-assets {
     width: 324px;
+    max-width: 100%;
     height: 296px;
     img {
       width: 100%;
