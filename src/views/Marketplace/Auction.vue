@@ -289,9 +289,14 @@ export default defineComponent({
             router.go(0);
             console.log(res);
           })
-          .catch((error) => {
+          .catch((err) => {
             notification.dismiss(notification);
-            notification.error(error.message);
+            notification.error(
+              err.message.split("{")[0] ||
+                (err.head && err.head.msg) ||
+                err.message ||
+                (err.data && err.data.message)
+            );
           });
       } else {
         try {
@@ -390,9 +395,7 @@ export default defineComponent({
           console.log(err);
           isApproving.value = false;
           notification.dismiss(notifyId);
-          notification.error(
-            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
-          );
+          notification.error(err.message.split("{")[0] || err.message);
         }
       }
       isLoading.value = false;
