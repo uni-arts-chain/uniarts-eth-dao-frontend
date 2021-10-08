@@ -11,12 +11,27 @@
           Buy Now
         </div>
       </div>
-      <div class="tab-body">
-        <div class="item">
-          <AdaptiveView width="330px" height="330px" :nft="nft" />
+      <div class="tab-body" v-if="curTab === 1">
+        <div class="item" v-for="item of auctions" :key="item.id">
+          <AdaptiveView
+            width="330px"
+            height="330px"
+            :nft="item"
+            @click="$router.push(`/marketplace/auction/${item.auction_id}/${item.id}`)"
+          />
           <div class="info">
-            <div class="name">NFT Name</div>
-            <div class="price">Current High Bid $<span style="color: red">1500</span></div>
+            <div
+              class="name"
+              @click="$router.push(`/marketplace/auction/${item.auction_id}/${item.id}`)"
+            >
+              {{ item.artist_name }}
+            </div>
+            <div class="price">
+              Current High Bid
+              <span style="color: red">{{
+                item.auction_latest_price + " " + item.currency_code?.toUpperCase()
+              }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -25,8 +40,9 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import AdaptiveView from "@/components/AdaptiveView";
+import http from "@/plugins/http";
 export default defineComponent({
   name: "mobile-artworks",
   components: {
@@ -35,18 +51,22 @@ export default defineComponent({
   setup() {
     // TODO
     const curTab = ref(1);
-
-    const nft = {
-      img_main_file1: {
-        url: "https://bitflix-assets.s3.us-east-2.amazonaws.com/miner_pool/property/img/1/d128ae2b-ffb4-41c8-87d8-41c08e4a9cda.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA6PPSF6Y2ZB5JF5HX%2F20210917%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210917T171518Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=191d92380da0fe41a9ba47a0fe9ca3fc9c9cdccc4b709667021be50cf899061a",
-      },
-      property_url:
-        "https://bitflix-assets.s3.us-east-2.amazonaws.com/miner_pool/property/img/1/d128ae2b-ffb4-41c8-87d8-41c08e4a9cda.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA6PPSF6Y2ZB5JF5HX%2F20210917%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210917T171518Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=191d92380da0fe41a9ba47a0fe9ca3fc9c9cdccc4b709667021be50cf899061a",
-    };
-
+    const auctions = ref([]);
+    // const nft = {
+    //   img_main_file1: {
+    //     url: "https://bitflix-assets.s3.us-east-2.amazonaws.com/miner_pool/property/img/1/d128ae2b-ffb4-41c8-87d8-41c08e4a9cda.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA6PPSF6Y2ZB5JF5HX%2F20210917%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210917T171518Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=191d92380da0fe41a9ba47a0fe9ca3fc9c9cdccc4b709667021be50cf899061a",
+    //   },
+    //   property_url:
+    //     "https://bitflix-assets.s3.us-east-2.amazonaws.com/miner_pool/property/img/1/d128ae2b-ffb4-41c8-87d8-41c08e4a9cda.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA6PPSF6Y2ZB5JF5HX%2F20210917%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210917T171518Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=191d92380da0fe41a9ba47a0fe9ca3fc9c9cdccc4b709667021be50cf899061a",
+    // };
+    onMounted(async () => {
+      const data = await http.globalGetAuctionsRecommend({ size: 4 });
+      auctions.value = data?.auction || [];
+    });
     return {
       curTab,
-      nft,
+      // nft,
+      auctions,
     };
   },
 });
