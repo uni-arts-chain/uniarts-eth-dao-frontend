@@ -7,138 +7,195 @@
       <div class="offers-head">Offers</div>
     </div>
     <div class="list-body">
-      <div class="auctions-body">
-        <div class="main-item">
-          <img
-            src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"
-          />
+      <div class="auctions-body" v-if="auctions.length">
+        <div
+          class="main-item"
+          @click="$router.push(`/marketplace/auction/${auctions[0].auction_id}/${auctions[0].id}`)"
+        >
+          <img :src="auctions[0].img_main_file1" />
         </div>
         <div class="artist-info">
           <div class="avatar">
-            <div class="avatar-image">
-              <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />
-              <div class="name">Kyle Bighead</div>
+            <div class="avatar-image" @click="$router.push('/artist/' + auctions[0].artist_uid)">
+              <img
+                :src="auctions[0].artist_avatar || require('@/assets/images/avatar@2x.png')"
+                :alt="auctions[0].artist_name"
+              />
+              <div class="name">{{ auctions[0].artist_name }}</div>
             </div>
           </div>
           <div class="info">
             <div class="vote-number">
-              Current High Bid <span style="color: #fe0000">1500</span> USDT
+              Current High Bid
+              <span style="color: #fe0000">{{ auctions[0].auction_latest_price }}</span>
+              <span>{{ auctions[0].currency_code?.toUpperCase() }}</span>
             </div>
             <div class="vote-date">
               <img src="@/assets/images/date-clock.png" />
-              <div class="date">3 Days 23 Hour 59 Minute 59 Second</div>
+              <div class="date">{{ getAuctionDateString }}</div>
             </div>
           </div>
         </div>
       </div>
-      <div class="offers-body">
-        <div class="sub-item">
+      <div
+        class="offers-body"
+        v-if="auctions.filter((item, index) => index >= 1 && index <= 3).length"
+      >
+        <div
+          class="sub-item"
+          v-for="item of auctions.filter((item, index) => index >= 1 && index <= 3)"
+          :key="item.id"
+        >
           <div class="item-content">
             <img
-              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"
+              :src="item.img_main_file1"
+              @click="$router.push(`/marketplace/auction/${item.auction_id}/${item.id}`)"
             />
           </div>
           <div class="item-user">
-            <span class="username">name@</span>
-            <span style="color: #fe0000">$1500</span>
-          </div>
-        </div>
-        <div class="sub-item">
-          <div class="item-content">
-            <img
-              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"
-            />
-          </div>
-          <div class="item-user">
-            <span class="username">name@</span>
-            <span style="color: #fe0000">$1500</span>
-          </div>
-        </div>
-        <div class="sub-item">
-          <div class="item-content">
-            <img
-              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"
-            />
-          </div>
-          <div class="item-user">
-            <span class="username">name@</span>
-            <span style="color: #fe0000">$1500</span>
+            <span class="username">{{ item.artist_name }}@</span>
+            <span style="color: #fe0000">{{
+              item.auction_latest_price + " " + item.currency_code?.toUpperCase()
+            }}</span>
           </div>
         </div>
       </div>
+      <div class="offers-body" v-else>No data temporarily</div>
     </div>
-    <div class="list-body">
-      <div class="auctions-body">
-        <div class="main-item">
-          <img
-            src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"
-          />
-        </div>
-        <div class="artist-info">
-          <div class="avatar">
-            <div class="avatar-image">
-              <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />
-              <div class="name">Kyle Bighead</div>
-            </div>
-          </div>
-          <div class="info">
-            <div class="vote-number">
-              Current High Bid <span style="color: #fe0000">1500</span> USDT
-            </div>
-            <div class="vote-date">
-              <img src="@/assets/images/date-clock.png" />
-              <div class="date">3 Days 23 Hour 59 Minute 59 Second</div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="offers-body">
-        <div class="sub-item">
-          <div class="item-content">
-            <img
-              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"
-            />
-          </div>
-          <div class="item-user">
-            <span class="username">name@</span>
-            <span style="color: #fe0000">$1500</span>
-          </div>
-        </div>
-        <div class="sub-item">
-          <div class="item-content">
-            <img
-              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"
-            />
-          </div>
-          <div class="item-user">
-            <span class="username">name@</span>
-            <span style="color: #fe0000">$1500</span>
-          </div>
-        </div>
-        <div class="sub-item">
-          <div class="item-content">
-            <img
-              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"
-            />
-          </div>
-          <div class="item-user">
-            <span class="username">name@</span>
-            <span style="color: #fe0000">$1500</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!--    <div class="list-body">-->
+    <!--      <div class="auctions-body">-->
+    <!--        <div class="main-item">-->
+    <!--          <img-->
+    <!--            src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"-->
+    <!--          />-->
+    <!--        </div>-->
+    <!--        <div class="artist-info">-->
+    <!--          <div class="avatar">-->
+    <!--            <div class="avatar-image">-->
+    <!--              <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />-->
+    <!--              <div class="name">Kyle Bighead</div>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--          <div class="info">-->
+    <!--            <div class="vote-number">-->
+    <!--              Current High Bid <span style="color: #fe0000">1500</span> USDT-->
+    <!--            </div>-->
+    <!--            <div class="vote-date">-->
+    <!--              <img src="@/assets/images/date-clock.png" />-->
+    <!--              <div class="date">3 Days 23 Hour 59 Minute 59 Second</div>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--      <div class="offers-body">-->
+    <!--        <div class="sub-item">-->
+    <!--          <div class="item-content">-->
+    <!--            <img-->
+    <!--              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"-->
+    <!--            />-->
+    <!--          </div>-->
+    <!--          <div class="item-user">-->
+    <!--            <span class="username">name@</span>-->
+    <!--            <span style="color: #fe0000">$1500</span>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--        <div class="sub-item">-->
+    <!--          <div class="item-content">-->
+    <!--            <img-->
+    <!--              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"-->
+    <!--            />-->
+    <!--          </div>-->
+    <!--          <div class="item-user">-->
+    <!--            <span class="username">name@</span>-->
+    <!--            <span style="color: #fe0000">$1500</span>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--        <div class="sub-item">-->
+    <!--          <div class="item-content">-->
+    <!--            <img-->
+    <!--              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"-->
+    <!--            />-->
+    <!--          </div>-->
+    <!--          <div class="item-user">-->
+    <!--            <span class="username">name@</span>-->
+    <!--            <span style="color: #fe0000">$1500</span>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </div>-->
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { computed, defineComponent, onBeforeMount, onMounted, reactive, ref } from "vue";
+import http from "@/plugins/http";
+import Auction from "@/contracts/Auction";
+import moment from "moment";
+
 export default defineComponent({
   name: "artworks",
   setup() {
-    // TODO
-
-    return {};
+    const auctions = ref([]);
+    const now = ref(new Date());
+    let interval = null;
+    const startEnd = reactive({});
+    const dataMessage = ref("");
+    const getAuctionDate = async (auction) => {
+      try {
+        const { timestamp: startDate } = await Auction.dater.getBlockWrapper(
+          auction.auction_open_block
+        );
+        startEnd.startDate = new Date(startDate * 1000);
+      } catch (e) {
+        console.log(e);
+      }
+      try {
+        const { timestamp: endDate } = await Auction.dater.getBlockWrapper(
+          auction.auction_expiry_block
+        );
+        startEnd.endDate = new Date(endDate * 1000);
+      } catch (e) {
+        console.log(e);
+      }
+      if (!startEnd.startDate) {
+        dataMessage.value = "Auction not started";
+      } else if (!startEnd.endDate) {
+        const blockHeight = await Auction.dater.getDate(new moment());
+        now.value =
+          ((new Date() - startEnd.startDate) * (auction.auction_expiry_block - blockHeight.block)) /
+          (blockHeight.block - auction.auction_open_block);
+      } else {
+        dataMessage.value = "Auction is over";
+      }
+    };
+    const getAuctionDateString = computed(() => {
+      if (dataMessage.value) {
+        return dataMessage;
+      } else {
+        let second = now.value / 1000;
+        const day = (second / (60 * 60 * 24)).toFixed(0);
+        second = second % (60 * 60 * 24);
+        const hour = (second / (60 * 60)).toFixed(0);
+        second = second % (60 * 60);
+        const minute = (second / 60).toFixed(0);
+        second = (second % 60).toFixed(0);
+        return `${day} Days ${hour} Hour ${minute} Minute ${second} Second`;
+      }
+    });
+    onMounted(async () => {
+      const data = await http.globalGetAuctionsRecommend({ size: 4 });
+      auctions.value = data?.auction || [];
+      if (auctions.value.length) {
+        await getAuctionDate(auctions.value[0]);
+        interval = setInterval(() => (now.value -= 1000), 1000);
+      }
+    });
+    onBeforeMount(() => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    });
+    return { auctions, getAuctionDateString };
   },
 });
 </script>
@@ -153,10 +210,12 @@ export default defineComponent({
   line-height: 48px;
   margin-bottom: 81px;
 }
+
 .list-head {
   margin-bottom: 38px;
   display: flex;
   justify-content: center;
+
   .auctions-head {
     font-size: 18px;
     font-family: Montserrat-Medium;
@@ -166,6 +225,7 @@ export default defineComponent({
     color: #040000;
     line-height: 23px;
   }
+
   .offers-head {
     font-size: 18px;
     margin-left: 196px;
@@ -177,40 +237,51 @@ export default defineComponent({
     line-height: 23px;
   }
 }
+
 .list-body {
   display: flex;
   justify-content: center;
+  margin-bottom: 20px;
+
   .auctions-body {
     .main-item {
       width: 492px;
       height: 540px;
       overflow: hidden;
       box-shadow: 3px 4px 12px 12px rgba(34, 24, 20, 0.11);
+
       img {
         height: 100%;
       }
     }
+
     .artist-info {
       padding-left: 30px;
       margin-top: 23px;
       overflow: hidden;
+
       .avatar {
         float: left;
         margin-bottom: 10px;
       }
+
       .info {
         float: left;
       }
+
       .avatar-image {
         display: flex;
         align-items: center;
+
         img {
+          background-color: black;
           overflow: hidden;
           border-radius: 50%;
           width: 36px;
           height: 36px;
           box-shadow: 3px 4px 9px 0px rgba(34, 24, 20, 0.52);
         }
+
         .name {
           margin-left: 14px;
           font-size: 13px;
@@ -220,6 +291,7 @@ export default defineComponent({
           color: #000000;
         }
       }
+
       .avatar .name {
         font-size: 13px;
         font-family: Montserrat-Regular, Montserrat-Light;
@@ -227,6 +299,7 @@ export default defineComponent({
         text-align: left;
         color: #000000;
       }
+
       .info {
         margin-left: 39px;
         font-size: 13px;
@@ -234,6 +307,7 @@ export default defineComponent({
         font-weight: 300;
         text-align: left;
         color: #898989;
+
         .vote-number {
           font-size: 13px;
           font-weight: 300;
@@ -242,34 +316,42 @@ export default defineComponent({
           line-height: 24px;
           line-height: 36px;
         }
+
         .vote-date {
           display: flex;
           align-items: center;
           margin-top: 7px;
         }
+
         .vote-date img {
           width: 20px;
           height: 20px;
         }
+
         .vote-date .date {
           margin-left: 5px;
         }
       }
     }
   }
+
   .offers-body {
     margin-left: 196px;
     margin-bottom: 110px;
+
     .sub-item {
       margin-bottom: 31px;
+
       .item-content {
         width: 143px;
         height: 143px;
         overflow: hidden;
+
         img {
           height: 100%;
         }
       }
+
       .item-user {
         font-size: 13px;
         font-family: Montserrat-Regular, Montserrat-Light;
@@ -278,6 +360,7 @@ export default defineComponent({
         color: #898989;
         margin-top: 15px;
         line-height: 24px;
+
         .username {
           margin-right: 17px;
         }

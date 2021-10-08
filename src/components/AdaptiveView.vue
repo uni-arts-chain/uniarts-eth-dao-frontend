@@ -9,7 +9,7 @@
         :height="height"
         :isResponsive="isResponsive"
         :isPreview="isPreview"
-        :cover="nft.img_main_file1.url"
+        :cover="nft.img_main_file1"
         :isOrigin="!isResponsive"
         v-if="viewType == 'img'"
         :url="nft.property_url"
@@ -24,7 +24,7 @@
         :isResponsive="isResponsive"
         :isPlay="!isPreview"
         :isPreview="isPreview"
-        :cover="nft.img_main_file1.url"
+        :cover="nft.img_main_file1"
         :source="nft.property_url"
       />
       <div
@@ -156,6 +156,7 @@ export default {
       let isVideo = new RegExp(`${this.videoType.map((v) => "\\." + v).join("|")}$`).test(source);
       let isImg = new RegExp(`${this.imgType.map((v) => "\\." + v).join("|")}$`).test(source);
       let isAudio = new RegExp(`${this.audioType.map((v) => "\\." + v).join("|")}$`).test(source);
+      console.log(isVideo, isImg, isAudio);
       if (isVideo) {
         return "video";
       } else if (isImg) {
