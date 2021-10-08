@@ -171,7 +171,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, onMounted, reactive, ref } from "vue";
+import { computed, defineComponent, onBeforeMount, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import store from "@/store";
 // import Progress from "@/components/Progress";
@@ -448,6 +448,7 @@ export default defineComponent({
         return `${day} Days ${hour} Hour ${minute} Minute ${second} Second`;
       }
     });
+    let interval = null;
     onMounted(async () => {
       // eslint-disable-next-line no-unused-vars
       const { id, id2 } = route.params;
@@ -473,7 +474,10 @@ export default defineComponent({
         console.log(e);
       }
       await getAuctionDate();
-      setInterval(() => (now.value -= 1000), 1000);
+      interval = setInterval(() => (now.value -= 1000), 1000);
+    });
+    onBeforeMount(() => {
+      clearInterval(interval);
     });
     return {
       getAuctionDateString,

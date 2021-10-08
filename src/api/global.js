@@ -134,7 +134,21 @@ const apiList = [
     desc: "获取首页推荐",
     path: "/arts/recommend",
     mockPath: "/arts/recommend",
-    params: {},
+    params: {
+      sn: "",
+    },
+    options: {},
+  },
+  {
+    name: "getAuctionsRecommend",
+    method: "GET",
+    desc: "获取首页拍卖推荐",
+    path: "/auctions/recommend",
+    mockPath: "/auctions/recommend",
+    params: {
+      sn: "",
+      size: 4,
+    },
     options: {},
   },
 ];

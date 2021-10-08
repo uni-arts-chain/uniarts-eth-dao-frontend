@@ -11,8 +11,8 @@
     <div class="collection">
       <div class="title">CREATIONS</div>
       <div class="list">
-        <div class="item" v-for="(v, i) in list" :key="i">
-          <AdaptiveView width="100%" height="100%" :isPreview="true" :nft="v" />
+        <div class="item" v-for="item in list" :key="item.id">
+          <AdaptiveView width="100%" height="100%" :isPreview="true" :nft="item" />
         </div>
       </div>
     </div>
@@ -48,6 +48,7 @@ export default defineComponent({
           uid: route.params.id,
         })
         .then((res) => {
+          console.log(res);
           isLoading.value = false;
           info.artist_name = res.artist_avatar;
           info.artist_info = res.artist_info;
