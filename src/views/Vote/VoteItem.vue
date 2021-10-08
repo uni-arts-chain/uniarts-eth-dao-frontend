@@ -9,7 +9,7 @@
       <div class="artwork">
         <div class="artwork-label">Artwork Description</div>
         <div class="artwork-desc">
-          {{ item.details }}
+          {{ getShorten(item.details) }}
         </div>
         <div class="artwork-more"></div>
       </div>
@@ -18,7 +18,7 @@
         <div class="username">{{ item.artist_name }}</div>
       </div>
       <div class="user-desc">
-        {{ item.artist_info }}
+        {{ getShorten(item.artist_info, 100) }}
       </div>
       <div class="user-more" @click="goArtistDetail(item.artist_uid)">More ></div>
       <div class="bid-group">
@@ -57,10 +57,15 @@ export default defineComponent({
       router.push("/artist/" + id);
     };
 
+    const getShorten = (str, length = 355) => {
+      return str && str.length > length ? str.substr(0, length) + "..." : str;
+    };
+
     return {
       onVote,
       goArtistDetail,
       Avatar,
+      getShorten,
     };
   },
 });

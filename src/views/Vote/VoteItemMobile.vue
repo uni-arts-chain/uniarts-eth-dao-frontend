@@ -8,7 +8,7 @@
       <div class="title">{{ item.name }}</div>
       <div class="artwork">
         <div class="artwork-desc">
-          {{ item.details }}
+          {{ getShorten(item.details, 100) }}
         </div>
         <div class="artwork-more"></div>
       </div>
@@ -19,7 +19,7 @@
         </div>
         <div class="user-desc">
           <div class="desc-text">
-            {{ item.artist_info }}
+            {{ getShorten(item.artist_info, 70) }}
           </div>
           <div class="user-more" @click="goArtistDetail(item.artist_uid)">More ></div>
         </div>
@@ -60,10 +60,15 @@ export default defineComponent({
       router.push("/artist/" + id);
     };
 
+    const getShorten = (str, length = 355) => {
+      return str && str.length > length ? str.substr(0, length) + "..." : str;
+    };
+
     return {
       onVote,
       goArtistDetail,
       Avatar,
+      getShorten,
     };
   },
 });
@@ -238,8 +243,8 @@ export default defineComponent({
       height: 80px;
       overflow: hidden;
       width: 220px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      /* text-overflow: ellipsis; */
+      /* white-space: nowrap; */
     }
     .user-more {
       text-align: right;
