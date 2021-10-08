@@ -7,10 +7,10 @@
     <div class="info">
       <div class="title">{{ item.name }}</div>
       <div class="desc">Number of votes obtained</div>
-      <Progress :value="68" />
+      <Progress :value="parseInt((item.number / (item.total || 1)) * 100)" />
       <div class="votes-group">
-        <div class="number-votes">Number of votes：30000</div>
-        <div class="totl">Total：45000</div>
+        <div class="number-votes">Number of votes：{{ item.number }}</div>
+        <div class="totl">Total：{{ item.total }}</div>
       </div>
       <div class="user-info">
         <img :src="item.artist_avatar ? item.artist_avatar : Avatar" />

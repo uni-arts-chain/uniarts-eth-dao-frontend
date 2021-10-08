@@ -17,7 +17,7 @@
         >
         <el-col :span="8" class="item">
           <span style="text-align: right">{{ v.amount }}</span
-          ><button class="operate" @click="onShowDialog">Withdraw</button>
+          ><button class="operate" @click="onShowDialog(v.index)">Withdraw</button>
         </el-col>
         <el-col :span="7" class="item"
           ><span>{{ format(v.date) }}</span></el-col
@@ -27,13 +27,13 @@
     <Dialog v-model="dialogTableVisible" v-if="!$store.state.global.isMobile" type="small">
       <div class="dialog-content">
         <div class="balance">{{ bondedBalance }} UART</div>
-        <button @click="onWithdraw(v.index)" v-loading="isWithdrawing">Withdraw</button>
+        <button @click="onWithdraw()" v-loading="isWithdrawing">Withdraw</button>
       </div>
     </Dialog>
     <MobileConfirm v-else v-model="dialogTableVisible">
       <div class="confirm-content">
         <div class="balance">{{ bondedBalance }} UART</div>
-        <button @click="onWithdraw(v.index)" v-loading="isWithdrawing">Withdraw</button>
+        <button @click="onWithdraw()" v-loading="isWithdrawing">Withdraw</button>
       </div>
     </MobileConfirm>
   </div>
@@ -87,12 +87,20 @@ export default defineComponent({
     const onShowDialog = (index) => {
       dialogTableVisible.value = true;
       currentIndex.value = index;
+      bondedBalance.value = list.value.find((v) => v.index == index).amount.split("/")[0];
+    };
+
+    const onCloseDialog = () => {
+      dialogTableVisible.value = false;
+      currentIndex.value = null;
+      bondedBalance.value = 0;
     };
 
     const connectedAccount = store.state.user.info.address;
     const isWithdrawing = ref(false);
     const onWithdraw = async () => {
       isWithdrawing.value = true;
+      console.log(connectedAccount, currentIndex.value);
       const notifyId = notification.loading("Please wait for the wallet's response");
       VoteMining.redeemUnbonding(connectedAccount, currentIndex.value, async (err, txHash) => {
         isWithdrawing.value = false;
@@ -104,6 +112,7 @@ export default defineComponent({
           console.log(txHash);
           notification.dismiss(notifyId);
           notification.success(txHash);
+          onCloseDialog();
         }
       })
         .then(async (receipt) => {
