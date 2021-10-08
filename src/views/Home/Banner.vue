@@ -25,7 +25,7 @@
       <div class="avatar">
         <div class="label">ARTIST:</div>
         <div class="avatar-image">
-          <router-link to="/artist/1">
+          <router-link :to="`/artist/${recommmedInfo.artist_uid}`">
             <img v-if="recommmedInfo.artist_avatar" :src="recommmedInfo.artist_avatar" />
             <img v-else src="@/assets/images/avatar@2x.png" />
           </router-link>

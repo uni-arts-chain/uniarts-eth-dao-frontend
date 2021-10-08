@@ -2,34 +2,49 @@
 <template>
   <div class="mobilebanner">
     <img class="banner-logo" src="@/assets/images/banner-logo@2x.png" />
-    <AdaptiveView width="330px" height="230px" :nft="nft" />
+    <AdaptiveView width="330px" height="230px" :nft="recommmedInfo" />
     <div class="vote-date">
-      <p>Voting period: 2021/09/01~2021/09/08</p>
+      <p>Voting Start Date: {{ recommmedInfo.created_at }}</p>
       <p>Select the most in-demand NFT artwork</p>
     </div>
-    <button>Start Voting!</button>
+    <button @click="$router.push(`/vote/${recommmedInfo.id}`)">Start Voting</button>
   </div>
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import AdaptiveView from "@/components/AdaptiveView";
+import http from "@/plugins/http";
+import { notification } from "@/components/Notification";
 export default defineComponent({
   name: "mobilebanner",
   components: {
     AdaptiveView,
   },
   setup() {
-    // TODO
-    const nft = {
-      img_main_file1: {
-        url: "https://bitflix-assets.s3.us-east-2.amazonaws.com/miner_pool/property/img/1/d128ae2b-ffb4-41c8-87d8-41c08e4a9cda.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA6PPSF6Y2ZB5JF5HX%2F20210917%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210917T171518Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=191d92380da0fe41a9ba47a0fe9ca3fc9c9cdccc4b709667021be50cf899061a",
-      },
-      property_url:
-        "https://bitflix-assets.s3.us-east-2.amazonaws.com/miner_pool/property/img/1/d128ae2b-ffb4-41c8-87d8-41c08e4a9cda.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA6PPSF6Y2ZB5JF5HX%2F20210917%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20210917T171518Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=191d92380da0fe41a9ba47a0fe9ca3fc9c9cdccc4b709667021be50cf899061a",
+    const isLoading = ref(false);
+    const recommmedInfo = ref({});
+    const requestData = () => {
+      isLoading.value = false;
+      http
+        .globalGetRecommend({})
+        .then((res) => {
+          isLoading.value = false;
+          console.log(res);
+          recommmedInfo.value = res;
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(err.head ? err.head.msg : err.message);
+        });
     };
+
+    onMounted(() => {
+      requestData();
+    });
     return {
-      nft,
+      recommmedInfo,
     };
   },
 });
@@ -60,7 +75,7 @@ button {
   width: 220px;
   height: 47px;
   opacity: 1;
-  background: #c9c9c9;
+  background: #000;
   border-radius: 6px;
   margin-bottom: 40px;
   font-family: Montserrat-Medium;
