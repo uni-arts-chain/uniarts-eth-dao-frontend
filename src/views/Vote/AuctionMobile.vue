@@ -77,15 +77,16 @@ export default defineComponent({
 <style lang="scss" scoped>
 .item {
   display: flex;
+  flex-direction: column;
 }
 .nft {
-  width: 520px;
-  height: 573px;
+  width: 100%;
+  height: 333px;
   /* background-color: black; */
 }
 .info {
-  width: 434px;
-  margin-left: 149px;
+  margin-top: 30px;
+  width: 100%;
   .title {
     font-size: 32px;
     font-family: Montserrat-Medium;
@@ -146,14 +147,14 @@ export default defineComponent({
     }
   }
   .bid-group {
-    margin-top: 63px;
+    margin-top: 23px;
     .label {
       display: flex;
       justify-content: space-between;
       font-size: 12px;
       font-family: Montserrat-Regular;
       font-weight: 400;
-      width: 376px;
+      width: 100%;
       text-align: left;
       color: #595757;
       line-height: 27px;
@@ -166,7 +167,7 @@ export default defineComponent({
       text-align: left;
       color: #898989;
       line-height: 18px;
-      width: 376px;
+      width: 100%;
       height: 48px;
       text-align: center;
       cursor: pointer;

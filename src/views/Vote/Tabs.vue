@@ -6,8 +6,8 @@
       <div
         class="auction"
         :class="{ active: currentTab == 2 }"
-        @click="currentTab = 1"
-        style="margin-left: 87px; color: #aaa"
+        @click="currentTab = 2"
+        style="margin-left: 87px"
       >
         Auction
       </div>
@@ -38,13 +38,14 @@
         @change="onCarouselChange"
         trigger="click"
         :arrow="isShowAuctionArrow"
-        height="600px"
+        :height="isMobile ? `800px` : `600px`"
         indicator-position="outside"
         :autoplay="false"
       >
         <el-carousel-item v-for="(item, v) in auctionList" :key="v">
           <div class="container">
-            <AuctionItem :item="item" />
+            <AuctionItem v-if="!isMobile" :item="item" />
+            <AuctionItemMobile v-else :item="item" />
           </div>
         </el-carousel-item>
       </el-carousel>
@@ -53,10 +54,11 @@
 </template>
 
 <script>
-import { defineComponent, computed, ref, onMounted } from "vue";
+import { defineComponent, computed, ref, onMounted, watch } from "vue";
 import VoteItem from "./VoteItem";
 import VoteItemMobile from "./VoteItemMobile";
 import AuctionItem from "./Auction";
+import AuctionItemMobile from "./AuctionMobile";
 import notification from "@/components/Notification";
 import http from "@/plugins/http";
 import store from "@/store";
@@ -67,6 +69,7 @@ export default defineComponent({
     VoteItem,
     AuctionItem,
     VoteItemMobile,
+    AuctionItemMobile,
   },
   setup() {
     // TODO
@@ -82,6 +85,15 @@ export default defineComponent({
 
     const voteList = ref([]);
     const auctionList = ref([]);
+
+    watch(currentTab, (value) => {
+      if (value == 2) {
+        onRequestAuctionData();
+      } else {
+        onRequestData();
+      }
+    });
+
     const onRequestData = () => {
       isLoading.value = true;
       http
@@ -91,6 +103,23 @@ export default defineComponent({
         .then((res) => {
           isLoading.value = false;
           voteList.value = res.list;
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(err.head ? err.head.msg : err.message);
+        });
+    };
+
+    const onRequestAuctionData = () => {
+      isLoading.value = true;
+      http
+        .globalGetAuctionsGroup({})
+        .then((res) => {
+          isLoading.value = false;
+          if (res.list.length > 0 && res.list[0].arts.length > 0) {
+            auctionList.value = res.list[0].arts;
+          }
         })
         .catch((err) => {
           console.log(err);
@@ -129,6 +158,8 @@ export default defineComponent({
       isMobile,
       isShowVoteArrow,
       isShowAuctionArrow,
+
+      onRequestAuctionData,
     };
   },
 });

@@ -120,12 +120,10 @@ const apiList = [
   {
     name: "getAuctionsGroup",
     method: "GET",
-    desc: "通过id获取市场定时拍卖的竞价历史记录",
+    desc: "通过竞拍组",
     path: "/auctions/group",
     mockPath: "/auctions/group",
-    params: {
-      sn: "",
-    },
+    params: {},
     options: {},
   },
   {
