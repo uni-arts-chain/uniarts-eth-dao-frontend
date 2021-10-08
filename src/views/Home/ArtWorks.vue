@@ -16,8 +16,11 @@
         </div>
         <div class="artist-info">
           <div class="avatar">
-            <div class="avatar-image">
-              <img :src="auctions[0].artist_avatar" :alt="auctions[0].artist_name" />
+            <div class="avatar-image" @click="$router.push('/artist/' + auctions[0].artist_uid)">
+              <img
+                :src="auctions[0].artist_avatar || require('@/assets/images/avatar@2x.png')"
+                :alt="auctions[0].artist_name"
+              />
               <div class="name">{{ auctions[0].artist_name }}</div>
             </div>
           </div>
@@ -182,8 +185,10 @@ export default defineComponent({
     onMounted(async () => {
       const data = await http.globalGetAuctionsRecommend({ size: 4 });
       auctions.value = data?.auction || [];
-      await getAuctionDate();
-      interval = setInterval(() => (now.value -= 1000), 1000);
+      if (auctions.value.length) {
+        await getAuctionDate(auctions.value[0]);
+        interval = setInterval(() => (now.value -= 1000), 1000);
+      }
     });
     onBeforeMount(() => {
       if (interval) {
@@ -269,6 +274,7 @@ export default defineComponent({
         align-items: center;
 
         img {
+          background-color: black;
           overflow: hidden;
           border-radius: 50%;
           width: 36px;
