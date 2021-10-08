@@ -19,7 +19,7 @@
       <div class="token-info">
         <div class="token">
           Token mint:
-          <span style="font-size: 20px; margin-left: 10px">{{ item.auction_min_bid }}</span>
+          <span style="font-size: 20px; margin-left: 10px">{{ item.token_mint }}</span>
         </div>
         <div class="bid">
           Current High Bid：<span style="font-size: 20px; margin-left: 10px">{{

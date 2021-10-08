@@ -71,6 +71,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/Index.vue"),
   },
   {
+    path: "/vote/rule",
+    name: "voteRule",
+    component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/Rule.vue"),
+  },
+  {
     path: "/vote/:id",
     name: "voteDetail",
     component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/VoteDetail.vue"),

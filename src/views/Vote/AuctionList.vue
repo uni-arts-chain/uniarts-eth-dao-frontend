@@ -8,8 +8,10 @@
         </button>
         <div class="content">
           <h2>Auction Round</h2>
-          <div class="date">
-            <img src="@/assets/images/date-clock.png" /> 6 Days 23 Hour 59 Minute 59 Second
+          <div class="date" v-if="countdownTime(auctionInfo.start_at, auctionInfo.end_at)">
+            <img src="@/assets/images/date-clock.png" />{{
+              countdownTime(auctionInfo.start_at, auctionInfo.end_at)
+            }}
           </div>
           <div class="amount">
             <span class="label">Prize Available with Higher Deal Price</span>
@@ -24,23 +26,36 @@
     <div class="list">
       <div class="container item-list">
         <div class="item" v-for="(v, i) in list" :key="i">
-          <div class="nft"></div>
+          <div class="nft">
+            <img :src="v.img_main_file1" alt="" />
+          </div>
           <div class="nft-info">
             <div class="my-votes">
-              <span class="value">My Votes : 200</span>
+              <span class="value">My Votes : {{ v.mine }}</span>
               <div class="bar">
-                <div class="progress" :style="`width: ${width}%;`"></div>
+                <div
+                  class="progress"
+                  :style="`width: ${parseInt((v.mine / (v.group_mine || 1)) * 100)}%;`"
+                ></div>
               </div>
             </div>
             <div class="vote-progress">
               <div class="bar"></div>
-              <div class="vote-bar" :style="`width: ${width}%`"></div>
-              <div class="current-per" :style="`left: ${width}%`">50%</div>
-              <div class="total-per">Total: 45000</div>
+              <div
+                class="vote-bar"
+                :style="`width: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
+              ></div>
+              <div
+                class="current-per"
+                :style="`left: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
+              >
+                {{ parseInt((v.number / (v.total || 1)) * 100) }}%
+              </div>
+              <div class="total-per">Total: {{ v.total }}</div>
             </div>
-            <div class="number-vote">Number of votes: 30000</div>
+            <div class="number-vote">Number of votes: {{ v.number }}</div>
           </div>
-          <button class="vote-button" @click="goAuction(1)">Place a bid</button>
+          <button class="vote-button" @click="goAuction(v.auction_id, v.id)">Place a bid</button>
         </div>
       </div>
     </div>
@@ -48,15 +63,14 @@
       <div class="container">
         <h2>Art Formula NFT Vote</h2>
         <p>
-          - Vote for NFTs that you think are most in-demand- According to the number of votes
-          obtained by each NFT, Uink rewards will be continuously cast into NFTs, which can be
-          retrieved by the owner.<br />
-          - Vote for NFT won't cost any token, but voted token can only be retrieved 7 days after
-          the end of the voted round.<br />
-          - Vote reward will be distributed at UTC 00:00 everyday during the voting period, and can
-          be withdraw at anytime once available.<br />
-          - Extra benefit from prize pool will be distributed after the end of auction. The higher
-          the deal price, the more benefit will be available for the voters of the NFT.
+          - Vote for NFTs that you think are most in-demand<br />
+          - According to the number of votes obtained by each NFT, UART rewards will be continuously
+          cast into NFTs, which can be retrieved by the owner.<br />
+          - Vote for NFT won't cost any token, voted token can be retrieved at UTC 00:00 next day.
+          <br />
+          - Vote reward will be distributed at UTC 00:00 everyday during the voting period. <br />
+          - Auction reward will be distributed after the auction round. The higher the deal price,
+          the more benefit will be available for the voters of the NFT.
         </p>
         <div class="more">More ></div>
       </div>
@@ -65,8 +79,11 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
+import { notification } from "@/components/Notification";
+import { DateFormatCountdown } from "@/utils";
+import http from "@/plugins/http";
 import store from "@/store";
 export default defineComponent({
   name: "list",
@@ -76,7 +93,7 @@ export default defineComponent({
 
     store.dispatch("global/SetNavText", "View Timed Auctions");
 
-    const list = [1, 2, 3];
+    const list = ref([]);
 
     const width = 50;
 
@@ -84,12 +101,45 @@ export default defineComponent({
       router.push("/vote");
     };
 
+    const isLoading = ref(false);
+    const auctionInfo = reactive({});
+    const requestData = () => {
+      isLoading.value = true;
+      http
+        .globalGetAuctionsGroup({})
+        .then((res) => {
+          auctionInfo.end_at = res.list[0].end_at;
+          auctionInfo.img = res.list[0].img;
+          auctionInfo.start_at = res.list[0].start_at;
+          auctionInfo.title = res.list[0].title;
+          isLoading.value = false;
+          list.value = res.list[0].arts;
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+
+    onMounted(() => {
+      requestData();
+    });
+
     const goVoteQueue = () => {
       router.push("/vote/votelist");
     };
 
-    const goAuction = (id) => {
-      router.push("/marketplace/auction/" + id);
+    const goAuction = (uid, id) => {
+      router.push("/marketplace/auction/" + uid + "/" + id);
+    };
+
+    const countdownTime = (startTime, endTime) => {
+      let value = DateFormatCountdown(startTime * 10, endTime * 10);
+      console.log(value);
+      return value ? `${value.day} Day ${value.hour} Hours ${value.minute} Minute` : "";
     };
 
     return {
@@ -99,6 +149,10 @@ export default defineComponent({
       goVoteQueue,
       onBack,
       goAuction,
+      requestData,
+      auctionInfo,
+
+      countdownTime,
     };
   },
 });
@@ -207,7 +261,16 @@ export default defineComponent({
   .nft {
     width: 212px;
     height: 124px;
-    background: black;
+    position: relative;
+    overflow: hidden;
+    img {
+      width: 100%;
+      display: block;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateX(-50%) translateY(-50%);
+    }
   }
   .my-votes {
     display: flex;
