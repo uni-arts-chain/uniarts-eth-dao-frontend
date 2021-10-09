@@ -2,10 +2,10 @@
 <template>
   <div v-if="!$store.state.global.isMobile" class="index container">
     <h3 class="title">Market</h3>
-    <!--    <div class="search">-->
-    <!--      <input placeholder="Please enter keywords to search work" type="text" />-->
-    <!--      <img src="@/assets/images/market-search@2x.png" />-->
-    <!--    </div>-->
+    <div class="search">
+      <input placeholder="Please enter keywords to search work" type="text" />
+      <img src="@/assets/images/market-search@2x.png" />
+    </div>
     <div class="buy-now">
       <div class="title">Timed Auctions</div>
       <div class="list">
@@ -39,10 +39,10 @@
   </div>
   <div v-else class="index container">
     <h3 class="title">Market</h3>
-    <!--    <div class="search">-->
-    <!--      <input placeholder="Please enter keywords..." type="text" />-->
-    <!--      <img src="@/assets/images/market-search@2x.png" />-->
-    <!--    </div>-->
+    <div class="search">
+      <input placeholder="Please enter keywords..." type="text" />
+      <img src="@/assets/images/market-search@2x.png" />
+    </div>
     <div class="buy-now">
       <div class="title">
         <div :class="{ active: currentTab == 1 }" class="title-tab" @click="currentTab = 1">

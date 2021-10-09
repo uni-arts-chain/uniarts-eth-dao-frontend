@@ -21,6 +21,7 @@
         <div class="token">
           <span>Token mint:&nbsp;&nbsp;</span>
           <span class="value">{{ auction.token_mint }}</span>
+          <span>UART</span>
         </div>
         <div class="bid">
           <span>Current High Bid: &nbsp;&nbsp;</span>
@@ -122,6 +123,7 @@
         <div class="token">
           <span>Token mint:&nbsp;&nbsp;</span>
           <span class="value">{{ auction.token_mint }}</span>
+          <span>UART</span>
         </div>
         <div class="bid">
           <span>Current High Bid: &nbsp;&nbsp;</span>

@@ -4,8 +4,10 @@ import { toBN, BN, isBN } from "web3-utils";
 import { MAX_UINT256 } from "./constants";
 import { BigNumber } from "@/plugins/bignumber";
 // import config from "@/config/network";
-import ABI from "@/config/abi/Erc721.json";
+import ABI from "@/contracts/abi/Erc721.json";
 import Wallet from "@/plugins/wallet";
+import config from "@/config/network";
+import store from "@/store";
 
 export class Erc721 {
   constructor(address, symbol) {
@@ -29,6 +31,26 @@ export class Erc721 {
   async getApproved(tokenId) {
     let address = await this.contract.methods.getApproved(tokenId).call();
     return address;
+  }
+
+  async sendNft(address, tokenId, callback) {
+    const sender = store.state.user.info.address;
+    const gasPrice = await this.gasPrice();
+    //第一个地址是自己钱包地址，第二个地址是用户填写的地址
+    const tx = this.contract.methods.safeTransferFrom(sender, address, tokenId);
+    const gasLimit = await tx.estimateGas({
+      value: 0,
+      from: sender,
+      to: this.address,
+    });
+    return tx.send(
+      {
+        from: sender,
+        gasPrice: gasPrice,
+        gas: Math.round(gasLimit * 1.1),
+      },
+      callback
+    );
   }
 
   async approve(sender, address, tokenId, callback) {

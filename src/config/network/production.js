@@ -5,6 +5,7 @@ module.exports = {
     VoteMining: "0xd9ed8F4d1F66Ae933E4ea3c752886d8Ab392D276",
     Auction: "0xe473ccEbF3FBfEA26da9129958f48f39dbA5F165",
     TrustMarketplace: "0x88018509F438422E3254A3c50227Ad54C9E8d4D3",
+    Collection: "0xb0F55f7468A6F781d09D0B84cfD14C34F5566A62",
   },
   nfts: {
     UniartsNFT: {

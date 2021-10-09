@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="action-notice">To Collect Airdrop & Vote for NFT</div>
-      <div class="label">Coming Sept. 20</div>
+      <div class="label"></div>
     </div>
   </div>
 </template>

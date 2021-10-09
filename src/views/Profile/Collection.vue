@@ -4,52 +4,56 @@
     <div class="no-data" v-if="list.length <= 0">No data</div>
     <div class="list" v-for="v in list" :key="v">
       <div class="item">
-        <img
-          src="https://ipfs.pixura.io/ipfs/QmbBmVPHkXQFcUHUw1ETKsq3m51iUjCNkJwop9L44uiAmV/FinalWithGradient.jpg"
-          alt=""
-        />
+        <img :src="v.img_main_file1" alt="" />
         <div class="info">
           <div class="progress">
-            <Progress :value="width" />
+            <Progress :value="v.number / v.total" />
             <div class="value-group">
-              <span>Number of votes: 30000</span>
-              <span>Total: 45000</span>
+              <span>Number of votes: {{ v.number }}</span>
+              <span>Total: {{ v.total }}</span>
             </div>
           </div>
           <div class="operate">
-            <button @click="visible = true">List</button>
-            <button>Send</button>
+            <button>List</button>
+            <button @click="() => openSendDialog(v)">Send</button>
             <button disabled>Pin</button>
           </div>
         </div>
       </div>
     </div>
-    <MobileConfirm v-model="visible">
-      <div style="height: 300px"></div>
-    </MobileConfirm>
+    <Dialog v-model="sendDialog" type="small">
+      <div class="dialog-content">
+        <div class="input-body">
+          <span class="unit">address</span>
+          <input v-model="sender" />
+        </div>
+        <button v-loading="isLoading" @click="send">send</button>
+      </div>
+    </Dialog>
   </div>
 </template>
 
 <script>
 import { defineComponent, ref, onMounted } from "vue";
 import Progress from "@/components/Progress";
-import MobileConfirm from "@/components/MobileConfirm";
 // import { BigNumber } from "@/plugins/bignumber";
 // import { DAPP_CONFIG } from "@/config";
 // import store from "@/store";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
+import Dialog from "@/components/Dialog";
+import config from "@/config/network";
+import Erc721 from "@/contracts/Erc721";
 export default defineComponent({
   name: "collection",
   components: {
+    Dialog,
     Progress,
-    MobileConfirm,
   },
   setup() {
-    // TODO
     const width = 70;
-    const visible = ref(false);
-
+    const sendDialog = ref(false);
+    const sender = ref("");
     const isLoading = ref(false);
     const list = ref([]);
     const requestData = () => {
@@ -72,11 +76,34 @@ export default defineComponent({
     onMounted(() => {
       requestData();
     });
-
+    let selectItem = null;
+    const openSendDialog = (v) => {
+      selectItem = v;
+      sendDialog.value = true;
+    };
+    const send = () => {
+      const nft = config.nfts.UniartsNFT;
+      const erc721 = new Erc721(nft.address, nft.symbol);
+      erc721
+        .sendNft(sender, selectItem.token_id, (res) => {
+          console.log(res);
+        })
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      console.log(send);
+    };
     return {
-      visible,
+      sendDialog,
       list,
       width,
+      send,
+      sender,
+      isLoading,
+      openSendDialog,
     };
   },
 });
@@ -161,5 +188,78 @@ export default defineComponent({
   align-items: center;
   min-height: 200px;
   color: #aaa;
+}
+
+.dialog-content {
+  .input-body {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    height: 50px;
+    border: 1px solid #e3e4e5;
+
+    input {
+      height: 100%;
+      width: calc(100% - 50px);
+      outline: none;
+      background-color: white;
+      font-size: 17px;
+      border: none;
+      padding: 0 15px;
+    }
+
+    .unit {
+      width: 130px;
+      font-size: 16px;
+      background-color: white;
+      font-family: Montserrat-Regular;
+      font-weight: 300;
+      text-align: center;
+      color: #000000;
+      line-height: 48px;
+      padding: 0 10px;
+      border-right: 1px solid #e3e4e5;
+    }
+  }
+
+  .balance {
+    font-size: 18px;
+    font-family: Montserrat-Regular;
+    font-weight: 300;
+    text-align: center;
+    color: #000000;
+    line-height: 50px;
+    padding-left: 20px;
+  }
+
+  button {
+    width: 343px;
+    height: 48px;
+    background-color: black;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+    font-family: Montserrat-Regular;
+    font-weight: 400;
+    text-align: center;
+    color: #ffffff;
+    line-height: 32px;
+    margin: 0 auto;
+    margin-top: 33px;
+    display: block;
+    cursor: pointer;
+  }
+
+  .notice {
+    font-size: 12px;
+    font-family: Montserrat-Regular;
+    font-weight: 300;
+    text-align: left;
+    color: #898989;
+    line-height: 18px;
+    width: 343px;
+    margin: 0 auto;
+    margin-top: 21px;
+  }
 }
 </style>
