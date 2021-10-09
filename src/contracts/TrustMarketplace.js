@@ -11,6 +11,9 @@ class TrustMarketplace {
     // 初始化合约
     this.contract = new this.web3.eth.Contract(TrustMarketplaceABI, this.address.toString());
   }
+  async gasPrice() {
+    return await this.web3.eth.getGasPrice();
+  }
   // buyNow
   async creatOrder(nftAddress, assetId, priceInWei, expiresAt, callback) {
     const sender = store.state.user.info.address;
