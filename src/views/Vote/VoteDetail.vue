@@ -82,7 +82,7 @@
             class="submit"
             v-if="isApproved"
             v-loading="isBonding"
-            :disabled="voteTime || hasFinished"
+            :disabled="!voteTime || hasFinished"
             @click="onBonded"
           >
             Bonded
