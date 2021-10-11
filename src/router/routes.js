@@ -66,6 +66,11 @@ const routes = [
       import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Auction.vue"),
   },
   {
+    path: "/marketplace/buy/:id",
+    name: "buyDetail",
+    component: () => import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Buy.vue"),
+  },
+  {
     path: "/vote",
     name: "vote",
     component: () => import(/* webpackChunkName: "vote" */ "../views/Vote/Index.vue"),

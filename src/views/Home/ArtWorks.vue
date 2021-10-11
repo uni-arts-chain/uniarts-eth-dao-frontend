@@ -62,67 +62,62 @@
       </div>
       <div class="offers-body" v-else>No data temporarily</div>
     </div>
-    <!--    <div class="list-body">-->
-    <!--      <div class="auctions-body">-->
-    <!--        <div class="main-item">-->
-    <!--          <img-->
-    <!--            src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"-->
-    <!--          />-->
-    <!--        </div>-->
-    <!--        <div class="artist-info">-->
-    <!--          <div class="avatar">-->
-    <!--            <div class="avatar-image">-->
-    <!--              <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />-->
-    <!--              <div class="name">Kyle Bighead</div>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--          <div class="info">-->
-    <!--            <div class="vote-number">-->
-    <!--              Current High Bid <span style="color: #fe0000">1500</span> USDT-->
-    <!--            </div>-->
-    <!--            <div class="vote-date">-->
-    <!--              <img src="@/assets/images/date-clock.png" />-->
-    <!--              <div class="date">3 Days 23 Hour 59 Minute 59 Second</div>-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--      <div class="offers-body">-->
-    <!--        <div class="sub-item">-->
-    <!--          <div class="item-content">-->
-    <!--            <img-->
-    <!--              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"-->
-    <!--            />-->
-    <!--          </div>-->
-    <!--          <div class="item-user">-->
-    <!--            <span class="username">name@</span>-->
-    <!--            <span style="color: #fe0000">$1500</span>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--        <div class="sub-item">-->
-    <!--          <div class="item-content">-->
-    <!--            <img-->
-    <!--              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"-->
-    <!--            />-->
-    <!--          </div>-->
-    <!--          <div class="item-user">-->
-    <!--            <span class="username">name@</span>-->
-    <!--            <span style="color: #fe0000">$1500</span>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--        <div class="sub-item">-->
-    <!--          <div class="item-content">-->
-    <!--            <img-->
-    <!--              src="https://ipfs.pixura.io/ipfs/QmVPaeYb8mSDTUkMuw1HHnCP6evmv1Zr3LEASRtbRLcWz2/StephenTompkins_Typhon.jpg"-->
-    <!--            />-->
-    <!--          </div>-->
-    <!--          <div class="item-user">-->
-    <!--            <span class="username">name@</span>-->
-    <!--            <span style="color: #fe0000">$1500</span>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
+    <div class="list-head">
+      <div class="auctions-head">Buy Now</div>
+      <div class="offers-head">Offers</div>
+    </div>
+    <div class="list-body">
+      <div class="auctions-body" v-if="artOrderList.length">
+        <div class="main-item" @click="$router.push(`/marketplace/buy/${artOrderList[0].id}`)">
+          <img :src="artOrderList[0].art.img_main_file1.url" />
+        </div>
+        <div class="artist-info">
+          <div class="avatar">
+            <div
+              class="avatar-image"
+              @click="$router.push('/artist/' + artOrderList[0].art.artist_uid)"
+            >
+              <img :src="artOrderList[0].art.artist_avatar" />
+              <div class="name">{{ artOrderList[0].art.artist_name }}</div>
+            </div>
+          </div>
+          <div class="info">
+            <div class="vote-number">
+              <span> Price </span>
+              <span style="color: #fe0000">{{ artOrderList[0].price }}</span>
+              <span> {{ artOrderList[0].art.currency_code.toUpperCase() }} </span>
+            </div>
+            <!--            <div class="vote-date">-->
+            <!--              <img src="@/assets/images/date-clock.png" />-->
+            <!--              <div class="date">3 Days 23 Hour 59 Minute 59 Second</div>-->
+            <!--            </div>-->
+          </div>
+        </div>
+      </div>
+      <div
+        class="offers-body"
+        v-if="artOrderList.filter((item, index) => index >= 1 && index <= 3).length"
+      >
+        <div
+          class="sub-item"
+          v-for="item of artOrderList.filter((item, index) => index >= 1 && index <= 3).length"
+          :key="item.id"
+        >
+          <div class="item-content">
+            <img
+              :src="item.art.img_main_file1.url"
+              @click="$router.push(`/marketplace/buy/${item.id}`)"
+            />
+          </div>
+          <div class="item-user">
+            <span class="username">{{ artOrderList[0].art.artist_name }} @</span>
+            <span style="color: #fe0000">{{ item.price }}</span>
+            <span>{{ item.art.currency_code.toUpperCase() }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="offers-body" v-else>No data temporarily</div>
+    </div>
   </div>
 </template>
 
@@ -182,7 +177,16 @@ export default defineComponent({
         return `${day} Days ${hour} Hour ${minute} Minute ${second} Second`;
       }
     });
+    const artOrderList = ref([]);
     onMounted(async () => {
+      http
+        .globalGetArtOrderRecommend({ size: 4 })
+        .then((res) => {
+          artOrderList.value = res || [];
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       const data = await http.globalGetAuctionsRecommend({ size: 4 });
       auctions.value = data?.auction || [];
       if (auctions.value.length) {
@@ -195,7 +199,7 @@ export default defineComponent({
         clearInterval(interval);
       }
     });
-    return { auctions, getAuctionDateString };
+    return { auctions, getAuctionDateString, artOrderList };
   },
 });
 </script>

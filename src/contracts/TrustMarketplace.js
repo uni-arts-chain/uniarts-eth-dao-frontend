@@ -15,10 +15,12 @@ class TrustMarketplace {
     return await this.web3.eth.getGasPrice();
   }
   // buyNow
-  async creatOrder(nftAddress, assetId, priceInWei, expiresAt, callback) {
+  async safePlaceBid(nftAddress, assetId, priceInWei, expiresAt, callback) {
     const sender = store.state.user.info.address;
     const gasPrice = await this.gasPrice();
-    const tx = this.contract.createOrder(nftAddress, assetId, priceInWei, expiresAt);
+    console.log({ nftAddress, assetId, priceInWei, expiresAt });
+    console.log(priceInWei.toString());
+    const tx = this.contract.methods.safePlaceBid(nftAddress, assetId, priceInWei, expiresAt);
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,

@@ -6,7 +6,7 @@
       <input placeholder="Please enter keywords to search work" type="text" />
       <img src="@/assets/images/market-search@2x.png" />
     </div>
-    <div class="buy-now">
+    <div class="buy-now" v-if="auctionList.length">
       <div class="title">Timed Auctions</div>
       <div class="list">
         <div v-for="item in auctionList" :key="item.id" class="item">
@@ -22,16 +22,18 @@
         </div>
       </div>
     </div>
-    <div v-show="buyList?.length" class="buy-now">
+    <div v-if="buyList?.length" class="buy-now">
       <div class="title">Buy Now</div>
       <div class="list">
-        <div v-for="v in buyList" :key="v" class="item">
-          <router-link to="/marketplace/1">
-            <div class="item-img"></div>
+        <div v-for="item in buyList" :key="item.id" class="item">
+          <router-link :to="`/marketplace/buy/${item.id}`">
+            <img :src="item.art.img_main_file1.url" class="item-img" />
           </router-link>
           <div class="info">
-            <div class="name">《 Earth Wisp 》</div>
-            <div class="price">Price: 999 USDT</div>
+            <div class="name">《 {{ item.art.name }} 》</div>
+            <div class="price">
+              Price: {{ item.price }} {{ item.art.currency_code.toUpperCase() }}
+            </div>
           </div>
         </div>
       </div>
@@ -99,9 +101,17 @@ export default defineComponent({
       http.globalGetAuctions({}).then((res) => {
         auctionList.value = res.list;
       });
-      http.globalGetAuctionsGroup({}).then((res) => {
-        console.log(res);
-      });
+      // http.globalGetAuctionsGroup({}).then((res) => {
+      //   console.log(res);
+      // });
+      http
+        .globalGetArtOrder({})
+        .then((res) => {
+          buyList.value = res || [];
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     };
     onMounted(() => getAuctionListData());
     return {

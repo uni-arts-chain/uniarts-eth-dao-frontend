@@ -90,6 +90,8 @@ const apiList = [
     mockPath: "/auctions",
     params: {
       sn: "",
+      page: "",
+      per_page: "",
     },
     options: {},
   },
@@ -146,6 +148,42 @@ const apiList = [
     params: {
       sn: "",
       size: 4,
+    },
+    options: {},
+  },
+  {
+    name: "getArtOrderRecommend",
+    method: "GET",
+    desc: "获取首页一口价推荐",
+    path: "/art_orders/recommend",
+    mockPath: "/art_orders/recommend",
+    params: {
+      sn: "",
+      size: 4,
+    },
+    options: {},
+  },
+  {
+    name: "getArtOrder",
+    method: "GET",
+    desc: "获取市场一口价",
+    path: "/art_orders",
+    mockPath: "/art_orders",
+    params: {
+      sn: "",
+      page: "",
+      per_page: "",
+    },
+    options: {},
+  },
+  {
+    name: "getArtOrderById",
+    method: "GET",
+    desc: "获取市场一口价",
+    path: "/art_orders/{:id}",
+    mockPath: "/art_orders/{:id}",
+    params: {
+      sn: "",
     },
     options: {},
   },
