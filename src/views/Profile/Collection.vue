@@ -14,14 +14,14 @@
             </div>
           </div>
           <div class="operate">
-            <button>List</button>
+            <!--            <button>List</button>-->
             <button @click="() => openSendDialog(v)">Send</button>
-            <button disabled>Pin</button>
+            <button @click="() => pin(v)">Pin</button>
           </div>
         </div>
       </div>
     </div>
-    <Dialog v-model="sendDialog" type="small">
+    <Dialog v-if="!$store.state.global.isMobile" v-model="sendDialog" type="small">
       <div class="dialog-content">
         <div class="input-body">
           <span class="unit">address</span>
@@ -30,6 +30,15 @@
         <button v-loading="isLoading" @click="send">send</button>
       </div>
     </Dialog>
+    <Mobilecomfirm v-else v-model="sendDialog" type="small">
+      <div class="dialog-content">
+        <div class="input-body">
+          <span class="unit">address</span>
+          <input v-model="sender" />
+        </div>
+        <button v-loading="isLoading" @click="send">send</button>
+      </div>
+    </Mobilecomfirm>
   </div>
 </template>
 
@@ -44,9 +53,11 @@ import { notification } from "@/components/Notification";
 import Dialog from "@/components/Dialog";
 import config from "@/config/network";
 import Erc721 from "@/contracts/Erc721";
+import Mobilecomfirm from "@/components/MobileConfirm";
 export default defineComponent({
   name: "collection",
   components: {
+    Mobilecomfirm,
     Dialog,
     Progress,
   },
@@ -84,19 +95,36 @@ export default defineComponent({
     const send = () => {
       const nft = config.nfts.UniartsNFT;
       const erc721 = new Erc721(nft.address, nft.symbol);
+      console.log({ sender: sender.value, token_id: selectItem.token_id });
+      let notifyId = notification.loading("In transferred assets");
       erc721
-        .sendNft(sender, selectItem.token_id, (res) => {
-          console.log(res);
+        .sendNft(sender.value, selectItem.token_id, (err, txHash) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          if (txHash) {
+            isLoading.value = true;
+            console.log(txHash);
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+            notifyId = notification.success("Confirming");
+          }
         })
         .then((res) => {
           console.log(res);
+          notification.dismiss(notifyId);
+          notification.success("Asset transfer succeeded");
         })
         .catch((err) => {
           console.log(err);
         });
-      console.log(send);
+    };
+    const pin = (item) => {
+      console.log(item);
     };
     return {
+      pin,
       sendDialog,
       list,
       width,

@@ -50,9 +50,9 @@
         <div :class="{ active: currentTab == 1 }" class="title-tab" @click="currentTab = 1">
           Auctions
         </div>
-        <!--        <div :class="{ active: currentTab == 2 }" class="title-tab" @click="currentTab = 2">-->
-        <!--          Buy Now-->
-        <!--        </div>-->
+        <div :class="{ active: currentTab == 2 }" class="title-tab" @click="currentTab = 2">
+          Buy Now
+        </div>
       </div>
       <div v-if="currentTab == 1" class="list">
         <div v-for="item in auctionList" :key="item.id" class="item">
@@ -68,13 +68,15 @@
         </div>
       </div>
       <div v-else v-show="buyList?.length" class="list">
-        <div v-for="v in buyList" :key="v" class="item">
-          <router-link to="/marketplace/1">
-            <div class="item-img"></div>
+        <div v-for="item in buyList" :key="item.id" class="item">
+          <router-link :to="`/marketplace/buy/${item.id}`">
+            <img :src="item.art.img_main_file1.url" class="item-img" />
           </router-link>
           <div class="info">
-            <div class="name">《 Earth Wisp 》</div>
-            <div class="price">Price: 999 USDT</div>
+            <div class="name">《 {{ item.art.name }} 》</div>
+            <div class="price">
+              Price: {{ item.price }} {{ item.art.currency_code.toUpperCase() }}
+            </div>
           </div>
         </div>
       </div>

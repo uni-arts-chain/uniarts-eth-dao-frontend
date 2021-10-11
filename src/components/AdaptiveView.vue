@@ -9,7 +9,7 @@
         :height="height"
         :isResponsive="isResponsive"
         :isPreview="isPreview"
-        :cover="nft.img_main_file1"
+        :cover="nft.img_main_file1?.url || nft.img_main_file1"
         :isOrigin="!isResponsive"
         v-if="viewType == 'img'"
         :url="nft.property_url"
@@ -24,7 +24,7 @@
         :isResponsive="isResponsive"
         :isPlay="!isPreview"
         :isPreview="isPreview"
-        :cover="nft.img_main_file1"
+        :cover="nft.img_main_file1?.url || nft.img_main_file1"
         :source="nft.property_url"
       />
       <div
