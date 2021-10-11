@@ -54,6 +54,9 @@ import Dialog from "@/components/Dialog";
 import config from "@/config/network";
 import Erc721 from "@/contracts/Erc721";
 import Mobilecomfirm from "@/components/MobileConfirm";
+import Collection from "@/contracts/Collection";
+import { DAPP_CONFIG } from "@/config";
+import store from "@/store";
 export default defineComponent({
   name: "collection",
   components: {
@@ -120,8 +123,54 @@ export default defineComponent({
           console.log(err);
         });
     };
-    const pin = (item) => {
-      console.log(item);
+    const pin = async (item) => {
+      let notifyId = notification.loading("Authorization in progress");
+      const sender = store.state.user.info.address;
+      const nft = DAPP_CONFIG.nfts.UniartsNFT;
+      const erc721 = new Erc721(nft.address, nft.symbol);
+      try {
+        await erc721.approve(sender, Collection.address, item.token_id, (err, txHash) => {
+          if (err) {
+            console.log(err);
+            notification.dismiss(notifyId);
+            throw err;
+          }
+          if (txHash) {
+            isLoading.value = true;
+            console.log(txHash);
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+            notifyId = notification.success("Confirming");
+          }
+        });
+        notification.dismiss(notifyId);
+      } catch (err) {
+        notification.dismiss(notifyId);
+        notifyId = notification.error(err);
+      }
+      notifyId = notification.loading("Pinning");
+      Collection.pin(nft.address, item.token_id, (err, txHash) => {
+        if (err) {
+          console.log(err);
+          throw err;
+        }
+        if (txHash) {
+          isLoading.value = true;
+          console.log(txHash);
+          notification.dismiss(notifyId);
+          notification.success(txHash);
+          notifyId = notification.success("Confirming");
+        }
+      })
+        .then((res) => {
+          console.log(res);
+          notification.dismiss(notifyId);
+          notifyId = notification.success("Pin Success");
+        })
+        .catch((err) => {
+          notification.dismiss(notifyId);
+          notification.error(err);
+        });
     };
     return {
       pin,
