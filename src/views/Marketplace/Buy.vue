@@ -161,6 +161,7 @@ import Erc20 from "../../contracts/Erc20";
 import { notification } from "@/components/Notification";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
 import { BigNumber } from "@/plugins/bignumber";
+import { toBN } from "web3-utils";
 // import Dialog from "@/components/Dialog";
 // import Mobilecomfirm from "@/components/MobileConfirm";
 
@@ -228,14 +229,14 @@ export default defineComponent({
       // 购买nft
       notification.dismiss(notifyId);
       notifyId = notification.loading("Please wait for the wallet's response");
-      const amount = new BigNumber(auction.value.price).shiftedBy(
-        DAPP_CONFIG.tokens[auction.value.art?.currency_code?.toUpperCase()].decimals
-      );
+      const amount = new BigNumber(auction.value.price)
+        .shiftedBy(DAPP_CONFIG.tokens[auction.value.art?.currency_code?.toUpperCase()].decimals)
+        .toNumber();
 
       await TrustMarketplace.safePlaceBid(
         DAPP_CONFIG.nfts.UniartsNFT.address,
         auction.value.art.token_id,
-        amount,
+        toBN(amount),
         Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
         async (err, txHash) => {
           if (err) {

@@ -17,7 +17,6 @@ class TrustMarketplace {
   }
   // buyNow
   async safePlaceBid(nftAddress, assetId, priceInWei, expiresAt, callback) {
-    notification.info(nftAddress, assetId, priceInWei, expiresAt);
     const sender = store.state.user.info.address;
     const gasPrice = await this.gasPrice();
     console.info({ nftAddress, assetId, priceInWei, expiresAt });
