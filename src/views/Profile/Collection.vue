@@ -129,6 +129,7 @@ export default defineComponent({
       const nft = DAPP_CONFIG.nfts.UniartsNFT;
       const erc721 = new Erc721(nft.address, nft.symbol);
       try {
+        console.log({ sender, address: Collection.address, token_id: item.token_id });
         await erc721.approve(sender, Collection.address, item.token_id, (err, txHash) => {
           if (err) {
             console.log(err);
@@ -147,6 +148,7 @@ export default defineComponent({
       } catch (err) {
         notification.dismiss(notifyId);
         notifyId = notification.error(err);
+        return;
       }
       notifyId = notification.loading("Pinning");
       Collection.pin(nft.address, item.token_id, (err, txHash) => {

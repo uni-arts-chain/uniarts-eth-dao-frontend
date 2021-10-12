@@ -257,7 +257,7 @@ export default defineComponent({
         })
         .catch((err) => {
           notification.dismiss(notifyId);
-          notification.error(err.message.split('"message": "')[1]?.split('"')[0] || "Error buying");
+          notification.error(err);
           console.log(err);
         });
     };
