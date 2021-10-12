@@ -3,6 +3,7 @@ import Wallet from "@/plugins/wallet";
 import { DAPP_CONFIG } from "@/config";
 import TrustMarketplaceABI from "@/contracts/abi/TrustMarketplace.json";
 import store from "@/store";
+import { notification } from "@/components/Notification";
 
 class TrustMarketplace {
   constructor() {
@@ -16,10 +17,12 @@ class TrustMarketplace {
   }
   // buyNow
   async safePlaceBid(nftAddress, assetId, priceInWei, expiresAt, callback) {
+    notification.info(nftAddress, assetId, priceInWei, expiresAt);
     const sender = store.state.user.info.address;
     const gasPrice = await this.gasPrice();
+    console.info({ nftAddress, assetId, priceInWei, expiresAt });
     console.log({ nftAddress, assetId, priceInWei, expiresAt });
-    console.log(priceInWei.toString());
+    console.info(priceInWei.toString());
     const tx = this.contract.methods.safePlaceBid(nftAddress, assetId, priceInWei, expiresAt);
     const gasLimit = await tx.estimateGas({
       value: 0,
