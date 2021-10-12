@@ -1,8 +1,8 @@
 /** * Created by Lay Hunt on 2021-09-08 14:14:13. */
 <template>
   <div class="collection">
-    <div class="no-data" v-if="list.length <= 0">No data</div>
-    <div class="list" v-for="v in list" :key="v">
+    <div v-if="list.length <= 0" class="no-data">No data</div>
+    <div v-for="v in list" :key="v" class="list">
       <div class="item">
         <img :src="v.img_main_file1" alt="" @click="goDetail(v.id)" />
         <div class="info">
@@ -55,9 +55,10 @@ import Dialog from "@/components/Dialog";
 import config from "@/config/network";
 import Erc721 from "@/contracts/Erc721";
 import Mobilecomfirm from "@/components/MobileConfirm";
-import Collection from "@/contracts/Collection";
+import Pin from "@/contracts/Collection";
 import { DAPP_CONFIG } from "@/config";
 import store from "@/store";
+
 export default defineComponent({
   name: "collection",
   components: {
@@ -99,7 +100,10 @@ export default defineComponent({
     const send = () => {
       const nft = config.nfts.UniartsNFT;
       const erc721 = new Erc721(nft.address, nft.symbol);
-      console.log({ sender: sender.value, token_id: selectItem.token_id });
+      console.log({
+        sender: sender.value,
+        token_id: selectItem.token_id,
+      });
       let notifyId = notification.loading("In transferred assets");
       erc721
         .sendNft(sender.value, selectItem.token_id, (err, txHash) => {
@@ -112,7 +116,7 @@ export default defineComponent({
             console.log(txHash);
             notification.dismiss(notifyId);
             notification.success(txHash);
-            notifyId = notification.success("Confirming");
+            notifyId = notification.loading("Confirming");
           }
         })
         .then((res) => {
@@ -121,7 +125,9 @@ export default defineComponent({
           notification.success("Asset transfer succeeded");
         })
         .catch((err) => {
+          notification.dismiss(notifyId);
           console.log(err);
+          notification.error(err);
         });
     };
     const pin = async (item) => {
@@ -129,30 +135,45 @@ export default defineComponent({
       const sender = store.state.user.info.address;
       const nft = DAPP_CONFIG.nfts.UniartsNFT;
       const erc721 = new Erc721(nft.address, nft.symbol);
+      let bool = false;
       try {
-        console.log({ sender, address: Collection.address, token_id: item.token_id });
-        await erc721.approve(sender, Collection.address, item.token_id, (err, txHash) => {
-          if (err) {
-            console.log(err);
-            notification.dismiss(notifyId);
-            throw err;
-          }
-          if (txHash) {
-            // isLoading.value = true;
-            console.log(txHash);
-            notification.dismiss(notifyId);
-            notification.success(txHash);
-            notifyId = notification.loading("Pinning");
-          }
-        });
-        notification.dismiss(notifyId);
+        const res = await erc721.getApproved(item.token_id);
+        bool = res.toString() === Pin.address.toString();
       } catch (err) {
-        notification.dismiss(notifyId);
-        notifyId = notification.error(err);
-        return;
+        console.log(err);
+        bool = false;
+      }
+      if (!bool) {
+        try {
+          console.log({
+            sender,
+            address: Pin.address,
+            token_id: item.token_id,
+          });
+          await erc721.approve(sender, Pin.address, item.token_id, (err, txHash) => {
+            if (err) {
+              console.log(err);
+              notification.dismiss(notifyId);
+              throw err;
+            }
+            if (txHash) {
+              // isLoading.value = true;
+              console.log(txHash);
+              notification.dismiss(notifyId);
+              notification.success(txHash);
+              notifyId = notification.loading("Pinning");
+            }
+          });
+          notification.dismiss(notifyId);
+          notification.success("Pin Success");
+        } catch (err) {
+          notification.dismiss(notifyId);
+          notifyId = notification.error(err);
+          return;
+        }
       }
 
-      Collection.pin(nft.address, item.token_id, (err, txHash) => {
+      Pin.pin(nft.address, item.token_id, (err, txHash) => {
         if (err) {
           console.log(err);
           throw err;
@@ -200,18 +221,22 @@ export default defineComponent({
   .item {
     display: flex;
     margin-bottom: 72px;
+
     img {
       min-width: 400px;
       max-width: 400px;
     }
   }
+
   .info {
     width: 434px;
     margin-left: 37px;
+
     .operate {
       display: flex;
       justify-content: space-between;
       margin-top: 69px;
+
       button {
         font-size: 14px;
         font-family: Montserrat-Medium;
@@ -221,10 +246,12 @@ export default defineComponent({
         height: 43px;
         background-color: black;
       }
+
       button:disabled {
         background-color: #8e8e8e;
       }
     }
+
     .value-group {
       margin: 0 auto;
       margin-top: 15px;
@@ -244,6 +271,7 @@ export default defineComponent({
   .list .item {
     display: flex;
     flex-direction: column;
+
     img {
       width: 100%;
       height: auto;
@@ -263,6 +291,7 @@ export default defineComponent({
   }
   .list .info .operate {
     margin-top: 20px;
+
     button {
       width: 30%;
     }
