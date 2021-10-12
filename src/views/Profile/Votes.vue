@@ -71,7 +71,9 @@
                 </template>
               </el-dropdown>
             </div>
-            <div class="balance">{{ availableVotedBalance || 0 }} UART</div>
+            <div class="balance">
+              available for retrieve: {{ availableVotedBalance || 0 }} {{ currentToken.symbol }}
+            </div>
             <button @click="unStake" v-loading="isUnstaking">Retrieve</button>
           </div>
           <div class="tab-content" v-if="dialogTab == 2">
@@ -81,7 +83,9 @@
                 >UART</span
               >
             </div>
-            <div class="balance">{{ availableBondedVotedBalance || 0 }} UART</div>
+            <div class="balance">
+              available for retrieve: {{ availableBondedVotedBalance || 0 }} UART
+            </div>
             <button @click="unVoteBonded" v-loading="isUnBonding">Retrieve</button>
           </div>
         </div>
@@ -115,7 +119,9 @@
                 </template>
               </el-dropdown>
             </div>
-            <div class="balance">{{ availableVotedBalance || 0 }} UART</div>
+            <div class="balance">
+              available for retrieve: {{ availableVotedBalance || 0 }} {{ currentToken.symbol }}
+            </div>
             <button @click="unStake" v-loading="isUnstaking">Retrieve</button>
           </div>
           <div class="tab-content" v-if="dialogTab == 2">
@@ -125,7 +131,9 @@
                 >UART</span
               >
             </div>
-            <div class="balance">{{ availableBondedVotedBalance || 0 }} UART</div>
+            <div class="balance">
+              available for retrieve: {{ availableBondedVotedBalance || 0 }} UART
+            </div>
             <button @click="unVoteBonded" v-loading="isUnBonding">Retrieve</button>
           </div>
         </div>
@@ -196,7 +204,6 @@ export default defineComponent({
         curNft.value.token_id
       );
       availableVotedBalance.value = new BigNumber(votedBalance.available)
-        .plus(votedBalance.freezed)
         .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
         .toString();
     };
@@ -204,7 +211,6 @@ export default defineComponent({
     const getBondedVoted = async () => {
       let votedBalance = await VoteMining.getVotedBalances(connectedAccount, curNft.value.token_id);
       availableBondedVotedBalance.value = new BigNumber(votedBalance.available)
-        .plus(votedBalance.freezed)
         .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
         .toString();
     };
@@ -259,6 +265,7 @@ export default defineComponent({
           }
           if (txHash) {
             console.log(txHash);
+            dialogTableVisible.value = false;
             inputRetrieveAmount.value = null;
             notification.dismiss(notifyId);
             notification.success(txHash);
@@ -287,6 +294,12 @@ export default defineComponent({
       }
       isUnBonding.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
+      console.log(
+        connectedAccount,
+        DAPP_CONFIG.nfts.UniartsNFT.address,
+        curNft.value.token_id,
+        amount.shiftedBy(currentToken.decimals)
+      );
       VoteMining.unvoteBonded(
         connectedAccount,
         DAPP_CONFIG.nfts.UniartsNFT.address,
@@ -300,6 +313,7 @@ export default defineComponent({
           }
           if (txHash) {
             console.log(txHash);
+            dialogTableVisible.value = false;
             inputUnbondAmount.value = null;
             notification.dismiss(notifyId);
             notification.success(txHash);

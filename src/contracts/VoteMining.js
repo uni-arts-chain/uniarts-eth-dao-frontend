@@ -54,7 +54,7 @@ class VoteMining {
   }
   async unstake(sender, nftAddr, nftId, token, amount, callback) {
     var gasPrice = await this.gasPrice();
-    var tx = this.contract.methods.stake(nftAddr, nftId, token, toBN(amount));
+    var tx = this.contract.methods.unstake(nftAddr, nftId, token, toBN(amount));
 
     var gasLimit = await tx.estimateGas({
       value: 0,
