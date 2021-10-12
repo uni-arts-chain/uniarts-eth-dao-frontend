@@ -3,7 +3,6 @@ import Wallet from "@/plugins/wallet";
 import { DAPP_CONFIG } from "@/config";
 import TrustMarketplaceABI from "@/contracts/abi/TrustMarketplace.json";
 import store from "@/store";
-import { notification } from "@/components/Notification";
 
 class TrustMarketplace {
   constructor() {
