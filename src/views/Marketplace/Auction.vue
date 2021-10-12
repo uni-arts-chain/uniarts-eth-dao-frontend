@@ -260,12 +260,8 @@ export default defineComponent({
       isLoading.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       if (isApproving.value) {
-        const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals);
-        console.log(
-          auction.value.auction_match_id,
-          auction.value.auction_token_index,
-          amount.toNumber()
-        );
+        const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals).toNumber();
+        console.log(auction.value.auction_match_id, auction.value.auction_token_index, amount);
         // 出价
         Auction.playerBid(
           auction.value.auction_match_id,
