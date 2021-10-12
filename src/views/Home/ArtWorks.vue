@@ -100,7 +100,7 @@
       >
         <div
           class="sub-item"
-          v-for="item of artOrderList.filter((item, index) => index >= 1 && index <= 3).length"
+          v-for="item of artOrderList.filter((item, index) => index >= 1 && index <= 3)"
           :key="item.id"
         >
           <div class="item-content">
