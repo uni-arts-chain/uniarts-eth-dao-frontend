@@ -11,7 +11,7 @@
     <div class="collection">
       <div class="title">CREATIONS</div>
       <div class="list">
-        <div class="item" v-for="item in list" :key="item.id">
+        <div class="item" v-for="item in list" :key="item.id" @click="goDetail(item.id)">
           <AdaptiveView width="100%" height="100%" :isPreview="true" :nft="item" />
         </div>
       </div>
@@ -22,7 +22,7 @@
 <script>
 import { defineComponent, ref, onMounted, reactive } from "vue";
 import store from "@/store";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import http from "@/plugins/http";
 import notification from "@/components/Notification";
 import Avatar from "@/assets/images/avatar@2x.png";
@@ -35,6 +35,7 @@ export default defineComponent({
   setup() {
     // TODO
     const route = useRoute();
+    const router = useRouter();
 
     store.dispatch("global/SetNavText", "Artist");
 
@@ -66,11 +67,16 @@ export default defineComponent({
       requestData();
     });
 
+    const goDetail = (id) => {
+      router.push("/marketplace/" + id);
+    };
+
     return {
       list,
       info,
 
       Avatar,
+      goDetail,
     };
   },
 });
