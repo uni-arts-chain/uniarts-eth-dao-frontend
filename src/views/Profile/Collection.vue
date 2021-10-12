@@ -71,16 +71,16 @@ export default defineComponent({
     const isLoading = ref(false);
     const list = ref([]);
     const requestData = () => {
-      isLoading.value = true;
+      // isLoading.value = true;
       http
         .userGetMineNFT({})
         .then((res) => {
-          isLoading.value = false;
+          // isLoading.value = false;
           list.value.splice(0, 0, ...res.list);
         })
         .catch((err) => {
           console.log(err);
-          isLoading.value = false;
+          // isLoading.value = false;
           notification.error(
             (err.head && err.head.msg) || err.message || (err.data && err.data.message)
           );
@@ -107,7 +107,7 @@ export default defineComponent({
             throw err;
           }
           if (txHash) {
-            isLoading.value = true;
+            // isLoading.value = true;
             console.log(txHash);
             notification.dismiss(notifyId);
             notification.success(txHash);
@@ -137,11 +137,11 @@ export default defineComponent({
             throw err;
           }
           if (txHash) {
-            isLoading.value = true;
+            // isLoading.value = true;
             console.log(txHash);
             notification.dismiss(notifyId);
             notification.success(txHash);
-            notifyId = notification.success("Confirming");
+            notifyId = notification.loading("Pinning");
           }
         });
         notification.dismiss(notifyId);
@@ -150,14 +150,14 @@ export default defineComponent({
         notifyId = notification.error(err);
         return;
       }
-      notifyId = notification.loading("Pinning");
+
       Collection.pin(nft.address, item.token_id, (err, txHash) => {
         if (err) {
           console.log(err);
           throw err;
         }
         if (txHash) {
-          isLoading.value = true;
+          // isLoading.value = true;
           console.log(txHash);
           notification.dismiss(notifyId);
           notification.success(txHash);
@@ -170,6 +170,7 @@ export default defineComponent({
           notifyId = notification.success("Pin Success");
         })
         .catch((err) => {
+          console.log(err);
           notification.dismiss(notifyId);
           notification.error(err);
         });
@@ -194,6 +195,7 @@ export default defineComponent({
     display: flex;
     margin-bottom: 72px;
     img {
+      min-width: 400px;
       max-width: 400px;
     }
   }
