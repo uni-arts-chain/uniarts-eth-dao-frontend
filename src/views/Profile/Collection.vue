@@ -58,6 +58,7 @@ import Mobilecomfirm from "@/components/MobileConfirm";
 import Pin from "@/contracts/Collection";
 import { DAPP_CONFIG } from "@/config";
 import store from "@/store";
+import Web3 from "web3";
 
 export default defineComponent({
   name: "collection",
@@ -98,6 +99,10 @@ export default defineComponent({
       sendDialog.value = true;
     };
     const send = () => {
+      const bool = Web3.utils.isAddress(sender.value);
+      if (!bool) {
+        return notification.info("Invalid address");
+      }
       const nft = config.nfts.UniartsNFT;
       const erc721 = new Erc721(nft.address, nft.symbol);
       console.log({
