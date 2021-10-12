@@ -111,7 +111,7 @@ export default defineComponent({
             console.log(txHash);
             notification.dismiss(notifyId);
             notification.success(txHash);
-            notifyId = notification.success("Confirming");
+            notifyId = notification.loading("Confirming");
           }
         })
         .then((res) => {
@@ -120,7 +120,9 @@ export default defineComponent({
           notification.success("Asset transfer succeeded");
         })
         .catch((err) => {
+          notification.dismiss(notifyId);
           console.log(err);
+          notification.error(err);
         });
     };
     const pin = async (item) => {
@@ -145,6 +147,7 @@ export default defineComponent({
           }
         });
         notification.dismiss(notifyId);
+        notification.success("Pin Success");
       } catch (err) {
         notification.dismiss(notifyId);
         notifyId = notification.error(err);

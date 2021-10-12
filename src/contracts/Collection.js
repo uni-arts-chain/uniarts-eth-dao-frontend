@@ -16,8 +16,9 @@ class Collection {
   async pin(nftAddress, nftId, callback) {
     const sender = store.state.user.info.address;
     const gasPrice = await this.gasPrice();
-    console.log({ nftAddress, nftId });
+    console.log({ nftAddress, nftId, address: this.address, sender });
     const tx = this.contract.methods.pin(nftAddress, nftId);
+    console.log(tx);
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,
