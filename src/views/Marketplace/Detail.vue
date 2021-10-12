@@ -2,22 +2,28 @@
 <template>
   <div class="detail" v-if="!$store.state.global.isMobile">
     <div class="head">
-      <span>NFT Name</span>
+      <span>{{ info.name }}</span>
       <button @click="onBack">Back</button>
     </div>
     <div class="nft">
-      <img
-        class="img"
-        src="https://ipfs.pixura.io/ipfs/QmbBmVPHkXQFcUHUw1ETKsq3m51iUjCNkJwop9L44uiAmV/FinalWithGradient.jpg"
-      />
+      <AdaptiveView width="100%" height="100%" :nft="info" />
     </div>
-    <div class="info">
+    <div class="info" v-loading="isLoading">
       <div class="nft-info">
         <div class="title">Additional Info</div>
         <div class="address">
           <span>NFT Address:</span>
-          <span style="margin-left: 31px">0xsbd354sdf42354sdf441d354s54...</span>
-          <div class="copy" @click="onCopy(1)">Copy</div>
+          <span
+            style="
+              margin-left: 31px;
+              width: 280px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            "
+            >{{ info.tx_hash }}</span
+          >
+          <div class="copy" @click="onCopy(info.tx_hash)">Copy</div>
           <el-popover placement="top" width="80" trigger="hover">
             <template #reference>
               <img class="qr" src="@/assets/images/qr@2x.png" />
@@ -27,28 +33,26 @@
               style="border: none"
               :scale="5"
               :typeNumber="7"
-              data="0xsbd354sdf42354sdf441d354s54"
+              :data="info.tx_hash"
             />
           </el-popover>
         </div>
         <div class="votes">
-          <div class="title">Number of votes obtained</div>
-          <div class="progress">
+          <!-- <div class="title">Number of votes obtained</div> -->
+          <!-- <div class="progress">
             <Progress :value="52" />
             <div class="label">3000 of 45000</div>
-          </div>
+          </div> -->
           <div class="nft-desc">
             <div class="title">ARTWORK INFORMATION</div>
             <div class="nft-desc-body">
               <div class="name-body">
-                <div class="name">Name</div>
-                <div class="artist-name">Artist: XYZ</div>
-                <div class="token-mint">Token mint: 251</div>
+                <div class="name">{{ info.name }}</div>
+                <div class="artist-name">Artist: {{ info.artist_name }}</div>
+                <!-- <div class="token-mint">Token mint: 251</div> -->
               </div>
               <div class="desc-body">
-                "Planet spirit" is an oil painting created by in 2010. After successful creation, it
-                has aroused great repercussions and won great recognition in the circle, which also
-                led to the introduction of the work, introduction...
+                {{ info.artist_info }}
               </div>
             </div>
           </div>
@@ -57,32 +61,26 @@
       <div class="artist-info">
         <div class="title">ABOUT ARTIST</div>
         <div class="avatar">
-          <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />
+          <img :src="info.artist_avatar" />
         </div>
-        <div class="username">Kyle Bighead</div>
+        <div class="username">{{ info.artist_name }}</div>
         <div class="user-desc">
-          "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
-          aroused great repercussions and won great recognition in the circle, which also led to the
-          introduction of the work, introduction...
+          {{ info.artist_info }}
         </div>
-        <router-link class="more" to="/artist/1">More ></router-link>
       </div>
     </div>
   </div>
   <div class="detail container" v-else>
     <div class="nft">
-      <img
-        class="img"
-        src="https://ipfs.pixura.io/ipfs/QmbBmVPHkXQFcUHUw1ETKsq3m51iUjCNkJwop9L44uiAmV/FinalWithGradient.jpg"
-      />
+      <AdaptiveView width="100%" height="100%" :nft="info" />
     </div>
-    <div class="info">
+    <div class="info" v-loading="isLoading">
       <div class="nft-info">
         <div class="title">Additional Info</div>
         <div class="address">
           <span>NFT Address:</span>
-          <span class="address-span">0xsbd354sdf42354sdf441d354s54</span>
-          <div class="copy" @click="onCopy(1)">Copy</div>
+          <span class="address-span">{{ info.tx_hash }}</span>
+          <div class="copy" @click="onCopy(info.tx_hash)">Copy</div>
           <el-popover placement="top" width="80" trigger="hover">
             <template #reference>
               <img class="qr" src="@/assets/images/qr@2x.png" />
@@ -92,27 +90,25 @@
               style="border: none"
               :scale="5"
               :typeNumber="7"
-              data="0xsbd354sdf42354sdf441d354s54"
+              :data="info.tx_hash"
             />
           </el-popover>
         </div>
         <div class="votes">
-          <div class="title">Number of votes obtained</div>
-          <div class="progress">
+          <!-- <div class="title">Number of votes obtained</div> -->
+          <!-- <div class="progress">
             <Progress :value="52" />
             <div class="label">3000 of 45000</div>
-          </div>
+          </div> -->
           <div class="nft-desc">
             <div class="title">ARTWORK INFORMATION</div>
             <div class="nft-desc-body">
               <div class="name-body">
-                <div class="name">Name</div>
-                <div class="artist-name">Artist: XYZ</div>
+                <div class="name">{{ info.name }}</div>
+                <div class="artist-name">Artist: {{ info.artist_name }}</div>
               </div>
               <div class="desc-body">
-                "Planet spirit" is an oil painting created by in 2010. After successful creation, it
-                has aroused great repercussions and won great recognition in the circle, which also
-                led to the introduction of the work, introduction...
+                {{ info.artist_info }}
               </div>
             </div>
           </div>
@@ -120,15 +116,13 @@
         <div class="artist-info">
           <div class="title">ABOUT ARTIST</div>
           <div class="avatar">
-            <img src="https://avatars.githubusercontent.com/u/87279659?v=4" />
+            <img :src="info.artist_avatar" />
           </div>
-          <div class="username">Kyle Bighead</div>
+          <div class="username">{{ info.artist_name }}</div>
           <div class="user-desc">
-            "Planet spirit" is an oil painting created by in 2010. After successful creation, it has
-            aroused great repercussions and won great recognition in the circle, which also led to
-            the introduction of the work, introduction...
+            {{ info.artist_info }}
           </div>
-          <router-link class="more" to="/artist/1">More ></router-link>
+          <!-- <router-link class="more" to="/artist/1">More ></router-link> -->
         </div>
       </div>
     </div>
@@ -136,36 +130,72 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
-import { useRouter } from "vue-router";
+import { defineComponent, ref, onMounted } from "vue";
+import { notification } from "@/components/Notification";
+import AdaptiveView from "@/components/AdaptiveView";
+import { useRoute } from "vue-router";
 import store from "@/store";
+import http from "@/plugins/http";
 import Qrcode from "@/components/Qrcode";
-import Progress from "@/components/Progress";
+// import Progress from "@/components/Progress";
 import copy from "clipboard-copy";
 export default defineComponent({
   name: "detail",
   components: {
     Qrcode,
-    Progress,
+    // Progress,
+    AdaptiveView,
   },
   setup() {
     // TODO
 
-    const router = useRouter();
-
     store.dispatch("global/SetNavText", "Detail");
+
+    const route = useRoute();
 
     const onCopy = (value) => {
       copy(value);
     };
 
     const onBack = () => {
-      router.push("/marketplace");
+      history.back();
     };
+
+    const info = ref({});
+    const isLoading = ref(false);
+
+    const requestData = () => {
+      isLoading.value = true;
+      http
+        .globalGetArtDetail(
+          {},
+          {
+            id: route.params.id,
+          }
+        )
+        .then((res) => {
+          console.log(res);
+          isLoading.value = false;
+          info.value = res;
+        })
+        .catch((err) => {
+          console.log(err);
+          isLoading.value = false;
+          notification.error(err.head ? err.head.msg : err.message);
+        });
+    };
+
+    onMounted(() => {
+      requestData();
+    });
 
     return {
       onCopy,
       onBack,
+      info,
+      isLoading,
+
+      requestData,
     };
   },
 });
@@ -289,12 +319,14 @@ export default defineComponent({
       text-align: center;
       color: #898989;
       line-height: 27px;
+      margin-top: 110px;
     }
     .nft-desc-body {
       display: flex;
       justify-content: space-between;
       .name-body {
         .name {
+          width: 92px;
           font-size: 14px;
           font-family: Montserrat-Medium;
           font-weight: 400;
@@ -315,6 +347,7 @@ export default defineComponent({
         }
         .artist-name,
         .token-mint {
+          width: 122px;
           font-size: 12px;
           font-family: Montserrat-Regular;
           font-weight: 300;
@@ -352,9 +385,11 @@ export default defineComponent({
       width: 111px;
       height: 111px;
       border-radius: 50%;
-      background-color: black;
       margin-bottom: 31px;
       overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       img {
         width: 100%;
       }
@@ -369,10 +404,11 @@ export default defineComponent({
       margin-bottom: 12px;
     }
     .user-desc {
+      width: 306px;
       font-size: 12px;
       font-family: Montserrat-Regular;
       font-weight: 300;
-      text-align: justifyLeft;
+      text-align: center;
       color: #898989;
       line-height: 18px;
       margin-bottom: 22px;
@@ -463,6 +499,7 @@ export default defineComponent({
         text-align: center;
       }
       .user-desc {
+        margin-top: 20px;
         font-size: 16px;
         line-height: 1.5;
       }

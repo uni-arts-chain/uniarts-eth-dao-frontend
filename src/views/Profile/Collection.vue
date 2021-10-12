@@ -4,7 +4,7 @@
     <div class="no-data" v-if="list.length <= 0">No data</div>
     <div class="list" v-for="v in list" :key="v">
       <div class="item">
-        <img :src="v.img_main_file1" alt="" />
+        <img :src="v.img_main_file1" alt="" @click="goDetail(v.id)" />
         <div class="info">
           <div class="progress">
             <Progress :value="v.number / v.total" />
@@ -45,6 +45,7 @@
 <script>
 import { defineComponent, ref, onMounted } from "vue";
 import Progress from "@/components/Progress";
+import { useRouter } from "vue-router";
 // import { BigNumber } from "@/plugins/bignumber";
 // import { DAPP_CONFIG } from "@/config";
 // import store from "@/store";
@@ -175,6 +176,10 @@ export default defineComponent({
           notification.error(err);
         });
     };
+    const router = useRouter();
+    const goDetail = (id) => {
+      router.push("/marketplace/" + id);
+    };
     return {
       pin,
       sendDialog,
@@ -184,6 +189,7 @@ export default defineComponent({
       sender,
       isLoading,
       openSendDialog,
+      goDetail,
     };
   },
 });
