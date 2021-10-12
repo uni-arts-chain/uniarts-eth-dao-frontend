@@ -278,6 +278,7 @@ export default defineComponent({
     flex-direction: column;
 
     img {
+      min-width: 100% !important;
       width: 100%;
       height: auto;
     }
