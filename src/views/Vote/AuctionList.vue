@@ -108,6 +108,7 @@ export default defineComponent({
       http
         .globalGetAuctionsGroup({})
         .then((res) => {
+          if (res.list.length == 0) return;
           auctionInfo.end_at = res.list[0].end_at;
           auctionInfo.img = res.list[0].img;
           auctionInfo.start_at = res.list[0].start_at;
