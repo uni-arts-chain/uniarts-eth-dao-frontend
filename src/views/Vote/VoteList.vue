@@ -58,7 +58,7 @@
                 class="current-per"
                 :style="`left: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
               >
-                {{ parseInt((v.number / (v.total || 1)) * 100) }}%
+                {{ formatPercent((v.number / (v.total || 1)) * 100) }}%
               </div>
               <div class="total-per">Total: {{ v.total }}</div>
             </div>
@@ -92,6 +92,7 @@ import { defineComponent, ref, onMounted, reactive } from "vue";
 import store from "@/store";
 import { useRouter } from "vue-router";
 import http from "@/plugins/http";
+import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
 import { DateFormatCountdown } from "@/utils";
 export default defineComponent({
@@ -167,6 +168,10 @@ export default defineComponent({
       return value ? `${value.day} Day ${value.hour} Hours ${value.minute} Minute` : "";
     };
 
+    const formatPercent = (number) => {
+      return new BigNumber(number).toFixed(2, 1);
+    };
+
     return {
       list,
       width,
@@ -177,6 +182,7 @@ export default defineComponent({
       voteInfo,
 
       countdownTime,
+      formatPercent,
     };
   },
 });
