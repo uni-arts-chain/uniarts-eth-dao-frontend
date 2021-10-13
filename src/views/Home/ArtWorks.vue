@@ -87,7 +87,9 @@
               class="avatar-image"
               @click="$router.push('/artist/' + artOrderList[0].art.artist_uid)"
             >
-              <img :src="artOrderList[0].art.artist_avatar" />
+              <img
+                :src="artOrderList[0].art.artist_avatar || require('@/assets/images/avatar@2x.png')"
+              />
               <div class="name">{{ artOrderList[0].art.artist_name }}</div>
             </div>
           </div>
