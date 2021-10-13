@@ -7,7 +7,9 @@
       <p v-if="recommmedInfo.id">Voting Start Date: {{ recommmedInfo.created_at }}</p>
       <p>Select the most in-demand NFT artwork</p>
     </div>
-    <button @click="onVote">Start Voting</button>
+    <button :style="{ background: recommmedInfo.id ? 'black' : '#909399' }" @click="onVote">
+      Start Voting
+    </button>
   </div>
 </template>
 
@@ -47,7 +49,9 @@ export default defineComponent({
 
     const router = useRouter();
     const onVote = () => {
-      router.push(recommmedInfo.value.id ? `/vote/${recommmedInfo.value.id}` : "/vote");
+      if (recommmedInfo.value.id) {
+        router.push(`/vote/${recommmedInfo.value.id}`);
+      }
     };
 
     return {

@@ -27,7 +27,7 @@
           <span class="unit">address</span>
           <input v-model="sender" />
         </div>
-        <button v-loading="isLoading" @click="send">send</button>
+        <button v-loading="isLoading" @click="send">Send</button>
       </div>
     </Dialog>
     <Mobilecomfirm v-else v-model="sendDialog" type="small">
@@ -36,7 +36,7 @@
           <span class="unit">address</span>
           <input v-model="sender" />
         </div>
-        <button v-loading="isLoading" @click="send">send</button>
+        <button v-loading="isLoading" @click="send">Send</button>
       </div>
     </Mobilecomfirm>
   </div>

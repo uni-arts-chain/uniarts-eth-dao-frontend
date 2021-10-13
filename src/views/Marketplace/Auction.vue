@@ -36,7 +36,9 @@
         </div>
         <div class="button-group">
           <button @click="openMakeOfferDialog">Make an Offer</button>
-          <button @click="openByeDiaLog">Collect Now</button>
+          <button @click="openByeDiaLog" v-if="Number(auction.auction_fixed_price)">
+            Collect Now
+          </button>
         </div>
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
@@ -134,7 +136,9 @@
       <div class="bid-history">
         <div class="button-group">
           <button @click="openMakeOfferDialog">Make an Offer</button>
-          <button @click="openByeDiaLog">Collect Now</button>
+          <button @click="openByeDiaLog" v-if="Number(auction.auction_fixed_price)">
+            Collect Now
+          </button>
         </div>
         <div class="bid-title">
           <span>Bid History</span>

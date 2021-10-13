@@ -18,7 +18,9 @@
       <div class="text" :class="{ 'no-data-text': !recommmedInfo.id }">
         <img src="@/assets/images/banner-logo@2x.png" />
         <h4>Select the most in demand artwork NFT</h4>
-        <router-link :to="votePath">START VOTE</router-link>
+        <router-link :to="votePath" :style="{ background: recommmedInfo.id ? 'black' : '#909399' }">
+          START VOTE
+        </router-link>
       </div>
     </div>
     <div class="artist-info" v-if="recommmedInfo.id">
@@ -79,7 +81,7 @@ export default defineComponent({
     });
 
     const votePath = computed(() => {
-      return recommmedInfo.value.id ? `/vote/${recommmedInfo.value.id}` : "/vote";
+      return recommmedInfo.value.id ? `/vote/${recommmedInfo.value.id}` : "";
     });
 
     return {
