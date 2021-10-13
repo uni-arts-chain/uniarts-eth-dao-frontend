@@ -2,17 +2,18 @@
 <template>
   <div class="mobilebanner">
     <img class="banner-logo" src="@/assets/images/banner-logo@2x.png" />
-    <AdaptiveView width="330px" height="230px" :nft="recommmedInfo" />
+    <AdaptiveView v-if="recommmedInfo.id" width="330px" height="230px" :nft="recommmedInfo" />
     <div class="vote-date">
-      <p>Voting Start Date: {{ recommmedInfo.created_at }}</p>
+      <p v-if="recommmedInfo.id">Voting Start Date: {{ recommmedInfo.created_at }}</p>
       <p>Select the most in-demand NFT artwork</p>
     </div>
-    <button @click="$router.push(`/vote/${recommmedInfo.id}`)">Start Voting</button>
+    <button @click="onVote">Start Voting</button>
   </div>
 </template>
 
 <script>
 import { defineComponent, onMounted, ref } from "vue";
+import { useRouter } from "vue-router";
 import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
@@ -43,8 +44,15 @@ export default defineComponent({
     onMounted(() => {
       requestData();
     });
+
+    const router = useRouter();
+    const onVote = () => {
+      router.push(recommmedInfo.value.id ? `/vote/${recommmedInfo.value.id}` : "/vote");
+    };
+
     return {
       recommmedInfo,
+      onVote,
     };
   },
 });
