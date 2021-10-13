@@ -8,6 +8,7 @@
       <el-col :span="7" class="item">Date</el-col>
     </el-row>
     <el-row class="body">
+      <div class="no-data" v-if="list.length == 0">No data</div>
       <el-row class="row" v-for="(v, i) in list" :key="i">
         <el-col :span="4" class="item">
           <span>{{ v.token }}</span></el-col
@@ -332,6 +333,16 @@ export default defineComponent({
     margin: 0 auto;
     margin-top: 21px;
   }
+}
+
+.no-data {
+  color: #aaa;
+  font-size: 13px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
 @media screen and (max-width: 750px) {

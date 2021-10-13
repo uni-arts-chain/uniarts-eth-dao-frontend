@@ -81,7 +81,7 @@
           - Auction reward will be distributed after the auction round. The higher the deal price,
           the more benefit will be available for the voters of the NFT.
         </p>
-        <div class="more">More ></div>
+        <router-link class="more" to="/vote/rule">More ></router-link>
       </div>
     </div>
   </div>

@@ -1,8 +1,9 @@
 /** * Created by Lay Hunt on 2021-09-26 14:46:04. */
 <template>
   <div class="votes">
-    <div class="list">
+    <div class="list" v-loading="isLoading">
       <div class="item-list">
+        <div class="no-data" v-if="list.length == 0">No data</div>
         <div class="item" v-for="(v, i) in list" :key="i">
           <div class="nft">
             <img style="max-height: 100%; max-width: 100%" :src="v.img_main_file1" />
@@ -36,6 +37,10 @@
           <button class="vote-button" @click="onRetrieve(v)">Retrieve</button>
         </div>
       </div>
+    </div>
+    <div class="button-group">
+      <button @click="onPrev" :disabled="currentPage < 2">Previous</button>
+      <button @click="onNext" :disabled="currentPage >= totalPage">Next</button>
     </div>
     <Dialog
       v-model="dialogTableVisible"
@@ -162,14 +167,23 @@ export default defineComponent({
   setup() {
     // TODO
     const list = ref([]);
+    const currentPage = ref(1);
+    const totalPage = ref(1);
+    const perPage = ref(10);
+    const totalCount = ref(0);
     const isLoading = ref(false);
     const onRequestData = () => {
       isLoading.value = true;
       http
-        .userGetMyVotes({})
+        .userGetMyVotes({
+          page: currentPage.value,
+          per_page: perPage.value,
+        })
         .then((res) => {
           isLoading.value = false;
-          list.value.splice(0, 0, ...res.list);
+          totalCount.value = res.total_count;
+          totalPage.value = Math.ceil(totalCount.value / perPage.value);
+          list.value = res.list;
         })
         .catch((err) => {
           isLoading.value = false;
@@ -338,6 +352,19 @@ export default defineComponent({
       inputUnbondAmount.value = null;
     };
 
+    const onPrev = () => {
+      if (currentPage.value > 1) {
+        currentPage.value--;
+        onRequestData();
+      }
+    };
+    const onNext = () => {
+      if (currentPage.value < totalPage.value) {
+        currentPage.value++;
+        onRequestData();
+      }
+    };
+
     return {
       list,
       onRetrieve,
@@ -361,6 +388,12 @@ export default defineComponent({
       isUnBonding,
 
       onClose,
+      totalCount,
+      onPrev,
+      onNext,
+      totalPage,
+      currentPage,
+      isLoading,
     };
   },
 });
@@ -368,6 +401,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .list {
+  min-height: 100px;
   .item {
     margin-bottom: 27px;
     display: flex;
@@ -496,6 +530,31 @@ export default defineComponent({
   }
 }
 
+.button-group {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+  button {
+    border: 3px solid #ddd;
+    background: transparent;
+    width: 160px;
+    height: 49px;
+    font-size: 14px;
+    font-family: Montserrat-Medium;
+    font-weight: 600;
+    text-align: center;
+    margin: 0 50px;
+    color: #595757;
+    cursor: pointer;
+  }
+  button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
 .dialog-content {
   .tab-content {
     padding: 40px 100px 80px 100px;
@@ -620,6 +679,16 @@ export default defineComponent({
     display: block;
     cursor: pointer;
   }
+}
+
+.no-data {
+  color: #aaa;
+  font-size: 13px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
 @media screen and (max-width: 750px) {

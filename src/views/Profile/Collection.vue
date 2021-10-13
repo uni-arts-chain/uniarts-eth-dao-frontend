@@ -305,11 +305,13 @@ export default defineComponent({
 }
 
 .no-data {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 200px;
   color: #aaa;
+  font-size: 13px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
 }
 
 .dialog-content {
