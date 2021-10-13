@@ -11,7 +11,7 @@ class Auction {
     this.web3 = new Web3(Wallet.provider);
     this.address = DAPP_CONFIG.contracts.Auction;
     this.contract = new this.web3.eth.Contract(AuctionABI, this.address.toString());
-    this.dater = new EthDater(this.web3);
+    this.dater = new EthDater(this.web3.eth);
   }
 
   async playerBid(matchId, tokenIndex, amount, callback) {

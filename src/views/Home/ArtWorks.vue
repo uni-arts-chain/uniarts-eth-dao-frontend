@@ -26,9 +26,15 @@
           </div>
           <div class="info">
             <div class="vote-number">
-              Current High Bid
-              <span style="color: #fe0000">{{ auctions[0].auction_latest_price }}</span>
-              <span>{{ auctions[0].currency_code?.toUpperCase() }}</span>
+              {{ Number(auctions[0].auction_latest_price) ? "Current High Bid " : "Price " }}
+              <span style="color: #fe0000">
+                {{
+                  Number(auctions[0].auction_latest_price)
+                    ? auctions[0].auction_latest_price
+                    : auctions[0].auction_fixed_price
+                }}
+              </span>
+              <span> {{ " " + auctions[0].currency_code?.toUpperCase() }}</span>
             </div>
             <div class="vote-date">
               <img src="@/assets/images/date-clock.png" />
@@ -55,7 +61,11 @@
           <div class="item-user">
             <span class="username">{{ item.artist_name }}@</span>
             <span style="color: #fe0000">{{
-              item.auction_latest_price + " " + item.currency_code?.toUpperCase()
+              (Number(item.auction_latest_price)
+                ? item.auction_latest_price
+                : item.auction_fixed_price) +
+              " " +
+              item.currency_code?.toUpperCase()
             }}</span>
           </div>
         </div>
@@ -77,7 +87,9 @@
               class="avatar-image"
               @click="$router.push('/artist/' + artOrderList[0].art.artist_uid)"
             >
-              <img :src="artOrderList[0].art.artist_avatar" />
+              <img
+                :src="artOrderList[0].art.artist_avatar || require('@/assets/images/avatar@2x.png')"
+              />
               <div class="name">{{ artOrderList[0].art.artist_name }}</div>
             </div>
           </div>
@@ -142,7 +154,7 @@ export default defineComponent({
         );
         startEnd.startDate = new Date(startDate * 1000);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
       try {
         const { timestamp: endDate } = await Auction.dater.getBlockWrapper(
@@ -150,7 +162,7 @@ export default defineComponent({
         );
         startEnd.endDate = new Date(endDate * 1000);
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
       if (!startEnd.startDate) {
         dataMessage.value = "Auction not started";

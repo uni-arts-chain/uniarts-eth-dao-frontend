@@ -27,7 +27,7 @@
           <span class="unit">address</span>
           <input v-model="sender" />
         </div>
-        <button v-loading="isLoading" @click="send">send</button>
+        <button v-loading="isLoading" @click="send">Send</button>
       </div>
     </Dialog>
     <Mobilecomfirm v-else v-model="sendDialog" type="small">
@@ -36,7 +36,7 @@
           <span class="unit">address</span>
           <input v-model="sender" />
         </div>
-        <button v-loading="isLoading" @click="send">send</button>
+        <button v-loading="isLoading" @click="send">Send</button>
       </div>
     </Mobilecomfirm>
   </div>
@@ -98,6 +98,10 @@ export default defineComponent({
       selectItem = v;
       sendDialog.value = true;
     };
+    const closeSendDiaLog = () => {
+      sendDialog.value = false;
+      requestData();
+    };
     const send = () => {
       const bool = Web3.utils.isAddress(sender.value);
       if (!bool) {
@@ -117,7 +121,7 @@ export default defineComponent({
             throw err;
           }
           if (txHash) {
-            // isLoading.value = true;
+            closeSendDiaLog();
             console.log(txHash);
             notification.dismiss(notifyId);
             notification.success(txHash);
@@ -125,6 +129,7 @@ export default defineComponent({
           }
         })
         .then((res) => {
+          closeSendDiaLog();
           console.log(res);
           notification.dismiss(notifyId);
           notification.success("Asset transfer succeeded");

@@ -27,9 +27,13 @@
               {{ item.artist_name }}
             </div>
             <div class="price">
-              Current High Bid
+              {{ Number(item.auction_latest_price) ? "Current High Bid" : "Price" }}
               <span style="color: red">{{
-                item.auction_latest_price + " " + item.currency_code?.toUpperCase()
+                (Number(item.auction_latest_price)
+                  ? item.auction_latest_price
+                  : item.auction_fixed_price) +
+                " " +
+                item.currency_code?.toUpperCase()
               }}</span>
             </div>
           </div>
