@@ -58,10 +58,11 @@
           </div>
           <div class="notice">
             Notice： <br />
-            1. Vote for NFT won’t cost any token, but voted&nbsp;token can only be retrieved 7 days
-            after the end of the voted round. <br />
-            2. Vote reward will be distributed at UTC 00:00 everyday during the voting period, and
-            can be withdraw at anytime once available.
+            1. Vote for NFT won’t cost any token, voted token can be retrieved at UTC 00:00 next
+            day. <br />
+            2. Vote reward distributes at UTC 00:00 everyday during the voting period. <br />
+            3. If NOT retrieved, voted token will be count as another vote for the same NFT. <br />
+            4. 1 wETH vote = 100 UART vote. <br />
           </div>
           <div class="info">
             <div class="info-title">My Account</div>
@@ -94,10 +95,11 @@
           </div>
           <div class="notice">
             Notice： <br />
-            1. Vote for NFT won’t cost any token, but voted&nbsp;token can only be retrieved 7 days
-            after the end of the voted round. <br />
-            2. Vote reward will be distributed at UTC 00:00 everyday during the voting period, and
-            can be withdraw at anytime once available.
+            1. Vote for NFT won’t cost any token, voted token can be retrieved at UTC 00:00 next
+            day. <br />
+            2. Vote reward distributes at UTC 00:00 everyday during the voting period. <br />
+            3. If NOT retrieved, voted token will be count as another vote for the same NFT. <br />
+            4. 1 wETH vote = 100 UART vote. <br />
           </div>
           <div class="info">
             <div class="info-title">My Account</div>
