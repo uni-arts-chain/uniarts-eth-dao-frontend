@@ -13,6 +13,9 @@
             <router-link class="link" to="/profile/votes">My Votes</router-link>
           </li>
           <li class="menu-li">
+            <router-link class="link" to="/profile/history">My Rewards</router-link>
+          </li>
+          <li class="menu-li">
             <router-link class="link" to="/profile/collection">My Collection</router-link>
           </li>
           <li class="menu-li">
@@ -37,21 +40,11 @@
               <router-link class="link" to="/profile/votes">My Votes</router-link>
             </template>
           </el-tab-pane>
-          <!-- <el-tab-pane label="Rewards History" name="2">
+          <el-tab-pane label="Rewards History" name="5">
             <template #label>
-              <router-link class="link" to="/profile/history">Reward History</router-link>
-            </template>
-          </el-tab-pane> -->
-          <!-- <el-tab-pane label="Unbonded History" name="3">
-            <template #label>
-              <router-link class="link" to="/profile/collection">Unbonded History</router-link>
+              <router-link class="link" to="/profile/history">My Rewards</router-link>
             </template>
           </el-tab-pane>
-          <el-tab-pane label="Vote History" name="4">
-            <template #label>
-              <router-link class="link" to="/profile/collection">Vote History</router-link>
-            </template>
-          </el-tab-pane> -->
           <el-tab-pane label="My Colloection" name="3">
             <template #label>
               <router-link class="link" to="/profile/collection">My Collection</router-link>

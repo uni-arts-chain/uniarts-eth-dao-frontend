@@ -39,8 +39,12 @@
       </div>
     </div>
     <div class="button-group">
-      <button @click="onPrev" :disabled="currentPage < 2">Previous</button>
-      <button @click="onNext" :disabled="currentPage >= totalPage">Next</button>
+      <button style="margin-right: 40px" @click="onPrev" :disabled="currentPage < 2">
+        Previous
+      </button>
+      <button style="margin-left: 40px" @click="onNext" :disabled="currentPage >= totalPage">
+        Next
+      </button>
     </div>
     <Dialog
       v-model="dialogTableVisible"
@@ -545,7 +549,6 @@ export default defineComponent({
     font-family: Montserrat-Medium;
     font-weight: 600;
     text-align: center;
-    margin: 0 50px;
     color: #595757;
     cursor: pointer;
   }
@@ -713,6 +716,7 @@ export default defineComponent({
       .vote-button {
         margin-top: 20px;
         width: 80%;
+        margin-left: 0;
       }
     }
   }
