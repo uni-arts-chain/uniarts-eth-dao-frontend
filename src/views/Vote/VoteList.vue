@@ -322,6 +322,7 @@ export default defineComponent({
   .vote-progress {
     margin-top: 12px;
     position: relative;
+    overflow: hidden;
     .bar {
       width: 100%;
       height: 26px;
@@ -332,6 +333,7 @@ export default defineComponent({
       position: absolute;
       top: 2px;
       height: 100%;
+      max-width: 100%;
       width: 40%;
       background: url(~@/assets/images/vote-progress@2x.png) no-repeat;
       background-size: 707px 22px;

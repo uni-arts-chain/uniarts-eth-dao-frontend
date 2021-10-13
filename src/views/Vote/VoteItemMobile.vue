@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="bid-group">
-        <button @click="onVote">VOTE</button>
+        <button @click="onVote">Vote</button>
       </div>
     </div>
   </div>

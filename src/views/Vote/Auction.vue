@@ -20,6 +20,7 @@
         <div class="token">
           Token mint:
           <span style="font-size: 20px; margin-left: 10px">{{ item.token_mint }}</span>
+          UART
         </div>
         <div class="bid">
           Current High Bid：<span style="font-size: 20px; margin-left: 10px">{{
