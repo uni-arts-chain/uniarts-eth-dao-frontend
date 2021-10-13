@@ -1,9 +1,9 @@
 /** * Created by Lay Hunt on 2021-09-06 15:49:53. */
 <template>
   <div class="featured-art container">
-    <div class="feature-label">FEATURED ART</div>
+    <div class="feature-label" v-if="recommmedInfo.id">FEATURED ART</div>
     <div class="body">
-      <div class="art">
+      <div class="art" v-if="recommmedInfo.id">
         <div class="art-resource">
           <AdaptiveImage
             class="banner-image"
@@ -15,13 +15,13 @@
           />
         </div>
       </div>
-      <div class="text">
+      <div class="text" :class="{ 'no-data-text': !recommmedInfo.id }">
         <img src="@/assets/images/banner-logo@2x.png" />
         <h4>Select the most in demand artwork NFT</h4>
-        <router-link :to="`/vote/${recommmedInfo.id}`">START VOTE</router-link>
+        <router-link :to="votePath">START VOTE</router-link>
       </div>
     </div>
-    <div class="artist-info">
+    <div class="artist-info" v-if="recommmedInfo.id">
       <div class="avatar">
         <div class="label">ARTIST:</div>
         <div class="avatar-image">
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref, computed } from "vue";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
 import AdaptiveImage from "@/components/AdaptiveImage";
@@ -77,8 +77,14 @@ export default defineComponent({
     onMounted(() => {
       requestData();
     });
+
+    const votePath = computed(() => {
+      return recommmedInfo.value.id ? `/vote/${recommmedInfo.value.id}` : "/vote";
+    });
+
     return {
       recommmedInfo,
+      votePath,
     };
   },
 });
@@ -104,6 +110,11 @@ export default defineComponent({
   }
   .art {
     padding-left: 30px;
+  }
+  .text.no-data-text {
+    width: 100%;
+    margin-top: 40px;
+    margin-bottom: 40px;
   }
   .text {
     display: flex;
