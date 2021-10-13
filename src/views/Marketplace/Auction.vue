@@ -24,8 +24,14 @@
           <span>UART</span>
         </div>
         <div class="bid">
-          <span>Current High Bid: &nbsp;&nbsp;</span>
-          <span class="value">{{ auction.auction_latest_price }}</span>
+          <span>{{
+            `${Number(auction.auction_latest_price) ? "Current High Bid" : "Price"}  `
+          }}</span>
+          <span class="value">{{
+            Number(auction.auction_latest_price)
+              ? auction.auction_latest_price
+              : auction.auction_fixed_price
+          }}</span>
           <span>{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
       </div>
@@ -128,8 +134,14 @@
           <span>UART</span>
         </div>
         <div class="bid">
-          <span>Current High Bid: &nbsp;&nbsp;</span>
-          <span class="value">{{ auction.auction_latest_price }}</span>
+          <span>{{
+            `${Number(auction.auction_latest_price) ? "Current High Bid" : "Price"}  `
+          }}</span>
+          <span class="value">{{
+            Number(auction.auction_latest_price)
+              ? auction.auction_latest_price
+              : auction.auction_fixed_price
+          }}</span>
           <span>{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
       </div>

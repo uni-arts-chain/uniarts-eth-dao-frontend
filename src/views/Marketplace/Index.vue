@@ -16,7 +16,13 @@
           <div class="info">
             <div class="name">《 {{ item.name }} 》</div>
             <div class="price">
-              Price: {{ item.auction_latest_price }} {{ item.currency_code?.toUpperCase() }}
+              {{
+                `${Number(item.auction_latest_price) ? "Current Bid" : "Price"}: ${
+                  Number(item.auction_latest_price)
+                    ? item.auction_latest_price
+                    : item.auction_fixed_price
+                } ${item.currency_code?.toUpperCase()}`
+              }}
             </div>
           </div>
         </div>
@@ -62,7 +68,13 @@
           <div class="info">
             <div class="name">《 {{ item.name }} 》</div>
             <div class="price">
-              Price: {{ item.auction_latest_price }} {{ item.currency_code?.toUpperCase() }}
+              {{
+                `${Number(item.auction_latest_price) ? "Current Bid" : "Price"}: ${
+                  Number(item.auction_latest_price)
+                    ? item.auction_latest_price
+                    : item.auction_fixed_price
+                } ${item.currency_code?.toUpperCase()}`
+              }}
             </div>
           </div>
         </div>
