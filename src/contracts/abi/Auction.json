@@ -225,6 +225,11 @@
         "internalType": "uint256",
         "name": "standingBid",
         "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "finalBid",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",

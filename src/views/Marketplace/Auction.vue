@@ -96,7 +96,7 @@
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
         <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "OFFER" : "APPROVE" }}
+          {{ isApproving ? "Offer" : "Approve&Offer" }}
         </button>
       </div>
     </Dialog>
@@ -181,7 +181,7 @@
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
         <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "OFFER" : "APPROVE" }}
+          {{ isApproving ? "Offer" : "Approve&Offer" }}
         </button>
       </div>
     </Mobilecomfirm>
@@ -222,9 +222,10 @@ export default defineComponent({
     const buyDialogVisible = ref(false);
     const isLoading = ref(false);
     const startEnd = reactive({});
-    const isApproving = ref(false);
     store.dispatch("global/SetNavText", "Auction");
-    const openMakeOfferDialog = async () => {
+    const isApproving = ref(false);
+    //检查权限
+    const findApproveValue = async () => {
       const connectedAccount = store.state.user.info.address;
       const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
       const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
@@ -239,10 +240,58 @@ export default defineComponent({
         }
       } catch (e) {
         isApproving.value = false;
-      } finally {
-        offerDialogVisible.value = true;
       }
     };
+    //链上授权
+    const approveLink = async (success) => {
+      isLoading.value = true;
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      const connectedAccount = store.state.user.info.address;
+      const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
+      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
+      const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
+      try {
+        // 授权
+        const receipt = await currentErc20.approveMax(
+          connectedAccount,
+          AuctionMiningAddress,
+          async (err, txHash) => {
+            if (err) {
+              console.log(err);
+              throw err;
+            }
+            if (txHash) {
+              console.log(txHash);
+              isApproving.value = true;
+              notification.dismiss(notifyId);
+              notification.success(txHash);
+              success && success();
+            }
+          }
+        );
+        console.log("receipt: ", receipt);
+      } catch (err) {
+        isLoading.value = false;
+        isApproving.value = false;
+        notification.dismiss(notifyId);
+        notification.error(
+          err.message.split("{")[0] ||
+            (err.head && err.head.msg) ||
+            err.message ||
+            (err.data && err.data.message)
+        );
+        throw err;
+      }
+    };
+    //一口价下单
+    //拍卖出价
+    const openMakeOfferDialog = async () => {
+      offerDialogVisible.value = true;
+    };
+    const openByeDiaLog = async () => {
+      buyDialogVisible.value = true;
+    };
+    // 检查出价格规范
     const filter = () => {
       if (
         Number(bidAmount.value) <=
@@ -266,76 +315,42 @@ export default defineComponent({
       }
     };
     const makeAnOffer = async () => {
-      const connectedAccount = store.state.user.info.address;
-      const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
-      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
-
-      const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       filter();
-
-      isLoading.value = true;
-      const notifyId = notification.loading("Please wait for the wallet's response");
-      if (isApproving.value) {
-        const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals).toNumber();
-        console.log(auction.value.auction_match_id, auction.value.auction_token_index, amount);
-        // 出价
-        Auction.playerBid(
-          auction.value.auction_match_id,
-          auction.value.auction_token_index,
-          toBN(amount),
-          async (err, txHash) => {
-            if (err) {
-              console.log(err);
-              throw err;
-            }
-            if (txHash) {
-              isLoading.value = true;
-              console.log(txHash);
-              offerDialogVisible.value = false;
-              isApproving.value = false;
-              notification.dismiss(notifyId);
-              notification.success(txHash);
-              setTimeout(() => router.go(0), 3000);
-            }
+      let notifyId;
+      if (!isApproving.value) {
+        await approveLink(() => (notifyId = notification.loading("Offering")));
+      }
+      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
+      const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals).toNumber();
+      console.log(auction.value.auction_match_id, auction.value.auction_token_index, amount);
+      // 出价
+      Auction.playerBid(
+        auction.value.auction_match_id,
+        auction.value.auction_token_index,
+        toBN(amount),
+        async (err, txHash) => {
+          if (err) {
+            console.log(err);
+            throw err;
           }
-        )
-          .then((res) => {
-            router.go(0);
-            console.log(res);
-          })
-          .catch((err) => {
-            notification.dismiss(notification);
-            notification.error(
-              err.message.split("{")[0] ||
-                (err.head && err.head.msg) ||
-                err.message ||
-                (err.data && err.data.message)
-            );
-          });
-      } else {
-        try {
-          // 授权
-          const receipt = await currentErc20.approveMax(
-            connectedAccount,
-            AuctionMiningAddress,
-            async (err, txHash) => {
-              if (err) {
-                console.log(err);
-                throw err;
-              }
-              if (txHash) {
-                isLoading.value = true;
-                console.log(txHash);
-                isApproving.value = false;
-                notification.dismiss(notifyId);
-                notification.success(txHash);
-              }
-            }
-          );
-          console.log("receipt: ", receipt);
-          this.makeAnOffer();
-        } catch (err) {
-          isApproving.value = false;
+          if (txHash) {
+            isLoading.value = false;
+            console.log(txHash);
+            offerDialogVisible.value = false;
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+          }
+        }
+      )
+        .then((res) => {
+          notification.dismiss(notifyId);
+          notification.success("Confirmed on Chain");
+          isLoading.value = false;
+          router.go(0);
+          console.log(res);
+        })
+        .catch((err) => {
+          isLoading.value = false;
           notification.dismiss(notifyId);
           notification.error(
             err.message.split("{")[0] ||
@@ -343,96 +358,48 @@ export default defineComponent({
               err.message ||
               (err.data && err.data.message)
           );
-        }
-      }
-      isLoading.value = false;
-      notification.dismiss(notifyId);
+        });
     };
     const buyAuction = async () => {
       isLoading.value = true;
-      const notifyId = notification.loading("Please wait for the wallet's response");
-      const connectedAccount = store.state.user.info.address;
-      const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
-      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
-
-      const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
-      if (isApproving.value) {
-        Auction.playerFixedPrice(
-          auction.value.auction_match_id,
-          auction.value.auction_token_index,
-          async (err, txHash) => {
-            if (err) {
-              console.log(err.message);
-              throw err;
-            }
-            if (txHash) {
-              isLoading.value = true;
-              console.log(txHash);
-              buyDialogVisible.value = false;
-              isApproving.value = false;
-              notification.dismiss(notifyId);
-              notification.success(txHash);
-            }
+      let notifyId;
+      if (!isApproving.value) {
+        if (!isApproving.value) {
+          await approveLink(() => (notifyId = notification.loading("Loading Auction")));
+        }
+      }
+      Auction.playerFixedPrice(
+        auction.value.auction_match_id,
+        auction.value.auction_token_index,
+        async (err, txHash) => {
+          if (err) {
+            console.log(err.message);
+            throw err;
           }
-        )
-          .then((res) => {
-            console.log(res);
-            router.go(0);
-          })
-          .catch((error) => {
-            notification.dismiss(notification);
-            notification.error(error.message.split("{")[0] || error.message);
-          });
-      } else {
-        try {
-          // 授权
-          const receipt = await currentErc20.approveMax(
-            connectedAccount,
-            AuctionMiningAddress,
-            async (err, txHash) => {
-              if (err) {
-                console.log(err);
-                throw err;
-              }
-              if (txHash) {
-                isLoading.value = true;
-                console.log(txHash);
-                isApproving.value = false;
-                notification.dismiss(notifyId);
-                notification.success(txHash);
-              }
-            }
-          );
-          console.log("receipt: ", receipt);
-          this.makeAnOffer();
-        } catch (err) {
-          console.log(err);
-          isApproving.value = false;
+          if (txHash) {
+            isLoading.value = false;
+            buyDialogVisible.value = false;
+            console.log(txHash);
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+          }
+        }
+      )
+        .then((res) => {
+          isLoading.value = false;
           notification.dismiss(notifyId);
-          notification.error(err.message.split("{")[0] || err.message);
-        }
-      }
-      isLoading.value = false;
-      notification.dismiss(notifyId);
+          notification.success("Confirmed on Chain");
+          console.log();
+          console.log(res);
+          router.go(0);
+        })
+        .catch((error) => {
+          isLoading.value = false;
+          notification.dismiss(notification);
+          notification.error(error.message.split("{")[0] || error.message);
+        });
     };
-    const openByeDiaLog = async () => {
-      const connectedAccount = store.state.user.info.address;
-      const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
-      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
 
-      const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
-      // 查看链上权限
-      try {
-        const data = await currentErc20.allowance(connectedAccount, AuctionMiningAddress);
-        if (data.toNumber() !== 0) {
-          isApproving.value = true;
-        }
-      } catch (e) {
-        isApproving.value = false;
-      } finally {
-        buyDialogVisible.value = true;
-      }
-    };
     const onBack = () => {
       router.back();
     };
@@ -474,6 +441,7 @@ export default defineComponent({
       });
       const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
       auction.value = list[0] || {};
+      await findApproveValue();
       try {
         const { timestamp: startDate } = await Auction.dater.getBlockWrapper(
           auction.value.auction_open_block
