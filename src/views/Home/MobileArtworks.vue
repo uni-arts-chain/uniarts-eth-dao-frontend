@@ -17,6 +17,8 @@
             :nft="item"
             height="330px"
             width="330px"
+            :isResponsive="true"
+            :isPreview="true"
             @click="$router.push(`/marketplace/auction/${item.auction_id}/${item.id}`)"
           />
           <div class="info">

@@ -11,7 +11,13 @@
       <div class="list">
         <div v-for="item in auctionList" :key="item.id" class="item">
           <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
-            <img :src="item.img_main_file1" class="item-img" />
+            <AdaptiveView
+              :nft="item"
+              width="364px"
+              height="364px"
+              :isResponsive="true"
+              :isPreview="true"
+            />
           </router-link>
           <div class="info">
             <div class="name">《 {{ item.name }} 》</div>
@@ -33,7 +39,13 @@
       <div class="list">
         <div v-for="item in buyList" :key="item.id" class="item">
           <router-link :to="`/marketplace/buy/${item.id}`">
-            <img :src="item.art.img_main_file1.url" class="item-img" />
+            <AdaptiveView
+              :nft="item.art"
+              width="364px"
+              height="364px"
+              :isResponsive="true"
+              :isPreview="true"
+            />
           </router-link>
           <div class="info">
             <div class="name">《 {{ item.art.name }} 》</div>
@@ -63,7 +75,13 @@
       <div v-if="currentTab == 1" class="list">
         <div v-for="item in auctionList" :key="item.id" class="item">
           <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
-            <img :src="item.img_main_file1" class="item-img" />
+            <AdaptiveView
+              :nft="item"
+              width="335px"
+              height="200px"
+              :isResponsive="true"
+              :isPreview="true"
+            />
           </router-link>
           <div class="info">
             <div class="name">《 {{ item.name }} 》</div>
@@ -82,7 +100,13 @@
       <div v-else v-show="buyList?.length" class="list">
         <div v-for="item in buyList" :key="item.id" class="item">
           <router-link :to="`/marketplace/buy/${item.id}`">
-            <img :src="item.art.img_main_file1.url" class="item-img" />
+            <AdaptiveView
+              :nft="item.art"
+              width="335px"
+              height="200px"
+              :isResponsive="true"
+              :isPreview="true"
+            />
           </router-link>
           <div class="info">
             <div class="name">《 {{ item.art.name }} 》</div>
@@ -99,10 +123,14 @@
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import store from "@/store";
+import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
 
 export default defineComponent({
   name: "index",
+  components: {
+    AdaptiveView,
+  },
   setup() {
     store.dispatch("global/SetNavText", "Market");
 

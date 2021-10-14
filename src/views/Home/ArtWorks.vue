@@ -12,7 +12,7 @@
           class="main-item"
           @click="$router.push(`/marketplace/auction/${auctions[0].auction_id}/${auctions[0].id}`)"
         >
-          <img :src="auctions[0].img_main_file1" />
+          <AdaptiveView :nft="auctions[0]" :isResponsive="true" :isPreview="true" />
         </div>
         <div class="artist-info">
           <div class="avatar">
@@ -52,11 +52,11 @@
           v-for="item of auctions.filter((item, index) => index >= 1 && index <= 3)"
           :key="item.id"
         >
-          <div class="item-content">
-            <img
-              :src="item.img_main_file1"
-              @click="$router.push(`/marketplace/auction/${item.auction_id}/${item.id}`)"
-            />
+          <div
+            class="item-content"
+            @click="$router.push(`/marketplace/auction/${item.auction_id}/${item.id}`)"
+          >
+            <AdaptiveView :nft="item" :isResponsive="true" :isPreview="true" />
           </div>
           <div class="item-user">
             <span class="username">{{ item.artist_name }}@</span>
@@ -115,11 +115,8 @@
           v-for="item of artOrderList.filter((item, index) => index >= 1 && index <= 3)"
           :key="item.id"
         >
-          <div class="item-content">
-            <img
-              :src="item.art.img_main_file1.url"
-              @click="$router.push(`/marketplace/buy/${item.id}`)"
-            />
+          <div class="item-content" @click="$router.push(`/marketplace/buy/${item.id}`)">
+            <AdaptiveView :nft="item" :isResponsive="true" :isPreview="true" />
           </div>
           <div class="item-user">
             <span class="username">{{ artOrderList[0].art.artist_name }} @</span>
@@ -136,11 +133,15 @@
 <script>
 import { computed, defineComponent, onBeforeMount, onMounted, reactive, ref } from "vue";
 import http from "@/plugins/http";
+import AdaptiveView from "@/components/AdaptiveView";
 import Auction from "@/contracts/Auction";
 import moment from "moment";
 
 export default defineComponent({
   name: "artworks",
+  components: {
+    AdaptiveView,
+  },
   setup() {
     const auctions = ref([]);
     const now = ref(new Date());

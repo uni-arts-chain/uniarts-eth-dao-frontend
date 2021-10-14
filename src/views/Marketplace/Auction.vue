@@ -60,11 +60,7 @@
     </div>
     <div class="center">
       <div class="nft">
-        <img
-          v-if="auction.property_url"
-          :src="auction.property_url"
-          style="width: 520px; height: 515px"
-        />
+        <AdaptiveView :nft="auction" width="520px" height="515px" />
       </div>
       <div class="notice">
         <img src="@/assets/images/date-clock.png" />
@@ -109,7 +105,7 @@
   <div v-else class="auction container">
     <div class="center">
       <div class="nft">
-        <img v-if="auction.property_url" :src="auction.property_url" />
+        <AdaptiveView :nft="auction" width="335px" height="290px" />
       </div>
       <div class="notice">
         <img src="@/assets/images/date-clock.png" />
@@ -206,6 +202,7 @@ import store from "@/store";
 import http from "@/plugins/http";
 import Auction from "@/contracts/Auction";
 import Dialog from "@/components/Dialog";
+import AdaptiveView from "@/components/AdaptiveView";
 import { DAPP_CONFIG } from "@/config";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
@@ -219,6 +216,7 @@ export default defineComponent({
   components: {
     Mobilecomfirm,
     // Progress,
+    AdaptiveView,
     Dialog,
   },
   setup() {
