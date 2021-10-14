@@ -17,10 +17,10 @@
             <div class="name">《 {{ item.name }} 》</div>
             <div class="price">
               {{
-                `${Number(item.auction_latest_price) ? "Current Bid" : "Price"}: ${
+                `${Number(item.auction_latest_price) ? "Current Bid" : "Bid"}: ${
                   Number(item.auction_latest_price)
                     ? item.auction_latest_price
-                    : item.auction_fixed_price
+                    : item.auction_min_bid
                 } ${item.currency_code?.toUpperCase()}`
               }}
             </div>
@@ -69,10 +69,10 @@
             <div class="name">《 {{ item.name }} 》</div>
             <div class="price">
               {{
-                `${Number(item.auction_latest_price) ? "Current Bid" : "Price"}: ${
+                `${Number(item.auction_latest_price) ? "Current Bid" : "Bid"}: ${
                   Number(item.auction_latest_price)
                     ? item.auction_latest_price
-                    : item.auction_fixed_price
+                    : item.auction_min_bid
                 } ${item.currency_code?.toUpperCase()}`
               }}
             </div>
