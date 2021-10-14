@@ -35,7 +35,7 @@
           <span>{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
         <div class="bid" v-if="Number(auction.auction_fixed_price)">
-          <span>Fixed Psrice: </span>
+          <span>Fixed Price: </span>
           <span class="value">{{ auction.auction_fixed_price }}</span>
           <span>{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
@@ -150,7 +150,7 @@
           <span>{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
         <div class="bid" v-if="Number(auction.auction_fixed_price)">
-          <span>Fixed Psrice: </span>
+          <span>Fixed Price: </span>
           <span class="value">{{ auction.auction_fixed_price }}</span>
           <span>{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
@@ -362,7 +362,6 @@ export default defineComponent({
           notification.dismiss(notifyId);
           notification.success("Confirmed on Chain");
           isLoading.value = false;
-          router.go(0);
           console.log(res);
         })
         .catch((err) => {
@@ -407,7 +406,6 @@ export default defineComponent({
           notification.success("Confirmed on Chain");
           console.log();
           console.log(res);
-          router.go(0);
         })
         .catch((err) => {
           isLoading.value = false;
