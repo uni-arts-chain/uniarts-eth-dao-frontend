@@ -2,7 +2,7 @@
 <template>
   <div class="item">
     <div class="nft">
-      <AdaptiveView width="100%" height="100%" :nft="item" />
+      <AdaptiveView :isResponsive="true" :nft="item" />
     </div>
     <div class="info">
       <div class="title">{{ item.name }}</div>
