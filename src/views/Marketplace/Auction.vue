@@ -19,19 +19,24 @@
       <!--      </div>-->
       <div class="token-info">
         <div class="token">
-          <span>Token mint:&nbsp;&nbsp;</span>
+          <span>Token Mint: </span>
           <span class="value">{{ auction.token_mint }}</span>
           <span>UART</span>
         </div>
         <div class="bid">
           <span>{{
-            `${Number(auction.auction_latest_price) ? "Current High Bid" : "Price"}  `
+            `${Number(auction.auction_latest_price) ? "Current High Bid: " : "Current Price: "}  `
           }}</span>
           <span class="value">{{
             Number(auction.auction_latest_price)
               ? auction.auction_latest_price
-              : auction.auction_fixed_price
+              : auction.auction_min_bid
           }}</span>
+          <span>{{ auction.currency_code?.toUpperCase() }}</span>
+        </div>
+        <div class="bid" v-if="Number(auction.auction_fixed_price)">
+          <span>Fixed Psrice: </span>
+          <span class="value">{{ auction.auction_fixed_price }}</span>
           <span>{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
       </div>
@@ -129,19 +134,24 @@
       <!--      <div class="number-vote-value">3000 of 45000</div>-->
       <div class="token-info">
         <div class="token">
-          <span>Token mint:&nbsp;&nbsp;</span>
+          <span>Token Mint: </span>
           <span class="value">{{ auction.token_mint }}</span>
           <span>UART</span>
         </div>
         <div class="bid">
           <span>{{
-            `${Number(auction.auction_latest_price) ? "Current High Bid" : "Price"}  `
+            `${Number(auction.auction_latest_price) ? "Current High Bid: " : "Current Price: "}  `
           }}</span>
           <span class="value">{{
             Number(auction.auction_latest_price)
               ? auction.auction_latest_price
-              : auction.auction_fixed_price
+              : auction.auction_min_bid
           }}</span>
+          <span>{{ auction.currency_code?.toUpperCase() }}</span>
+        </div>
+        <div class="bid" v-if="Number(auction.auction_fixed_price)">
+          <span>Fixed Psrice: </span>
+          <span class="value">{{ auction.auction_fixed_price }}</span>
           <span>{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
       </div>
@@ -293,14 +303,9 @@ export default defineComponent({
     };
     // 检查出价格规范
     const filter = () => {
-      if (
-        Number(bidAmount.value) <=
-        Number(auction.value.auction_latest_price) + Number(auction.value.auction_min_bid)
-      ) {
+      if (Number(bidAmount.value) <= Number(auction.value.auction_min_bid)) {
         isLoading.value = false;
-        const message = `amount cannot be less than${
-          Number(auction.value.auction_latest_price) + Number(auction.value.auction_min_bid)
-        }`;
+        const message = `amount cannot be less than${Number(auction.value.auction_min_bid)}`;
         notification.error(message);
         throw new Error(message);
       }
@@ -310,6 +315,17 @@ export default defineComponent({
       ) {
         isLoading.value = false;
         const message = "Cannot be greater than 2 times the current bid";
+        notification.error(message);
+        throw new Error(message);
+      }
+      if (
+        Number(auction.value.auction_latest_price) &&
+        Number(bidAmount.value) <= Number(auction.value.auction_latest_price) * 1.05
+      ) {
+        isLoading.value = false;
+        const message = `amount cannot be less than${(
+          Number(auction.value.auction_latest_price) * 1.05
+        ).toFixed(3)}`;
         notification.error(message);
         throw new Error(message);
       }
@@ -393,10 +409,15 @@ export default defineComponent({
           console.log(res);
           router.go(0);
         })
-        .catch((error) => {
+        .catch((err) => {
           isLoading.value = false;
           notification.dismiss(notification);
-          notification.error(error.message.split("{")[0] || error.message);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
         });
     };
 

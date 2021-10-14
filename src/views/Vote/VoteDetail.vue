@@ -304,19 +304,6 @@ export default defineComponent({
         .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
         .toString();
     };
-
-    // const curNftTotalVotes = ref(0);
-    // const curGroupTotalVotes = ref(0);
-    // const getTotalNftVotes = async (nftId) => {
-    //   curNftTotalVotes.value = new BigNumber(await VoteMining.getNftVotes(nftId))
-    //     .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
-    //     .toString();
-    // };
-    // const getTotalGroupVotes = async (nftId) => {
-    //   curGroupTotalVotes.value = new BigNumber(await VoteMining.getGroupVotes(nftId))
-    //     .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
-    //     .toString();
-    // };
     const votePercent = computed(() => {
       return new BigNumber(artInfo.number || 0)
         .div(artInfo.total || 1)
@@ -352,8 +339,6 @@ export default defineComponent({
           Object.keys(res).forEach((key) => (artInfo[key] = res[key]));
           isLoading.value = false;
           init();
-          // getTotalNftVotes(res.token_id);
-          // getTotalGroupVotes(res.token_id);
           voteHasFinished(res.token_id);
           getVoteTime(res.token_id);
         })

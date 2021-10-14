@@ -118,6 +118,13 @@ export default defineComponent({
         .sendNft(sender.value, selectItem.token_id, (err, txHash) => {
           if (err) {
             console.log(err);
+            notification.dismiss(notifyId);
+            notification.error(
+              err.message.split("{")[0] ||
+                (err.head && err.head.msg) ||
+                err.message ||
+                (err.data && err.data.message)
+            );
             throw err;
           }
           if (txHash) {
@@ -137,7 +144,12 @@ export default defineComponent({
         .catch((err) => {
           notification.dismiss(notifyId);
           console.log(err);
-          notification.error(err);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
         });
     };
     const pin = async (item) => {
@@ -178,7 +190,13 @@ export default defineComponent({
           notification.success("Pin Success");
         } catch (err) {
           notification.dismiss(notifyId);
-          notifyId = notification.error(err);
+          notification.error(err);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
           return;
         }
       }
@@ -186,6 +204,13 @@ export default defineComponent({
       Pin.pin(nft.address, item.token_id, (err, txHash) => {
         if (err) {
           console.log(err);
+          notification.dismiss(notifyId);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
           throw err;
         }
         if (txHash) {
@@ -204,7 +229,12 @@ export default defineComponent({
         .catch((err) => {
           console.log(err);
           notification.dismiss(notifyId);
-          notification.error(err);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
         });
     };
     const router = useRouter();

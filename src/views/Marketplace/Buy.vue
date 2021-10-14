@@ -25,7 +25,9 @@
         <!--        </div>-->
         <div class="button-group">
           <!--          <button @click="openMakeOfferDialog">Make an Offer</button>-->
-          <button @click="buyNow">Collect Now</button>
+          <button @click="buyNow">
+            {{ isApproving ? "Collect Now" : "Approve & Collect Now" }}
+          </button>
         </div>
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
@@ -122,7 +124,9 @@
       </div>
       <div class="bid-history">
         <div class="button-group">
-          <button @click="buyNow">Collect Now</button>
+          <button @click="buyNow">
+            {{ isApproving ? "Collect Now" : "Approve & Collect Now" }}
+          </button>
         </div>
       </div>
     </div>
@@ -172,7 +176,7 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const auction = ref({});
-    let isApproving = false;
+    let isApproving = ref(false);
     let currentErc20 = null;
     let token = null;
     const TrustMarketplaceMiningAddress = DAPP_CONFIG.contracts.TrustMarketplace;
@@ -193,10 +197,10 @@ export default defineComponent({
         currentErc20
           .allowance(connectedAccount, TrustMarketplaceMiningAddress)
           .then((data) => {
-            isApproving = data.toNumber() !== 0;
+            isApproving.value = data.toNumber() !== 0;
           })
           .catch(() => {
-            isApproving = false;
+            isApproving.value = false;
           });
       });
     });
@@ -205,26 +209,37 @@ export default defineComponent({
       isLoading.value = true;
       const connectedAccount = store.state.user.info.address;
       // 检查链上合约权限
-      if (!isApproving) {
+      if (!isApproving.value) {
         // 给合约授权
-        notifyId = notification.loading("Authorizing");
-        const receipt = await currentErc20.approveMax(
-          connectedAccount,
-          TrustMarketplaceMiningAddress,
-          async (err, txHash) => {
-            if (err) {
-              console.log(err);
-              throw err;
+        try {
+          notifyId = notification.loading("Authorizing");
+          const receipt = await currentErc20.approveMax(
+            connectedAccount,
+            TrustMarketplaceMiningAddress,
+            async (err, txHash) => {
+              if (err) {
+                console.log(err);
+                throw err;
+              }
+              if (txHash) {
+                isLoading.value = true;
+                console.log(txHash);
+                notification.dismiss(notifyId);
+                notification.success(txHash);
+              }
             }
-            if (txHash) {
-              isLoading.value = true;
-              console.log(txHash);
-              notification.dismiss(notifyId);
-              notification.success(txHash);
-            }
-          }
-        );
-        console.log("receipt: ", receipt);
+          );
+          console.log("receipt: ", receipt);
+        } catch (err) {
+          isLoading.value = false;
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
+          throw err;
+        }
       }
       // 购买nft
       notification.dismiss(notifyId);
@@ -258,7 +273,12 @@ export default defineComponent({
         })
         .catch((err) => {
           notification.dismiss(notifyId);
-          notification.error(err);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
           console.log(err);
         });
     };
@@ -266,6 +286,7 @@ export default defineComponent({
       auction,
       onBack,
       buyNow,
+      isApproving,
     };
   },
 });
