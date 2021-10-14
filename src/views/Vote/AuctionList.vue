@@ -49,11 +49,11 @@
                 class="current-per"
                 :style="`left: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
               >
-                {{ parseInt((v.number / (v.total || 1)) * 100) }}%
+                {{ formatPercent((v.number / (v.total || 1)) * 100) }}%
               </div>
-              <div class="total-per">Total: {{ v.total }}</div>
+              <div class="total-per">Total: {{ v.total }} USDT</div>
             </div>
-            <div class="number-vote">Number of votes: {{ v.number }}</div>
+            <div class="number-vote">Current high bid: ${{ v.number }}</div>
           </div>
           <button class="vote-button" @click="goAuction(v.auction_id, v.id)">Place a bid</button>
         </div>
@@ -72,7 +72,7 @@
           - Auction reward will be distributed after the auction round. The higher the deal price,
           the more benefit will be available for the voters of the NFT.
         </p>
-        <div class="more">More ></div>
+        <router-link class="more" to="/vote/rule">More ></router-link>
       </div>
     </div>
   </div>
@@ -81,6 +81,7 @@
 <script>
 import { defineComponent, ref, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
+import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
 import { DateFormatCountdown } from "@/utils";
 import http from "@/plugins/http";
@@ -143,6 +144,10 @@ export default defineComponent({
       return value ? `${value.day} Day ${value.hour} Hours ${value.minute} Minute` : "";
     };
 
+    const formatPercent = (number) => {
+      return new BigNumber(number).toFixed(2, 1);
+    };
+
     return {
       list,
       width,
@@ -154,6 +159,7 @@ export default defineComponent({
       auctionInfo,
 
       countdownTime,
+      formatPercent,
     };
   },
 });

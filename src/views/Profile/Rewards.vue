@@ -3,7 +3,7 @@
   <div class="history">
     <el-row class="head">
       <el-col :span="4" class="item">Token</el-col>
-      <el-col :span="5" class="item">State</el-col>
+      <el-col :span="5" class="item">Type</el-col>
       <el-col :span="8" class="item">Amount</el-col>
       <el-col :span="7" class="item">Date</el-col>
     </el-row>
@@ -14,29 +14,16 @@
           <span>{{ v.token }}</span></el-col
         >
         <el-col :span="5" class="item"
-          ><span>{{ v.state }}</span></el-col
+          ><span>{{ v.stake }}</span></el-col
         >
         <el-col :span="8" class="item">
-          <span style="text-align: right">{{ v.amount }}</span
-          ><button class="operate" @click="onShowDialog(v.index)">Withdraw</button>
+          <span style="text-align: center">{{ v.amount }}</span>
         </el-col>
         <el-col :span="7" class="item"
           ><span>{{ format(v.date) }}</span></el-col
         >
       </el-row>
     </el-row>
-    <Dialog v-model="dialogTableVisible" v-if="!$store.state.global.isMobile" type="small">
-      <div class="dialog-content">
-        <div class="balance">{{ bondedBalance }} UART</div>
-        <button @click="onWithdraw()" v-loading="isWithdrawing">Withdraw</button>
-      </div>
-    </Dialog>
-    <MobileConfirm v-else v-model="dialogTableVisible">
-      <div class="confirm-content">
-        <div class="balance">{{ bondedBalance }} UART</div>
-        <button @click="onWithdraw()" v-loading="isWithdrawing">Withdraw</button>
-      </div>
-    </MobileConfirm>
   </div>
 </template>
 
@@ -44,30 +31,19 @@
 import { defineComponent, ref, onMounted } from "vue";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
-import Dialog from "@/components/Dialog";
-import MobileConfirm from "@/components/MobileConfirm";
 import { DateFormat } from "@/utils";
-import store from "@/store";
-import VoteMining from "@/contracts/VoteMining";
 export default defineComponent({
   name: "history",
-  components: {
-    Dialog,
-    MobileConfirm,
-  },
+  components: {},
   setup() {
     // TODO
-    const dialogTableVisible = ref(false);
-    const isUnbonding = ref(false);
-    const bondedBalance = ref(0);
 
     const list = ref([]);
     const isLoading = ref(false);
-    const currentIndex = ref(null);
     const onRequestData = () => {
       isLoading.value = true;
       http
-        .userGetUnbindHistory({})
+        .userGetMyRewards({})
         .then((res) => {
           isLoading.value = false;
           list.value = res.list;
@@ -85,65 +61,13 @@ export default defineComponent({
       onRequestData();
     });
 
-    const onShowDialog = (index) => {
-      dialogTableVisible.value = true;
-      currentIndex.value = index;
-      bondedBalance.value = list.value.find((v) => v.index == index).amount.split("/")[0];
-    };
-
-    const onCloseDialog = () => {
-      dialogTableVisible.value = false;
-      currentIndex.value = null;
-      bondedBalance.value = 0;
-    };
-
-    const connectedAccount = store.state.user.info.address;
-    const isWithdrawing = ref(false);
-    const onWithdraw = async () => {
-      isWithdrawing.value = true;
-      console.log(connectedAccount, currentIndex.value);
-      const notifyId = notification.loading("Please wait for the wallet's response");
-      VoteMining.redeemUnbonding(connectedAccount, currentIndex.value, async (err, txHash) => {
-        isWithdrawing.value = false;
-        if (err) {
-          console.log(err);
-          throw err;
-        }
-        if (txHash) {
-          console.log(txHash);
-          notification.dismiss(notifyId);
-          notification.success(txHash);
-          onCloseDialog();
-        }
-      })
-        .then(async (receipt) => {
-          console.log("receipt: ", receipt);
-        })
-        .catch((err) => {
-          console.log(err);
-          isWithdrawing.value = false;
-          notification.dismiss(notifyId);
-          notification.error(
-            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
-          );
-        });
-    };
-
     const format = (time) => {
       return DateFormat(time);
     };
 
     return {
-      dialogTableVisible,
-      isUnbonding,
-      bondedBalance,
-      onWithdraw,
-      onShowDialog,
-
       format,
       list,
-      currentIndex,
-      isWithdrawing,
     };
   },
 });

@@ -27,7 +27,7 @@ const routes = [
       {
         path: "history",
         name: "history",
-        component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/History.vue"),
+        component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/Rewards.vue"),
       },
       {
         path: "unbond",

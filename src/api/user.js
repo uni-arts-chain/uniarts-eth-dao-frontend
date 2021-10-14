@@ -102,6 +102,15 @@ const apiList = [
     params: {},
     options: {},
   },
+  {
+    name: "getMyRewards",
+    method: "GET",
+    desc: "我的奖励",
+    path: "/arts/rewards",
+    mockPath: "/arts/rewards",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;
