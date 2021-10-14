@@ -16,8 +16,8 @@
       <div class="progress">
         <VoteProgress :value="votePercent" />
         <div class="progress-value">
-          <span>Number of votes：{{ curNftTotalVotes }}</span>
-          <span>Total：{{ curGroupTotalVotes }}</span>
+          <span>Number of votes：{{ artInfo.number }}</span>
+          <span>Total：{{ artInfo.total }}</span>
         </div>
       </div>
       <div class="vote-body">
@@ -305,21 +305,21 @@ export default defineComponent({
         .toString();
     };
 
-    const curNftTotalVotes = ref(0);
-    const curGroupTotalVotes = ref(0);
-    const getTotalNftVotes = async (nftId) => {
-      curNftTotalVotes.value = new BigNumber(await VoteMining.getNftVotes(nftId))
-        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
-        .toString();
-    };
-    const getTotalGroupVotes = async (nftId) => {
-      curGroupTotalVotes.value = new BigNumber(await VoteMining.getGroupVotes(nftId))
-        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
-        .toString();
-    };
+    // const curNftTotalVotes = ref(0);
+    // const curGroupTotalVotes = ref(0);
+    // const getTotalNftVotes = async (nftId) => {
+    //   curNftTotalVotes.value = new BigNumber(await VoteMining.getNftVotes(nftId))
+    //     .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+    //     .toString();
+    // };
+    // const getTotalGroupVotes = async (nftId) => {
+    //   curGroupTotalVotes.value = new BigNumber(await VoteMining.getGroupVotes(nftId))
+    //     .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+    //     .toString();
+    // };
     const votePercent = computed(() => {
-      return new BigNumber(curNftTotalVotes.value || 0)
-        .div(curGroupTotalVotes.value || 1)
+      return new BigNumber(artInfo.number || 0)
+        .div(artInfo.total || 1)
         .times(100)
         .toFixed(2, 1);
     });
@@ -352,8 +352,8 @@ export default defineComponent({
           Object.keys(res).forEach((key) => (artInfo[key] = res[key]));
           isLoading.value = false;
           init();
-          getTotalNftVotes(res.token_id);
-          getTotalGroupVotes(res.token_id);
+          // getTotalNftVotes(res.token_id);
+          // getTotalGroupVotes(res.token_id);
           voteHasFinished(res.token_id);
           getVoteTime(res.token_id);
         })
@@ -453,8 +453,6 @@ export default defineComponent({
       stakeTotal,
       bondedTotal,
 
-      curNftTotalVotes,
-      curGroupTotalVotes,
       votePercent,
 
       onBonded,

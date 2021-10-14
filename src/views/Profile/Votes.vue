@@ -216,19 +216,24 @@ export default defineComponent({
 
     const curNft = ref({});
     const getStakeVoted = async () => {
-      let votedBalance = await VoteMining.getBalances(
+      let votedBalance = await VoteMining.getAvailableBalance(
         connectedAccount,
         currentToken.address,
+        DAPP_CONFIG.nfts.UniartsNFT.address,
         curNft.value.token_id
       );
-      availableVotedBalance.value = new BigNumber(votedBalance.available)
+      availableVotedBalance.value = new BigNumber(votedBalance)
         .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
         .toString();
     };
     const availableBondedVotedBalance = ref(0);
     const getBondedVoted = async () => {
-      let votedBalance = await VoteMining.getVotedBalances(connectedAccount, curNft.value.token_id);
-      availableBondedVotedBalance.value = new BigNumber(votedBalance.available)
+      let votedBalance = await VoteMining.getUnvotableBalance(
+        connectedAccount,
+        DAPP_CONFIG.nfts.UniartsNFT.address,
+        curNft.value.token_id
+      );
+      availableBondedVotedBalance.value = new BigNumber(votedBalance)
         .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
         .toString();
     };

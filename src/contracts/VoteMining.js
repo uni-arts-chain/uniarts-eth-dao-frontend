@@ -192,6 +192,18 @@ class VoteMining {
     let groupVotes = await this.contract.methods.groupVotes(groupId).call();
     return groupVotes;
   }
+  async getAvailableBalance(user, tokenAddress, nftAddress, nftId) {
+    let availableBalance = await this.contract.methods
+      .getAvailableBalance(user, tokenAddress, nftAddress, nftId)
+      .call();
+    return availableBalance;
+  }
+  async getUnvotableBalance(user, nftAddress, nftId) {
+    let availableBalance = await this.contract.methods
+      .getUnvotableBalance(user, nftAddress, nftId)
+      .call();
+    return availableBalance;
+  }
 }
 
 export default new VoteMining();
