@@ -6,7 +6,7 @@
         <div class="no-data" v-if="list.length == 0">No data</div>
         <div class="item" v-for="(v, i) in list" :key="i">
           <div class="nft">
-            <img style="max-height: 100%; max-width: 100%" :src="v.img_main_file1" />
+            <AdaptiveView :isResponsive="true" :isPreview="true" :nft="v" />
           </div>
           <div class="nft-info">
             <div class="my-votes">
@@ -38,7 +38,7 @@
         </div>
       </div>
     </div>
-    <div class="button-group">
+    <div class="button-group" v-if="totalPage > 1">
       <button style="margin-right: 40px" @click="onPrev" :disabled="currentPage < 2">
         Previous
       </button>
@@ -155,6 +155,7 @@
 import { defineComponent, ref, reactive, onMounted, watch, computed } from "vue";
 import http from "@/plugins/http";
 import Dialog from "@/components/Dialog";
+import AdaptiveView from "@/components/AdaptiveView";
 import MobileConfirm from "@/components/MobileConfirm";
 import { notification } from "@/components/Notification";
 import { DAPP_CONFIG } from "@/config";
@@ -167,6 +168,7 @@ export default defineComponent({
   components: {
     MobileConfirm,
     Dialog,
+    AdaptiveView,
   },
   setup() {
     // TODO
@@ -422,9 +424,8 @@ export default defineComponent({
     width: 390px;
   }
   .nft {
-    width: 180px;
-    height: 124px;
-    /* background: black; */
+    width: 130px;
+    height: 130px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -708,7 +709,8 @@ export default defineComponent({
       margin-bottom: 50px;
       .nft {
         width: 100%;
-        height: 235px;
+        max-width: 320px;
+        height: 320px;
       }
       .nft-info {
         width: 100%;

@@ -27,7 +27,7 @@
       <div class="container item-list">
         <div class="item" v-for="(v, i) in list" :key="i">
           <div class="nft">
-            <img :src="v.img_main_file1" alt="" />
+            <AdaptiveView :isResponsive="true" :isPreview="true" :nft="v" />
           </div>
           <div class="nft-info">
             <div class="my-votes">
@@ -83,11 +83,15 @@ import { defineComponent, ref, onMounted, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
+import AdaptiveView from "@/components/AdaptiveView";
 import { DateFormatCountdown } from "@/utils";
 import http from "@/plugins/http";
 import store from "@/store";
 export default defineComponent({
   name: "list",
+  components: {
+    AdaptiveView,
+  },
   setup() {
     // TODO
     const router = useRouter();
@@ -262,12 +266,12 @@ export default defineComponent({
     align-items: center;
   }
   .nft-info {
-    margin-left: 86px;
-    width: 707px;
+    margin-left: 26px;
+    width: 747px;
   }
   .nft {
-    width: 212px;
-    height: 124px;
+    width: 150px;
+    height: 150px;
     position: relative;
     overflow: hidden;
     img {
@@ -432,8 +436,9 @@ export default defineComponent({
       flex-direction: column;
       margin-bottom: 50px;
       .nft {
-        width: 100%;
-        height: 235px;
+        width: 313px;
+        max-width: 100%;
+        height: 313px;
       }
       .nft-info {
         width: 100%;

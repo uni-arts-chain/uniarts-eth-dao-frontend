@@ -6,11 +6,10 @@
     </div>
     <div class="info">
       <div class="title">{{ item.name }}</div>
-      <div class="desc">Number of votes obtained</div>
-      <Progress :value="parseInt((item.number / (item.total || 1)) * 100)" />
+      <Progress :value="formatPercent((item.number / (item.total || 1)) * 100)" />
       <div class="votes-group">
-        <div class="number-votes">Number of votes：{{ item.number }}</div>
-        <div class="totl">Total：{{ item.total }}</div>
+        <div class="number-votes">Current high bid: ${{ item.number }}</div>
+        <div class="totl">Total：{{ item.total }} USDT</div>
       </div>
       <div class="user-info">
         <img :src="item.artist_avatar ? item.artist_avatar : Avatar" />
@@ -43,6 +42,7 @@
 <script>
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
+import { BigNumber } from "@/plugins/bignumber";
 import Progress from "@/components/Progress";
 import Avatar from "@/assets/images/avatar@2x.png";
 import AdaptiveView from "@/components/AdaptiveView";
@@ -66,8 +66,12 @@ export default defineComponent({
     const goAuction = (uid, id) => {
       router.push("/marketplace/auction/" + uid + "/" + id);
     };
+    const formatPercent = (number) => {
+      return new BigNumber(number).toFixed(2, 1);
+    };
     return {
       goAuction,
+      formatPercent,
 
       Avatar,
     };

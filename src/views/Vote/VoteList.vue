@@ -3,10 +3,7 @@
   <div class="index">
     <div class="info">
       <div class="container">
-        <!-- <button class="auction-button" v-if="!$store.state.global.isMobile" @click="goAuctionQueue">
-          View Auction Round
-        </button> -->
-        <button class="auction-button" style="color: #aaa" v-if="!$store.state.global.isMobile">
+        <button class="auction-button" v-if="!$store.state.global.isMobile" @click="goAuctionQueue">
           View Auction Round
         </button>
         <div class="content">
@@ -25,7 +22,11 @@
           >
             View Auction Round
           </button> -->
-          <button v-if="$store.state.global.isMobile" class="auction-button" style="color: #aaa">
+          <button
+            v-if="$store.state.global.isMobile"
+            class="auction-button"
+            @click="goAuctionQueue"
+          >
             View Auction Round
           </button>
         </div>
@@ -36,7 +37,7 @@
       <div class="container item-list">
         <div class="item" v-for="(v, i) in list" :key="i">
           <div class="nft">
-            <img :src="v.img_main_file1" />
+            <AdaptiveView :isResponsive="true" :isPreview="true" :nft="v" />
           </div>
           <div class="nft-info">
             <div class="my-votes">
@@ -92,11 +93,15 @@ import { defineComponent, ref, onMounted, reactive } from "vue";
 import store from "@/store";
 import { useRouter } from "vue-router";
 import http from "@/plugins/http";
+import AdaptiveView from "@/components/AdaptiveView";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
 import { DateFormatCountdown } from "@/utils";
 export default defineComponent({
   name: "list",
+  components: {
+    AdaptiveView,
+  },
   setup() {
     // TODO
 
@@ -285,12 +290,12 @@ export default defineComponent({
     align-items: center;
   }
   .nft-info {
-    margin-left: 86px;
-    width: 707px;
+    margin-left: 26px;
+    width: 747px;
   }
   .nft {
-    width: 212px;
-    height: 124px;
+    width: 150px;
+    height: 150px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -454,8 +459,9 @@ export default defineComponent({
       flex-direction: column;
       margin-bottom: 50px;
       .nft {
-        width: 100%;
-        height: 235px;
+        width: 313px;
+        max-width: 100%;
+        height: 313px;
       }
       .nft-info {
         width: 100%;
