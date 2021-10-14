@@ -4,9 +4,7 @@
     <div class="artist">
       <img class="avatar" :src="info.artist_avatar ? info.artist_avatar : Avatar" />
       <div class="username">{{ info.artist_name }}</div>
-      <p class="desc">
-        {{ info.artist_info }}
-      </p>
+      <div class="desc" v-html="info.artist_info"></div>
     </div>
     <div class="collection">
       <div class="title">CREATIONS</div>

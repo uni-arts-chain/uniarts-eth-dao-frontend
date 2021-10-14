@@ -121,9 +121,7 @@
         <img class="avatar" :src="artInfo.artist_avatar ? artInfo.artist_avatar : Avatar" />
         <span class="username">{{ artInfo.artist_name }}</span>
       </div>
-      <div class="user-desc">
-        {{ artInfo.artist_info }}
-      </div>
+      <div class="user-desc" v-html="artInfo.artist_info"></div>
     </div>
   </div>
   <VoteDetailMobile v-else />

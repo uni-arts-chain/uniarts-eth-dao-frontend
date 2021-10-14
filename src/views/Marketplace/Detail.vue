@@ -51,9 +51,7 @@
                 <div class="artist-name">Artist: {{ info.artist_name }}</div>
                 <!-- <div class="token-mint">Token mint: 251</div> -->
               </div>
-              <div class="desc-body">
-                {{ info.artist_info }}
-              </div>
+              <div class="desc-body" v-html="info.artist_info"></div>
             </div>
           </div>
         </div>
@@ -64,9 +62,7 @@
           <img :src="info.artist_avatar" />
         </div>
         <div class="username">{{ info.artist_name }}</div>
-        <div class="user-desc">
-          {{ info.artist_info }}
-        </div>
+        <div class="user-desc" v-html="info.artist_info"></div>
       </div>
     </div>
   </div>
@@ -107,9 +103,7 @@
                 <div class="name">{{ info.name }}</div>
                 <div class="artist-name">Artist: {{ info.artist_name }}</div>
               </div>
-              <div class="desc-body">
-                {{ info.artist_info }}
-              </div>
+              <div class="desc-body" v-html="info.artist_info"></div>
             </div>
           </div>
         </div>
@@ -119,9 +113,7 @@
             <img :src="info.artist_avatar" />
           </div>
           <div class="username">{{ info.artist_name }}</div>
-          <div class="user-desc">
-            {{ info.artist_info }}
-          </div>
+          <div class="user-desc" v-html="info.artist_info"></div>
           <!-- <router-link class="more" to="/artist/1">More ></router-link> -->
         </div>
       </div>
@@ -408,7 +400,6 @@ export default defineComponent({
       font-size: 12px;
       font-family: Montserrat-Regular;
       font-weight: 300;
-      text-align: center;
       color: #898989;
       line-height: 18px;
       margin-bottom: 22px;

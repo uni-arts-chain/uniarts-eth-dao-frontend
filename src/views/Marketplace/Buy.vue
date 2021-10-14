@@ -4,7 +4,7 @@
     <div class="left">
       <div class="title">{{ auction?.art?.name }}</div>
       <div class="desc-title">Artwork description</div>
-      <div class="desc-content">{{ auction?.art?.details || auction?.art?.artist_info }}</div>
+      <div class="desc-content" v-html="auction?.art?.details"></div>
       <div class="more">More ></div>
       <div class="token-info">
         <!--        <div class="token">-->
@@ -56,7 +56,7 @@
         <img v-if="auction?.art?.artist_avatar" :src="auction?.art?.artist_avatar" />
       </div>
       <div class="username">{{ auction?.art?.artist_name }}</div>
-      <div class="user-desc">{{ auction?.art?.artist_info }}</div>
+      <div class="user-desc" v-html="auction?.art?.artist_info"></div>
       <router-link :to="`/artist/${auction?.art?.artist_uid}`" class="more">More ></router-link>
     </div>
     <!--    <Dialog v-model="buyDialogVisible" type="small">-->
@@ -94,7 +94,7 @@
     </div>
     <div class="left">
       <div class="title">{{ auction?.art?.name }}</div>
-      <div class="desc-content">{{ auction?.art?.details || auction?.art?.artist_info }}</div>
+      <div class="desc-content" v-html="auction?.art?.details"></div>
       <div class="more">More ></div>
       <div class="right">
         <div class="title">ABOUT ARTIST</div>
@@ -102,7 +102,7 @@
           <img v-if="auction?.art?.artist_avatar" :src="auction?.art?.artist_avatar" />
         </div>
         <div class="username">{{ auction?.art?.artist_name }}</div>
-        <div class="user-desc">{{ auction?.art?.artist_info }}</div>
+        <div class="user-desc" v-html="auction?.art?.artist_info"></div>
         <router-link :to="`/artist/${auction?.art?.artist_uid}`" class="more">More ></router-link>
       </div>
       <!--      <div class="number-votes">Number of votes obtained</div>-->
