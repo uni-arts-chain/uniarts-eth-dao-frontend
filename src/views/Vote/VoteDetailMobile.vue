@@ -158,7 +158,10 @@ export default defineComponent({
       history.go(-1);
     };
 
-    const tokenList = Object.values(DAPP_CONFIG.tokens);
+    const tokenList = Object.values({
+      UART: DAPP_CONFIG.tokens.UART,
+      WETH: DAPP_CONFIG.tokens.WETH,
+    });
     let currentToken = reactive({});
     tokenList.length > 0
       ? Object.keys(tokenList[0]).forEach((v) => (currentToken[v] = tokenList[0][v]))
