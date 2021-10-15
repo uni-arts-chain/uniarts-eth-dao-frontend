@@ -4,20 +4,20 @@
     <div class="content">
       <img class="logo" src="@/assets/images/banner-logo@2x.png" />
       <div class="airdrop-body">
-        <div class="airdrop-content" v-if="!isLogin">
+        <div v-if="!isLogin" class="airdrop-content">
           <span class="title">To View Your UART Airdrop Result</span>
           <button class="connect-wallet" @click="onLogin">SIGN IN</button>
         </div>
-        <div class="airdrop-content connected" v-if="isLogin && airDropBalanceList.length < 2">
+        <div v-if="isLogin && airDropBalanceList.length < 2" class="airdrop-content connected">
           <span class="title">Your Airdrop Result is:</span>
           <button class="connect-wallet">Collect {{ airDropBalance }} UART</button>
         </div>
-        <div class="airdrop-content connected" v-if="isLogin && airDropBalanceList.length >= 2">
+        <div v-if="isLogin && airDropBalanceList.length >= 2" class="airdrop-content connected">
           <span class="title">
             The
-            <select class="airdropSelect" v-model="airDropBalanceSelecter">
+            <select v-model="airDropBalanceSelecter" class="airdropSelect">
               <option v-for="(item, index) of airDropBalanceList" :key="index" :value="item">
-                {{ index + 1 }}
+                {{ getListNumber(index) }}
               </option>
             </select>
             Time Your Airdrop Result Is:
@@ -36,6 +36,7 @@ import { defineComponent, computed, ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import TokenLocker from "@/contracts/TokenLocker";
 import store from "@/store";
+
 export default defineComponent({
   name: "index",
   setup() {
@@ -49,7 +50,17 @@ export default defineComponent({
     const isLogin = computed(() => {
       return store.state.user.info.address;
     });
-
+    const getListNumber = (index) => {
+      if (index === 0) {
+        return "1nd";
+      } else if (index === 1) {
+        return "2st";
+      } else if (index === 2) {
+        return "3rd";
+      } else {
+        return index + 1 + "th";
+      }
+    };
     const airDropBalance = ref(0);
     const airDropBalanceList = ref([]);
     const airDropBalanceSelecter = ref(0);
@@ -72,6 +83,7 @@ export default defineComponent({
       isLogin,
       airDropBalanceSelecter,
       airDropBalance,
+      getListNumber,
     };
   },
 });
@@ -82,28 +94,32 @@ export default defineComponent({
   margin-top: 125px;
   margin-bottom: 114px;
 }
+
 .content {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .logo {
   width: 361px;
   height: 83px;
   margin-bottom: 46px;
 }
+
 .airdrop-body {
   background-color: #f0f0f0;
   border-radius: 10px;
   width: 498px;
   height: 230px;
-  padding: 54px 63px;
+  padding: 54px 50px;
 
   .airdrop-content {
     display: flex;
     flex-direction: column;
     align-items: center;
   }
+
   .airdrop-content.connected {
     .connect-wallet {
       background-color: white;
@@ -116,6 +132,7 @@ export default defineComponent({
       letter-spacing: -1px;
     }
   }
+
   .title {
     font-size: 22px;
     font-family: Montserrat-Regular;
@@ -124,12 +141,14 @@ export default defineComponent({
     color: #000000;
     line-height: 27px;
     margin-bottom: 40px;
+
     .airdropSelect {
       position: relative;
       height: 34px;
       font-size: 20px;
     }
   }
+
   .connect-wallet {
     background: #000000;
     border-radius: 11px;
@@ -145,6 +164,7 @@ export default defineComponent({
     cursor: pointer;
   }
 }
+
 .action-notice {
   margin-top: 31px;
   font-size: 22px;
@@ -154,6 +174,7 @@ export default defineComponent({
   color: #000000;
   line-height: 33px;
 }
+
 .label {
   margin-top: 106px;
   font-size: 26px;
