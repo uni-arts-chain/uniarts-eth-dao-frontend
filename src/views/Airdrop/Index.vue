@@ -8,9 +8,21 @@
           <span class="title">To View Your UART Airdrop Result</span>
           <button class="connect-wallet" @click="onLogin">SIGN IN</button>
         </div>
-        <div class="airdrop-content connected" v-else>
+        <div class="airdrop-content connected" v-if="isLogin && airDropBalanceList.length < 2">
           <span class="title">Your Airdrop Result is:</span>
           <button class="connect-wallet">Collect {{ airDropBalance }} UART</button>
+        </div>
+        <div class="airdrop-content connected" v-if="isLogin && airDropBalanceList.length >= 2">
+          <span class="title">
+            The
+            <select class="airdropSelect" v-model="airDropBalanceSelecter">
+              <option v-for="(item, index) of airDropBalanceList" :key="index" :value="item">
+                {{ index + 1 }}
+              </option>
+            </select>
+            Time Your Airdrop Result Is:
+          </span>
+          <button class="connect-wallet">Collect {{ airDropBalanceSelecter || 0 }} UART</button>
         </div>
       </div>
       <div class="action-notice">To Collect Airdrop & Vote for NFT</div>
@@ -31,7 +43,6 @@ export default defineComponent({
 
     const router = useRouter();
     const route = useRoute();
-
     const onLogin = () => {
       router.push("/login?back=" + encodeURIComponent(route.path));
     };
@@ -40,15 +51,26 @@ export default defineComponent({
     });
 
     const airDropBalance = ref(0);
+    const airDropBalanceList = ref([]);
+    const airDropBalanceSelecter = ref(0);
     onMounted(async () => {
-      airDropBalance.value = await TokenLocker.queryLockPosition();
+      const number = await TokenLocker.queryLockNum();
+      for (let i = 0; i < number; i++) {
+        const value = await TokenLocker.queryLockPosition(i);
+        airDropBalanceList.value.push(value);
+        if (i === 0) {
+          airDropBalanceSelecter.value = value;
+          airDropBalance.value = value;
+        }
+      }
+      console.log(airDropBalanceList);
     });
 
     return {
       onLogin,
-
+      airDropBalanceList,
       isLogin,
-
+      airDropBalanceSelecter,
       airDropBalance,
     };
   },
@@ -102,6 +124,11 @@ export default defineComponent({
     color: #000000;
     line-height: 27px;
     margin-bottom: 40px;
+    .airdropSelect {
+      position: relative;
+      height: 34px;
+      font-size: 20px;
+    }
   }
   .connect-wallet {
     background: #000000;

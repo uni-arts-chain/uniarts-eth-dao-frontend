@@ -8,6 +8,7 @@
       <div class="title">{{ item.name }}</div>
       <div class="artwork">
         <div class="artwork-label">Artwork Description</div>
+        <!--todo-->
         <div class="artwork-desc">
           {{ getShorten(item.details) }}
         </div>
@@ -17,6 +18,7 @@
         <img :src="item.artist_avatar ? item.artist_avatar : Avatar" />
         <div class="username">{{ item.artist_name }}</div>
       </div>
+      <!-- todo -->
       <div class="user-desc">
         {{ getShorten(item.artist_info, 100) }}
       </div>

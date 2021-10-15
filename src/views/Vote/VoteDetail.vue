@@ -4,9 +4,7 @@
     <div class="left">
       <div class="title">{{ artInfo.name }}</div>
       <div class="desc-title">Artwork description</div>
-      <div class="desc-content">
-        {{ artInfo.details }}
-      </div>
+      <div class="desc-content" v-html="artInfo.details"></div>
       <div class="more"></div>
     </div>
     <div class="center">

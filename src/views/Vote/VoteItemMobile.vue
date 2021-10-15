@@ -7,6 +7,7 @@
     <div class="info">
       <div class="title">{{ item.name }}</div>
       <div class="artwork">
+        <!--todo-->
         <div class="artwork-desc">
           {{ getShorten(item.details, 100) }}
         </div>
@@ -18,6 +19,7 @@
           <div class="username">{{ item.artist_name }}</div>
         </div>
         <div class="user-desc">
+          <!--todo-->
           <div class="desc-text">
             {{ getShorten(item.artist_info, 70) }}
           </div>
