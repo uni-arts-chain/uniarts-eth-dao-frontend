@@ -2,7 +2,7 @@
 <template>
   <div class="detail" :class="{ mobile: $store.state.global.isMobile }">
     <img class="detail-logo" src="@/assets/images/banner-logo@2x.png" />
-    <p class="detail-desc">The right formula for the best art never exists</p>
+    <p class="detail-desc">The right formula for the best art never exists.</p>
     <div class="button-group">
       <button class="candidate" @click="goVoteQueue">View All Candidates</button>
       <button class="auction" @click="goAuctionQueue">View Timed Auctions</button>
@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="desc">
-          <span>Higher bidding price, More reward available</span>
+          <span>Higher bidding price, more reward available</span>
         </div>
       </div>
     </div>

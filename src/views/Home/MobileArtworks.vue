@@ -26,7 +26,7 @@
               class="name"
               @click="$router.push(`/marketplace/auction/${item.auction_id}/${item.id}`)"
             >
-              {{ item.artist_name }}
+              {{ item.name }}
             </div>
             <div class="price">
               {{ Number(item.auction_latest_price) ? "Current High Bid" : "Price" }}
@@ -47,11 +47,13 @@
             :nft="item.art"
             height="330px"
             width="330px"
+            :isResponsive="true"
+            :isPreview="true"
             @click="$router.push(`/marketplace/buy/${item.id}`)"
           />
           <div class="info">
             <div class="name" @click="$router.push(`/marketplace/buy/${item.id}`)">
-              {{ item.art.artist_name }}
+              {{ item.art.name }}
             </div>
             <div class="price">
               Price

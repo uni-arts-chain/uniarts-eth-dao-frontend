@@ -59,7 +59,7 @@
             <AdaptiveView :nft="item" :isResponsive="true" :isPreview="true" />
           </div>
           <div class="item-user">
-            <span class="username">{{ item.artist_name }}@</span>
+            <span class="username">{{ item.name }}@</span>
             <span style="color: #fe0000">{{
               (Number(item.auction_latest_price)
                 ? item.auction_latest_price
@@ -119,7 +119,7 @@
             <AdaptiveView :nft="item.art" :isResponsive="true" :isPreview="true" />
           </div>
           <div class="item-user">
-            <span class="username">{{ artOrderList[0].art.artist_name }} @</span>
+            <span class="username">{{ item.art.name }} @</span>
             <span style="color: #fe0000">{{ item.price }}</span>
             <span>{{ item.art.currency_code.toUpperCase() }}</span>
           </div>

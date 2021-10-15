@@ -9,10 +9,11 @@
       <div class="container">
         <h2>Art Formula NFT Vote</h2>
         <p>
-          - Vote for NFTs that you think are most in-demand<br />
+          - Vote for the NFTs that you think are the most in-demand<br />
           - According to the number of votes obtained by each NFT, UART rewards will be continuously
           cast into NFTs, which can be retrieved by the owner.<br />
-          - Vote for NFT won't cost any token, voted token can be retrieved at UTC 00:00 next day.
+          - Vote for NFT won't cost any token, voted token can be retrieved at UTC 00:00 the next
+          day.
           <br />
           - Vote reward will be distributed at UTC 00:00 everyday during the voting period. <br />
           - Auction reward will be distributed after the auction round. The higher the deal price,

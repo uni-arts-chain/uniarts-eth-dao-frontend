@@ -66,7 +66,7 @@
               >Notice：</span
             >
             <br />
-            1. Vote for NFT won’t cost any token, voted token can be retrieved at UTC 00:00 next
+            1. Vote for NFT won’t cost any token, voted token can be retrieved at UTC 00:00 the next
             day. <br />
             2. Vote reward distributes at UTC 00:00 everyday during the voting period. <br />
             3. If NOT retrieved, voted token will be count as another vote for the same NFT. <br />
@@ -106,7 +106,7 @@
               >Notice：</span
             >
             <br />
-            1. Vote for NFT won’t cost any token, voted token can be retrieved at UTC 00:00 next
+            1. Vote for NFT won’t cost any token, voted token can be retrieved at UTC 00:00 the next
             day. <br />
             2. Vote reward distributes at UTC 00:00 everyday during the voting period. <br />
             3. If NOT retrieved, voted token will be count as another vote for the same NFT. <br />

@@ -15,7 +15,9 @@
       4. According to the number of votes obtained by each NFT, UART rewards will be continuously
       cast into NFTs, which can be retrieved by the owner.
     </p>
-    <p>5. Vote for NFT won't cost any token, voted token can be retrieved at UTC 00:00 next day.</p>
+    <p>
+      5. Vote for NFT won't cost any token, voted token can be retrieved at UTC 00:00 the next day.
+    </p>
     <p>6. Vote reward will be distributed at UTC 00:00 everyday during the voting period.</p>
     <p>
       7. Auction reward will be distributed after the auction round. The higher the deal price, the

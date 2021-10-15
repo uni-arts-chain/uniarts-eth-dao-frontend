@@ -9,7 +9,7 @@
     <ul class="info-list">
       <li class="info-item">
         <h5>Staking & Voting</h5>
-        <span>Staking, vote and gain for the NFTs that you think are most in-demand</span>
+        <span>Stake, vote for and gain for the NFTs that you think are most in-demand.</span>
       </li>
       <li class="info-item">
         <h5>Mint & Retrieve</h5>
