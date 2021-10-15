@@ -14,13 +14,13 @@
         </div>
         <div v-if="isLogin && airDropBalanceList.length >= 2" class="airdrop-content connected">
           <span class="title">
-            The
+            The (
             <select v-model="airDropBalanceSelecter" class="airdropSelect">
               <option v-for="(item, index) of airDropBalanceList" :key="index" :value="index">
                 {{ getListNumber(index) }}
               </option>
             </select>
-            Time Your Airdrop Result Is:
+            ) Your Airdrop Result Is:
           </span>
           <button class="connect-wallet" @click="collect(airDropBalanceSelecter)">
             Collect {{ airDropBalanceList[airDropBalanceSelecter] || 0 }} UART
@@ -187,6 +187,7 @@ export default defineComponent({
       position: relative;
       height: 34px;
       font-size: 20px;
+      border-radius: 8px;
     }
   }
 
