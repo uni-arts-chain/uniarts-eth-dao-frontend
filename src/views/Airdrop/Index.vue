@@ -16,13 +16,15 @@
           <span class="title">
             The
             <select v-model="airDropBalanceSelecter" class="airdropSelect">
-              <option v-for="(item, index) of airDropBalanceList" :key="index" :value="item">
+              <option v-for="(item, index) of airDropBalanceList" :key="index" :value="index">
                 {{ getListNumber(index) }}
               </option>
             </select>
             Time Your Airdrop Result Is:
           </span>
-          <button class="connect-wallet">Collect {{ airDropBalanceSelecter || 0 }} UART</button>
+          <button class="connect-wallet" @click="collect(airDropBalanceSelecter)">
+            Collect {{ airDropBalanceList[airDropBalanceSelecter] || 0 }} UART
+          </button>
         </div>
       </div>
       <div class="action-notice">To Collect Airdrop & Vote for NFT</div>
@@ -36,6 +38,8 @@ import { defineComponent, computed, ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import TokenLocker from "@/contracts/TokenLocker";
 import store from "@/store";
+import VoteMining from "@/contracts/VoteMining";
+import { notification } from "@/components/Notification";
 
 export default defineComponent({
   name: "index",
@@ -64,13 +68,49 @@ export default defineComponent({
     const airDropBalance = ref(0);
     const airDropBalanceList = ref([]);
     const airDropBalanceSelecter = ref(0);
+    const collect = () => {
+      console.log(airDropBalanceList.value[airDropBalanceSelecter.value]);
+      if (
+        !airDropBalanceList.value[airDropBalanceSelecter.value] ||
+        airDropBalanceList.value[airDropBalanceSelecter.value] <= 0
+      ) {
+        return notification.error("Don't Collect");
+      }
+      let notifyId = notification.loading("Waiting for Wallet");
+      console.log(airDropBalanceSelecter.value.toString());
+      VoteMining.collectFromLock(airDropBalanceSelecter.value.toString(), async (err, txHash) => {
+        if (err) {
+          console.log(err);
+          throw err;
+        }
+        if (txHash) {
+          console.log(txHash);
+          // isApproving.value = false;
+          notification.dismiss(notifyId);
+          notification.success(txHash);
+        }
+      })
+        .then(async (receipt) => {
+          console.log("receipt: ", receipt);
+        })
+        .catch((err) => {
+          console.log(err);
+          // isWithdrawing.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
+        });
+    };
     onMounted(async () => {
       const number = await TokenLocker.queryLockNum();
       for (let i = 0; i < number; i++) {
         const value = await TokenLocker.queryLockPosition(i);
         airDropBalanceList.value.push(value);
         if (i === 0) {
-          airDropBalanceSelecter.value = value;
           airDropBalance.value = value;
         }
       }
@@ -84,6 +124,7 @@ export default defineComponent({
       airDropBalanceSelecter,
       airDropBalance,
       getListNumber,
+      collect,
     };
   },
 });
@@ -112,7 +153,7 @@ export default defineComponent({
   border-radius: 10px;
   width: 498px;
   height: 230px;
-  padding: 54px 50px;
+  padding: 40px;
 
   .airdrop-content {
     display: flex;

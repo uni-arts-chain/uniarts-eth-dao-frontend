@@ -4,6 +4,7 @@ import { toBN } from "web3-utils";
 import Wallet from "@/plugins/wallet";
 import { DAPP_CONFIG } from "@/config";
 import VoteMiningABI from "@/contracts/abi/VoteMining";
+import store from "@/store";
 // import store from "@/store";
 
 class VoteMining {
@@ -203,6 +204,25 @@ class VoteMining {
       .getUnvotableBalance(user, nftAddress, nftId)
       .call();
     return availableBalance;
+  }
+
+  async collectFromLock(lockId, callback) {
+    const gasPrice = await this.gasPrice();
+    const tx = this.contract.methods.collectFromLock(lockId);
+    const sender = store.state.user.info.address;
+    const gasLimit = await tx.estimateGas({
+      value: 0,
+      from: sender,
+      to: this.address,
+    });
+    return tx.send(
+      {
+        from: sender,
+        gasPrice: gasPrice,
+        gas: Math.round(gasLimit * 1.1),
+      },
+      callback
+    );
   }
 }
 
