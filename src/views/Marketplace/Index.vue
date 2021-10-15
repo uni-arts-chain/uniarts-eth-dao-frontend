@@ -20,7 +20,7 @@
             />
           </router-link>
           <div class="info">
-            <div class="name">《 {{ item.name }} 》</div>
+            <div class="name">{{ item.name }}</div>
             <div class="price">
               {{
                 `${Number(item.auction_latest_price) ? "Current Bid" : "Bid"}: ${
@@ -48,7 +48,7 @@
             />
           </router-link>
           <div class="info">
-            <div class="name">《 {{ item.art.name }} 》</div>
+            <div class="name">{{ item.art.name }}</div>
             <div class="price">
               Price: {{ item.price }} {{ item.art.currency_code.toUpperCase() }}
             </div>
@@ -84,7 +84,7 @@
             />
           </router-link>
           <div class="info">
-            <div class="name">《 {{ item.name }} 》</div>
+            <div class="name">{{ item.name }}</div>
             <div class="price">
               {{
                 `${Number(item.auction_latest_price) ? "Current Bid" : "Bid"}: ${
@@ -109,7 +109,7 @@
             />
           </router-link>
           <div class="info">
-            <div class="name">《 {{ item.art.name }} 》</div>
+            <div class="name">{{ item.art.name }}</div>
             <div class="price">
               Price: {{ item.price }} {{ item.art.currency_code.toUpperCase() }}
             </div>

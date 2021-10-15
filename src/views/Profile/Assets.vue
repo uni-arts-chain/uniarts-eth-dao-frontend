@@ -16,8 +16,8 @@
         >
         <el-col :span="7" class="item"
           ><span style="text-align: center">{{ v.bound }}</span>
-          <button v-if="v.token === 'UART'" @click="onShowDialog">unBond</button></el-col
-        >
+          <!-- <button v-if="v.token === 'UART'" @click="onShowDialog">unBond</button> -->
+        </el-col>
         <el-col :span="7" class="item"
           ><span style="text-align: center">{{ v.available }}</span>
           <!-- <button @click="onShowWithdrawDialog">Withdraw</button> -->
@@ -26,7 +26,7 @@
     </el-row>
     <div class="notices">
       Notice:<br />
-      Rewarded and airdrop UARTs unbond will start from 30th Oct.
+      Rewarded and airdrop UARTs unbond will start from 15th Dec.
     </div>
   </div>
   <div class="assets" v-else>
@@ -43,7 +43,7 @@
       <div class="item-col">
         <span class="label">Bonded</span>
         <span class="value">{{ v.bound }}</span>
-        <button @click="onShowDialog">unBond</button>
+        <!-- <button @click="onShowDialog">unBond</button> -->
       </div>
       <div class="item-col">
         <span class="label">Available</span>
@@ -53,7 +53,7 @@
     </div>
     <div class="notices">
       Notice:<br />
-      Rewarded and airdrop UARTs unbond will start from 30th Oct.
+      Rewarded and airdrop UARTs unbond will start from 15th Dec.
     </div>
   </div>
   <Dialog v-model="dialogTableVisible" v-if="!$store.state.global.isMobile" type="small">
