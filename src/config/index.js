@@ -6,7 +6,7 @@ export const BASE_URL = "https://af.uniarts.network";
 
 export const PREFIX = "/api/v1";
 
-export const isProd = NODE_ENV === "production" ? true : false; //条件非真时 false：访问测试接口, true: 访问线上接口
+export const isProd = NODE_ENV === "production" ? true : true; //条件非真时 false：访问测试接口, true: 访问线上接口
 
 // HTTP_API 默认配置
 export const HTTP_DEFAULT_CONFIG = {

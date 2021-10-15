@@ -10,7 +10,13 @@
       <div class="title">CREATIONS</div>
       <div class="list">
         <div class="item" v-for="item in list" :key="item.id" @click="goDetail(item.id)">
-          <AdaptiveView width="100%" height="100%" :isPreview="true" :nft="item" />
+          <AdaptiveView
+            width="100%"
+            height="100%"
+            :isPreview="true"
+            :isResponsive="true"
+            :nft="item"
+          />
         </div>
       </div>
     </div>
@@ -18,7 +24,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, reactive } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import store from "@/store";
 import { useRoute, useRouter } from "vue-router";
 import http from "@/plugins/http";
@@ -38,7 +44,7 @@ export default defineComponent({
     store.dispatch("global/SetNavText", "Artist");
 
     const isLoading = ref(false);
-    let info = reactive({});
+    let info = ref({});
     const list = ref([]);
 
     const requestData = () => {
@@ -49,9 +55,7 @@ export default defineComponent({
         .then((res) => {
           console.log(res);
           isLoading.value = false;
-          info.artist_name = res.artist_avatar;
-          info.artist_info = res.artist_info;
-          info.artist_name = res.artist_name;
+          info.value = res;
           list.value = res.arts;
         })
         .catch((err) => {
