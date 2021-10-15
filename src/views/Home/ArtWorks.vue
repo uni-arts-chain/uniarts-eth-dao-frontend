@@ -79,7 +79,7 @@
     <div class="list-body">
       <div class="auctions-body" v-if="artOrderList.length">
         <div class="main-item" @click="$router.push(`/marketplace/buy/${artOrderList[0].id}`)">
-          <img :src="artOrderList[0].art.img_main_file1.url" />
+          <AdaptiveView :nft="artOrderList[0].art" :isResponsive="true" :isPreview="true" />
         </div>
         <div class="artist-info">
           <div class="avatar">
@@ -116,7 +116,7 @@
           :key="item.id"
         >
           <div class="item-content" @click="$router.push(`/marketplace/buy/${item.id}`)">
-            <AdaptiveView :nft="item" :isResponsive="true" :isPreview="true" />
+            <AdaptiveView :nft="item.art" :isResponsive="true" :isPreview="true" />
           </div>
           <div class="item-user">
             <span class="username">{{ artOrderList[0].art.artist_name }} @</span>
