@@ -9,19 +9,15 @@
       <div class="artwork">
         <div class="artwork-label">Artwork Description</div>
         <!--todo-->
-        <div class="artwork-desc">
-          {{ getShorten(item.details) }}
-        </div>
+        <div class="artwork-desc" v-html="getShorten(item.details)"></div>
         <div class="artwork-more"></div>
       </div>
       <div class="user-info">
         <img :src="item.artist_avatar ? item.artist_avatar : Avatar" />
         <div class="username">{{ item.artist_name }}</div>
       </div>
-      <!-- todo -->
-      <div class="user-desc">
-        {{ getShorten(item.artist_info, 100) }}
-      </div>
+      <!--todo-->
+      <div class="user-desc" v-html="getShorten(item.artist_info, 100)"></div>
       <div class="user-more" @click="goArtistDetail(item.artist_uid)">More ></div>
       <div class="bid-group">
         <button @click="onVote">Vote</button>

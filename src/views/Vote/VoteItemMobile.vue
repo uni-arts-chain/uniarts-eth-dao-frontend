@@ -8,9 +8,7 @@
       <div class="title">{{ item.name }}</div>
       <div class="artwork">
         <!--todo-->
-        <div class="artwork-desc">
-          {{ getShorten(item.details, 100) }}
-        </div>
+        <div class="artwork-desc" v-html="getShorten(item.details, 100)"></div>
         <div class="artwork-more"></div>
       </div>
       <div class="user">
@@ -20,9 +18,7 @@
         </div>
         <div class="user-desc">
           <!--todo-->
-          <div class="desc-text">
-            {{ getShorten(item.artist_info, 70) }}
-          </div>
+          <div class="desc-text" v-html="getShorten(item.artist_info, 70)"></div>
           <div class="user-more" @click="goArtistDetail(item.artist_uid)">More ></div>
         </div>
       </div>
