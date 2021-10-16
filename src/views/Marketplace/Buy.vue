@@ -38,11 +38,7 @@
     </div>
     <div class="center">
       <div class="nft">
-        <img
-          v-if="auction?.art?.property_url"
-          :src="auction?.art?.property_url"
-          style="width: 520px; height: 515px"
-        />
+        <AdaptiveView :nft="auction.art" width="520px" height="515px" />
       </div>
       <!--      <div class="notice">-->
       <!--        <img src="@/assets/images/date-clock.png" />-->
@@ -87,7 +83,7 @@
   <div v-else class="auction container">
     <div class="center">
       <div class="nft">
-        <img v-if="auction?.art?.property_url" :src="auction?.art?.property_url" />
+        <AdaptiveView :nft="auction.art" />
       </div>
       <!--      <div class="notice">-->
       <!--        <img src="@/assets/images/date-clock.png" />-->
@@ -162,6 +158,7 @@ import store from "@/store";
 import http from "@/plugins/http";
 import { DAPP_CONFIG } from "@/config";
 import Erc20 from "../../contracts/Erc20";
+import AdaptiveView from "@/components/AdaptiveView";
 import { notification } from "@/components/Notification";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
 import { BigNumber } from "@/plugins/bignumber";
@@ -171,6 +168,9 @@ import { toBN } from "web3-utils";
 
 export default defineComponent({
   name: "auction",
+  components: {
+    AdaptiveView,
+  },
   setup() {
     const isLoading = ref(false);
     const router = useRouter();
