@@ -122,7 +122,7 @@ export default defineComponent({
         })
         .then((res) => {
           isLoading.value = false;
-          buyList.value = res || [];
+          buyList.value = res.list || [];
           let totalCount = res.total_count || 0;
           totalPage.value = Math.ceil(totalCount / perPage.value);
         })

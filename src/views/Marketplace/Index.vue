@@ -241,7 +241,7 @@ export default defineComponent({
           per_page: buyListPerPage.value,
         })
         .then((res) => {
-          buyList.value = res || [];
+          buyList.value = res.list || [];
         })
         .catch((err) => {
           console.log(err);
