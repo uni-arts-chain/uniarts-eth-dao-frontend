@@ -37,7 +37,7 @@ export function DateFormat(inputTime, isUTC = false, isDay = false) {
   if (!inputTime) return "";
   var date = new Date(inputTime * 1000);
   var y = isUTC ? date.getUTCFullYear() : date.getFullYear();
-  var m = isUTC ? date.getUTCMonth() : date.getMonth() + 1;
+  var m = isUTC ? date.getUTCMonth() + 1 : date.getMonth() + 1;
   m = m < 10 ? "0" + m : m;
   var d = isUTC ? date.getUTCDate() : date.getDate();
   d = d < 10 ? "0" + d : d;
