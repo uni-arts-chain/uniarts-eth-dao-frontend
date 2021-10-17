@@ -62,7 +62,7 @@ export default defineComponent({
     });
 
     const format = (time) => {
-      return DateFormat(time);
+      return DateFormat(time, true, true);
     };
 
     return {

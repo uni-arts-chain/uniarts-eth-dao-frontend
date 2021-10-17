@@ -33,18 +33,19 @@ export function DateFormatCountdown(startTime, endTime) {
   };
 }
 
-export function DateFormat(inputTime) {
+export function DateFormat(inputTime, isUTC = false, isDay = false) {
   if (!inputTime) return "";
   var date = new Date(inputTime * 1000);
-  var y = date.getFullYear();
-  var m = date.getMonth() + 1;
+  var y = isUTC ? date.getUTCFullYear() : date.getFullYear();
+  var m = isUTC ? date.getUTCMonth() : date.getMonth() + 1;
   m = m < 10 ? "0" + m : m;
-  var d = date.getDate();
+  var d = isUTC ? date.getUTCDate() : date.getDate();
   d = d < 10 ? "0" + d : d;
-  var h = date.getHours();
+  if (isDay) return y + "-" + m + "-" + d;
+  var h = isUTC ? date.getUTCHours() : date.getHours();
   h = h < 10 ? "0" + h : h;
-  var minute = date.getMinutes();
-  var second = date.getSeconds();
+  var minute = isUTC ? date.getUTCMinutes() : date.getMinutes();
+  var second = isUTC ? date.getUTCSeconds() : date.getSeconds();
   minute = minute < 10 ? "0" + minute : minute;
   second = second < 10 ? "0" + second : second;
   return y + "-" + m + "-" + d + " " + h + ":" + minute + ":" + second;

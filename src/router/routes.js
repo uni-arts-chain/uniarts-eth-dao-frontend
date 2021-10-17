@@ -54,6 +54,18 @@ const routes = [
     component: () => import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Index.vue"),
   },
   {
+    path: "/marketplace/auctions",
+    name: "marketplaceAuctions",
+    component: () =>
+      import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/MarketAuctions.vue"),
+  },
+  {
+    path: "/marketplace/buynow",
+    name: "marketplaceBuyNow",
+    component: () =>
+      import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/MarketBuyNow.vue"),
+  },
+  {
     path: "/marketplace/:id",
     name: "nftDetail",
     component: () =>

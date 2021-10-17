@@ -7,8 +7,15 @@
       <img src="@/assets/images/market-search@2x.png" />
     </div>
     <div class="buy-now" v-if="auctionList.length">
-      <div class="title">Timed Auctions</div>
-      <div class="list">
+      <div class="title">
+        <span>Timed Auctions</span>
+        <router-link
+          style="font-family: Montserrat-Light; font-size: 14px"
+          to="/marketplace/autions"
+          >MORE ></router-link
+        >
+      </div>
+      <div v-if="auctionList.length > 0" class="list">
         <div v-for="item in auctionList" :key="item.id" class="item">
           <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
             <AdaptiveView
@@ -33,10 +40,22 @@
           </div>
         </div>
       </div>
+      <div
+        v-else
+        class="no-data"
+        style="min-height: 200px; text-align: center; line-height: 200px; color: #999"
+      >
+        No Data
+      </div>
     </div>
     <div v-if="buyList?.length" class="buy-now">
-      <div class="title">Buy Now</div>
-      <div class="list">
+      <div class="title">
+        <span>Buy Now</span>
+        <router-link style="font-family: Montserrat-Light; font-size: 14px" to="/marketplace/buynow"
+          >MORE ></router-link
+        >
+      </div>
+      <div v-if="buyList.length > 0" class="list">
         <div v-for="item in buyList" :key="item.id" class="item">
           <router-link :to="`/marketplace/buy/${item.id}`">
             <AdaptiveView
@@ -54,6 +73,13 @@
             </div>
           </div>
         </div>
+      </div>
+      <div
+        v-else
+        class="no-data"
+        style="min-height: 200px; text-align: center; line-height: 200px; color: #999"
+      >
+        No Data
       </div>
     </div>
   </div>
@@ -96,6 +122,33 @@
             </div>
           </div>
         </div>
+        <router-link
+          v-if="auctionList.length > 0"
+          style="
+            font-size: 14px;
+            width: 100%;
+            text-align: center;
+            line-height: 50px;
+            border: 2px solid black;
+            color: black;
+            margin-top: 10px;
+          "
+          to="/marketplace/autions"
+          >MORE</router-link
+        >
+        <div
+          v-if="auctionList.length == 0"
+          class="no-data"
+          style="
+            width: 100%;
+            min-height: 200px;
+            text-align: center;
+            line-height: 200px;
+            color: #999;
+          "
+        >
+          No Data
+        </div>
       </div>
       <div v-else v-show="buyList?.length" class="list">
         <div v-for="item in buyList" :key="item.id" class="item">
@@ -114,6 +167,33 @@
               Price: {{ item.price }} {{ item.art.currency_code.toUpperCase() }}
             </div>
           </div>
+        </div>
+        <router-link
+          v-if="buyList.length > 0"
+          style="
+            font-size: 14px;
+            width: 100%;
+            text-align: center;
+            line-height: 50px;
+            border: 2px solid black;
+            color: black;
+            margin-top: 10px;
+          "
+          to="/marketplace/buynow"
+          >MORE</router-link
+        >
+        <div
+          v-if="buyList.length == 0"
+          class="no-data"
+          style="
+            width: 100%;
+            min-height: 200px;
+            text-align: center;
+            line-height: 200px;
+            color: #999;
+          "
+        >
+          No Data
         </div>
       </div>
     </div>
@@ -135,19 +215,31 @@ export default defineComponent({
     store.dispatch("global/SetNavText", "Market");
 
     const auctionList = ref([]);
+    const auctionCurrentPage = ref(1);
+    const auctionPerPage = ref(6);
     // todo
     const buyList = ref([]);
+    const buyListCurrentPage = ref(1);
+    const buyListPerPage = ref(6);
 
     const currentTab = ref(1);
     const getAuctionListData = () => {
-      http.globalGetAuctions({}).then((res) => {
-        auctionList.value = res.list;
-      });
+      http
+        .globalGetAuctions({
+          page: auctionCurrentPage.value,
+          per_page: auctionPerPage.value,
+        })
+        .then((res) => {
+          auctionList.value = res.list;
+        });
       // http.globalGetAuctionsGroup({}).then((res) => {
       //   console.log(res);
       // });
       http
-        .globalGetArtOrder({})
+        .globalGetArtOrder({
+          page: buyListCurrentPage.value,
+          per_page: buyListPerPage.value,
+        })
         .then((res) => {
           buyList.value = res || [];
         })
@@ -158,7 +250,11 @@ export default defineComponent({
     onMounted(() => getAuctionListData());
     return {
       auctionList,
+      auctionCurrentPage,
+      auctionPerPage,
       buyList,
+      buyListCurrentPage,
+      buyListPerPage,
       currentTab,
     };
   },
@@ -218,10 +314,12 @@ h3.title {
   .title {
     font-size: 18px;
     font-family: Montserrat-Medium;
-    text-align: left;
     color: #040000;
     line-height: 23px;
     margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .list {
