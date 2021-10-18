@@ -37,6 +37,10 @@
             />
           </el-popover>
         </div>
+        <div class="address">
+          <span>Token ID:</span
+          ><span style="left: 10px; position: relative">{{ info.token_id }}</span>
+        </div>
         <div class="votes">
           <!-- <div class="title">Number of votes obtained</div> -->
           <!-- <div class="progress">
@@ -89,6 +93,10 @@
               :data="info.tx_hash"
             />
           </el-popover>
+        </div>
+        <div class="address" style="justify-content: flex-start">
+          <span>Token ID:</span>
+          <span style="left: 10px; position: relative">{{ info.token_id }}</span>
         </div>
         <div class="votes">
           <!-- <div class="title">Number of votes obtained</div> -->
