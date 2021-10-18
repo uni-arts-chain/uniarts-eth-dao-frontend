@@ -21,6 +21,31 @@
       <li>
         <router-link to="/profile"><img src="@/assets/images/profile@2x.png" /></router-link>
       </li>
+      <li class="network">
+        <el-dropdown trigger="click" @command="onNetworkChange">
+          <div>
+            <button class="network-button" v-if="currentChainInfo.chainId">
+              <icon-svg
+                :icon-class="currentChainInfo.chainName?.toLowerCase()"
+                v-if="currentChainInfo.hasIcon"
+              />
+              <span style="text-transform: capitalize">{{ currentChainInfo.chainName }}</span>
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </button>
+            <button v-else class="network-button">
+              <span style="color: red">Unknown Network</span>
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </button>
+          </div>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="polygon" v-for="(v, i) in networkList" :key="i">
+                <icon-svg :icon-class="v.chainName.toLowerCase()" /><span>{{ v.chainName }}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </li>
     </ul>
   </nav>
   <nav class="mobile-nav-bar" v-if="isMobile">
@@ -48,38 +73,82 @@
     <div class="top">
       <img src="@/assets/images/arrow@1x.png" @click="onClickItem" />
     </div>
-    <ul class="ul-menu">
-      <li :class="{ active: currentPath == '/' }">
-        <router-link to="/" @click="onClickItem">Homepage</router-link>
-      </li>
-      <li :class="{ active: currentPath == '/vote' }">
-        <router-link to="/vote" @click="onClickItem">Vote</router-link>
-      </li>
-      <li :class="{ active: currentPath == '/marketplace' }">
-        <router-link to="/marketplace" @click="onClickItem">Marketplace</router-link>
-      </li>
-      <li :class="{ active: currentPath == '/airdrop' }">
-        <router-link to="/airdrop" @click="onClickItem">Airdrop</router-link>
-      </li>
-      <!--      <li>-->
-      <!--        <router-link to="/marketplace" @click="onClickItem">Search</router-link>-->
-      <!--      </li>-->
-      <li>
-        <router-link to="/profile" @click="onClickItem">Account</router-link>
-      </li>
-      <li v-if="$store.state.user.info.address">
-        <span @click="onLogout">Log out</span>
-      </li>
-    </ul>
+    <div
+      style="
+        height: calc(100% - 70px);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      "
+    >
+      <ul class="ul-menu">
+        <li :class="{ active: currentPath == '/' }">
+          <router-link to="/" @click="onClickItem">Homepage</router-link>
+        </li>
+        <li :class="{ active: currentPath == '/vote' }">
+          <router-link to="/vote" @click="onClickItem">Vote</router-link>
+        </li>
+        <li :class="{ active: currentPath == '/marketplace' }">
+          <router-link to="/marketplace" @click="onClickItem">Marketplace</router-link>
+        </li>
+        <li :class="{ active: currentPath == '/airdrop' }">
+          <router-link to="/airdrop" @click="onClickItem">Airdrop</router-link>
+        </li>
+        <!--      <li>-->
+        <!--        <router-link to="/marketplace" @click="onClickItem">Search</router-link>-->
+        <!--      </li>-->
+        <li>
+          <router-link to="/profile" @click="onClickItem">Account</router-link>
+        </li>
+        <li v-if="$store.state.user.info.address">
+          <span @click="onLogout">Log out</span>
+        </li>
+      </ul>
+      <ul class="ul-menu bottom">
+        <li class="network">
+          <button class="network-button" v-if="currentChainInfo.chainId" @click="showDialog">
+            <icon-svg
+              :icon-class="currentChainInfo.chainName?.toLowerCase()"
+              v-if="currentChainInfo.hasIcon"
+            />
+            <span style="text-transform: capitalize">{{ currentChainInfo.chainName }}</span>
+          </button>
+          <button v-else class="network-button" @click="showDialog">
+            <span style="color: red">Unknown Network</span>
+          </button>
+        </li>
+      </ul>
+    </div>
   </el-drawer>
+  <MobileConfirm v-model="dialogTableVisible" customClass="retrieve-confirm">
+    <div class="confirm-content">
+      <div class="title">Select Network</div>
+      <div class="list">
+        <div
+          class="item"
+          v-for="(v, i) in networkList"
+          :key="i"
+          @click="onNetworkChange(v.chainName.toLowerCase())"
+        >
+          <icon-svg :icon-class="v.chainName.toLowerCase()" /><span>{{ v.chainName }}</span>
+        </div>
+      </div>
+    </div>
+  </MobileConfirm>
 </template>
 
 <script>
 import { defineComponent, computed, ref, watch } from "vue";
+import MobileConfirm from "@/components/MobileConfirm";
 import { useRoute, useRouter } from "vue-router";
+import { DAPP_CONFIG } from "@/config";
+import wallet from "@/plugins/wallet";
 import store from "@/store";
 export default defineComponent({
   name: "nav-bar",
+  components: {
+    MobileConfirm,
+  },
   setup() {
     const route = useRoute();
     const router = useRouter();
@@ -114,6 +183,44 @@ export default defineComponent({
       router.push("/");
     };
 
+    const currentChainInfo = ref({});
+
+    const getCurrentChainInfo = (currentChainId) => {
+      const chainInfo = wallet.getChainById(currentChainId);
+      currentChainInfo.value = {
+        chainName: chainInfo.name?.toLowerCase(),
+        chainId: chainInfo.chainId,
+      };
+      const item = Object.values(DAPP_CONFIG.networks).find(
+        (v) => v.chainId == "0x" + new Number(currentChainId).toString(16)
+      );
+      if (item) currentChainInfo.value = item;
+      currentChainInfo.value.hasIcon = item ? true : false;
+    };
+
+    wallet.getCurrentChainId().then((res) => {
+      const currentChainId = "0x" + new Number(res).toString(16);
+      getCurrentChainInfo(currentChainId);
+    });
+
+    wallet.provider.on("chainChanged", (currentChainId) => {
+      getCurrentChainInfo(currentChainId);
+    });
+
+    const onNetworkChange = async (command) => {
+      const chainInfo = DAPP_CONFIG.networks[command];
+      await wallet.switchNetwork(chainInfo);
+      dialogTableVisible.value = false;
+    };
+
+    const networkList = ref(Object.values(DAPP_CONFIG.networks));
+
+    const dialogTableVisible = ref(false);
+
+    const showDialog = () => {
+      dialogTableVisible.value = true;
+    };
+
     return {
       currentPath,
       isMobile,
@@ -122,6 +229,11 @@ export default defineComponent({
       onOpenDrawer,
       onClickItem,
       onLogout,
+      onNetworkChange,
+      currentChainInfo,
+      networkList,
+      dialogTableVisible,
+      showDialog,
     };
   },
 });
@@ -157,6 +269,26 @@ export default defineComponent({
   li.active {
     color: $--theme-primary;
   }
+  li.network {
+    display: flex;
+    align-items: center;
+    margin-left: 30px;
+    .network-button {
+      background-color: #f0f0f0;
+      color: black;
+      /* background-color: transparent; */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      border-radius: 6px;
+      padding: 6px 15px;
+      .svg-icon {
+        margin-right: 10px;
+        font-size: 24px;
+      }
+    }
+  }
   img {
     height: 16px;
   }
@@ -165,6 +297,24 @@ export default defineComponent({
     align-items: center;
   }
 }
+
+.el-dropdown-menu {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+.el-dropdown-menu__item:hover {
+  border-radius: 6px;
+}
+.el-dropdown-menu__item {
+  display: flex;
+  align-items: center;
+  padding: 2px 15px;
+  .svg-icon {
+    margin-right: 15px;
+    font-size: 24px;
+  }
+}
+
 .mobile-nav-bar {
   display: flex;
   justify-content: space-between;
@@ -225,6 +375,65 @@ export default defineComponent({
   }
   li:focus {
     background-color: none;
+  }
+}
+.ul-menu.bottom {
+  margin-bottom: 20px;
+  margin-right: 40px;
+  li {
+    width: 100%;
+    display: flex;
+    align-items: center;
+  }
+  li.network {
+    display: flex;
+    justify-content: center;
+    .network-button {
+      max-width: 100%;
+      background-color: #f0f0f0;
+      color: black;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      border-radius: 6px;
+      padding: 6px 15px;
+      .svg-icon {
+        margin-right: 10px;
+        font-size: 24px;
+      }
+    }
+  }
+}
+.confirm-content {
+  padding: 20px 15px;
+  .title {
+    font-size: 20px;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+    margin-bottom: 40px;
+  }
+  .list {
+    width: 100%;
+    min-height: 100px;
+    margin-bottom: 30px;
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    .item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .item .svg-icon {
+      margin-right: 15px;
+      font-size: 27px;
+    }
+    .item > span {
+      font-size: 20px;
+    }
   }
 }
 </style>

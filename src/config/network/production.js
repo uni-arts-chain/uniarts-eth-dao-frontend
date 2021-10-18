@@ -30,6 +30,26 @@ module.exports = {
       address: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
     },
   },
+  networks: {
+    polygon: {
+      chainId: "0x" + new Number(137).toString(16), // A 0x-prefixed hexadecimal string
+      chainName: "Polygon",
+      nativeCurrency: {
+        name: "Matic Token",
+        symbol: "MATIC", // 2-6 characters long
+        decimals: 18,
+      },
+      rpcUrls: [
+        "https://rpc-mainnet.matic.network",
+        "https://matic-mainnet.chainstacklabs.com",
+        "https://rpc-mainnet.maticvigil.com",
+        "https://rpc-mainnet.matic.quiknode.pro",
+        "https://matic-mainnet-full-rpc.bwarelabs.com",
+      ],
+      blockExplorerUrls: ["https://polygonscan.com"],
+      iconUrls: ["https://polygon.technology/media-kit/matic-token-icon.png"],
+    },
+  },
 };
 /**
  * ### Matic Mainnet

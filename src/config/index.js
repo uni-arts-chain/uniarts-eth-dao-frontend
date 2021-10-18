@@ -1,5 +1,3 @@
-import DappConfig from "./network";
-
 export const NODE_ENV = process.env.NODE_ENV || "development";
 
 // 开发环境下模拟生产环境，方便调试
@@ -19,6 +17,4 @@ export const HTTP_DEFAULT_CONFIG = {
 
 export const CHAIN_DEFAULT_CONFIG = window.NODE_CONFIG || {};
 
-export const DAPP_CONFIG = DappConfig;
-
-// export const RPC_DEFAULT_CONFIG = rpcConfig;
+export const DAPP_CONFIG = require(`./network/${isProd ? "production" : "development"}`);
