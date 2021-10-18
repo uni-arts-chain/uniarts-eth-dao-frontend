@@ -1,12 +1,12 @@
 /** * Created by Lay Hunt on 2021-09-13 16:02:21. */
 <template>
   <div class="login container">
-    <div class="select-wallet" v-if="!isChecked">
+    <div v-if="!isChecked" class="select-wallet">
       <img src="@/assets/images/banner-logo@2x.png" />
       <p>Welcome ! Please sign in</p>
       <button v-loading="isLoading" @click="onConnectMetaMask">Sign in</button>
     </div>
-    <div class="sign-in" v-if="!isNeedSignUp && isChecked">
+    <div v-if="!isNeedSignUp && isChecked" class="sign-in">
       <p>Welcome back</p>
       <p>@{{ userIntro.nickname }}!</p>
       <div class="info">
@@ -15,7 +15,7 @@
         <button v-loading="isLoading" class="sign-in-button" @click="onLogin">SIGN IN</button>
       </div>
     </div>
-    <div class="register" v-else-if="isNeedSignUp && isChecked">
+    <div v-else-if="isNeedSignUp && isChecked" class="register">
       <img src="@/assets/images/banner-logo@2x.png" />
       <div class="info">
         <div class="label">ADDRESS</div>
@@ -25,17 +25,17 @@
         <div class="item">
           <p>Please enter your email address:</p>
           <input
-            type="text"
             v-model="registerForm.email"
             placeholder="Please enter your email address"
+            type="text"
           />
         </div>
         <div class="item">
           <p>Please enter your nickname:</p>
           <input
-            type="text"
             v-model="registerForm.nickname"
             placeholder="Please enter your nickname"
+            type="text"
           />
         </div>
       </div>
@@ -51,6 +51,7 @@ import { notification } from "@/components/Notification";
 import http from "@/plugins/http";
 import wallet from "@/plugins/wallet";
 import store from "@/store";
+
 export default defineComponent({
   name: "login",
   setup() {
@@ -64,6 +65,19 @@ export default defineComponent({
     const isNeedSignUp = ref(false);
     const address = ref("");
     const onLogin = async () => {
+      // 验证登录邮箱和昵称
+      if (isNeedSignUp.value) {
+        if (!registerForm.email || !registerForm.nickname) {
+          return notification.error("Please enter the correct information");
+        }
+        const reg = new RegExp(
+          "^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$"
+        );
+        if (!reg.test(registerForm.email)) {
+          return notification.error("Please enter the correct mail address");
+        }
+      }
+      // 登录
       isLoading.value = true;
       let response = await http.userLoginMessage({});
       let notifyId;
@@ -81,10 +95,6 @@ export default defineComponent({
         notification.dismiss(notifyId);
         let info;
         if (isNeedSignUp.value) {
-          if (!registerForm.email || !registerForm.nickname) {
-            notification.error("Please enter the correct information");
-            return;
-          }
           info = await http.userPostSignUp({
             address: wallet.connectedAccount,
             message: response.message,
@@ -180,14 +190,17 @@ export default defineComponent({
   margin-top: 167px;
   margin-bottom: 200px;
 }
+
 .select-wallet {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   img {
     width: 435px;
     height: 100px;
   }
+
   p {
     margin-top: 106px;
     font-size: 30px;
@@ -198,6 +211,7 @@ export default defineComponent({
     line-height: 72px;
     margin-bottom: 40px;
   }
+
   button {
     width: 243px;
     height: 58px;
@@ -211,28 +225,33 @@ export default defineComponent({
     cursor: pointer;
   }
 }
+
 .sign-in,
 .register {
   display: flex;
   flex-direction: column;
   align-items: center;
+
   p {
     font-size: 32px;
     line-height: 1.4;
     white-space: pre-wrap;
     margin-bottom: 20px;
   }
+
   .info {
     background-color: #f0f0f0;
     border-radius: 6px;
     padding: 16px;
     width: 300px;
+
     .label {
       font-size: 10px;
       text-align: left;
       letter-spacing: 1px;
       margin-bottom: 10px;
     }
+
     .address {
       font-size: 12px;
       text-align: left;
@@ -240,6 +259,7 @@ export default defineComponent({
       overflow: hidden;
       width: 100%;
     }
+
     .sign-in-button {
       display: block;
       width: 100%;
@@ -254,27 +274,33 @@ export default defineComponent({
     }
   }
 }
+
 .register {
   img {
     width: 295px;
     margin-bottom: 20px;
   }
+
   .info {
     margin-top: 20px;
     width: 350px;
     margin-bottom: 20px;
+
     .address {
       margin-bottom: 0px;
     }
   }
+
   .form {
     .item {
       margin-bottom: 30px;
       width: 350px;
+
       p {
         width: 100%;
         font-size: 20px;
       }
+
       input {
         border: 2px solid #ddd;
         width: 100%;
@@ -284,6 +310,7 @@ export default defineComponent({
       }
     }
   }
+
   .register-button {
     display: block;
     width: 350px;
@@ -307,11 +334,13 @@ export default defineComponent({
       width: 240px;
       height: auto;
     }
+
     p {
       margin-top: 40px;
       font-size: 20px;
       margin-bottom: 40px;
     }
+
     button {
       height: 50px;
       font-size: 18px;
@@ -339,6 +368,7 @@ export default defineComponent({
         }
       }
     }
+
     .register-button {
       height: 50px;
       font-size: 17px;
