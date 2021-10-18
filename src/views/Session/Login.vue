@@ -66,14 +66,16 @@ export default defineComponent({
     const address = ref("");
     const onLogin = async () => {
       // 验证登录邮箱和昵称
-      if (!registerForm.email || !registerForm.nickname) {
-        return notification.error("Please enter the correct information");
-      }
-      const reg = new RegExp(
-        "^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$"
-      );
-      if (!reg.test(registerForm.email)) {
-        return notification.error("Please enter the correct mail address");
+      if (isNeedSignUp.value) {
+        if (!registerForm.email || !registerForm.nickname) {
+          return notification.error("Please enter the correct information");
+        }
+        const reg = new RegExp(
+          "^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$"
+        );
+        if (!reg.test(registerForm.email)) {
+          return notification.error("Please enter the correct mail address");
+        }
       }
       // 登录
       isLoading.value = true;
