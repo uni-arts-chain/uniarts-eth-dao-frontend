@@ -23,7 +23,7 @@
             ) Your Airdrop Result Is:
           </span>
           <button class="connect-wallet" @click="collect(airDropBalanceSelecter)">
-            Collect {{ airDropBalanceList[airDropBalanceSelecter] || 0 }} UART
+            Collect {{ airDropBalanceList[airDropBalanceSelecter].amount || 0 }} UART
           </button>
         </div>
       </div>
@@ -69,12 +69,16 @@ export default defineComponent({
     const airDropBalanceList = ref([]);
     const airDropBalanceSelecter = ref(0);
     const collect = () => {
-      console.log(airDropBalanceList.value[airDropBalanceSelecter.value]);
-      if (
-        !airDropBalanceList.value[airDropBalanceSelecter.value] ||
-        airDropBalanceList.value[airDropBalanceSelecter.value] <= 0
-      ) {
-        return notification.error("Don't Collect");
+      const collectItem = airDropBalanceList.value[airDropBalanceSelecter.value];
+      if (!collectItem) {
+        return notification.error("Unable to collect");
+      }
+      const { amount, retrieved } = collectItem;
+      if (!amount || amount <= 0) {
+        return notification.error("Unable to collect");
+      }
+      if (retrieved) {
+        return notification.error("Please do not repeat the collection");
       }
       let notifyId = notification.loading("Waiting for Wallet");
       console.log(airDropBalanceSelecter.value.toString());
@@ -91,6 +95,7 @@ export default defineComponent({
         }
       })
         .then(async (receipt) => {
+          collectItem.retrieved = true;
           console.log("receipt: ", receipt);
         })
         .catch((err) => {
