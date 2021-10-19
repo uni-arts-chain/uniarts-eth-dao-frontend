@@ -10,7 +10,9 @@
         </div>
         <div v-if="isLogin && airDropBalanceList.length < 2" class="airdrop-content connected">
           <span class="title">Your Airdrop Result is:</span>
-          <button class="connect-wallet" @click="collect">Collect {{ airDropBalance }} UART</button>
+          <button class="connect-wallet" @click="collect">
+            Collect {{ airDropBalance?.amount || 0 }} UART
+          </button>
         </div>
         <div v-if="isLogin && airDropBalanceList.length >= 2" class="airdrop-content connected">
           <span class="title">
