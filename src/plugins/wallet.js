@@ -84,6 +84,7 @@ class Wallet {
     }
   }
   async connect() {
+    this.provider = window.ethereum || window.BinanceChain;
     if (!this.provider) {
       throw {
         code: 100,
@@ -95,7 +96,6 @@ class Wallet {
     await this.init();
   }
   async request(obj) {
-    console.log(obj);
     let result = await this.provider.request({
       method: obj.method,
       params: obj.params,
@@ -109,7 +109,7 @@ class Wallet {
     console.log(message);
     var from = this.state.connectedAccount;
     const msgParams = Web3Utils.utf8ToHex(message + "");
-    var params = [from, msgParams];
+    var params = [msgParams, from];
     var method = "personal_sign";
     console.log(from, params, method);
     let result = await this.request({

@@ -31,6 +31,7 @@ export default defineComponent({
 
     onMounted(() => {
       store.dispatch("global/WindowResize");
+      setTimeout(() => store.dispatch("user/ConnectWallet"), 2000);
     });
 
     return {

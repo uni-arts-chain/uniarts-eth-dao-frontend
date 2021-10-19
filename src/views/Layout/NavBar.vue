@@ -142,7 +142,7 @@
 </template>
 
 <script>
-import { defineComponent, computed, ref, watch } from "vue";
+import { defineComponent, computed, ref, watch, onMounted } from "vue";
 import MobileConfirm from "@/components/MobileConfirm";
 import { useRoute, useRouter } from "vue-router";
 import { DAPP_CONFIG } from "@/config";
@@ -204,16 +204,20 @@ export default defineComponent({
       console.log(currentChainInfo.value);
     };
 
-    if (wallet.provider) {
-      wallet.getCurrentChainId().then((res) => {
-        const currentChainId = "0x" + new Number(res).toString(16);
-        getCurrentChainInfo(currentChainId);
-      });
+    onMounted(() => {
+      setTimeout(() => {
+        if (wallet.provider) {
+          wallet.getCurrentChainId().then((res) => {
+            const currentChainId = "0x" + new Number(res).toString(16);
+            getCurrentChainInfo(currentChainId);
+          });
 
-      wallet.provider.on("chainChanged", (currentChainId) => {
-        getCurrentChainInfo(currentChainId);
-      });
-    }
+          wallet.provider.on("chainChanged", (currentChainId) => {
+            getCurrentChainInfo(currentChainId);
+          });
+        }
+      }, 3000);
+    });
 
     const onNetworkChange = async (command) => {
       if (!wallet.provider) {
