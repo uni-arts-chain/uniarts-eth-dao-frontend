@@ -39,7 +39,11 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item command="polygon" v-for="(v, i) in networkList" :key="i">
+              <el-dropdown-item
+                :command="v.chainName.toLowerCase()"
+                v-for="(v, i) in networkList"
+                :key="i"
+              >
                 <icon-svg :icon-class="v.chainName.toLowerCase()" /><span>{{ v.chainName }}</span>
               </el-dropdown-item>
             </el-dropdown-menu>

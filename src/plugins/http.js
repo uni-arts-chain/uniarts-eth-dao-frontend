@@ -41,7 +41,7 @@ export class MakeApi {
     options.api.forEach((api) => {
       const apiName = `${options.namespace}${_firstUpperCase(api.name)}`;
       let prefix = api.prefix || options.config.prefix;
-      prefix = options.config.isProd ? prefix : `/test${prefix}`;
+      // prefix = options.config.isProd ? prefix : `/test${prefix}`;
       const url = prefix + api.path;
       api.baseURL = api.baseURL ? api.baseURL : options.config.baseURL;
       options.config.debug && assert(api.name, `${url} :接口name属性不能为空`);

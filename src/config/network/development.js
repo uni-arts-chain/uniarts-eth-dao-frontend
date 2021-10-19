@@ -25,4 +25,18 @@ module.exports = {
       address: "0xFd9CA9e22bd54260B87834966d26055620aFdbFf",
     },
   },
+  networks: {
+    rinkeby: {
+      chainId: "0x" + new Number(4).toString(16),
+      chainName: "Rinkeby",
+      rpcUrls: ["https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
+      nativeCurrency: {
+        name: "Rinkeby Ether",
+        symbol: "ETH",
+        decimals: 18,
+      },
+      blockExplorerUrls: ["https://rinkeby.etherscan.io"],
+      iconUrls: [],
+    },
+  },
 };
