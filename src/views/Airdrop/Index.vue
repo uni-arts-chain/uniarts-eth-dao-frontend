@@ -78,7 +78,7 @@ export default defineComponent({
         return notification.error("Unable to collect");
       }
       if (retrieved) {
-        return notification.error("Please do not repeat the collection");
+        return notification.error("Has been collected");
       }
       let notifyId = notification.loading("Waiting for Wallet");
       console.log(airDropBalanceSelecter.value.toString());
