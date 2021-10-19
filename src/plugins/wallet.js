@@ -143,6 +143,7 @@ class Wallet {
         params: [{ chainId: chainInfo.chainId }],
       });
     } catch (switchError) {
+      console.log(switchError);
       if (switchError.code === 4902) {
         this.addNetwork(chainInfo);
       } else {

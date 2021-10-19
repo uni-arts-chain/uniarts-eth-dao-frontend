@@ -146,6 +146,7 @@ import { defineComponent, computed, ref, watch } from "vue";
 import MobileConfirm from "@/components/MobileConfirm";
 import { useRoute, useRouter } from "vue-router";
 import { DAPP_CONFIG } from "@/config";
+import { notification } from "@/components/Notification";
 import wallet from "@/plugins/wallet";
 import store from "@/store";
 export default defineComponent({
@@ -188,8 +189,8 @@ export default defineComponent({
     };
 
     const currentChainInfo = ref({});
-
     const getCurrentChainInfo = (currentChainId) => {
+      if (!wallet.provider) return;
       const chainInfo = wallet.getChainById(currentChainId);
       currentChainInfo.value = {
         chainName: chainInfo.name?.toLowerCase(),
@@ -200,18 +201,24 @@ export default defineComponent({
       );
       if (item) currentChainInfo.value = item;
       currentChainInfo.value.hasIcon = item ? true : false;
+      console.log(currentChainInfo.value);
     };
 
-    wallet.getCurrentChainId().then((res) => {
-      const currentChainId = "0x" + new Number(res).toString(16);
-      getCurrentChainInfo(currentChainId);
-    });
+    if (wallet.provider) {
+      wallet.getCurrentChainId().then((res) => {
+        const currentChainId = "0x" + new Number(res).toString(16);
+        getCurrentChainInfo(currentChainId);
+      });
 
-    wallet.provider.on("chainChanged", (currentChainId) => {
-      getCurrentChainInfo(currentChainId);
-    });
+      wallet.provider.on("chainChanged", (currentChainId) => {
+        getCurrentChainInfo(currentChainId);
+      });
+    }
 
     const onNetworkChange = async (command) => {
+      if (!wallet.provider) {
+        notification.error("Please install the wallet first");
+      }
       const chainInfo = DAPP_CONFIG.networks[command];
       await wallet.switchNetwork(chainInfo);
       dialogTableVisible.value = false;
@@ -382,7 +389,7 @@ export default defineComponent({
   }
 }
 .ul-menu.bottom {
-  margin-bottom: 20px;
+  margin-bottom: 140px;
   margin-right: 40px;
   li {
     width: 100%;
