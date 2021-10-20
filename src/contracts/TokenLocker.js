@@ -18,7 +18,10 @@ class TokenLocker {
     const contract = this.contract.methods.locks(store.state.user.info.address, i.toString());
     const response = await contract.call();
     // 确定精度
-    return new BigNumber(response.amount).shiftedBy(-DAPP_CONFIG.tokens.UART.decimals).toString();
+    response.amount = BigNumber(response.amount)
+      .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+      .toString();
+    return response;
   }
   // 空投次数
   queryLockNum() {
