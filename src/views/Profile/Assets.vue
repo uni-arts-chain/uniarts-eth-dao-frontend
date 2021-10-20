@@ -26,7 +26,7 @@
     </el-row>
     <div class="notices">
       Notice:<br />
-      Rewarded and airdrop UARTs unbond will start from 15th Dec.
+      Rewarded and airdrop UARTs unbond will start from 15th Nov.
     </div>
   </div>
   <div class="assets" v-else>
@@ -53,7 +53,7 @@
     </div>
     <div class="notices">
       Notice:<br />
-      Rewarded and airdrop UARTs unbond will start from 15th Dec.
+      Rewarded and airdrop UARTs unbond will start from 15th Nov.
     </div>
   </div>
   <Dialog v-model="dialogTableVisible" v-if="!$store.state.global.isMobile" type="small">
