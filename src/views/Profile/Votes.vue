@@ -225,7 +225,7 @@ export default defineComponent({
         curNft.value.token_id
       );
       availableVotedBalance.value = new BigNumber(votedBalance)
-        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .shiftedBy(-currentToken.decimals)
         .toString();
     };
     const availableBondedVotedBalance = ref(0);

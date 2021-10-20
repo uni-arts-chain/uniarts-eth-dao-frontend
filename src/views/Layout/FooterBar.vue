@@ -36,6 +36,7 @@
           class="white-page"
           >Get project white papers</a
         >
+        <div class="desc">UniArts granted by Web3 Foundation</div>
       </div>
     </div>
   </footer>
@@ -119,5 +120,15 @@ export default defineComponent({
     padding: 30px 50px 0 50px;
     color: white;
   }
+}
+.desc {
+  margin-top: 20px;
+  width: calc(100% - 30px);
+  margin-right: 30px;
+  border-top: 1px solid rgb(160, 160, 160);
+  color: white;
+  padding-top: 20px;
+  font-size: 16px;
+  font-family: Montserrat-Light;
 }
 </style>
