@@ -50,3 +50,14 @@ export function DateFormat(inputTime, isUTC = false, isDay = false) {
   second = second < 10 ? "0" + second : second;
   return y + "-" + m + "-" + d + " " + h + ":" + minute + ":" + second;
 }
+
+export function FormatRpcError(error) {
+  try {
+    let message = error.message || "";
+    message = message.replaceAll(/\n(\s\s)/g, "");
+    let index = message.search(/\{"code": \d,"message":/);
+    return index >= 0 ? JSON.parse(message.substr(index)) : null;
+  } catch (e) {
+    return null;
+  }
+}

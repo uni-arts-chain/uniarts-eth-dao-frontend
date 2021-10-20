@@ -5,6 +5,7 @@ import Wallet from "@/plugins/wallet";
 import { DAPP_CONFIG } from "@/config";
 import VoteMiningABI from "@/contracts/abi/VoteMining";
 import store from "@/store";
+import { FormatRpcError } from "@/utils";
 // import store from "@/store";
 
 class VoteMining {
@@ -17,113 +18,50 @@ class VoteMining {
   async gasPrice() {
     return await this.web3.eth.getGasPrice();
   }
-  async stake(sender, nftAddr, nftId, token, amount, callback) {
-    var gasPrice = await this.gasPrice();
-    var tx = this.contract.methods.stake(nftAddr, nftId, token, toBN(amount));
-
-    var gasLimit = await tx.estimateGas({
-      value: 0,
-      from: sender,
-      to: this.address,
-    });
-    return tx.send(
-      {
+  async sendTransaction(tx, sender, callback) {
+    try {
+      var gasPrice = await this.gasPrice();
+      var gasLimit = await tx.estimateGas({
+        value: 0,
         from: sender,
-        gasPrice: gasPrice,
-        gas: Math.round(gasLimit * 1.1),
-      },
-      callback
-    );
+        to: this.address,
+      });
+      return tx.send(
+        {
+          from: sender,
+          gasPrice: gasPrice,
+          gas: Math.round(gasLimit * 1.1),
+        },
+        callback
+      );
+    } catch (err) {
+      let result = FormatRpcError(err);
+      throw result ? result : err;
+    }
+  }
+  async stake(sender, nftAddr, nftId, token, amount, callback) {
+    var tx = this.contract.methods.stake(nftAddr, nftId, token, toBN(amount));
+    return this.sendTransaction(tx, sender, callback);
   }
   async voteBonded(sender, nftAddr, nftId, amount, callback) {
-    var gasPrice = await this.gasPrice();
     var tx = this.contract.methods.voteBonded(nftAddr, nftId, toBN(amount));
-
-    var gasLimit = await tx.estimateGas({
-      value: 0,
-      from: sender,
-      to: this.address,
-    });
-    return tx.send(
-      {
-        from: sender,
-        gasPrice: gasPrice,
-        gas: Math.round(gasLimit * 1.1),
-      },
-      callback
-    );
+    return this.sendTransaction(tx, sender, callback);
   }
   async unstake(sender, nftAddr, nftId, token, amount, callback) {
-    var gasPrice = await this.gasPrice();
     var tx = this.contract.methods.unstake(nftAddr, nftId, token, toBN(amount));
-
-    var gasLimit = await tx.estimateGas({
-      value: 0,
-      from: sender,
-      to: this.address,
-    });
-    return tx.send(
-      {
-        from: sender,
-        gasPrice: gasPrice,
-        gas: Math.round(gasLimit * 1.1),
-      },
-      callback
-    );
+    return this.sendTransaction(tx, sender, callback);
   }
   async unvoteBonded(sender, nftAddr, nftId, amount, callback) {
-    var gasPrice = await this.gasPrice();
     var tx = this.contract.methods.unvoteBonded(nftAddr, nftId, toBN(amount));
-
-    var gasLimit = await tx.estimateGas({
-      value: 0,
-      from: sender,
-      to: this.address,
-    });
-    return tx.send(
-      {
-        from: sender,
-        gasPrice: gasPrice,
-        gas: Math.round(gasLimit * 1.1),
-      },
-      callback
-    );
+    return this.sendTransaction(tx, sender, callback);
   }
   async unbond(sender, amount, callback) {
-    var gasPrice = await this.gasPrice();
     var tx = this.contract.methods.unbond(toBN(amount));
-
-    var gasLimit = await tx.estimateGas({
-      value: 0,
-      from: sender,
-      to: this.address,
-    });
-    return tx.send(
-      {
-        from: sender,
-        gasPrice: gasPrice,
-        gas: Math.round(gasLimit * 1.1),
-      },
-      callback
-    );
+    return this.sendTransaction(tx, sender, callback);
   }
   async redeemUnbonding(sender, index, callback) {
-    var gasPrice = await this.gasPrice();
     var tx = this.contract.methods.redeemUnbonding(index);
-
-    var gasLimit = await tx.estimateGas({
-      value: 0,
-      from: sender,
-      to: this.address,
-    });
-    return tx.send(
-      {
-        from: sender,
-        gasPrice: gasPrice,
-        gas: Math.round(gasLimit * 1.1),
-      },
-      callback
-    );
+    return this.sendTransaction(tx, sender, callback);
   }
   async getGroupId(nftId) {
     const uid = await this.getUID(nftId);
@@ -207,22 +145,9 @@ class VoteMining {
   }
 
   async collectFromLock(lockId, callback) {
-    const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.collectFromLock(lockId);
     const sender = store.state.user.info.address;
-    const gasLimit = await tx.estimateGas({
-      value: 0,
-      from: sender,
-      to: this.address,
-    });
-    return tx.send(
-      {
-        from: sender,
-        gasPrice: gasPrice,
-        gas: Math.round(gasLimit * 1.1),
-      },
-      callback
-    );
+    return this.sendTransaction(tx, sender, callback);
   }
 }
 
