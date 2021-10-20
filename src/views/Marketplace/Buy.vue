@@ -232,6 +232,7 @@ export default defineComponent({
           console.log("receipt: ", receipt);
         } catch (err) {
           isLoading.value = false;
+          notification.dismiss(notifyId);
           notification.error(
             err.message.split("{")[0] ||
               (err.head && err.head.msg) ||
