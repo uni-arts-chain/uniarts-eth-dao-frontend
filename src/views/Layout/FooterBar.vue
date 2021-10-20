@@ -122,7 +122,7 @@ export default defineComponent({
   }
 }
 .desc {
-  margin-top: 20px;
+  margin-top: 70px;
   width: calc(100% - 30px);
   margin-right: 30px;
   border-top: 1px solid rgb(160, 160, 160);
