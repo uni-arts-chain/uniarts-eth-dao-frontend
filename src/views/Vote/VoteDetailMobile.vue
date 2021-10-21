@@ -28,7 +28,7 @@
       <div class="vote-body">
         <div class="tabs">
           <div :class="{ active: curTab == 1 }" @click="curTab = 1">Stake&Vote</div>
-          <div :class="{ active: curTab == 2 }" @click="curTab = 2">Bonded&Vote</div>
+          <div :class="{ active: curTab == 2 }" @click="curTab = 2">Bond&Vote</div>
         </div>
         <div class="form-body" v-if="curTab == 1">
           <div class="amount-input">
