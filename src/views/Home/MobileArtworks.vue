@@ -12,6 +12,7 @@
         </div>
       </div>
       <div v-if="curTab === 1" class="tab-body">
+        <div class="no-data" v-if="auctions.length == 0">No data</div>
         <div v-for="item of auctions" :key="item.id" class="item">
           <AdaptiveView
             :nft="item"
@@ -42,6 +43,7 @@
         </div>
       </div>
       <div v-if="curTab === 2" class="tab-body">
+        <div class="no-data" v-if="artOrderList.length == 0">No data</div>
         <div v-for="item of artOrderList" :key="item.id" class="item">
           <AdaptiveView
             :nft="item.art"
@@ -178,5 +180,15 @@ export default defineComponent({
       line-height: 50px;
     }
   }
+}
+.no-data {
+  color: #aaa;
+  font-size: 13px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 230px;
+  padding: 20px;
 }
 </style>

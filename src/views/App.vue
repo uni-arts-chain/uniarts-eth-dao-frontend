@@ -49,7 +49,7 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100vh;
+  min-height: 100vh;
 }
 .nav-bar {
   flex: 0 0 auto;
