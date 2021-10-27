@@ -56,7 +56,7 @@
 
 <script>
 import { defineComponent, ref, computed, onMounted } from "vue";
-// import { BigNumber } from "@/plugins/bignumber";
+import { BigNumber } from "@/plugins/bignumber";
 import { DAPP_CONFIG } from "@/config";
 import http from "@/plugins/http";
 import store from "@/store";
@@ -81,6 +81,19 @@ export default defineComponent({
         .userGetAssets({})
         .then(async (res) => {
           assetsList.value = res.list;
+          assetsList.value.forEach((v) => {
+            let token = DAPP_CONFIG.tokens[v.token.toUpperCase()];
+            token
+              ? VoteMining.getRedeemableBalance(connectedAccount.value, token.address).then(
+                  (res) => {
+                    res = new BigNumber(res);
+                    if (!res.isZero()) {
+                      v.available = res.shiftedBy(-token.decimals).toString();
+                    }
+                  }
+                )
+              : "";
+          });
           const bonedTotal = await VoteMining.getBondedBalance(connectedAccount.value);
           const uartToken = assetsList.value.find(
             (v) => v.token.toLowerCase() === DAPP_CONFIG.tokens.UART.symbol.toLowerCase()

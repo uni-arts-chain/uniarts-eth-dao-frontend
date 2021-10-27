@@ -154,6 +154,13 @@ class VoteMining {
     const mintRewards = await this.contract.methods.getMintRewards(nftAddress, nftId).call();
     return mintRewards;
   }
+
+  async getRedeemableBalance(userAddress, tokenAddress) {
+    const redeemableBalance = await this.contract.methods
+      .getRedeemableBalance(userAddress, tokenAddress)
+      .call();
+    return redeemableBalance;
+  }
 }
 
 export default new VoteMining();
