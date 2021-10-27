@@ -40,11 +40,13 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, watch, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { BigNumber } from "@/plugins/bignumber";
+import { DAPP_CONFIG } from "@/config";
 import Progress from "@/components/Progress";
 import Avatar from "@/assets/images/avatar@2x.png";
+import VoteMining from "@/contracts/VoteMining";
 import AdaptiveView from "@/components/AdaptiveView";
 export default defineComponent({
   name: "auction",
@@ -58,7 +60,7 @@ export default defineComponent({
     Progress,
     AdaptiveView,
   },
-  setup() {
+  setup(props) {
     // TODO
 
     const router = useRouter();
@@ -69,6 +71,25 @@ export default defineComponent({
     const formatPercent = (number) => {
       return new BigNumber(number).toFixed(2, 1);
     };
+
+    const { item } = toRefs(props);
+
+    watch(item, () => {
+      getMintRewards();
+    });
+
+    const getMintRewards = async () => {
+      if (item && item.value.token_id) {
+        const tokenMint = await VoteMining.getMintRewards(
+          DAPP_CONFIG.nfts.UniartsNFT.address,
+          item.value.token_id
+        );
+        if (!tokenMint.isZero()) {
+          item.value.token_mint = tokenMint.shiftedBy(-DAPP_CONFIG.tokens.UART.decimals).toString();
+        }
+      }
+    };
+
     return {
       goAuction,
       formatPercent,

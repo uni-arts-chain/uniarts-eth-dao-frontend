@@ -16,11 +16,9 @@
         >
         <el-col :span="7" class="item"
           ><span style="text-align: center">{{ v.bound }}</span>
-          <!-- <button v-if="v.token === 'UART'" @click="onShowDialog">unBond</button> -->
         </el-col>
         <el-col :span="7" class="item"
           ><span style="text-align: center">{{ v.available }}</span>
-          <!-- <button @click="onShowWithdrawDialog">Withdraw</button> -->
         </el-col>
       </el-row>
     </el-row>
@@ -43,12 +41,10 @@
       <div class="item-col">
         <span class="label">Bonded</span>
         <span class="value">{{ v.bound }}</span>
-        <!-- <button @click="onShowDialog">unBond</button> -->
       </div>
       <div class="item-col">
         <span class="label">Available</span>
         <span class="value">{{ v.available }}</span>
-        <!-- <button @click="onShowWithdrawDialog">Withdraw</button> -->
       </div>
     </div>
     <div class="notices">
@@ -56,96 +52,43 @@
       Rewarded and airdrop UARTs unbond will start from 15th Nov.
     </div>
   </div>
-  <Dialog v-model="dialogTableVisible" v-if="!$store.state.global.isMobile" type="small">
-    <div class="dialog-content">
-      <div class="input-body">
-        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
-          >UART</span
-        >
-      </div>
-      <div class="balance">{{ bondedBalance }} UART</div>
-      <button @click="unBond" v-loading="isUnbonding">UnBond</button>
-      <div class="notice">
-        Notice: <br />
-        Unbonding uarts can not be used for NFT vote.
-      </div>
-    </div>
-  </Dialog>
-  <MobileConfirm v-else v-model="dialogTableVisible">
-    <div class="confirm-content">
-      <div class="input-body">
-        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
-          >UART</span
-        >
-      </div>
-      <div class="balance">{{ bondedBalance }} UART</div>
-      <button @click="unBond" v-loading="isUnbonding">UnBond</button>
-      <div class="notice">
-        Notice: <br />
-        Unbonding uarts can not be used for NFT vote.
-      </div>
-    </div>
-  </MobileConfirm>
-
-  <Dialog v-model="dialogWithdrawVisible" v-if="!$store.state.global.isMobile" type="small">
-    <div class="dialog-content">
-      <div class="input-body">
-        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
-          >UART</span
-        >
-      </div>
-      <div class="balance">{{ availableBalance }} UART</div>
-      <button @click="unBond" v-loading="isUnbonding">Withdraw</button>
-      <div class="notice">
-        Notice: <br />
-        Unbonded UARTs need to be withdraw from unbond history.
-      </div>
-    </div>
-  </Dialog>
-  <MobileConfirm v-else v-model="dialogWithdrawVisible">
-    <div class="confirm-content">
-      <div class="input-body">
-        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
-          >UART</span
-        >
-      </div>
-      <div class="balance">{{ availableBalance }} UART</div>
-      <button @click="unBond" v-loading="isUnbonding">Withdraw</button>
-      <div class="notice">
-        Notice: <br />
-        Unbonded UARTs need to be withdraw from unbond history.
-      </div>
-    </div>
-  </MobileConfirm>
 </template>
 
 <script>
 import { defineComponent, ref, computed, onMounted } from "vue";
-import { BigNumber } from "@/plugins/bignumber";
+// import { BigNumber } from "@/plugins/bignumber";
 import { DAPP_CONFIG } from "@/config";
-import store from "@/store";
 import http from "@/plugins/http";
+import store from "@/store";
 import { notification } from "@/components/Notification";
-import MobileConfirm from "@/components/MobileConfirm";
-import Dialog from "@/components/Dialog";
 import VoteMining from "@/contracts/VoteMining";
 export default defineComponent({
   name: "assets",
-  components: {
-    Dialog,
-    MobileConfirm,
-  },
   setup() {
     // TODO
     const isLoading = ref(false);
     const assetsList = ref([]);
-    const requestData = () => {
+
+    onMounted(() => {
+      if (connectedAccount.value) {
+        getAssets();
+      }
+    });
+
+    const getAssets = async () => {
       isLoading.value = true;
       http
         .userGetAssets({})
-        .then((res) => {
+        .then(async (res) => {
+          assetsList.value = res.list;
+          const bonedTotal = await VoteMining.getBondedBalance(connectedAccount.value);
+          const uartToken = assetsList.value.find(
+            (v) => v.token.toLowerCase() === DAPP_CONFIG.tokens.UART.symbol.toLowerCase()
+          );
+          if (uartToken && !bonedTotal.isZero()) {
+            uartToken.bound = bonedTotal.shiftedBy(-DAPP_CONFIG.tokens.UART.decimals).toString();
+          }
           isLoading.value = false;
-          assetsList.value.splice(0, 0, ...res.list);
         })
         .catch((err) => {
           console.log(err);
@@ -155,114 +98,14 @@ export default defineComponent({
           );
         });
     };
-
-    onMounted(() => {
-      requestData();
-    });
 
     const connectedAccount = computed(() => {
       return store.state.user.info.address;
     });
-    const isUnbonding = ref(false);
-
-    const inputUnbondAmount = ref(null);
-    const unBond = async () => {
-      const amount = new BigNumber(inputUnbondAmount.value);
-      if (amount.isNaN() || amount.isZero()) {
-        notification.error("Invalid value");
-        return;
-      }
-      if (amount.isNaN() || amount.lt(0)) {
-        notification.error("Invalid amount");
-        return;
-      }
-      isUnbonding.value = true;
-      const notifyId = notification.loading("Please wait for the wallet's response");
-      VoteMining.unbond(
-        connectedAccount.value,
-        new BigNumber(inputUnbondAmount.value)
-          .shiftedBy(DAPP_CONFIG.tokens.UART.decimals)
-          .toNumber(),
-        async (err, txHash) => {
-          if (err) {
-            console.log(err);
-            throw err;
-          }
-          if (txHash) {
-            console.log(txHash);
-            isUnbonding.value = false;
-            notification.dismiss(notifyId);
-            notification.success(txHash);
-            onCloseDialog();
-          }
-        }
-      )
-        .then(async (receipt) => {
-          console.log("receipt: ", receipt);
-        })
-        .catch((err) => {
-          console.log(err);
-          isUnbonding.value = false;
-          notification.dismiss(notifyId);
-          notification.error(
-            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
-          );
-        });
-    };
-
-    const onShowDialog = () => {
-      dialogTableVisible.value = true;
-    };
-    const onCloseDialog = () => {
-      dialogTableVisible.value = false;
-      inputUnbondAmount.value = null;
-    };
-    const onShowWithdrawDialog = () => {
-      dialogWithdrawVisible.value = true;
-    };
-    const onCloseWithdrawDialog = () => {
-      dialogWithdrawVisible.value = false;
-      inputUnbondAmount.value = null;
-    };
-
-    const dialogTableVisible = ref(false);
-    const bondedBalance = ref(0);
-    const getBondedBalance = async () => {
-      bondedBalance.value = (await VoteMining.getBondedBalance(connectedAccount.value))
-        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
-        .toString();
-    };
-
-    const dialogWithdrawVisible = ref(false);
-    const availableBalance = ref(0);
-    const getAvailableBalance = async () => {
-      availableBalance.value = (await VoteMining.getUnbondedBalance(connectedAccount.value))
-        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
-        .toString();
-    };
-
-    onMounted(() => {
-      getBondedBalance();
-      getAvailableBalance();
-    });
 
     return {
       assetsList,
-      unBond,
       connectedAccount,
-      dialogTableVisible,
-      onShowDialog,
-      isUnbonding,
-
-      dialogWithdrawVisible,
-
-      getBondedBalance,
-      bondedBalance,
-      inputUnbondAmount,
-      availableBalance,
-
-      onShowWithdrawDialog,
-      onCloseWithdrawDialog,
     };
   },
 });

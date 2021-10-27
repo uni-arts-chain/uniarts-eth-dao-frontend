@@ -149,6 +149,11 @@ class VoteMining {
     const sender = store.state.user.info.address;
     return this.sendTransaction(tx, sender, callback);
   }
+
+  async getMintRewards(nftAddress, nftId) {
+    const mintRewards = await this.contract.methods.getMintRewards(nftAddress, nftId).call();
+    return mintRewards;
+  }
 }
 
 export default new VoteMining();

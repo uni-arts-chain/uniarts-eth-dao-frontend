@@ -204,6 +204,7 @@ import Auction from "@/contracts/Auction";
 import Dialog from "@/components/Dialog";
 import AdaptiveView from "@/components/AdaptiveView";
 import { DAPP_CONFIG } from "@/config";
+import VoteMining from "@/contracts/VoteMining";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
 import Erc20 from "../../contracts/Erc20";
@@ -458,6 +459,17 @@ export default defineComponent({
       });
       const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
       auction.value = list[0] || {};
+      if (auction.value.token_id) {
+        const tokenMint = await VoteMining.getMintRewards(
+          DAPP_CONFIG.nfts.UniartsNFT.address,
+          auction.value.token_id
+        );
+        if (!tokenMint.isZero()) {
+          auction.value.token_mint = tokenMint
+            .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+            .toString();
+        }
+      }
       await findApproveValue();
       try {
         const { timestamp: startDate } = await Auction.dater.getBlockWrapper(
