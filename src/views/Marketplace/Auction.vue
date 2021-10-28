@@ -6,21 +6,14 @@
       <div class="desc-title">Artwork description</div>
       <div class="desc-content" v-html="auction.details"></div>
       <div class="more">More ></div>
-      <!--      <div class="number-votes">Number of votes obtained</div>-->
-      <!--      <Progress-->
-      <!--        :value="-->
-      <!--          (-->
-      <!--            new Number(auction.auction_latest_price) / new Number(auction.auction_fixed_price)-->
-      <!--          ).toFixed(2)-->
-      <!--        "-->
-      <!--      />-->
-      <!--      <div class="number-vote-value">-->
-      <!--        {{ auction.auction_latest_price }} of {{ auction.auction_fixed_price }}-->
-      <!--      </div>-->
       <div class="token-info">
         <div class="token">
           <span>Token Mint: </span>
-          <span class="value">{{ auction.token_mint }}</span>
+          <span
+            class="value"
+            style="overflow: hidden; text-overflow: ellipsis; width: 150px; white-space: nowrap"
+            >{{ auction.token_mint }}</span
+          >
           <span>UART</span>
         </div>
         <div class="bid">
@@ -295,13 +288,22 @@ export default defineComponent({
     //一口价下单
     //拍卖出价
     const openMakeOfferDialog = async () => {
-      offerDialogVisible.value = true;
+      if (store.state.user.info.address) {
+        offerDialogVisible.value = true;
+      } else {
+        router.push("/login");
+      }
     };
     const openByeDiaLog = async () => {
-      buyDialogVisible.value = true;
+      if (store.state.user.info.address) {
+        buyDialogVisible.value = true;
+      } else {
+        router.push("/login");
+      }
     };
     // 检查出价格规范
     const filter = () => {
+      console.log(Number(bidAmount.value));
       if (Number(bidAmount.value) <= Number(auction.value.auction_min_bid)) {
         isLoading.value = false;
         const message = `amount cannot be less than${Number(auction.value.auction_min_bid)}`;
@@ -464,8 +466,8 @@ export default defineComponent({
           DAPP_CONFIG.nfts.UniartsNFT.address,
           auction.value.token_id
         );
-        if (!tokenMint.isZero()) {
-          auction.value.token_mint = tokenMint
+        if (!new BigNumber(tokenMint).isZero()) {
+          auction.value.token_mint = new BigNumber(tokenMint)
             .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
             .toString();
         }

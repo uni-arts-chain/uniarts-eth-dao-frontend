@@ -18,7 +18,17 @@
       <div class="token-info">
         <div class="token">
           Token mint:
-          <span style="font-size: 20px; margin-left: 10px">{{ item.token_mint }}</span>
+          <span
+            style="
+              font-size: 20px;
+              margin-left: 10px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              width: 150px;
+              white-space: nowrap;
+            "
+            >{{ item.token_mint }}</span
+          >
           UART
         </div>
         <div class="bid">
@@ -84,8 +94,10 @@ export default defineComponent({
           DAPP_CONFIG.nfts.UniartsNFT.address,
           item.value.token_id
         );
-        if (!tokenMint.isZero()) {
-          item.value.token_mint = tokenMint.shiftedBy(-DAPP_CONFIG.tokens.UART.decimals).toString();
+        if (!new BigNumber(tokenMint).isZero()) {
+          item.value.token_mint = new BigNumber(tokenMint)
+            .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+            .toString();
         }
       }
     };
