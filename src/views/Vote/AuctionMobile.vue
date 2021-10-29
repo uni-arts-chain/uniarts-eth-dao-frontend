@@ -8,8 +8,8 @@
       <div class="title">{{ item.name }}</div>
       <Progress :value="formatPercent((item.number / (item.total || 1)) * 100)" />
       <div class="votes-group">
-        <div class="number-votes">Current high bid: ${{ item.number }}</div>
-        <div class="totl">Total：{{ item.total }} USDT</div>
+        <div class="number-votes">Current votes: {{ item.number }}</div>
+        <div class="totl">Total：{{ item.total }}</div>
       </div>
       <div class="user-info">
         <img :src="item.artist_avatar ? item.artist_avatar : Avatar" />
@@ -31,9 +31,13 @@
           >
         </div>
         <div class="bid">
-          Current High Bid：<span style="font-size: 20px; margin-left: 10px">{{
-            item.auction_latest_price
-          }}</span>
+          {{ Number(item.auction_latest_price) ? "Current High Bid" : "Price" }}：<span
+            style="font-size: 20px; margin-left: 10px"
+          >
+            {{
+              Number(item.auction_latest_price) ? item.auction_latest_price : item.auction_min_bid
+            }}
+          </span>
           {{ item.currency_code?.toUpperCase() }}
         </div>
       </div>
