@@ -59,14 +59,16 @@
             <AdaptiveView :nft="item" :isResponsive="true" :isPreview="true" />
           </div>
           <div class="item-user">
-            <span class="username">{{ item.name }}@</span>
-            <span style="color: #fe0000">{{
-              (Number(item.auction_latest_price)
-                ? item.auction_latest_price
-                : item.auction_min_bid) +
-              " " +
-              item.currency_code?.toUpperCase()
-            }}</span>
+            <div class="username">{{ item.name }}@</div>
+            <div style="color: #fe0000">
+              {{
+                (Number(item.auction_latest_price)
+                  ? item.auction_latest_price
+                  : item.auction_min_bid) +
+                " " +
+                item.currency_code?.toUpperCase()
+              }}
+            </div>
           </div>
         </div>
       </div>
@@ -119,9 +121,10 @@
             <AdaptiveView :nft="item.art" :isResponsive="true" :isPreview="true" />
           </div>
           <div class="item-user">
-            <span class="username">{{ item.art.name }} @</span>
-            <span style="color: #fe0000">{{ item.price }}</span>
-            <span>{{ item.art.currency_code.toUpperCase() }}</span>
+            <div class="username">{{ item.art.name }} @</div>
+            <div style="color: #fe0000">
+              {{ item.price }}{{ item.art.currency_code.toUpperCase() }}
+            </div>
           </div>
         </div>
       </div>
@@ -377,6 +380,7 @@ export default defineComponent({
         color: #898989;
         margin-top: 15px;
         line-height: 24px;
+        width: 200px;
 
         .username {
           margin-right: 17px;
