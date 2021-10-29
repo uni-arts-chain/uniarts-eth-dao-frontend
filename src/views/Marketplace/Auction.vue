@@ -97,7 +97,7 @@
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
         <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "Offer" : "Approve&Offer" }}
+          {{ isApproving ? "Offer" : "Approve & Offer" }}
         </button>
       </div>
     </Dialog>
@@ -194,7 +194,7 @@
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
         <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "Offer" : "Approve&Offer" }}
+          {{ isApproving ? "Offer" : "Approve & Offer" }}
         </button>
       </div>
     </Mobilecomfirm>

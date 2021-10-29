@@ -26,12 +26,12 @@
           </div>
           <div class="info">
             <div class="vote-number">
-              {{ Number(auctions[0].auction_latest_price) ? "Current High Bid " : "Price " }}
+              {{ Number(auctions[0].auction_latest_price) ? "Current Bid " : "Bid " }}
               <span style="color: #fe0000">
                 {{
                   Number(auctions[0].auction_latest_price)
                     ? auctions[0].auction_latest_price
-                    : auctions[0].auction_fixed_price
+                    : auctions[0].auction_min_bid
                 }}
               </span>
               <span> {{ " " + auctions[0].currency_code?.toUpperCase() }}</span>
@@ -63,7 +63,7 @@
             <span style="color: #fe0000">{{
               (Number(item.auction_latest_price)
                 ? item.auction_latest_price
-                : item.auction_fixed_price) +
+                : item.auction_min_bid) +
               " " +
               item.currency_code?.toUpperCase()
             }}</span>

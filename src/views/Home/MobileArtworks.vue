@@ -34,7 +34,7 @@
               <span style="color: red">{{
                 (Number(item.auction_latest_price)
                   ? item.auction_latest_price
-                  : item.auction_fixed_price) +
+                  : item.auction_min_bid) +
                 " " +
                 item.currency_code?.toUpperCase()
               }}</span>
