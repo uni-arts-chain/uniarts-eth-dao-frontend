@@ -130,6 +130,7 @@ export default defineComponent({
 
     onMounted(() => {
       onRequestData();
+      onRequestAuctionData();
     });
 
     const isMobile = computed(() => {
