@@ -66,7 +66,7 @@ const routes = [
       import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/MarketBuyNow.vue"),
   },
   {
-    path: "/marketplace/:id",
+    path: "/marketplace/detail/:id",
     name: "nftDetail",
     component: () =>
       import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Detail.vue"),

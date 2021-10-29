@@ -73,7 +73,7 @@ export default defineComponent({
   },
   setup() {
     // TODO
-    const currentTab = ref(1);
+    const currentTab = ref(2);
 
     const isLoading = ref(false);
 

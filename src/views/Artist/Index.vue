@@ -70,7 +70,7 @@ export default defineComponent({
     });
 
     const goDetail = (id) => {
-      router.push("/marketplace/" + id);
+      router.push("/marketplace/detail" + id);
     };
 
     return {

@@ -39,10 +39,17 @@
           <span>Total {{ auctionBids.length }} Bids</span>
         </div>
         <div class="button-group">
-          <button @click="openMakeOfferDialog">Make an Offer</button>
-          <button @click="openByeDiaLog" v-if="Number(auction.auction_fixed_price)">
+          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Make an Offer</button>
+          <button
+            :disabled="disabledAuction"
+            @click="openByeDiaLog"
+            v-if="Number(auction.auction_fixed_price)"
+          >
             Collect Now
           </button>
+          <span style="font-size: 14px; color: #666"
+            >Your offer needs to be 10% higher than current price</span
+          >
         </div>
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
@@ -146,10 +153,17 @@
       </div>
       <div class="bid-history">
         <div class="button-group">
-          <button @click="openMakeOfferDialog">Make an Offer</button>
-          <button @click="openByeDiaLog" v-if="Number(auction.auction_fixed_price)">
+          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Make an Offer</button>
+          <button
+            :disabled="disabledAuction"
+            @click="openByeDiaLog"
+            v-if="Number(auction.auction_fixed_price)"
+          >
             Collect Now
           </button>
+          <div style="font-size: 14px; color: #595757; margin-bottom: 30px">
+            Your offer needs to be 10% higher than current price
+          </div>
         </div>
         <div class="bid-title">
           <span>Bid History</span>
@@ -425,9 +439,11 @@ export default defineComponent({
     };
     const now = ref(0);
     const dataMessage = ref("");
+    const disabledAuction = ref(false);
     const getAuctionDate = async () => {
       if (!startEnd.startDate) {
         dataMessage.value = "Auction not started";
+        disabledAuction.value = true;
       } else if (!startEnd.endDate) {
         const blockHeight = await Auction.dater.getDate(new moment());
         now.value =
@@ -436,6 +452,7 @@ export default defineComponent({
           (blockHeight.block - auction.value.auction_open_block);
       } else {
         dataMessage.value = "Auction is over";
+        disabledAuction.value = true;
       }
     };
     const getAuctionDateString = computed(() => {
@@ -510,6 +527,8 @@ export default defineComponent({
       openByeDiaLog,
       buyDialogVisible,
       buyAuction,
+
+      disabledAuction,
     };
   },
 });
@@ -619,6 +638,10 @@ export default defineComponent({
       }
 
       .button-group {
+        button:disabled {
+          cursor: not-allowed;
+          opacity: 0.5;
+        }
         button {
           cursor: pointer;
           width: 321px;
@@ -808,6 +831,10 @@ export default defineComponent({
       .bid-history .button-group {
         margin-top: 69px;
 
+        button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
         button {
           width: 100%;
           height: 60px;

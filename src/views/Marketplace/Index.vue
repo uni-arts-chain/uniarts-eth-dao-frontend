@@ -11,7 +11,7 @@
         <span>Timed Auctions</span>
         <router-link
           style="font-family: Montserrat-Light; font-size: 14px"
-          to="/marketplace/autions"
+          to="/marketplace/auctions"
           >MORE ></router-link
         >
       </div>
@@ -133,7 +133,7 @@
             color: black;
             margin-top: 10px;
           "
-          to="/marketplace/autions"
+          to="/marketplace/auctions"
           >MORE</router-link
         >
         <div
