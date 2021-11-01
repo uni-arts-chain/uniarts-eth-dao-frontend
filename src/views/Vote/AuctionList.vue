@@ -8,10 +8,8 @@
         </button>
         <div class="content">
           <h2>Auction Round</h2>
-          <div class="date" v-if="countdownTime(auctionInfo.start_at, auctionInfo.end_at)">
-            <img src="@/assets/images/date-clock.png" />{{
-              countdownTime(auctionInfo.start_at, auctionInfo.end_at)
-            }}
+          <div class="date">
+            <img src="@/assets/images/date-clock.png" />{{ getAuctionDateString }}
           </div>
           <div class="amount">
             <span class="label">Prize Available with Higher Deal Price</span>
@@ -35,7 +33,7 @@
               <div class="bar">
                 <div
                   class="progress"
-                  :style="`width: ${parseInt((v.mine / (v.group_mine || 1)) * 100)}%;`"
+                  :style="`width: ${parseInt((v.mine / (v.group_mine || 1)) * 100 || 0)}%;`"
                 ></div>
               </div>
             </div>
@@ -43,13 +41,13 @@
               <div class="bar"></div>
               <div
                 class="vote-bar"
-                :style="`width: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
+                :style="`width: ${parseInt((v.number / (v.total || 1)) * 100 || 0)}%`"
               ></div>
               <div
                 class="current-per"
-                :style="`left: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
+                :style="`left: ${parseInt((v.number / (v.total || 1)) * 100 || 0)}%`"
               >
-                {{ formatPercent((v.number / (v.total || 1)) * 100) }}%
+                {{ formatPercent((v.number / (v.total || 1)) * 100 || 0) }}%
               </div>
               <div class="total-per">Total: {{ v.total }} USDT</div>
             </div>
@@ -80,14 +78,15 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, reactive } from "vue";
+import { defineComponent, ref, onMounted, reactive, computed, onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
 import AdaptiveView from "@/components/AdaptiveView";
-import { DateFormatCountdown } from "@/utils";
 import http from "@/plugins/http";
 import store from "@/store";
+import Auction from "@/contracts/Auction";
+import moment from "moment";
 export default defineComponent({
   name: "list",
   components: {
@@ -109,9 +108,9 @@ export default defineComponent({
 
     const isLoading = ref(false);
     const auctionInfo = reactive({});
-    const requestData = () => {
+    const requestData = async () => {
       isLoading.value = true;
-      http
+      return http
         .globalGetAuctionsGroup({})
         .then((res) => {
           if (res.list.length == 0) return;
@@ -130,11 +129,17 @@ export default defineComponent({
           );
         });
     };
-
-    onMounted(() => {
-      requestData();
+    let interval = 0;
+    onMounted(async () => {
+      await requestData();
+      await getAuctionDate();
+      interval = setInterval(() => (now.value -= 1000), 1000);
     });
-
+    onBeforeUnmount(() => {
+      if (interval) {
+        clearInterval(interval);
+      }
+    });
     const goVoteQueue = () => {
       router.push("/vote/votelist");
     };
@@ -142,12 +147,49 @@ export default defineComponent({
     const goAuction = (uid, id) => {
       router.push("/marketplace/auction/" + uid + "/" + id);
     };
-
-    const countdownTime = (startTime, endTime) => {
-      let value = DateFormatCountdown(startTime * 10, endTime * 10);
-      console.log(value);
-      return value ? `${value.day} Day ${value.hour} Hours ${value.minute} Minute` : "";
+    const startEnd = reactive({});
+    const now = ref(0);
+    const dataMessage = ref("");
+    const getAuctionDate = async () => {
+      try {
+        const { timestamp: startDate } = await Auction.dater.getBlockWrapper(auctionInfo.start_at);
+        startEnd.startDate = new Date(startDate * 1000);
+      } catch (e) {
+        console.error(e);
+      }
+      try {
+        const { timestamp: endDate } = await Auction.dater.getBlockWrapper(auctionInfo.end_at);
+        startEnd.endDate = new Date(endDate * 1000);
+      } catch (e) {
+        console.error(e);
+      }
+      console.log(startEnd);
+      if (!startEnd.startDate) {
+        dataMessage.value = "Auction not started";
+      } else if (!startEnd.endDate) {
+        const blockHeight = await Auction.dater.getDate(new moment());
+        now.value =
+          ((new Date() - startEnd.startDate) * (auctionInfo.end_at - blockHeight.block)) /
+          (blockHeight.block - auctionInfo.start_at);
+      } else {
+        dataMessage.value = "Auction is over";
+      }
+      console.log(now.value);
     };
+    const getAuctionDateString = computed(() => {
+      if (dataMessage.value) {
+        return dataMessage;
+      } else {
+        let second = now.value / 1000;
+        const day = (second / (60 * 60 * 24)).toFixed(0);
+        second = second % (60 * 60 * 24);
+        const hour = (second / (60 * 60)).toFixed(0);
+        second = second % (60 * 60);
+        const minute = (second / 60).toFixed(0);
+        second = (second % 60).toFixed(0);
+        return `${day} Days ${hour} Hour ${minute} Minute ${second} Second`;
+      }
+    });
 
     const formatPercent = (number) => {
       return new BigNumber(number).toFixed(2, 1);
@@ -162,8 +204,7 @@ export default defineComponent({
       goAuction,
       requestData,
       auctionInfo,
-
-      countdownTime,
+      getAuctionDateString,
       formatPercent,
     };
   },

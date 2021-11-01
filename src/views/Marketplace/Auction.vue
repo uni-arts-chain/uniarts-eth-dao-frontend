@@ -202,7 +202,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, onBeforeMount, onMounted, reactive, ref } from "vue";
+import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import store from "@/store";
 // import Progress from "@/components/Progress";
@@ -509,7 +509,7 @@ export default defineComponent({
       await getAuctionDate();
       interval = setInterval(() => (now.value -= 1000), 1000);
     });
-    onBeforeMount(() => {
+    onBeforeUnmount(() => {
       clearInterval(interval);
     });
     return {
