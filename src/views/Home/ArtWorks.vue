@@ -134,7 +134,7 @@
 </template>
 
 <script>
-import { computed, defineComponent, onBeforeMount, onMounted, reactive, ref } from "vue";
+import { computed, defineComponent, onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import http from "@/plugins/http";
 import AdaptiveView from "@/components/AdaptiveView";
 import Auction from "@/contracts/Auction";
@@ -147,7 +147,7 @@ export default defineComponent({
   },
   setup() {
     const auctions = ref([]);
-    const now = ref(new Date());
+    const now = ref(0);
     let interval = null;
     const startEnd = reactive({});
     const dataMessage = ref("");
@@ -210,7 +210,7 @@ export default defineComponent({
         interval = setInterval(() => (now.value -= 1000), 1000);
       }
     });
-    onBeforeMount(() => {
+    onBeforeUnmount(() => {
       if (interval) {
         clearInterval(interval);
       }
