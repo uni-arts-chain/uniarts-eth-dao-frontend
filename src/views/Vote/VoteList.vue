@@ -34,7 +34,7 @@
       </div>
     </div>
     <div class="list">
-      <div class="container item-list">
+      <div class="container item-list" v-if="list.length > 0">
         <div class="item" v-for="(v, i) in list" :key="i">
           <div class="nft">
             <AdaptiveView :isResponsive="true" :isPreview="true" :nft="v" />
@@ -67,6 +67,13 @@
           </div>
           <button class="vote-button" @click="goVoteDetail(v.id)">VOTE</button>
         </div>
+      </div>
+      <div
+        v-else
+        class="container"
+        style="height: 600px; display: flex; align-items: center; justify-content: center"
+      >
+        No vote
       </div>
     </div>
     <div class="notice">

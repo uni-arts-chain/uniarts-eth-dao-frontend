@@ -24,7 +24,7 @@
               margin-left: 10px;
               overflow: hidden;
               text-overflow: ellipsis;
-              width: 150px;
+              max-width: 150px;
               white-space: nowrap;
             "
             >{{ item.token_mint }}</span

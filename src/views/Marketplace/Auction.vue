@@ -11,7 +11,7 @@
           <span>Token Mint: </span>
           <span
             class="value"
-            style="overflow: hidden; text-overflow: ellipsis; width: 150px; white-space: nowrap"
+            style="overflow: hidden; text-overflow: ellipsis; max-width: 150px; white-space: nowrap"
             >{{ auction.token_mint }}</span
           >
           <span>UART</span>
@@ -450,6 +450,7 @@ export default defineComponent({
           ((new Date() - startEnd.startDate) *
             (auction.value.auction_expiry_block - blockHeight.block)) /
           (blockHeight.block - auction.value.auction_open_block);
+        console.log(now.value);
       } else {
         dataMessage.value = "Auction is over";
         disabledAuction.value = true;

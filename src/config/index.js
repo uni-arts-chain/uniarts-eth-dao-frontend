@@ -1,9 +1,9 @@
 export const NODE_ENV = process.env.NODE_ENV || "development";
 
 // 开发环境下模拟生产环境，方便调试
-export const isProd = NODE_ENV === "production" ? true : true; //条件非真时 false：访问测试接口, true: 访问线上接口
+export const isProd = NODE_ENV === "production" ? true : false; //条件非真时 false：访问测试接口, true: 访问线上接口
 
-export const BASE_URL = isProd ? "https://dapp.uniarts.network" : "https://dapp.uniarts.network";
+export const BASE_URL = isProd ? "https://dapp.uniarts.network" : "https://af.uniarts.network";
 
 export const PREFIX = "/api/v1";
 
