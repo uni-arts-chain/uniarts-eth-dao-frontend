@@ -22,14 +22,14 @@
       </div>
     </div>
     <div class="list">
-      <div class="container item-list">
+      <div class="container item-list" v-if="list.length > 0">
         <div class="item" v-for="(v, i) in list" :key="i">
           <div class="nft">
             <AdaptiveView :isResponsive="true" :isPreview="true" :nft="v" />
           </div>
           <div class="nft-info">
             <div class="my-votes">
-              <span class="value">My Votes : {{ v.mine }}</span>
+              <span class="value">My bid : {{ v.mine }}</span>
               <div class="bar">
                 <div
                   class="progress"
@@ -51,10 +51,17 @@
               </div>
               <div class="total-per">Total: {{ v.total }} USDT</div>
             </div>
-            <div class="number-vote">Current high bid: ${{ v.number }}</div>
+            <div class="number-vote">current high bid: ${{ v.number }}</div>
           </div>
           <button class="vote-button" @click="goAuction(v.auction_id, v.id)">Place a bid</button>
         </div>
+      </div>
+      <div
+        v-else
+        class="container"
+        style="height: 600px; display: flex; align-items: center; justify-content: center"
+      >
+        No auction
       </div>
     </div>
     <div class="notice">

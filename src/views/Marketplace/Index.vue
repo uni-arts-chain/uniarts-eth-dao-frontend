@@ -15,7 +15,7 @@
           >MORE ></router-link
         >
       </div>
-      <div v-if="auctionList.length > 0" class="list">
+      <div v-if="auctionList.length > 0" class="list" v-loading="auctionLoading">
         <div v-for="item in auctionList" :key="item.id" class="item">
           <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
             <AdaptiveView
@@ -48,7 +48,7 @@
         No Data
       </div>
     </div>
-    <div v-if="buyList?.length" class="buy-now">
+    <div v-if="buyList?.length" class="buy-now" v-loading="buyLoading">
       <div class="title">
         <span>Buy Now</span>
         <router-link style="font-family: Montserrat-Light; font-size: 14px" to="/marketplace/buynow"
@@ -223,18 +223,27 @@ export default defineComponent({
     const buyListPerPage = ref(6);
 
     const currentTab = ref(1);
+    const auctionLoading = ref(false);
+    const buyLoading = ref(false);
     const getAuctionListData = () => {
+      auctionLoading.value = true;
       http
         .globalGetAuctions({
           page: auctionCurrentPage.value,
           per_page: auctionPerPage.value,
         })
         .then((res) => {
-          auctionList.value = res.list;
+          auctionList.value = res.list || [];
+          auctionLoading.value = false;
+        })
+        .catch((err) => {
+          console.log(err);
+          auctionLoading.value = false;
         });
       // http.globalGetAuctionsGroup({}).then((res) => {
       //   console.log(res);
       // });
+      buyLoading.value = true;
       http
         .globalGetArtOrder({
           page: buyListCurrentPage.value,
@@ -242,9 +251,11 @@ export default defineComponent({
         })
         .then((res) => {
           buyList.value = res.list || [];
+          buyLoading.value = false;
         })
         .catch((err) => {
           console.log(err);
+          buyLoading.value = false;
         });
     };
     onMounted(() => getAuctionListData());
@@ -256,6 +267,8 @@ export default defineComponent({
       buyListCurrentPage,
       buyListPerPage,
       currentTab,
+      auctionLoading,
+      buyLoading,
     };
   },
 });

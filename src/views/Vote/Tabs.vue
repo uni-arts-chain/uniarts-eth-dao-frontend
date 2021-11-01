@@ -114,7 +114,7 @@ export default defineComponent({
     const onRequestAuctionData = () => {
       isLoading.value = true;
       http
-        .globalGetAuctionsGroup({})
+        .globalGetAuctionsGroupVotes({})
         .then((res) => {
           isLoading.value = false;
           if (res.list.length > 0 && res.list[0].arts.length > 0) {
