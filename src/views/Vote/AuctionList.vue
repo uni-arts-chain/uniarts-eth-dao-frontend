@@ -35,7 +35,7 @@
               <div class="bar">
                 <div
                   class="progress"
-                  :style="`width: ${parseInt((v.mine / (v.group_mine || 1)) * 100)}%;`"
+                  :style="`width: ${parseInt((v.mine / (v.group_mine || 1)) * 100 || 0)}%;`"
                 ></div>
               </div>
             </div>
@@ -43,13 +43,13 @@
               <div class="bar"></div>
               <div
                 class="vote-bar"
-                :style="`width: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
+                :style="`width: ${parseInt((v.number / (v.total || 1)) * 100 || 0)}%`"
               ></div>
               <div
                 class="current-per"
-                :style="`left: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
+                :style="`left: ${parseInt((v.number / (v.total || 1)) * 100 || 0)}%`"
               >
-                {{ formatPercent((v.number / (v.total || 1)) * 100) }}%
+                {{ formatPercent((v.number / (v.total || 1)) * 100 || 0) }}%
               </div>
               <div class="total-per">Total: {{ v.total }} USDT</div>
             </div>
