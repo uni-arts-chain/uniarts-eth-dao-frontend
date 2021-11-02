@@ -39,7 +39,7 @@
           <span>Total {{ auctionBids.length }} Bids</span>
         </div>
         <div class="button-group">
-          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Make an Offer</button>
+          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Bid</button>
           <button
             :disabled="disabledAuction"
             @click="openByeDiaLog"
@@ -153,7 +153,7 @@
       </div>
       <div class="bid-history">
         <div class="button-group">
-          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Make an Offer</button>
+          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Bid</button>
           <button
             :disabled="disabledAuction"
             @click="openByeDiaLog"
