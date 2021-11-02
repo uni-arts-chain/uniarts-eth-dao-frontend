@@ -341,6 +341,7 @@ h3.title {
   }
 
   .list .item {
+    width: 364px;
     display: flex;
     flex-direction: column;
     margin-right: 34px;
@@ -362,9 +363,14 @@ h3.title {
     justify-content: space-between;
     align-items: center;
     margin-top: 25px;
+    width: 100%;
   }
 
   .name {
+    width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 15px;
     text-align: left;
     font-family: Montserrat-Regular;
@@ -373,10 +379,14 @@ h3.title {
   }
 
   .price {
+    width: 50%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-size: 14px;
     font-family: Montserrat-Regular;
     font-weight: 300;
-    text-align: left;
+    text-align: right;
     color: #595757;
     line-height: 23px;
   }
