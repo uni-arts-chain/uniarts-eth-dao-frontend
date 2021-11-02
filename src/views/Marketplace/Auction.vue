@@ -39,7 +39,7 @@
           <span>Total {{ auctionBids.length }} Bids</span>
         </div>
         <div class="button-group">
-          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Bid</button>
+          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Make an Offer</button>
           <button
             :disabled="disabledAuction"
             @click="openByeDiaLog"
@@ -97,7 +97,7 @@
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
         <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "Bid" : "Approve & Bid" }}
+          {{ isApproving ? "Offer" : "Approve & Offer" }}
         </button>
       </div>
     </Dialog>
@@ -153,7 +153,7 @@
       </div>
       <div class="bid-history">
         <div class="button-group">
-          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Bid</button>
+          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Make an Offer</button>
           <button
             :disabled="disabledAuction"
             @click="openByeDiaLog"
@@ -194,7 +194,7 @@
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
         <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "Bid" : "Approve & Bid" }}
+          {{ isApproving ? "Offer" : "Approve & Offer" }}
         </button>
       </div>
     </Mobilecomfirm>
@@ -355,6 +355,8 @@ export default defineComponent({
       const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals).toNumber();
       console.log(auction.value.auction_match_id, auction.value.auction_token_index, amount);
       // 出价
+      // todo 切换AuctionV2合约
+      const { auction: auctionAddress } = await http.globalGetAuctionVersion({});
       Auction.playerBid(
         auction.value.auction_match_id,
         auction.value.auction_token_index,
@@ -371,7 +373,8 @@ export default defineComponent({
             notification.dismiss(notifyId);
             notification.success(txHash);
           }
-        }
+        },
+        auctionAddress
       )
         .then((res) => {
           notification.dismiss(notifyId);
@@ -398,6 +401,7 @@ export default defineComponent({
           await approveLink(() => (notifyId = notification.loading("Loading Auction")));
         }
       }
+      // todo 切换AuctionV2合约
       Auction.playerFixedPrice(
         auction.value.auction_match_id,
         auction.value.auction_token_index,

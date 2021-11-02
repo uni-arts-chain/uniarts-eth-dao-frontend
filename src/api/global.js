@@ -196,6 +196,15 @@ const apiList = [
     },
     options: {},
   },
+  {
+    name: "getAuctionVersion",
+    method: "GET",
+    desc: "获取合约地址",
+    path: "/arts/contracts",
+    mockPath: "/arts/contracts",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;
