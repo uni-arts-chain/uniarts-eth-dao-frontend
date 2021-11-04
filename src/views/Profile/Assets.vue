@@ -2,19 +2,24 @@
 <template>
   <div class="assets" v-if="!$store.state.global.isMobile">
     <el-row class="head">
-      <el-col :span="3" class="item">Token</el-col>
+      <el-col :span="4" class="item" style="text-align: left; padding-left: 15px">Token</el-col>
       <el-col :span="7" class="item">Voted</el-col>
-      <el-col :span="7" class="item">Bonded</el-col>
+      <el-col :span="6" class="item">Bonded</el-col>
       <el-col :span="7" class="item">Available</el-col>
     </el-row>
     <el-row class="body">
       <div class="no-data" v-if="assetsList.length == 0">No data</div>
       <el-row class="row" v-for="(v, i) in assetsList" :key="i">
-        <el-col :span="3" class="item">{{ v.token }}</el-col>
+        <el-col :span="4" class="item" style="justify-content: flex-start"
+          >{{ v.token }}
+          <span class="version" v-if="getContractVersion(v.contract)">{{
+            getContractVersion(v.contract)
+          }}</span>
+        </el-col>
         <el-col :span="7" class="item"
           ><span style="text-align: center">{{ v.voted }}</span></el-col
         >
-        <el-col :span="7" class="item"
+        <el-col :span="6" class="item"
           ><span style="text-align: center">{{ v.bound }}</span>
         </el-col>
         <el-col :span="7" class="item"
@@ -32,7 +37,12 @@
     <div class="item" v-for="(v, i) in assetsList" :key="i">
       <div class="item-col" style="margin-bottom: 20px">
         <span class="label">Token</span>
-        <span class="value">{{ v.token }}</span>
+        <span class="value"
+          >{{ v.token
+          }}<span class="version" v-if="getContractVersion(v.contract)">{{
+            getContractVersion(v.contract)
+          }}</span></span
+        >
       </div>
       <div class="item-col" style="margin-bottom: 20px">
         <span class="label">Voted</span>
@@ -57,7 +67,7 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { BigNumber } from "@/plugins/bignumber";
-import { DAPP_CONFIG } from "@/config";
+import { DAPP_CONFIG, DAPP_CONTRACTS } from "@/config";
 import http from "@/plugins/http";
 import store from "@/store";
 import { notification } from "@/components/Notification";
@@ -116,9 +126,19 @@ export default defineComponent({
       return store.state.user.info.address;
     });
 
+    const getContractVersion = (address) => {
+      let version = DAPP_CONTRACTS[address].name || "";
+      let index = version.search(/V\d$/);
+      version = index ? version.substr(index) : version;
+      console.log(version);
+      return DAPP_CONFIG.contracts.VoteMining !== address ? version : "";
+    };
+
     return {
       assetsList,
       connectedAccount,
+
+      getContractVersion,
     };
   },
 });
@@ -158,11 +178,21 @@ export default defineComponent({
       justify-content: center;
       span {
         display: block;
-        width: calc(100% - 120px);
+        width: 100%;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         text-align: right;
+      }
+      span.version {
+        width: auto;
+        font-size: 12px;
+        background-color: #ffe500;
+        border-radius: 16px;
+        color: black;
+        padding: 0px 12px;
+        margin-left: 10px;
+        margin-bottom: 1px;
       }
       button {
         color: #a43129;
@@ -220,10 +250,24 @@ export default defineComponent({
           font-weight: 400;
           margin-bottom: 7px;
         }
+        .value span.version {
+          width: auto;
+          font-size: 12px;
+          background-color: #ffe500;
+          border-radius: 16px;
+          color: black;
+          padding: 1px 12px;
+          margin-left: 10px;
+        }
         .value {
           color: black;
           font-family: Montserrat-Light;
           font-size: 16px;
+          display: block;
+          width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         button {
           margin-top: 5px;

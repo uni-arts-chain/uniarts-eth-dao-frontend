@@ -3,7 +3,7 @@ import { BigNumber } from "@/plugins/bignumber";
 import { toBN } from "web3-utils";
 import Wallet from "@/plugins/wallet";
 import { DAPP_CONFIG } from "@/config";
-import VoteMiningABI from "@/contracts/abi/VoteMining";
+import VoteMiningABIV1 from "@/contracts/abi/VoteMiningV1";
 import store from "@/store";
 import { FormatRpcError } from "@/utils";
 // import store from "@/store";
@@ -11,8 +11,8 @@ import { FormatRpcError } from "@/utils";
 class VoteMining {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DAPP_CONFIG.contracts.VoteMining;
-    this.contract = new this.web3.eth.Contract(VoteMiningABI, this.address.toString());
+    this.address = DAPP_CONFIG.contracts.VoteMiningV1;
+    this.contract = new this.web3.eth.Contract(VoteMiningABIV1, this.address.toString());
     this.defaultGasPrice = 20000000000;
   }
   async gasPrice() {

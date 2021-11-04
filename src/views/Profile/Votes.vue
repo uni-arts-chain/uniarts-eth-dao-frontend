@@ -17,6 +17,9 @@
                   :style="`width: ${parseInt((v.mine / (v.group_mine || 1)) * 100)}%;`"
                 ></div>
               </div>
+              <span class="version" v-if="getContractVersion(v.vote_contract)">{{
+                getContractVersion(v.vote_contract)
+              }}</span>
             </div>
             <div class="vote-progress">
               <div class="bar"></div>
@@ -24,12 +27,6 @@
                 class="vote-bar"
                 :style="`width: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
               ></div>
-              <!-- <div
-                class="current-per"
-                :style="`left: ${parseInt((v.number / (v.total || 1)) * 100)}%`"
-              >
-                {{ parseInt((v.number / (v.total || 1)) * 100) }}%
-              </div> -->
               <div class="total-per">Total: {{ v.total }}</div>
             </div>
             <div class="number-vote">Number of votes: {{ v.number }}</div>
@@ -158,9 +155,8 @@ import Dialog from "@/components/Dialog";
 import AdaptiveView from "@/components/AdaptiveView";
 import MobileConfirm from "@/components/MobileConfirm";
 import { notification } from "@/components/Notification";
-import { DAPP_CONFIG } from "@/config";
+import { DAPP_CONFIG, DAPP_CONTRACTS } from "@/config";
 import { Erc20 } from "@/contracts";
-import VoteMining from "@/contracts/VoteMining";
 import { BigNumber } from "bignumber.js";
 import store from "@/store";
 export default defineComponent({
@@ -172,6 +168,7 @@ export default defineComponent({
   },
   setup() {
     // TODO
+
     const list = ref([]);
     const currentPage = ref(1);
     const totalPage = ref(1);
@@ -204,7 +201,7 @@ export default defineComponent({
     });
 
     const connectedAccount = store.state.user.info.address;
-    const tokenList = Object.values(DAPP_CONFIG.tokens);
+    const tokenList = Object.values(DAPP_CONFIG.voteTokens);
     let currentToken = reactive({});
     const availableVotedBalance = ref(0);
     tokenList.length > 0
@@ -218,7 +215,9 @@ export default defineComponent({
 
     const curNft = ref({});
     const getStakeVoted = async () => {
-      let votedBalance = await VoteMining.getAvailableBalance(
+      const voteMiningContract = DAPP_CONTRACTS[curNft.value.vote_contract].contract;
+      console.log(voteMiningContract);
+      let votedBalance = await voteMiningContract.getAvailableBalance(
         connectedAccount,
         currentToken.address,
         DAPP_CONFIG.nfts.UniartsNFT.address,
@@ -230,7 +229,8 @@ export default defineComponent({
     };
     const availableBondedVotedBalance = ref(0);
     const getBondedVoted = async () => {
-      let votedBalance = await VoteMining.getUnvotableBalance(
+      const voteMiningContract = DAPP_CONTRACTS[curNft.value.vote_contract].contract;
+      let votedBalance = await voteMiningContract.getUnvotableBalance(
         connectedAccount,
         DAPP_CONFIG.nfts.UniartsNFT.address,
         curNft.value.token_id
@@ -250,6 +250,8 @@ export default defineComponent({
 
     const onRetrieve = (nft) => {
       curNft.value = nft;
+      availableBondedVotedBalance.value = "0";
+      availableVotedBalance.value = "0";
       getBondedVoted();
       getStakeVoted();
       dialogTableVisible.value = true;
@@ -262,6 +264,7 @@ export default defineComponent({
 
     const isUnstaking = ref(false);
     const unStake = async () => {
+      const voteMiningContract = DAPP_CONTRACTS[curNft.value.vote_contract].contract;
       const amount = new BigNumber(inputRetrieveAmount.value);
       if (amount.isNaN() || amount.isZero()) {
         notification.error("Invalid value");
@@ -276,27 +279,28 @@ export default defineComponent({
         currentToken.address,
         amount.shiftedBy(currentToken.decimals)
       );
-      VoteMining.unstake(
-        connectedAccount,
-        DAPP_CONFIG.nfts.UniartsNFT.address,
-        curNft.value.token_id,
-        currentToken.address,
-        amount.shiftedBy(currentToken.decimals),
-        async (err, txHash) => {
-          isUnstaking.value = false;
-          if (err) {
-            console.log(err);
-            throw err;
+      voteMiningContract
+        .unstake(
+          connectedAccount,
+          DAPP_CONFIG.nfts.UniartsNFT.address,
+          curNft.value.token_id,
+          currentToken.address,
+          amount.shiftedBy(currentToken.decimals),
+          async (err, txHash) => {
+            isUnstaking.value = false;
+            if (err) {
+              console.log(err);
+              throw err;
+            }
+            if (txHash) {
+              console.log(txHash);
+              dialogTableVisible.value = false;
+              inputRetrieveAmount.value = null;
+              notification.dismiss(notifyId);
+              notification.success(txHash);
+            }
           }
-          if (txHash) {
-            console.log(txHash);
-            dialogTableVisible.value = false;
-            inputRetrieveAmount.value = null;
-            notification.dismiss(notifyId);
-            notification.success(txHash);
-          }
-        }
-      )
+        )
         .then(async (receipt) => {
           console.log("receipt: ", receipt);
         })
@@ -312,6 +316,7 @@ export default defineComponent({
 
     const isUnBonding = ref(false);
     const unVoteBonded = async () => {
+      const voteMiningContract = DAPP_CONTRACTS[curNft.value.vote_contract].contract;
       const amount = new BigNumber(inputUnbondAmount.value);
       if (amount.isNaN() || amount.isZero()) {
         notification.error("Invalid value");
@@ -325,26 +330,27 @@ export default defineComponent({
         curNft.value.token_id,
         amount.shiftedBy(currentToken.decimals)
       );
-      VoteMining.unvoteBonded(
-        connectedAccount,
-        DAPP_CONFIG.nfts.UniartsNFT.address,
-        curNft.value.token_id,
-        amount.shiftedBy(currentToken.decimals),
-        async (err, txHash) => {
-          isUnBonding.value = false;
-          if (err) {
-            console.log(err);
-            throw err;
+      voteMiningContract
+        .unvoteBonded(
+          connectedAccount,
+          DAPP_CONFIG.nfts.UniartsNFT.address,
+          curNft.value.token_id,
+          amount.shiftedBy(currentToken.decimals),
+          async (err, txHash) => {
+            isUnBonding.value = false;
+            if (err) {
+              console.log(err);
+              throw err;
+            }
+            if (txHash) {
+              console.log(txHash);
+              dialogTableVisible.value = false;
+              inputUnbondAmount.value = null;
+              notification.dismiss(notifyId);
+              notification.success(txHash);
+            }
           }
-          if (txHash) {
-            console.log(txHash);
-            dialogTableVisible.value = false;
-            inputUnbondAmount.value = null;
-            notification.dismiss(notifyId);
-            notification.success(txHash);
-          }
-        }
-      )
+        )
         .then(async (receipt) => {
           console.log("receipt: ", receipt);
         })
@@ -376,6 +382,13 @@ export default defineComponent({
       }
     };
 
+    const getContractVersion = (address) => {
+      let version = DAPP_CONTRACTS[address].name || "";
+      let index = version.search(/V\d$/);
+      version = index ? version.substr(index) : version;
+      return DAPP_CONFIG.contracts.VoteMining !== address ? version : "";
+    };
+
     return {
       list,
       onRetrieve,
@@ -405,6 +418,7 @@ export default defineComponent({
       totalPage,
       currentPage,
       isLoading,
+      getContractVersion,
     };
   },
 });
@@ -453,6 +467,15 @@ export default defineComponent({
       background: #52c3dd;
       height: 18px;
       border-radius: 10px;
+    }
+    span.version {
+      font-size: 12px;
+      background-color: #ffe500;
+      border-radius: 16px;
+      color: black;
+      padding: 3px 12px;
+      margin-left: 15px;
+      margin-bottom: 2px;
     }
   }
   .vote-progress {

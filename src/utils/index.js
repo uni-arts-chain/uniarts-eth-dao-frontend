@@ -55,7 +55,7 @@ export function FormatRpcError(error) {
   try {
     let message = error.message || "";
     message = message.replaceAll(/\n(\s\s)/g, "");
-    let index = message.search(/\{"code": \d,"message":/);
+    let index = message.search(/\{["code": \d,"message":|"code": \d,"data":]/);
     return index >= 0 ? JSON.parse(message.substr(index)) : null;
   } catch (e) {
     return null;
