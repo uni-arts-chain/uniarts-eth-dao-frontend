@@ -122,7 +122,7 @@ const apiList = [
   {
     name: "getAuctionsGroup",
     method: "GET",
-    desc: "通过竞拍组(出价数)",
+    desc: "获取竞拍组(出价数)",
     path: "/auctions/group",
     mockPath: "/auctions/group",
     params: {},
@@ -131,7 +131,7 @@ const apiList = [
   {
     name: "getAuctionsGroupVotes",
     method: "GET",
-    desc: "通过竞拍组(投票数)",
+    desc: "获取竞拍组(投票数)",
     path: "/auctions/details",
     mockPath: "/auctions/details",
     params: {},
