@@ -14,14 +14,16 @@ class Auction {
     this.dater = new EthDater(this.web3.eth);
   }
 
-  async playerBid(matchId, tokenIndex, amount, callback) {
+  async playerBid(matchId, tokenIndex, amount, callback, addressV2) {
     const sender = store.state.user.info.address;
     const gasPrice = await this.gasPrice();
-    const tx = this.contract.methods.player_bid(matchId, tokenIndex, toBN(amount));
+    const contractAddress = addressV2 || this.address.toString();
+    const contract = new this.web3.eth.Contract(AuctionABI, contractAddress);
+    const tx = contract.methods.player_bid(matchId, tokenIndex, toBN(amount));
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,
-      to: this.address,
+      to: contractAddress,
     });
     console.log({
       from: sender,
