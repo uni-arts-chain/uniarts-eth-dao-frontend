@@ -21,6 +21,9 @@
           <li class="menu-li">
             <router-link class="link" to="/profile/unbond">Unbond History</router-link>
           </li>
+          <li class="menu-li" v-if="canMigrate">
+            <router-link class="link" to="/profile/migrate">Migrate</router-link>
+          </li>
         </ul>
         <ul class="menu" style="margin-top: 0px">
           <li class="menu-li" style="cursor: pointer" @click="onLogout">Log out</li>
@@ -68,9 +71,10 @@
 import { defineComponent, computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import store from "@/store";
-// import notification from "@/components/notification";
+// import { notification } from "@/components/Notification";
 export default defineComponent({
   name: "index",
+
   setup() {
     // TODO
     const router = useRouter();
@@ -83,13 +87,16 @@ export default defineComponent({
       case "/profile/assets":
         curTab.value = "1";
         break;
-      case "/profile/voted":
+      case "/profile/votes":
         curTab.value = "2";
         break;
       case "/profile/unbond":
         curTab.value = "4";
         break;
       case "/profile/collection":
+        curTab.value = "3";
+        break;
+      case "/profile/history":
         curTab.value = "3";
         break;
     }
@@ -103,10 +110,18 @@ export default defineComponent({
       return store.state.user.info;
     });
 
+    const migrateList = [
+      { vote_contract: "address", can_migrate: true | false, can_retrieve: true | false },
+    ];
+
+    const canMigrate = ref(false);
+    canMigrate.value = migrateList.find((v) => v.can_migrate);
+
     return {
       userInfo,
       onLogout,
       curTab,
+      canMigrate,
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -163,12 +178,14 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   li,
-  li a {
+  li .link {
     display: block;
     font-size: 14px;
     font-family: Montserrat-Medium, Montserrat-Light;
     font-weight: 300;
     text-align: left;
+    background-color: transparent;
+    cursor: pointer;
     color: #000000;
     margin-bottom: 23px;
   }

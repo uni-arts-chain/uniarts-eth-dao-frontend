@@ -41,7 +41,17 @@ const routes = [
         component: () =>
           import(/* webpackChunkName: "profile" */ "../views/Profile/Collection.vue"),
       },
+      {
+        path: "migrate",
+        name: "migrate",
+        component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/Migrate.vue"),
+      },
     ],
+  },
+  {
+    path: "/migrate",
+    name: "migrate",
+    component: () => import(/* webpackChunkName: "migrate" */ "../views/Profile/Migrate.vue"),
   },
   {
     path: "/artist/:id",

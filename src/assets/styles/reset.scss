@@ -306,6 +306,22 @@
     padding: 0;
   }
 }
+// .el-dialog.vote-dialog.migrate-dialog {
+//   padding: 0;
+//   max-width: 600px;
+//   overflow: hidden;
+//   .el-dialog__body {
+//     padding: 0;
+//   }
+// }
+.el-dialog.vote-dialog.migrate-info-dialog {
+  padding: 0;
+  max-width: 600px;
+  overflow: hidden;
+  .el-dialog__body {
+    padding: 0;
+  }
+}
 
 div.el-overlay {
   background-color: transparent;

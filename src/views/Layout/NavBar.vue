@@ -98,11 +98,11 @@
         <li :class="{ active: currentPath == '/airdrop' }">
           <router-link to="/airdrop" @click="onClickItem">Airdrop</router-link>
         </li>
-        <!--      <li>-->
-        <!--        <router-link to="/marketplace" @click="onClickItem">Search</router-link>-->
-        <!--      </li>-->
         <li>
           <router-link to="/profile" @click="onClickItem">Account</router-link>
+        </li>
+        <li>
+          <router-link to="/migrate" @click="onClickItem">Migrate</router-link>
         </li>
         <li v-if="$store.state.user.info.address">
           <span @click="onLogout">Log out</span>
