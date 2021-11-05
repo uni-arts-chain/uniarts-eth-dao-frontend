@@ -101,7 +101,7 @@
         <li>
           <router-link to="/profile" @click="onClickItem">Account</router-link>
         </li>
-        <li>
+        <li v-if="$store.getters['user/canMigrate']">
           <router-link to="/migrate" @click="onClickItem">Migrate</router-link>
         </li>
         <li v-if="$store.state.user.info.address">

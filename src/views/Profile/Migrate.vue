@@ -3,7 +3,7 @@
   <div class="migrate">
     <div class="item">
       <div class="title">Migrate the Bonded balance in contract V1 to V2</div>
-      <button @click="onMigrate">Migrate</button>
+      <button @click="onMigrate" v-loading="migrateLoading">Migrate</button>
     </div>
   </div>
   <Dialog
@@ -36,8 +36,11 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import store from "@/store";
+import { DAPP_CONTRACTS } from "@/config";
+import { notification } from "@/components/Notification";
 import Dialog from "@/components/Dialog";
 import MobileConfirm from "@/components/MobileConfirm";
 
@@ -49,21 +52,48 @@ export default defineComponent({
     const router = useRouter();
 
     const dialogInfoVisible = ref(false);
-
-    const migrateList = [
-      { vote_contract: "address", can_migrate: true | false, can_retrieve: true | false },
-    ];
-
-    const canMigrate = ref(false);
-    canMigrate.value = migrateList.find((v) => v.can_migrate);
-    const canRetrieve = ref(false);
-    canRetrieve.value = migrateList.find((v) => v.can_retrieve);
+    const migrateLoading = ref(false);
 
     const onMigrate = () => {
-      if (canRetrieve.value) {
+      if (store.getters["user/canRetrieve"]) {
         dialogInfoVisible.value = true;
         return;
       }
+      migrateLoading.value = true;
+      let info = store.state.user.migrateInfo;
+      let migrateItem = info.find((v) => v.can_migrate);
+      if (!migrateItem) {
+        migrateLoading.value = false;
+        return;
+      }
+      let contractModule = DAPP_CONTRACTS[migrateItem?.vote_contract?.toLowerCase()];
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      console.log(migrateItem?.vote_contract?.toLowerCase());
+      console.log(DAPP_CONTRACTS);
+      contractModule?.contract
+        ?.migrate((err, txHash) => {
+          migrateLoading.value = false;
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          if (txHash) {
+            console.log(txHash);
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+          }
+        })
+        .then(async (receipt) => {
+          console.log("receipt: ", receipt);
+        })
+        .catch((err) => {
+          migrateLoading.value = false;
+          console.log(err);
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
     };
 
     const onRetrieve = () => {
@@ -71,11 +101,16 @@ export default defineComponent({
       router.push("/profile/votes");
     };
 
+    onMounted(() => {
+      if (!store.getters["user/canMigrate"]) {
+        router.push("/profile");
+      }
+    });
+
     return {
       onMigrate,
       dialogInfoVisible,
-      canMigrate,
-      canRetrieve,
+      migrateLoading,
       onRetrieve,
     };
   },

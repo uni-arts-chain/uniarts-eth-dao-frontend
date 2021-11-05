@@ -25,7 +25,7 @@ export const DAPP_CONTRACTS = (() => {
   const contracts = {};
   Object.keys(DAPP_CONFIG.contracts).map((key) => {
     const contractModule = require(`../contracts/${key}`);
-    contracts[DAPP_CONFIG.contracts[key]] = {
+    contracts[DAPP_CONFIG.contracts[key].toLowerCase()] = {
       name: key,
       contract: contractModule.default,
     };

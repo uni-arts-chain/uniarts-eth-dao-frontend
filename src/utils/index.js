@@ -61,3 +61,11 @@ export function FormatRpcError(error) {
     return null;
   }
 }
+
+export function getContractVersion(address, contractList) {
+  let version = contractList[address]?.name || "";
+  let index = version.search(/V\d$/);
+  version = index ? version.substr(index) : version;
+  console.log(version);
+  return contractList.contracts.VoteMining !== address ? version : "";
+}

@@ -127,7 +127,7 @@ export default defineComponent({
     });
 
     const getContractVersion = (address) => {
-      let version = DAPP_CONTRACTS[address].name || "";
+      let version = DAPP_CONTRACTS[address.toLowerCase()]?.name || "";
       let index = version.search(/V\d$/);
       version = index ? version.substr(index) : version;
       console.log(version);

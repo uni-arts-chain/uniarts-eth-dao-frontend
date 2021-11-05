@@ -21,7 +21,7 @@
           <li class="menu-li">
             <router-link class="link" to="/profile/unbond">Unbond History</router-link>
           </li>
-          <li class="menu-li" v-if="canMigrate">
+          <li class="menu-li" v-if="$store.getters['user/canMigrate']">
             <router-link class="link" to="/profile/migrate">Migrate</router-link>
           </li>
         </ul>
@@ -71,7 +71,6 @@
 import { defineComponent, computed, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import store from "@/store";
-// import { notification } from "@/components/Notification";
 export default defineComponent({
   name: "index",
 
@@ -110,18 +109,10 @@ export default defineComponent({
       return store.state.user.info;
     });
 
-    const migrateList = [
-      { vote_contract: "address", can_migrate: true | false, can_retrieve: true | false },
-    ];
-
-    const canMigrate = ref(false);
-    canMigrate.value = migrateList.find((v) => v.can_migrate);
-
     return {
       userInfo,
       onLogout,
       curTab,
-      canMigrate,
     };
   },
   beforeRouteEnter(to, from, next) {

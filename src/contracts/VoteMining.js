@@ -37,7 +37,7 @@ class VoteMining {
     } catch (err) {
       let result = FormatRpcError(err);
       result = {
-        data: result.data || result.originalError,
+        data: result?.data || result?.originalError || err,
       };
       throw result ? result : err;
     }
@@ -163,6 +163,12 @@ class VoteMining {
       .getRedeemableBalance(userAddress, tokenAddress)
       .call();
     return redeemableBalance;
+  }
+
+  async migrate(callback) {
+    const tx = this.contract.methods.migrate();
+    const sender = store.state.user.info.address;
+    return this.sendTransaction(tx, sender, callback);
   }
 }
 

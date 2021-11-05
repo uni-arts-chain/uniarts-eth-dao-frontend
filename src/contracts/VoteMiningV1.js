@@ -36,8 +36,9 @@ class VoteMining {
       );
     } catch (err) {
       let result = FormatRpcError(err);
+      console.log(result);
       result = {
-        data: result.data || result.originalError,
+        data: result?.data || result?.originalError || err,
       };
       throw result ? result : err;
     }

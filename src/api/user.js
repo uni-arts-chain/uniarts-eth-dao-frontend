@@ -111,6 +111,15 @@ const apiList = [
     params: {},
     options: {},
   },
+  {
+    name: "getMigrate",
+    method: "GET",
+    desc: "获取迁移信息",
+    path: "/arts/mr",
+    mockPath: "/arts/mr",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;
