@@ -16,7 +16,8 @@
           <div class="operate">
             <!--            <button>List</button>-->
             <button @click="() => openSendDialog(v)">Send</button>
-            <button @click="() => pin(v)">Pin</button>
+            <!-- <button @click="() => pin(v)">Pin</button> -->
+            <button>Pin</button>
           </div>
         </div>
       </div>
