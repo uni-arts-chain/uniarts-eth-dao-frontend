@@ -27,7 +27,7 @@
               max-width: 150px;
               white-space: nowrap;
             "
-            >{{ item.token_mint }}</span
+            >{{ formatNumber(item.token_mint) }}</span
           >
         </div>
         <div class="bid">
@@ -44,7 +44,7 @@
       <div class="bid-group">
         <div class="label">
           <span>Bid History</span>
-          <span>Total {{ item.total_amount }} Bids</span>
+          <span>Total {{ item.biding_count }} Bids</span>
         </div>
         <button @click="goAuction(item.auction_id, item.id)">Place a Bid</button>
       </div>
@@ -105,9 +105,14 @@ export default defineComponent({
       }
     };
 
+    const formatNumber = (string) => {
+      return new BigNumber(string || 0).toFixed(1, 1);
+    };
+
     return {
       goAuction,
       formatPercent,
+      formatNumber,
 
       Avatar,
     };
