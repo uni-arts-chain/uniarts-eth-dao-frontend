@@ -44,7 +44,7 @@
       <div class="bid-group">
         <div class="label">
           <span>Bid History</span>
-          <span>Total {{ item.total_amount }} Bids</span>
+          <span>Total {{ item.biding_count }} Bids</span>
         </div>
         <button @click="goAuction(item.auction_id, item.id)">Place a Bid</button>
       </div>
