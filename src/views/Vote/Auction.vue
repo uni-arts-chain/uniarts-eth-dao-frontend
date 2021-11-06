@@ -27,7 +27,7 @@
               max-width: 150px;
               white-space: nowrap;
             "
-            >{{ item.token_mint }}</span
+            >{{ formatNumber(item.token_mint) }}</span
           >
           UART
         </div>
@@ -105,9 +105,14 @@ export default defineComponent({
       }
     };
 
+    const formatNumber = (string) => {
+      return new BigNumber(string || 0).toFixed(1, 1);
+    };
+
     return {
       goAuction,
       formatPercent,
+      formatNumber,
 
       Avatar,
     };

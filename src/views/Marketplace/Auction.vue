@@ -12,7 +12,7 @@
           <span
             class="value"
             style="overflow: hidden; text-overflow: ellipsis; max-width: 150px; white-space: nowrap"
-            >{{ auction.token_mint }}</span
+            >{{ formatNumber(auction.token_mint) }}</span
           >
           <span>UART</span>
         </div>
@@ -97,7 +97,7 @@
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
         <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "Offer" : "Approve & Offer" }}
+          {{ isApproving ? "Bid" : "Approve" }}
         </button>
       </div>
     </Dialog>
@@ -131,7 +131,7 @@
       <div class="token-info">
         <div class="token">
           <span>Token Mint: </span>
-          <span class="value">{{ auction.token_mint }}</span>
+          <span class="value">{{ formatNumber(auction.token_mint) }}</span>
           <span>UART</span>
         </div>
         <div class="bid">
@@ -194,7 +194,7 @@
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
         <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "Offer" : "Approve & Offer" }}
+          {{ isApproving ? "Bid" : "Approve" }}
         </button>
       </div>
     </Mobilecomfirm>
@@ -514,6 +514,11 @@ export default defineComponent({
       await getAuctionDate();
       interval = setInterval(() => (now.value -= 1000), 1000);
     });
+
+    const formatNumber = (string) => {
+      return new BigNumber(string || 0).toFixed(1, 1);
+    };
+
     onBeforeUnmount(() => {
       clearInterval(interval);
     });
@@ -534,6 +539,7 @@ export default defineComponent({
       buyAuction,
 
       disabledAuction,
+      formatNumber,
     };
   },
 });
