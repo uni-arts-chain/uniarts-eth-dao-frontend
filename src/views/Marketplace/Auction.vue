@@ -39,7 +39,7 @@
           <span>Total {{ auctionBids.length }} Bids</span>
         </div>
         <div class="button-group">
-          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Make an Offer</button>
+          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Bid</button>
           <button
             :disabled="disabledAuction"
             @click="openByeDiaLog"
@@ -81,24 +81,24 @@
     </div>
     <Dialog v-model="buyDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body">
+        <div class="input-body" v-if="isApproving">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
-        <button v-loading="isLoading" @click="buyAuction">
-          {{ isApproving ? "BUY" : "APPROVE" }}
-        </button>
+        <div class="approve-text" v-else>Please Approve contract before buy</div>
+        <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
+        <button v-else v-loading="isLoading" @click="buyAuction">BUY</button>
       </div>
     </Dialog>
     <Dialog v-model="offerDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body">
+        <div class="input-body" v-if="isApproving">
           <input v-model="bidAmount" placeholder="amount" type="number" />
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
-        <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "Bid" : "Approve" }}
-        </button>
+        <div class="approve-text" v-else>Please Approve contract before place bid</div>
+        <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
+        <button v-else v-loading="isLoading" @click="makeAnOffer">Bid</button>
       </div>
     </Dialog>
   </div>
@@ -153,7 +153,7 @@
       </div>
       <div class="bid-history">
         <div class="button-group">
-          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Make an Offer</button>
+          <button :disabled="disabledAuction" @click="openMakeOfferDialog">Bid</button>
           <button
             :disabled="disabledAuction"
             @click="openByeDiaLog"
@@ -178,24 +178,24 @@
     </div>
     <Mobilecomfirm v-model="buyDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body">
+        <div class="input-body" v-if="isApproving">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
-        <button v-loading="isLoading" @click="buyAuction">
-          {{ isApproving ? "BUY" : "APPROVE" }}
-        </button>
+        <div class="approve-text" v-else>Please Approve contract before buy</div>
+        <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
+        <button v-else v-loading="isLoading" @click="buyAuction">BUY</button>
       </div>
     </Mobilecomfirm>
     <Mobilecomfirm v-model="offerDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body">
+        <div class="input-body" v-if="isApproving">
           <input v-model="bidAmount" placeholder="amount" type="number" />
           <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
         </div>
-        <button v-loading="isLoading" @click="makeAnOffer">
-          {{ isApproving ? "Bid" : "Approve" }}
-        </button>
+        <div class="approve-text" v-else>Please Approve contract before place bid</div>
+        <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
+        <button v-else v-loading="isLoading" @click="makeAnOffer">Bid</button>
       </div>
     </Mobilecomfirm>
   </div>
@@ -245,7 +245,7 @@ export default defineComponent({
       const connectedAccount = store.state.user.info.address;
       const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
       const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
-
+      if (!token) return;
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       // 查看链上权限
       try {
@@ -259,7 +259,7 @@ export default defineComponent({
       }
     };
     //链上授权
-    const approveLink = async (success) => {
+    const approveLink = async () => {
       isLoading.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
@@ -272,6 +272,7 @@ export default defineComponent({
           connectedAccount,
           AuctionMiningAddress,
           async (err, txHash) => {
+            isLoading.value = false;
             if (err) {
               console.log(err);
               throw err;
@@ -279,9 +280,10 @@ export default defineComponent({
             if (txHash) {
               console.log(txHash);
               isApproving.value = true;
+              buyDialogVisible.value = false;
+              offerDialogVisible.value = false;
               notification.dismiss(notifyId);
               notification.success(txHash);
-              success && success();
             }
           }
         );
@@ -347,10 +349,8 @@ export default defineComponent({
     };
     const makeAnOffer = async () => {
       filter();
-      let notifyId;
-      if (!isApproving.value) {
-        await approveLink(() => (notifyId = notification.loading("Offering")));
-      }
+      isLoading.value = true;
+      let notifyId = notification.loading("Offering");
       const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
       const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals).toNumber();
       console.log(auction.value.auction_match_id, auction.value.auction_token_index, amount);
@@ -362,12 +362,12 @@ export default defineComponent({
         auction.value.auction_token_index,
         toBN(amount),
         async (err, txHash) => {
+          isLoading.value = false;
           if (err) {
             console.log(err);
             throw err;
           }
           if (txHash) {
-            isLoading.value = false;
             console.log(txHash);
             offerDialogVisible.value = false;
             notification.dismiss(notifyId);
@@ -395,23 +395,17 @@ export default defineComponent({
     };
     const buyAuction = async () => {
       isLoading.value = true;
-      let notifyId;
-      if (!isApproving.value) {
-        if (!isApproving.value) {
-          await approveLink(() => (notifyId = notification.loading("Loading Auction")));
-        }
-      }
-      // todo 切换AuctionV2合约
+      let notifyId = notification.loading("Loading Auction");
       Auction.playerFixedPrice(
         auction.value.auction_match_id,
         auction.value.auction_token_index,
         async (err, txHash) => {
+          isLoading.value = false;
           if (err) {
             console.log(err.message);
             throw err;
           }
           if (txHash) {
-            isLoading.value = false;
             buyDialogVisible.value = false;
             console.log(txHash);
             notification.dismiss(notifyId);
@@ -456,7 +450,7 @@ export default defineComponent({
           (blockHeight.block - auction.value.auction_open_block);
         console.log(now.value);
       } else {
-        dataMessage.value = "Auction is over";
+        dataMessage.value = "Auction finished";
         disabledAuction.value = true;
       }
     };
@@ -465,12 +459,12 @@ export default defineComponent({
         return dataMessage;
       } else {
         let second = now.value / 1000;
-        const day = (second / (60 * 60 * 24)).toFixed(0);
+        const day = Math.floor(second / (60 * 60 * 24));
         second = second % (60 * 60 * 24);
-        const hour = (second / (60 * 60)).toFixed(0);
+        const hour = Math.floor(second / (60 * 60));
         second = second % (60 * 60);
-        const minute = (second / 60).toFixed(0);
-        second = (second % 60).toFixed(0);
+        const minute = Math.floor(second / 60);
+        second = Math.floor(second % 60);
         return `${day} Days ${hour} Hour ${minute} Minute ${second} Second`;
       }
     });
@@ -482,7 +476,7 @@ export default defineComponent({
         auctionBids.value = res.list;
       });
       const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
-      auction.value = list[0] || {};
+      auction.value = list && list.length > 0 ? list[0] : {};
       if (auction.value.token_id) {
         const tokenMint = await VoteMining.getMintRewards(
           DAPP_CONFIG.nfts.UniartsNFT.address,
@@ -533,6 +527,7 @@ export default defineComponent({
       auction,
       onBack,
       makeAnOffer,
+      approveLink,
       openMakeOfferDialog,
       openByeDiaLog,
       buyDialogVisible,
@@ -971,6 +966,12 @@ export default defineComponent({
     width: 343px;
     margin: 0 auto;
     margin-top: 21px;
+  }
+
+  .approve-text {
+    margin-bottom: 40px;
+    font-size: 16px;
+    text-align: center;
   }
 }
 </style>
