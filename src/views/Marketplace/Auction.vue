@@ -259,7 +259,7 @@ export default defineComponent({
       }
     };
     //链上授权
-    const approveLink = async (success) => {
+    const approveLink = async () => {
       isLoading.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
@@ -272,6 +272,7 @@ export default defineComponent({
           connectedAccount,
           AuctionMiningAddress,
           async (err, txHash) => {
+            isLoading.value = false;
             if (err) {
               console.log(err);
               throw err;
@@ -279,9 +280,10 @@ export default defineComponent({
             if (txHash) {
               console.log(txHash);
               isApproving.value = true;
+              buyDialogVisible.value = false;
+              offerDialogVisible.value = false;
               notification.dismiss(notifyId);
               notification.success(txHash);
-              success && success();
             }
           }
         );
@@ -347,6 +349,7 @@ export default defineComponent({
     };
     const makeAnOffer = async () => {
       filter();
+      isLoading.value = true;
       let notifyId = notification.loading("Offering");
       const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
       const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals).toNumber();
@@ -357,12 +360,12 @@ export default defineComponent({
         auction.value.auction_token_index,
         toBN(amount),
         async (err, txHash) => {
+          isLoading.value = false;
           if (err) {
             console.log(err);
             throw err;
           }
           if (txHash) {
-            isLoading.value = false;
             console.log(txHash);
             offerDialogVisible.value = false;
             notification.dismiss(notifyId);
@@ -394,12 +397,12 @@ export default defineComponent({
         auction.value.auction_match_id,
         auction.value.auction_token_index,
         async (err, txHash) => {
+          isLoading.value = false;
           if (err) {
             console.log(err.message);
             throw err;
           }
           if (txHash) {
-            isLoading.value = false;
             buyDialogVisible.value = false;
             console.log(txHash);
             notification.dismiss(notifyId);
