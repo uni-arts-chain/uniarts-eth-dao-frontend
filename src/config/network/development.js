@@ -32,8 +32,8 @@ module.exports = {
       decimals: 12,
       address: "0xf51D9714b74644a224E7f62E56D4A87e1f1fb2E0",
     },
-    USDT: {
-      symbol: "USDT",
+    USDC: {
+      symbol: "USDC",
       decimals: 18,
       address: "0xFd9CA9e22bd54260B87834966d26055620aFdbFf",
     },
