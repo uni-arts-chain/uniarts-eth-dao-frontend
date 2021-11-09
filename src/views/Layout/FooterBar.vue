@@ -29,6 +29,7 @@
           <img style="height: 25px" src="@/assets/images/polygon.png" />
           <img style="height: 25px" src="@/assets/images/acid.png" />
           <img style="height: 34px" src="@/assets/images/art.png" />
+          <img style="height: 34px" src="@/assets/images/certik.jpg" />
         </div>
         <a
           href="https://github.com/uni-arts-chain/UniArts-white-paper/blob/master/UniArts_White_Paper.pdf"
