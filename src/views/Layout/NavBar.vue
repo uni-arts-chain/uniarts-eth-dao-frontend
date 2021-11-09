@@ -121,6 +121,10 @@
             <span style="color: red">Unknown Network</span>
           </button>
         </li>
+        <li class="parter">
+          Audit by
+          <div class="parter-icon"></div>
+        </li>
       </ul>
     </div>
   </el-drawer>
@@ -393,7 +397,7 @@ export default defineComponent({
   }
 }
 .ul-menu.bottom {
-  margin-bottom: 140px;
+  margin-bottom: 40px;
   margin-right: 40px;
   li {
     width: 100%;
@@ -417,6 +421,22 @@ export default defineComponent({
         margin-right: 10px;
         font-size: 24px;
       }
+    }
+  }
+  li.parter {
+    margin: 0 auto;
+    margin-top: 160px;
+    display: flex;
+    flex-direction: column;
+    line-height: 23px;
+    font-size: 14px;
+    .parter-icon {
+      width: 120px;
+      height: 40px;
+      background: url(~@/assets/images/certik-white.png) no-repeat;
+      background-size: 190px 70px;
+      background-position: -35px -16px;
+      border-radius: 10px;
     }
   }
 }
