@@ -73,7 +73,7 @@ export default defineComponent({
   },
   setup() {
     // TODO
-    const currentTab = ref(2);
+    const currentTab = ref(1);
 
     const isLoading = ref(false);
 
@@ -103,6 +103,11 @@ export default defineComponent({
         .then((res) => {
           isLoading.value = false;
           voteList.value = res.list;
+          if (voteList.value.length > 0) {
+            currentTab.value = 1;
+          } else {
+            currentTab.value = 2;
+          }
         })
         .catch((err) => {
           console.log(err);

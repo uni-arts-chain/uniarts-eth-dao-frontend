@@ -37,7 +37,7 @@ export default {
     async InitWallet() {
       await Wallet.init();
     },
-    GetInfo({ commit }) {
+    GetInfo({ commit, dispatch }) {
       http
         .userGetInfo({})
         .then((info) => {
@@ -48,6 +48,7 @@ export default {
           };
           setLocalStore("user_token", tokens);
           commit("SET_INFO", info);
+          dispatch("GetMigrateInfo");
         })
         .catch((err) => {
           console.log(err);
