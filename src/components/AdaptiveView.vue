@@ -1,47 +1,48 @@
 /** * Created by Lay Hunt on 2021-04-15 15:30:17. */
 <template>
-  <div class="adaptive-view" ref="adaptiveView" :style="`width: ${width};height: ${height}`">
-    <div class="img-container" :class="{ preview: isPreview }">
+  <div ref="adaptiveView" :style="`width: ${width};height: ${height}`" class="adaptive-view">
+    <div v-if="nft.aasm_state === 'sold'" class="status">SOLD</div>
+    <div :class="{ preview: isPreview }" class="img-container">
       <AdaptiveImage
-        @click="showPreview"
-        @ImgLoaded="imgLoaded"
-        :width="width"
-        :height="height"
-        :isResponsive="isResponsive"
-        :isPreview="isPreview"
-        :cover="nft.img_main_file1?.url || nft.img_main_file1"
-        :isOrigin="!isResponsive"
         v-if="viewType == 'img'"
+        :cover="nft.img_main_file1?.url || nft.img_main_file1"
+        :height="height"
+        :isOrigin="!isResponsive"
+        :isPreview="isPreview"
+        :isResponsive="isResponsive"
         :url="nft.property_url"
+        :width="width"
+        @ImgLoaded="imgLoaded"
+        @click="showPreview"
       />
       <AdaptiveVideo
-        @click="showPreview"
-        :width="width"
-        @ImgLoaded="imgLoaded"
-        :height="height"
-        :preload="preload"
         v-else-if="viewType == 'video'"
-        :isResponsive="isResponsive"
+        :cover="nft.img_main_file1?.url || nft.img_main_file1"
+        :height="height"
         :isPlay="!isPreview"
         :isPreview="isPreview"
-        :cover="nft.img_main_file1?.url || nft.img_main_file1"
+        :isResponsive="isResponsive"
+        :preload="preload"
         :source="nft.property_url"
+        :width="width"
+        @ImgLoaded="imgLoaded"
+        @click="showPreview"
       />
       <div
-        class="auction-label"
-        :style="`left: ${auctionLabelPosition.left}px;top: ${auctionLabelPosition.top}px`"
         v-if="!isPreview && isAuction"
+        :style="`left: ${auctionLabelPosition.left}px;top: ${auctionLabelPosition.top}px`"
+        class="auction-label"
       >
         IN AUCTION
       </div>
-      <div class="auction-date" v-if="!isPreview && (isAuction || isWaiting)">
+      <div v-if="!isPreview && (isAuction || isWaiting)" class="auction-date">
         <div class="auction-data-pick">
           {{ isWaiting ? "Start after" : "End after" }}
           <span>{{ countdown }}</span>
         </div>
         <span>Bidding notice </span>
       </div>
-      <div class="copyright-icon" v-if="!isPreview && nft.has_royalty">
+      <div v-if="!isPreview && nft.has_royalty" class="copyright-icon">
         <div class="icon-sub">
           <div class="sub"></div>
           <icon-svg icon-class="copyright" />
@@ -49,33 +50,33 @@
       </div>
       <icon-svg
         v-if="isPreview && viewType == 'video'"
-        class="video-label"
         :style="`top: ${typeLabelPosition.top}px;right: ${typeLabelPosition.right}px`"
+        class="video-label"
         icon-class="video"
       />
       <icon-svg
         v-if="isPreview && viewType == 'audio'"
-        class="video-label"
         :style="`top: ${typeLabelPosition.top}px;right: ${typeLabelPosition.right}px;font-size: 23px`"
+        class="video-label"
         icon-class="music"
       />
     </div>
-    <Dialog :visible="isDialogPreview" type="fullscreen" :close="handlePreviewClose">
+    <Dialog :close="handlePreviewClose" :visible="isDialogPreview" type="fullscreen">
       <div class="dialog-content">
         <AdaptiveImage
           v-if="viewType == 'img'"
-          width="100%"
-          height="100%"
-          :isResponsive="false"
           :isOrigin="true"
           :isPreview="false"
+          :isResponsive="false"
           :url="dialogPreviewUrl"
+          height="100%"
+          width="100%"
         />
         <AdaptiveVideo
           v-else-if="viewType == 'video'"
-          :isResponsive="false"
           :isPlay="true"
           :isPreview="false"
+          :isResponsive="false"
           :source="dialogPreviewUrl"
         />
       </div>
@@ -212,9 +213,18 @@ export default {
   overflow: hidden;
   width: 100%;
 
+  .status {
+    position: absolute;
+    z-index: 100;
+    font-size: 16px;
+    margin: 10px;
+    color: #fff;
+  }
+
   .img-container.preview {
     /* cursor: default; */
   }
+
   .img-container {
     width: 100%;
     height: 100%;
@@ -253,23 +263,28 @@ export default {
       align-items: center;
       justify-content: space-between;
       letter-spacing: 0px;
+
       span {
         display: flex;
         align-items: center;
       }
+
       img {
         width: 17px;
         margin-left: 5px;
       }
+
       .auction-data-pick {
         display: flex;
         align-items: center;
+
         span {
           margin-left: 10px;
           font-weight: 600;
         }
       }
     }
+
     .copyright-icon {
       position: absolute;
       bottom: 0px;
@@ -278,11 +293,13 @@ export default {
       height: 100px;
       color: white;
       font-size: 20px;
+
       .icon-sub {
         position: relative;
         width: 100%;
         height: 100%;
       }
+
       .sub {
         position: absolute;
         border-left: 100px solid transparent;
@@ -293,6 +310,7 @@ export default {
         top: 50%;
         transform: translateY(-50%) translateX(-50%);
       }
+
       .svg-icon {
         position: absolute;
         left: 55px;

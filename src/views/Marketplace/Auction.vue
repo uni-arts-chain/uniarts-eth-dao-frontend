@@ -84,23 +84,23 @@
     </div>
     <Dialog v-model="buyDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="isApproving">
+        <div class="input-body" v-if="buyApproving">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
           <span class="unit">{{ marketCurrency }}</span>
         </div>
         <div class="approve-text" v-else>Please Approve contract before buy</div>
-        <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
+        <button v-if="!buyApproving" v-loading="isLoading" @click="approveLinkBuy">APPROVE</button>
         <button v-else v-loading="isLoading" @click="buyAuction">BUY</button>
       </div>
     </Dialog>
     <Dialog v-model="offerDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="isApproving">
+        <div class="input-body" v-if="bidApproving">
           <input v-model="bidAmount" placeholder="amount" type="number" />
           <span class="unit">{{ marketCurrency }}</span>
         </div>
         <div class="approve-text" v-else>Please Approve contract before place bid</div>
-        <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
+        <button v-if="!bidApproving" v-loading="isLoading" @click="approveLinkBid">APPROVE</button>
         <button v-else v-loading="isLoading" @click="makeAnOffer">Bid</button>
       </div>
     </Dialog>
@@ -186,23 +186,23 @@
     </div>
     <Mobilecomfirm v-model="buyDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="isApproving">
+        <div class="input-body" v-if="buyApproving">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
           <span class="unit">{{ marketCurrency }}</span>
         </div>
         <div class="approve-text" v-else>Please Approve contract before buy</div>
-        <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
+        <button v-if="!buyApproving" v-loading="isLoading" @click="approveLinkBuy">APPROVE</button>
         <button v-else v-loading="isLoading" @click="buyAuction">BUY</button>
       </div>
     </Mobilecomfirm>
     <Mobilecomfirm v-model="offerDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="isApproving">
+        <div class="input-body" v-if="bidApproving">
           <input v-model="bidAmount" placeholder="amount" type="number" />
           <span class="unit">{{ marketCurrency }}</span>
         </div>
         <div class="approve-text" v-else>Please Approve contract before place bid</div>
-        <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
+        <button v-if="!bidApproving" v-loading="isLoading" @click="approveLinkBid">APPROVE</button>
         <button v-else v-loading="isLoading" @click="makeAnOffer">Bid</button>
       </div>
     </Mobilecomfirm>
@@ -248,27 +248,39 @@ export default defineComponent({
     const isLoading = ref(false);
     const startEnd = reactive({});
     store.dispatch("global/SetNavText", "Auction");
-    const isApproving = ref(false);
+    const bidApproving = ref(false);
+    const buyApproving = ref(false);
     //检查权限
     const findApproveValue = async () => {
       const connectedAccount = store.state.user.info.address;
-      const AuctionMiningAddress = auction.value.auction_contract; // DAPP_CONFIG.contracts.Auction;
+      const AuctionMiningAddress = auction.value.auction_contract;
       const token = DAPP_CONFIG.tokens[marketCurrency];
       if (!token) return;
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
-      // 查看链上权限
+      // 检查拍卖出价链上权限
       try {
         const data = await currentErc20.allowance(connectedAccount, AuctionMiningAddress);
         if (data.toNumber() !== 0) {
-          isApproving.value = true;
+          bidApproving.value = true;
           console.log("Authorized", data.toNumber());
         }
       } catch (e) {
-        isApproving.value = false;
+        bidApproving.value = false;
       }
+      // 检查买断授权
+      try {
+        const data = await currentErc20.allowance(connectedAccount, DAPP_CONFIG.contracts.Auction);
+        if (data.toNumber() !== 0) {
+          buyApproving.value = true;
+          console.log("Authorized", data.toNumber());
+        }
+      } catch (e) {
+        buyApproving.value = false;
+      }
+      console.log({ bidApproving, buyApproving });
     };
-    //链上授权
-    const approveLink = async () => {
+    // 链上授权buy
+    const approveLinkBuy = async () => {
       isLoading.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
@@ -288,7 +300,7 @@ export default defineComponent({
             }
             if (txHash) {
               console.log(txHash);
-              isApproving.value = true;
+              buyApproving.value = true;
               buyDialogVisible.value = false;
               offerDialogVisible.value = false;
               notification.dismiss(notifyId);
@@ -299,7 +311,7 @@ export default defineComponent({
         console.log("receipt: ", receipt);
       } catch (err) {
         isLoading.value = false;
-        isApproving.value = false;
+        buyApproving.value = false;
         notification.dismiss(notifyId);
         notification.error(
           err.message.split("{")[0] ||
@@ -310,6 +322,50 @@ export default defineComponent({
         throw err;
       }
     };
+    // 链上授权bid
+    const approveLinkBid = async () => {
+      isLoading.value = true;
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      const connectedAccount = store.state.user.info.address;
+      const AuctionMiningAddress = auction.value.auction_contract; // DAPP_CONFIG.contracts.Auction;
+      const token = DAPP_CONFIG.tokens[marketCurrency];
+      const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
+      try {
+        // 授权
+        const receipt = await currentErc20.approveMax(
+          connectedAccount,
+          AuctionMiningAddress,
+          async (err, txHash) => {
+            isLoading.value = false;
+            if (err) {
+              console.log(err);
+              throw err;
+            }
+            if (txHash) {
+              console.log(txHash);
+              bidApproving.value = true;
+              buyDialogVisible.value = false;
+              offerDialogVisible.value = false;
+              notification.dismiss(notifyId);
+              notification.success(txHash);
+            }
+          }
+        );
+        console.log("receipt: ", receipt);
+      } catch (err) {
+        isLoading.value = false;
+        bidApproving.value = false;
+        notification.dismiss(notifyId);
+        notification.error(
+          err.message.split("{")[0] ||
+            (err.head && err.head.msg) ||
+            err.message ||
+            (err.data && err.data.message)
+        );
+        throw err;
+      }
+    };
+
     //一口价下单
     //拍卖出价
     const openMakeOfferDialog = async () => {
@@ -487,16 +543,20 @@ export default defineComponent({
       });
       const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
       auction.value = list && list.length > 0 ? list[0] : {};
-      if (auction.value.token_id) {
-        const tokenMint = await VoteMining.getMintRewards(
-          DAPP_CONFIG.nfts.UniartsNFT.address,
-          auction.value.token_id
-        );
-        if (!new BigNumber(tokenMint).isZero()) {
-          auction.value.token_mint = new BigNumber(tokenMint)
-            .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
-            .toString();
+      try {
+        if (auction.value.token_id) {
+          const tokenMint = await VoteMining.getMintRewards(
+            DAPP_CONFIG.nfts.UniartsNFT.address,
+            auction.value.token_id
+          );
+          if (!new BigNumber(tokenMint).isZero()) {
+            auction.value.token_mint = new BigNumber(tokenMint)
+              .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+              .toString();
+          }
         }
+      } catch (e) {
+        console.error(e);
       }
       await findApproveValue();
       try {
@@ -571,14 +631,12 @@ export default defineComponent({
       getAuctionDateString,
       getAuctionDate,
       isLoading,
-      isApproving,
       bidAmount,
       offerDialogVisible,
       auctionBids,
       auction,
       onBack,
       makeAnOffer,
-      approveLink,
       openMakeOfferDialog,
       openByeDiaLog,
       buyDialogVisible,
@@ -587,6 +645,10 @@ export default defineComponent({
       formatNumber,
       startEnd,
       withdrawBid,
+      bidApproving,
+      buyApproving,
+      approveLinkBuy,
+      approveLinkBid,
     };
   },
 });
