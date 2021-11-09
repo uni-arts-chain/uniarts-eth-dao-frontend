@@ -103,11 +103,6 @@ export default defineComponent({
         .then((res) => {
           isLoading.value = false;
           voteList.value = res.list;
-          if (voteList.value.length > 0) {
-            currentTab.value = 1;
-          } else {
-            currentTab.value = 2;
-          }
         })
         .catch((err) => {
           console.log(err);
@@ -133,9 +128,15 @@ export default defineComponent({
         });
     };
 
-    onMounted(() => {
-      onRequestData();
-      onRequestAuctionData();
+    onMounted(async () => {
+      await onRequestData();
+      await onRequestAuctionData();
+
+      if (voteList.value.length > 0 || auctionList.value.length == 0) {
+        currentTab.value = 1;
+      } else if (auctionList.value.length > 0) {
+        currentTab.value = 2;
+      }
     });
 
     const isMobile = computed(() => {
