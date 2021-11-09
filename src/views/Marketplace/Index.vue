@@ -6,24 +6,24 @@
       <input placeholder="Please enter keywords to search work" type="text" />
       <img src="@/assets/images/market-search@2x.png" />
     </div>
-    <div class="buy-now" v-if="auctionList.length">
+    <div v-if="auctionList.length" class="buy-now">
       <div class="title">
         <span>Timed Auctions</span>
         <router-link
           style="font-family: Montserrat-Light; font-size: 14px"
           to="/marketplace/auctions"
-          >MORE ></router-link
-        >
+          >MORE >
+        </router-link>
       </div>
-      <div v-if="auctionList.length > 0" class="list" v-loading="auctionLoading">
+      <div v-if="auctionList.length > 0" v-loading="auctionLoading" class="list">
         <div v-for="item in auctionList" :key="item.id" class="item">
           <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
             <AdaptiveView
-              :nft="item"
-              width="364px"
-              height="364px"
-              :isResponsive="true"
               :isPreview="true"
+              :isResponsive="true"
+              :nft="item"
+              height="364px"
+              width="364px"
             />
           </router-link>
           <div class="info">
@@ -34,7 +34,7 @@
                   Number(item.auction_latest_price)
                     ? item.auction_latest_price
                     : item.auction_min_bid
-                } ${item.currency_code?.toUpperCase()}`
+                } ${marketTocken.symbol}`
               }}
             </div>
           </div>
@@ -48,29 +48,27 @@
         No Data
       </div>
     </div>
-    <div v-if="buyList?.length" class="buy-now" v-loading="buyLoading">
+    <div v-if="buyList?.length" v-loading="buyLoading" class="buy-now">
       <div class="title">
         <span>Buy Now</span>
         <router-link style="font-family: Montserrat-Light; font-size: 14px" to="/marketplace/buynow"
-          >MORE ></router-link
-        >
+          >MORE >
+        </router-link>
       </div>
       <div v-if="buyList.length > 0" class="list">
         <div v-for="item in buyList" :key="item.id" class="item">
           <router-link :to="`/marketplace/buy/${item.id}`">
             <AdaptiveView
-              :nft="item.art"
-              width="364px"
-              height="364px"
-              :isResponsive="true"
               :isPreview="true"
+              :isResponsive="true"
+              :nft="item.art"
+              height="364px"
+              width="364px"
             />
           </router-link>
           <div class="info">
             <div class="name">{{ item.art.name }}</div>
-            <div class="price">
-              Price: {{ item.price }} {{ item.art.currency_code.toUpperCase() }}
-            </div>
+            <div class="price">Price: {{ item.price }} {{ marketTocken.symbol }}</div>
           </div>
         </div>
       </div>
@@ -102,11 +100,11 @@
         <div v-for="item in auctionList" :key="item.id" class="item">
           <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
             <AdaptiveView
-              :nft="item"
-              width="335px"
-              height="200px"
-              :isResponsive="true"
               :isPreview="true"
+              :isResponsive="true"
+              :nft="item"
+              height="200px"
+              width="335px"
             />
           </router-link>
           <div class="info">
@@ -117,7 +115,7 @@
                   Number(item.auction_latest_price)
                     ? item.auction_latest_price
                     : item.auction_min_bid
-                } ${item.currency_code?.toUpperCase()}`
+                } ${marketTocken.symbol}`
               }}
             </div>
           </div>
@@ -134,8 +132,8 @@
             margin-top: 10px;
           "
           to="/marketplace/auctions"
-          >MORE</router-link
-        >
+          >MORE
+        </router-link>
         <div
           v-if="auctionList.length == 0"
           class="no-data"
@@ -154,18 +152,16 @@
         <div v-for="item in buyList" :key="item.id" class="item">
           <router-link :to="`/marketplace/buy/${item.id}`">
             <AdaptiveView
-              :nft="item.art"
-              width="335px"
-              height="200px"
-              :isResponsive="true"
               :isPreview="true"
+              :isResponsive="true"
+              :nft="item.art"
+              height="200px"
+              width="335px"
             />
           </router-link>
           <div class="info">
             <div class="name">{{ item.art.name }}</div>
-            <div class="price">
-              Price: {{ item.price }} {{ item.art.currency_code.toUpperCase() }}
-            </div>
+            <div class="price">Price: {{ item.price }} {{ marketTocken.symbol }}</div>
           </div>
         </div>
         <router-link
@@ -180,8 +176,8 @@
             margin-top: 10px;
           "
           to="/marketplace/buynow"
-          >MORE</router-link
-        >
+          >MORE
+        </router-link>
         <div
           v-if="buyList.length == 0"
           class="no-data"
@@ -205,6 +201,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import store from "@/store";
 import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
+import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
   name: "index",
@@ -212,6 +209,8 @@ export default defineComponent({
     AdaptiveView,
   },
   setup() {
+    const marketCurrency = "WETH";
+    const marketTocken = DAPP_CONFIG.tokens[marketCurrency];
     store.dispatch("global/SetNavText", "Market");
 
     const auctionList = ref([]);
@@ -260,6 +259,8 @@ export default defineComponent({
     };
     onMounted(() => getAuctionListData());
     return {
+      marketCurrency,
+      marketTocken,
       auctionList,
       auctionCurrentPage,
       auctionPerPage,

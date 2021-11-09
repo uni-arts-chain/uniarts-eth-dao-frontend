@@ -25,12 +25,12 @@
               ? auction.auction_latest_price
               : auction.auction_min_bid
           }}</span>
-          <span>{{ marketCurrency }}</span>
+          <span>{{ marketTocken.symbol }}</span>
         </div>
         <div v-if="Number(auction.auction_fixed_price)" class="bid">
           <span>Fixed Price: </span>
           <span class="value">{{ auction.auction_fixed_price }}</span>
-          <span>{{ marketCurrency }}</span>
+          <span>{{ marketTocken.symbol }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -56,7 +56,7 @@
         </div>
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
-            made an offer of {{ item.bid }} {{ marketCurrency }}
+            made an offer of {{ item.bid }} {{ marketTocken.symbol }}
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@
       <div class="dialog-content">
         <div v-if="buyApproving" class="input-body">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
-          <span class="unit">{{ marketCurrency }}</span>
+          <span class="unit">{{ marketTocken.symbol }}</span>
         </div>
         <div v-else class="approve-text">Please Approve contract before buy</div>
         <button v-if="!buyApproving" v-loading="isLoading" @click="approveLinkBuy">APPROVE</button>
@@ -97,7 +97,7 @@
       <div class="dialog-content">
         <div v-if="bidApproving" class="input-body">
           <input v-model="bidAmount" placeholder="amount" type="number" />
-          <span class="unit">{{ marketCurrency }}</span>
+          <span class="unit">{{ marketTocken.symbol }}</span>
         </div>
         <div v-else class="approve-text">Please Approve contract before place bid</div>
         <button v-if="!bidApproving" v-loading="isLoading" @click="approveLinkBid">APPROVE</button>
@@ -146,12 +146,12 @@
               ? auction.auction_latest_price
               : auction.auction_min_bid
           }}</span>
-          <span>{{ marketCurrency }}</span>
+          <span>{{ marketTocken.symbol }}</span>
         </div>
         <div v-if="Number(auction.auction_fixed_price)" class="bid">
           <span>Fixed Price: </span>
           <span class="value">{{ auction.auction_fixed_price }}</span>
-          <span>{{ marketCurrency }}</span>
+          <span>{{ marketTocken.symbol }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -179,7 +179,7 @@
 
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
-            made an offer of {{ item.bid }} {{ marketCurrency }}
+            made an offer of {{ item.bid }} {{ marketTocken.symbol }}
           </div>
         </div>
       </div>
@@ -188,7 +188,7 @@
       <div class="dialog-content">
         <div v-if="buyApproving" class="input-body">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
-          <span class="unit">{{ marketCurrency }}</span>
+          <span class="unit">{{ marketTocken.symbol }}</span>
         </div>
         <div v-else class="approve-text">Please Approve contract before buy</div>
         <button v-if="!buyApproving" v-loading="isLoading" @click="approveLinkBuy">APPROVE</button>
@@ -199,7 +199,7 @@
       <div class="dialog-content">
         <div v-if="bidApproving" class="input-body">
           <input v-model="bidAmount" placeholder="amount" type="number" />
-          <span class="unit">{{ marketCurrency }}</span>
+          <span class="unit">{{ marketTocken.symbol }}</span>
         </div>
         <div v-else class="approve-text">Please Approve contract before place bid</div>
         <button v-if="!bidApproving" v-loading="isLoading" @click="approveLinkBid">APPROVE</button>
@@ -236,7 +236,8 @@ export default defineComponent({
     Dialog,
   },
   setup() {
-    const marketCurrency = "USDC";
+    const marketCurrency = "WETH";
+    const marketTocken = DAPP_CONFIG.tokens[marketCurrency];
     // TODO
     const bidAmount = ref(null);
     const router = useRouter();
@@ -628,6 +629,7 @@ export default defineComponent({
       clearInterval(interval);
     });
     return {
+      marketTocken,
       marketCurrency,
       getAuctionDateString,
       getAuctionDate,
