@@ -21,11 +21,13 @@
           <li class="menu-li">
             <router-link class="link" to="/profile/unbond">Unbond History</router-link>
           </li>
-          <li class="menu-li" v-if="$store.getters['user/canMigrate']">
-            <router-link class="link" to="/profile/migrate">Migrate</router-link>
+          <li class="menu-li icon-link" v-if="$store.getters['user/canMigrate']">
+            <router-link class="link" to="/profile/migrate"
+              >Migrate<icon-svg icon-class="new"
+            /></router-link>
           </li>
         </ul>
-        <ul class="menu" style="margin-top: 0px">
+        <ul class="menu" style="margin: 11px 0">
           <li class="menu-li" style="cursor: pointer" @click="onLogout">Log out</li>
         </ul>
       </div>
@@ -178,7 +180,21 @@ export default defineComponent({
     background-color: transparent;
     cursor: pointer;
     color: #000000;
-    margin-bottom: 23px;
+    margin-top: 11px;
+    margin-bottom: 11px;
+    display: inline-block;
+  }
+  li.icon-link {
+    .link {
+      position: relative;
+      .svg-icon {
+        position: absolute;
+        left: calc(100% + 5px);
+        bottom: calc(100% - 10px);
+        font-size: 27px;
+        color: red;
+      }
+    }
   }
 }
 .content {
