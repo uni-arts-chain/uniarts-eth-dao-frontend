@@ -18,9 +18,7 @@ export default defineComponent({
   },
   setup() {
     if (store.state.user.info.address) {
-      store.dispatch("user/GetInfo").then(() => {
-        store.dispatch("user/GetMigrateInfo");
-      });
+      store.dispatch("user/GetInfo");
     }
 
     const isMobile = computed(() => {
