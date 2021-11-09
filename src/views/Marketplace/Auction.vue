@@ -25,12 +25,12 @@
               ? auction.auction_latest_price
               : auction.auction_min_bid
           }}</span>
-          <span>{{ marketCurrency }}</span>
+          <span>{{ marketTocken.symbol }}</span>
         </div>
         <div v-if="Number(auction.auction_fixed_price)" class="bid">
           <span>Fixed Price: </span>
           <span class="value">{{ auction.auction_fixed_price }}</span>
-          <span>{{ marketCurrency }}</span>
+          <span>{{ marketTocken.symbol }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -56,7 +56,7 @@
         </div>
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
-            made an offer of {{ item.bid }} {{ marketCurrency }}
+            made an offer of {{ item.bid }} {{ marketTocken.symbol }}
           </div>
         </div>
       </div>
@@ -84,22 +84,22 @@
     </div>
     <Dialog v-model="buyDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="buyApproving">
+        <div v-if="buyApproving" class="input-body">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
-          <span class="unit">{{ marketCurrency }}</span>
+          <span class="unit">{{ marketTocken.symbol }}</span>
         </div>
-        <div class="approve-text" v-else>Please Approve contract before buy</div>
+        <div v-else class="approve-text">Please Approve contract before buy</div>
         <button v-if="!buyApproving" v-loading="isLoading" @click="approveLinkBuy">APPROVE</button>
         <button v-else v-loading="isLoading" @click="buyAuction">BUY</button>
       </div>
     </Dialog>
     <Dialog v-model="offerDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="bidApproving">
+        <div v-if="bidApproving" class="input-body">
           <input v-model="bidAmount" placeholder="amount" type="number" />
-          <span class="unit">{{ marketCurrency }}</span>
+          <span class="unit">{{ marketTocken.symbol }}</span>
         </div>
-        <div class="approve-text" v-else>Please Approve contract before place bid</div>
+        <div v-else class="approve-text">Please Approve contract before place bid</div>
         <button v-if="!bidApproving" v-loading="isLoading" @click="approveLinkBid">APPROVE</button>
         <button v-else v-loading="isLoading" @click="makeAnOffer">Bid</button>
       </div>
@@ -146,12 +146,12 @@
               ? auction.auction_latest_price
               : auction.auction_min_bid
           }}</span>
-          <span>{{ marketCurrency }}</span>
+          <span>{{ marketTocken.symbol }}</span>
         </div>
         <div v-if="Number(auction.auction_fixed_price)" class="bid">
           <span>Fixed Price: </span>
           <span class="value">{{ auction.auction_fixed_price }}</span>
-          <span>{{ marketCurrency }}</span>
+          <span>{{ marketTocken.symbol }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -179,29 +179,29 @@
 
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
-            made an offer of {{ item.bid }} {{ marketCurrency }}
+            made an offer of {{ item.bid }} {{ marketTocken.symbol }}
           </div>
         </div>
       </div>
     </div>
     <Mobilecomfirm v-model="buyDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="buyApproving">
+        <div v-if="buyApproving" class="input-body">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
-          <span class="unit">{{ marketCurrency }}</span>
+          <span class="unit">{{ marketTocken.symbol }}</span>
         </div>
-        <div class="approve-text" v-else>Please Approve contract before buy</div>
+        <div v-else class="approve-text">Please Approve contract before buy</div>
         <button v-if="!buyApproving" v-loading="isLoading" @click="approveLinkBuy">APPROVE</button>
         <button v-else v-loading="isLoading" @click="buyAuction">BUY</button>
       </div>
     </Mobilecomfirm>
     <Mobilecomfirm v-model="offerDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="bidApproving">
+        <div v-if="bidApproving" class="input-body">
           <input v-model="bidAmount" placeholder="amount" type="number" />
-          <span class="unit">{{ marketCurrency }}</span>
+          <span class="unit">{{ marketTocken.symbol }}</span>
         </div>
-        <div class="approve-text" v-else>Please Approve contract before place bid</div>
+        <div v-else class="approve-text">Please Approve contract before place bid</div>
         <button v-if="!bidApproving" v-loading="isLoading" @click="approveLinkBid">APPROVE</button>
         <button v-else v-loading="isLoading" @click="makeAnOffer">Bid</button>
       </div>
@@ -235,7 +235,8 @@ export default defineComponent({
     Dialog,
   },
   setup() {
-    const marketCurrency = "USDC";
+    const marketCurrency = "WETH";
+    const marketTocken = DAPP_CONFIG.tokens[marketCurrency];
     // TODO
     const bidAmount = ref(null);
     const router = useRouter();
@@ -276,7 +277,10 @@ export default defineComponent({
       } catch (e) {
         buyApproving.value = false;
       }
-      console.log({ bidApproving, buyApproving });
+      console.log({
+        bidApproving,
+        buyApproving,
+      });
     };
     // 链上授权buy
     const approveLinkBuy = async () => {
@@ -626,6 +630,7 @@ export default defineComponent({
       clearInterval(interval);
     });
     return {
+      marketTocken,
       marketCurrency,
       getAuctionDateString,
       getAuctionDate,

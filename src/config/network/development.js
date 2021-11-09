@@ -37,6 +37,11 @@ module.exports = {
       decimals: 18,
       address: "0xFd9CA9e22bd54260B87834966d26055620aFdbFf",
     },
+    WETH: {
+      symbol: "wETH",
+      decimals: 18,
+      address: "0xFd9CA9e22bd54260B87834966d26055620aFdbFf",
+    },
   },
   networks: {
     rinkeby: {
