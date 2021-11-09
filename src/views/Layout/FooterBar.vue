@@ -3,7 +3,11 @@
   <footer class="footer-bar">
     <div class="container">
       <div class="bottom-logo">
-        <img class="logo-bt" src="@/assets/images/footer-logo@2x.png" />
+        <div class="logo-bt">
+          <img src="@/assets/images/footer-logo@2x.png" />
+          <div class="split—line"></div>
+          <img src="@/assets/images/certik.png" />
+        </div>
         <div class="intro">
           Community guidelines•Terms of Service Privacy• Policy•Report content
         </div>
@@ -25,16 +29,15 @@
       </div>
       <div class="info">
         <div class="uniarts-logo">
-          <img style="height: 25px" src="@/assets/images/uniarts.png" />
-          <img style="height: 25px" src="@/assets/images/polygon.png" />
-          <img style="height: 25px" src="@/assets/images/acid.png" />
-          <img style="height: 34px" src="@/assets/images/art.png" />
-          <img style="height: 34px" src="@/assets/images/certik.jpg" />
+          <img src="@/assets/images/uniarts.png" style="height: 25px" />
+          <img src="@/assets/images/polygon.png" style="height: 25px" />
+          <img src="@/assets/images/acid.png" style="height: 25px" />
+          <img src="@/assets/images/art.png" style="height: 34px" />
         </div>
         <a
+          class="white-page"
           href="https://github.com/uni-arts-chain/UniArts-white-paper/blob/master/UniArts_White_Paper.pdf"
           target="_blank"
-          class="white-page"
           >Get project white papers</a
         >
         <div class="desc">UniArts granted by Web3 Foundation</div>
@@ -45,6 +48,7 @@
 
 <script>
 import { defineComponent } from "vue";
+
 export default defineComponent({
   name: "footer-bar",
   setup() {
@@ -62,17 +66,34 @@ export default defineComponent({
   height: 401px;
   background: black;
 }
+
 .container {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
 }
+
 .bottom-logo {
-  img.logo-bt {
+  .logo-bt {
     width: 207px;
     height: 48px;
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+    .split—line {
+      border: 1px solid #fff;
+      width: 1px;
+      height: 100%;
+      background-color: #fff;
+      margin-left: 10px;
+      margin-right: 10px;
+      position: relative;
+    }
+    .img {
+      height: 100%;
+    }
   }
+
   .intro {
     width: 495px;
     font-size: 19px;
@@ -82,6 +103,7 @@ export default defineComponent({
     color: #ffffff;
     line-height: 30px;
   }
+
   .label {
     font-size: 16px;
     font-family: Montserrat-Light;
@@ -91,6 +113,7 @@ export default defineComponent({
     line-height: 30px;
     margin-bottom: 24px;
   }
+
   .social-group {
     img {
       width: 25px;
@@ -98,18 +121,22 @@ export default defineComponent({
     }
   }
 }
+
 .info {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+
   .uniarts-logo {
     height: 20px;
     display: flex;
     align-items: center;
+
     img {
       margin: 0 20px;
     }
   }
+
   .white-page {
     margin-top: 20px;
     display: block;
@@ -122,6 +149,7 @@ export default defineComponent({
     color: white;
   }
 }
+
 .desc {
   margin-top: 70px;
   width: calc(100% - 30px);
