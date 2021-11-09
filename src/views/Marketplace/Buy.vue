@@ -15,7 +15,7 @@
         <div class="bid">
           <span> Price: </span>
           <span class="value">{{ auction.price }}</span>
-          <span>{{ auction?.art?.currency_code?.toUpperCase() }}</span>
+          <span>{{ marketCurrency }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -31,7 +31,7 @@
         </div>
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
-            made an offer of {{ item.bid }} {{ auction.currency_code?.toUpperCase() }}
+            made an offer of {{ item.bid }} {{ marketCurrency }}
           </div>
         </div>
       </div>
@@ -115,7 +115,7 @@
         <div class="bid">
           <span>Price: &nbsp;&nbsp;</span>
           <span class="value">{{ auction.price }}</span>
-          <span>{{ auction?.art?.currency_code?.toUpperCase() }}</span>
+          <span>{{ marketCurrency }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -172,6 +172,7 @@ export default defineComponent({
     AdaptiveView,
   },
   setup() {
+    const marketCurrency = "USDC";
     const isLoading = ref(false);
     const router = useRouter();
     const route = useRoute();
@@ -189,7 +190,7 @@ export default defineComponent({
       http.globalGetArtOrderById({}, { id }).then((res) => {
         console.log(res);
         auction.value = res;
-        token = DAPP_CONFIG.tokens[auction.value.art.currency_code?.toUpperCase()];
+        token = DAPP_CONFIG.tokens[marketCurrency];
         const connectedAccount = store.state.user.info.address;
 
         currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
@@ -246,7 +247,7 @@ export default defineComponent({
       notification.dismiss(notifyId);
       notifyId = notification.loading("Please wait for the wallet's response");
       const amount = new BigNumber(auction.value.price)
-        .shiftedBy(DAPP_CONFIG.tokens[auction.value.art?.currency_code?.toUpperCase()].decimals)
+        .shiftedBy(DAPP_CONFIG.tokens[marketCurrency].decimals)
         .toNumber();
 
       await TrustMarketplace.safePlaceBid(
@@ -284,6 +285,7 @@ export default defineComponent({
         });
     };
     return {
+      marketCurrency,
       auction,
       onBack,
       buyNow,

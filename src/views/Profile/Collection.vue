@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="operate">
-            <!--            <button>List</button>-->
+            <button>List</button>
             <button @click="() => openSendDialog(v)">Send</button>
             <!-- <button @click="() => pin(v)">Pin</button> -->
             <button disabled>Pin</button>
@@ -240,7 +240,7 @@ export default defineComponent({
     };
     const router = useRouter();
     const goDetail = (id) => {
-      router.push("/marketplace/detail" + id);
+      router.push("/marketplace/detail/" + id);
     };
     return {
       pin,

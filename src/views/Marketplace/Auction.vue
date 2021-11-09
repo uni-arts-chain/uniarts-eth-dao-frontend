@@ -25,12 +25,12 @@
               ? auction.auction_latest_price
               : auction.auction_min_bid
           }}</span>
-          <span>{{ auction.currency_code?.toUpperCase() }}</span>
+          <span>{{ marketCurrency }}</span>
         </div>
-        <div class="bid" v-if="Number(auction.auction_fixed_price)">
+        <div v-if="Number(auction.auction_fixed_price)" class="bid">
           <span>Fixed Price: </span>
           <span class="value">{{ auction.auction_fixed_price }}</span>
-          <span>{{ auction.currency_code?.toUpperCase() }}</span>
+          <span>{{ marketCurrency }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -41,11 +41,14 @@
         <div class="button-group">
           <button :disabled="disabledAuction" @click="openMakeOfferDialog">Bid</button>
           <button
+            v-if="Number(auction.auction_fixed_price)"
             :disabled="disabledAuction"
             @click="openByeDiaLog"
-            v-if="Number(auction.auction_fixed_price)"
           >
             Collect Now
+          </button>
+          <button v-if="startEnd.startDate && startEnd.endDate" @click="withdrawBid">
+            Withdraw Bid
           </button>
           <span style="font-size: 14px; color: #666"
             >Your offer needs to be 10% higher than current price</span
@@ -53,14 +56,14 @@
         </div>
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
-            made an offer of {{ item.bid }} {{ auction.currency_code?.toUpperCase() }}
+            made an offer of {{ item.bid }} {{ marketCurrency }}
           </div>
         </div>
       </div>
     </div>
     <div class="center">
       <div class="nft">
-        <AdaptiveView :nft="auction" width="520px" height="515px" />
+        <AdaptiveView :nft="auction" height="515px" width="520px" />
       </div>
       <div class="notice">
         <img src="@/assets/images/date-clock.png" />
@@ -83,7 +86,7 @@
       <div class="dialog-content">
         <div class="input-body" v-if="isApproving">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
-          <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
+          <span class="unit">{{ marketCurrency }}</span>
         </div>
         <div class="approve-text" v-else>Please Approve contract before buy</div>
         <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
@@ -94,7 +97,7 @@
       <div class="dialog-content">
         <div class="input-body" v-if="isApproving">
           <input v-model="bidAmount" placeholder="amount" type="number" />
-          <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
+          <span class="unit">{{ marketCurrency }}</span>
         </div>
         <div class="approve-text" v-else>Please Approve contract before place bid</div>
         <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
@@ -105,7 +108,7 @@
   <div v-else class="auction container">
     <div class="center">
       <div class="nft">
-        <AdaptiveView :nft="auction" width="335px" height="290px" />
+        <AdaptiveView :nft="auction" height="290px" width="335px" />
       </div>
       <div class="notice">
         <img src="@/assets/images/date-clock.png" />
@@ -143,23 +146,26 @@
               ? auction.auction_latest_price
               : auction.auction_min_bid
           }}</span>
-          <span>{{ auction.currency_code?.toUpperCase() }}</span>
+          <span>{{ marketCurrency }}</span>
         </div>
-        <div class="bid" v-if="Number(auction.auction_fixed_price)">
+        <div v-if="Number(auction.auction_fixed_price)" class="bid">
           <span>Fixed Price: </span>
           <span class="value">{{ auction.auction_fixed_price }}</span>
-          <span>{{ auction.currency_code?.toUpperCase() }}</span>
+          <span>{{ marketCurrency }}</span>
         </div>
       </div>
       <div class="bid-history">
         <div class="button-group">
           <button :disabled="disabledAuction" @click="openMakeOfferDialog">Bid</button>
           <button
+            v-if="Number(auction.auction_fixed_price)"
             :disabled="disabledAuction"
             @click="openByeDiaLog"
-            v-if="Number(auction.auction_fixed_price)"
           >
             Collect Now
+          </button>
+          <button v-if="startEnd.startDate && startEnd.endDate" @click="withdrawBid">
+            Withdraw Bid
           </button>
           <div style="font-size: 14px; color: #595757; margin-bottom: 30px">
             Your offer needs to be 10% higher than current price
@@ -169,9 +175,11 @@
           <span>Bid History</span>
           <span>Total {{ auctionBids.length }} Bids</span>
         </div>
+        Withdraw Bid
+
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
-            made an offer of {{ item.bid }} {{ auction.currency_code?.toUpperCase() }}
+            made an offer of {{ item.bid }} {{ marketCurrency }}
           </div>
         </div>
       </div>
@@ -180,7 +188,7 @@
       <div class="dialog-content">
         <div class="input-body" v-if="isApproving">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
-          <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
+          <span class="unit">{{ marketCurrency }}</span>
         </div>
         <div class="approve-text" v-else>Please Approve contract before buy</div>
         <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
@@ -191,7 +199,7 @@
       <div class="dialog-content">
         <div class="input-body" v-if="isApproving">
           <input v-model="bidAmount" placeholder="amount" type="number" />
-          <span class="unit">{{ auction.currency_code?.toUpperCase() }}</span>
+          <span class="unit">{{ marketCurrency }}</span>
         </div>
         <div class="approve-text" v-else>Please Approve contract before place bid</div>
         <button v-if="!isApproving" v-loading="isLoading" @click="approveLink">APPROVE</button>
@@ -228,6 +236,7 @@ export default defineComponent({
     Dialog,
   },
   setup() {
+    const marketCurrency = "USDC";
     // TODO
     const bidAmount = ref(null);
     const router = useRouter();
@@ -243,8 +252,8 @@ export default defineComponent({
     //检查权限
     const findApproveValue = async () => {
       const connectedAccount = store.state.user.info.address;
-      const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
-      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
+      const AuctionMiningAddress = auction.value.auction_contract; // DAPP_CONFIG.contracts.Auction;
+      const token = DAPP_CONFIG.tokens[marketCurrency];
       if (!token) return;
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       // 查看链上权限
@@ -263,8 +272,8 @@ export default defineComponent({
       isLoading.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
-      const AuctionMiningAddress = DAPP_CONFIG.contracts.Auction;
-      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
+      const AuctionMiningAddress = auction.value.auction_contract; // DAPP_CONFIG.contracts.Auction;
+      const token = DAPP_CONFIG.tokens[marketCurrency];
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       try {
         // 授权
@@ -356,7 +365,8 @@ export default defineComponent({
       console.log(auction.value.auction_match_id, auction.value.auction_token_index, amount);
       // 出价
       // todo 切换AuctionV2合约
-      const { auction: auctionAddress } = await http.globalGetAuctionVersion({});
+      const auctionAddress = auction.value.auction_contract; // ||  await http.globalGetAuctionVersion({});
+      console.log(auctionAddress);
       Auction.playerBid(
         auction.value.auction_match_id,
         auction.value.auction_token_index,
@@ -512,11 +522,52 @@ export default defineComponent({
     const formatNumber = (string) => {
       return new BigNumber(string || 0).toFixed(1, 1);
     };
+    // 撤回投标
+    const withdrawBid = () => {
+      isLoading.value = true;
+      let notifyId;
+      Auction.playerWithdrawBid(
+        auction.value.auction_match_id,
+        auction.value.auction_token_index,
+        async (err, txHash) => {
+          if (err) {
+            console.log(err.message);
+            throw err;
+          }
+          if (txHash) {
+            isLoading.value = false;
+            buyDialogVisible.value = false;
+            console.log(txHash);
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+          }
+        },
+        auction.value.auction_contract
+      )
+        .then((res) => {
+          isLoading.value = false;
+          notification.dismiss(notifyId);
+          notification.success("Confirmed on Chain");
+          console.log();
+          console.log(res);
+        })
+        .catch((err) => {
+          isLoading.value = false;
+          notification.dismiss(notification);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
+        });
+    };
 
     onBeforeUnmount(() => {
       clearInterval(interval);
     });
     return {
+      marketCurrency,
       getAuctionDateString,
       getAuctionDate,
       isLoading,
@@ -532,9 +583,10 @@ export default defineComponent({
       openByeDiaLog,
       buyDialogVisible,
       buyAuction,
-
       disabledAuction,
       formatNumber,
+      startEnd,
+      withdrawBid,
     };
   },
 });
@@ -648,6 +700,7 @@ export default defineComponent({
           cursor: not-allowed;
           opacity: 0.5;
         }
+
         button {
           cursor: pointer;
           width: 321px;
@@ -841,6 +894,7 @@ export default defineComponent({
           opacity: 0.5;
           cursor: not-allowed;
         }
+
         button {
           width: 100%;
           height: 60px;
@@ -915,7 +969,7 @@ export default defineComponent({
     }
 
     .unit {
-      width: 70px;
+      width: 80px;
       font-size: 16px;
       background-color: white;
       font-family: Montserrat-Regular;
