@@ -84,22 +84,22 @@
     </div>
     <Dialog v-model="buyDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="buyApproving">
+        <div v-if="buyApproving" class="input-body">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
           <span class="unit">{{ marketCurrency }}</span>
         </div>
-        <div class="approve-text" v-else>Please Approve contract before buy</div>
+        <div v-else class="approve-text">Please Approve contract before buy</div>
         <button v-if="!buyApproving" v-loading="isLoading" @click="approveLinkBuy">APPROVE</button>
         <button v-else v-loading="isLoading" @click="buyAuction">BUY</button>
       </div>
     </Dialog>
     <Dialog v-model="offerDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="bidApproving">
+        <div v-if="bidApproving" class="input-body">
           <input v-model="bidAmount" placeholder="amount" type="number" />
           <span class="unit">{{ marketCurrency }}</span>
         </div>
-        <div class="approve-text" v-else>Please Approve contract before place bid</div>
+        <div v-else class="approve-text">Please Approve contract before place bid</div>
         <button v-if="!bidApproving" v-loading="isLoading" @click="approveLinkBid">APPROVE</button>
         <button v-else v-loading="isLoading" @click="makeAnOffer">Bid</button>
       </div>
@@ -186,22 +186,22 @@
     </div>
     <Mobilecomfirm v-model="buyDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="buyApproving">
+        <div v-if="buyApproving" class="input-body">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
           <span class="unit">{{ marketCurrency }}</span>
         </div>
-        <div class="approve-text" v-else>Please Approve contract before buy</div>
+        <div v-else class="approve-text">Please Approve contract before buy</div>
         <button v-if="!buyApproving" v-loading="isLoading" @click="approveLinkBuy">APPROVE</button>
         <button v-else v-loading="isLoading" @click="buyAuction">BUY</button>
       </div>
     </Mobilecomfirm>
     <Mobilecomfirm v-model="offerDialogVisible" type="small">
       <div class="dialog-content">
-        <div class="input-body" v-if="bidApproving">
+        <div v-if="bidApproving" class="input-body">
           <input v-model="bidAmount" placeholder="amount" type="number" />
           <span class="unit">{{ marketCurrency }}</span>
         </div>
-        <div class="approve-text" v-else>Please Approve contract before place bid</div>
+        <div v-else class="approve-text">Please Approve contract before place bid</div>
         <button v-if="!bidApproving" v-loading="isLoading" @click="approveLinkBid">APPROVE</button>
         <button v-else v-loading="isLoading" @click="makeAnOffer">Bid</button>
       </div>
@@ -277,7 +277,10 @@ export default defineComponent({
       } catch (e) {
         buyApproving.value = false;
       }
-      console.log({ bidApproving, buyApproving });
+      console.log({
+        bidApproving,
+        buyApproving,
+      });
     };
     // 链上授权buy
     const approveLinkBuy = async () => {
@@ -543,20 +546,18 @@ export default defineComponent({
       });
       const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
       auction.value = list && list.length > 0 ? list[0] : {};
-      try {
-        if (auction.value.token_id) {
-          const tokenMint = await VoteMining.getMintRewards(
-            DAPP_CONFIG.nfts.UniartsNFT.address,
-            auction.value.token_id
-          );
-          if (!new BigNumber(tokenMint).isZero()) {
-            auction.value.token_mint = new BigNumber(tokenMint)
-              .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
-              .toString();
-          }
-        }
-      } catch (e) {
-        console.error(e);
+      if (auction.value.token_id) {
+        await VoteMining.getMintRewards(DAPP_CONFIG.nfts.UniartsNFT.address, auction.value.token_id)
+          .then((tokenMint) => {
+            if (!new BigNumber(tokenMint).isZero()) {
+              auction.value.token_mint = new BigNumber(tokenMint)
+                .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+                .toString();
+            }
+          })
+          .catch((e) => {
+            console.error(e);
+          });
       }
       await findApproveValue();
       try {
