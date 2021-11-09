@@ -360,7 +360,7 @@ export default defineComponent({
       filter();
       isLoading.value = true;
       let notifyId = notification.loading("Offering");
-      const token = DAPP_CONFIG.tokens[auction.value.currency_code?.toUpperCase()];
+      const token = DAPP_CONFIG.tokens[marketCurrency];
       const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals).toNumber();
       console.log(auction.value.auction_match_id, auction.value.auction_token_index, amount);
       // 出价
