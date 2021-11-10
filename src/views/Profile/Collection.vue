@@ -240,7 +240,7 @@ export default defineComponent({
     };
     const router = useRouter();
     const goDetail = (id) => {
-      router.push("/marketplace/detail" + id);
+      router.push("/marketplace/detail/" + id);
     };
     return {
       pin,
