@@ -3,6 +3,7 @@ import Wallet from "@/plugins/wallet";
 import { DAPP_CONFIG } from "@/config";
 import TrustMarketplaceABI from "@/contracts/abi/TrustMarketplace.json";
 import store from "@/store";
+import { BigNumber } from "@/plugins/bignumber";
 
 class TrustMarketplace {
   constructor() {
@@ -49,9 +50,10 @@ class TrustMarketplace {
     );
   }
 
-  async createOrder(nftAddress, assetId, priceInWei, expiresAt, callback) {
+  async createOrder(nftAddress, assetId, price, expiresAt, callback) {
     const sender = store.state.user.info.address;
     const gasPrice = await this.gasPrice();
+    const priceInWei = BigNumber(price).shiftedBy(DAPP_CONFIG.tokens.WETH.decimals).toString();
     const tx = this.contract.methods.createOrder(nftAddress, assetId, priceInWei, expiresAt);
     const gasLimit = await tx.estimateGas({
       value: 0,
