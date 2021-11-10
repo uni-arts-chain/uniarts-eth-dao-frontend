@@ -25,12 +25,12 @@
               ? auction.auction_latest_price
               : auction.auction_min_bid
           }}</span>
-          <span>{{ marketTocken.symbol }}</span>
+          <span>{{ marketToken.symbol }}</span>
         </div>
         <div v-if="Number(auction.auction_fixed_price)" class="bid">
           <span>Fixed Price: </span>
           <span class="value">{{ auction.auction_fixed_price }}</span>
-          <span>{{ marketTocken.symbol }}</span>
+          <span>{{ marketToken.symbol }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -56,7 +56,7 @@
         </div>
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
-            made an offer of {{ item.bid }} {{ marketTocken.symbol }}
+            made an offer of {{ item.bid }} {{ marketToken.symbol }}
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@
       <div class="dialog-content">
         <div v-if="buyApproving" class="input-body">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
-          <span class="unit">{{ marketTocken.symbol }}</span>
+          <span class="unit">{{ marketToken.symbol }}</span>
         </div>
         <div v-else class="approve-text">Please Approve contract before buy</div>
         <button v-if="!buyApproving" v-loading="isLoading" @click="approveLinkBuy">APPROVE</button>
@@ -97,7 +97,7 @@
       <div class="dialog-content">
         <div v-if="bidApproving" class="input-body">
           <input v-model="bidAmount" placeholder="amount" type="number" />
-          <span class="unit">{{ marketTocken.symbol }}</span>
+          <span class="unit">{{ marketToken.symbol }}</span>
         </div>
         <div v-else class="approve-text">Please Approve contract before place bid</div>
         <button v-if="!bidApproving" v-loading="isLoading" @click="approveLinkBid">APPROVE</button>
@@ -146,12 +146,12 @@
               ? auction.auction_latest_price
               : auction.auction_min_bid
           }}</span>
-          <span>{{ marketTocken.symbol }}</span>
+          <span>{{ marketToken.symbol }}</span>
         </div>
         <div v-if="Number(auction.auction_fixed_price)" class="bid">
           <span>Fixed Price: </span>
           <span class="value">{{ auction.auction_fixed_price }}</span>
-          <span>{{ marketTocken.symbol }}</span>
+          <span>{{ marketToken.symbol }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -179,7 +179,7 @@
 
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
-            made an offer of {{ item.bid }} {{ marketTocken.symbol }}
+            made an offer of {{ item.bid }} {{ marketToken.symbol }}
           </div>
         </div>
       </div>
@@ -188,7 +188,7 @@
       <div class="dialog-content">
         <div v-if="buyApproving" class="input-body">
           <input :value="auction.auction_fixed_price" disabled placeholder="amount" type="number" />
-          <span class="unit">{{ marketTocken.symbol }}</span>
+          <span class="unit">{{ marketToken.symbol }}</span>
         </div>
         <div v-else class="approve-text">Please Approve contract before buy</div>
         <button v-if="!buyApproving" v-loading="isLoading" @click="approveLinkBuy">APPROVE</button>
@@ -199,7 +199,7 @@
       <div class="dialog-content">
         <div v-if="bidApproving" class="input-body">
           <input v-model="bidAmount" placeholder="amount" type="number" />
-          <span class="unit">{{ marketTocken.symbol }}</span>
+          <span class="unit">{{ marketToken.symbol }}</span>
         </div>
         <div v-else class="approve-text">Please Approve contract before place bid</div>
         <button v-if="!bidApproving" v-loading="isLoading" @click="approveLinkBid">APPROVE</button>
@@ -237,7 +237,7 @@ export default defineComponent({
   },
   setup() {
     const marketCurrency = "WETH";
-    const marketTocken = DAPP_CONFIG.tokens[marketCurrency];
+    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
     // TODO
     const bidAmount = ref(null);
     const router = useRouter();
@@ -255,7 +255,7 @@ export default defineComponent({
     const findApproveValue = async () => {
       const connectedAccount = store.state.user.info.address;
       const AuctionMiningAddress = auction.value.auction_contract;
-      const token = DAPP_CONFIG.tokens[marketCurrency];
+      const token = marketToken.value;
       if (!token) return;
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       // 检查拍卖出价链上权限
@@ -289,7 +289,7 @@ export default defineComponent({
       const notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
       const AuctionMiningAddress = auction.value.auction_contract; // DAPP_CONFIG.contracts.Auction;
-      const token = DAPP_CONFIG.tokens[marketCurrency];
+      const token = marketToken.value;
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       try {
         // 授权
@@ -332,7 +332,7 @@ export default defineComponent({
       const notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
       const AuctionMiningAddress = auction.value.auction_contract; // DAPP_CONFIG.contracts.Auction;
-      const token = DAPP_CONFIG.tokens[marketCurrency];
+      const token = marketToken.value;
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       try {
         // 授权
@@ -420,7 +420,7 @@ export default defineComponent({
       filter();
       isLoading.value = true;
       let notifyId = notification.loading("Offering");
-      const token = DAPP_CONFIG.tokens[marketCurrency];
+      const token = marketToken.value;
       const amount = new BigNumber(bidAmount.value).shiftedBy(token.decimals).toNumber();
       console.log(auction.value.auction_match_id, auction.value.auction_token_index, amount);
       // 出价
@@ -540,13 +540,13 @@ export default defineComponent({
     });
     let interval = null;
     onMounted(async () => {
-      // eslint-disable-next-line no-unused-vars
       const { id, id2 } = route.params;
       http.globalGetAuctionBidsById({ aid: id2 }, { id }).then((res) => {
         auctionBids.value = res.list;
       });
       const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
       auction.value = list && list.length > 0 ? list[0] : {};
+      marketToken.value = DAPP_CONFIG.tokens[auction.value.biding_coin.toUpperCase()];
       if (auction.value.token_id) {
         await VoteMining.getMintRewards(DAPP_CONFIG.nfts.UniartsNFT.address, auction.value.token_id)
           .then((tokenMint) => {
@@ -629,7 +629,7 @@ export default defineComponent({
       clearInterval(interval);
     });
     return {
-      marketTocken,
+      marketToken,
       marketCurrency,
       getAuctionDateString,
       getAuctionDate,

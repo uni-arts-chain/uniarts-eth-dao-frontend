@@ -34,7 +34,7 @@
                   Number(item.auction_latest_price)
                     ? item.auction_latest_price
                     : item.auction_min_bid
-                } ${marketTocken.symbol}`
+                } ${item.biding_coin}`
               }}
             </div>
           </div>
@@ -68,7 +68,7 @@
           </router-link>
           <div class="info">
             <div class="name">{{ item.art.name }}</div>
-            <div class="price">Price: {{ item.price }} {{ marketTocken.symbol }}</div>
+            <div class="price">Price: {{ item.price }} {{ item.biding_coin }}</div>
           </div>
         </div>
       </div>
@@ -115,7 +115,7 @@
                   Number(item.auction_latest_price)
                     ? item.auction_latest_price
                     : item.auction_min_bid
-                } ${marketTocken.symbol}`
+                } ${item.biding_coin}`
               }}
             </div>
           </div>
@@ -161,7 +161,7 @@
           </router-link>
           <div class="info">
             <div class="name">{{ item.art.name }}</div>
-            <div class="price">Price: {{ item.price }} {{ marketTocken.symbol }}</div>
+            <div class="price">Price: {{ item.price }} {{ item.biding_coin }}</div>
           </div>
         </div>
         <router-link
@@ -201,7 +201,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import store from "@/store";
 import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
-import { DAPP_CONFIG } from "@/config";
+// import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
   name: "index",
@@ -209,8 +209,8 @@ export default defineComponent({
     AdaptiveView,
   },
   setup() {
-    const marketCurrency = "WETH";
-    const marketTocken = DAPP_CONFIG.tokens[marketCurrency];
+    // const marketCurrency = "WETH";
+    // const marketToken = DAPP_CONFIG.tokens[marketCurrency];
     store.dispatch("global/SetNavText", "Market");
 
     const auctionList = ref([]);
@@ -259,8 +259,8 @@ export default defineComponent({
     };
     onMounted(() => getAuctionListData());
     return {
-      marketCurrency,
-      marketTocken,
+      // marketCurrency,
+      // marketToken,
       auctionList,
       auctionCurrentPage,
       auctionPerPage,

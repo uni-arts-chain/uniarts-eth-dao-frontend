@@ -15,7 +15,7 @@
         <div class="bid">
           <span> Price: </span>
           <span class="value">{{ auction.price }}</span>
-          <span>{{ marketTocken.symbol }}</span>
+          <span>{{ marketToken.symbol }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -31,7 +31,7 @@
         </div>
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
-            made an offer of {{ item.bid }} {{ marketTocken.symbol }}
+            made an offer of {{ item.bid }} {{ marketToken.symbol }}
           </div>
         </div>
       </div>
@@ -115,7 +115,7 @@
         <div class="bid">
           <span>Price: &nbsp;&nbsp;</span>
           <span class="value">{{ auction.price }}</span>
-          <span>{{ marketTocken.symbol }}</span>
+          <span>{{ marketToken.symbol }}</span>
         </div>
       </div>
       <div class="bid-history">
@@ -173,7 +173,7 @@ export default defineComponent({
   },
   setup() {
     const marketCurrency = "WETH";
-    const marketTocken = DAPP_CONFIG.tokens[marketCurrency];
+    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
     const isLoading = ref(false);
     const router = useRouter();
     const route = useRoute();
@@ -191,9 +191,9 @@ export default defineComponent({
       http.globalGetArtOrderById({}, { id }).then((res) => {
         console.log(res);
         auction.value = res;
-        token = DAPP_CONFIG.tokens[marketCurrency];
+        marketToken.value = DAPP_CONFIG.tokens[auction.value.biding_coin.toUpperCase()];
+        token = marketToken.value;
         const connectedAccount = store.state.user.info.address;
-
         currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
         // 查看链上权限
         currentErc20
@@ -248,7 +248,7 @@ export default defineComponent({
       notification.dismiss(notifyId);
       notifyId = notification.loading("Please wait for the wallet's response");
       const amount = new BigNumber(auction.value.price)
-        .shiftedBy(DAPP_CONFIG.tokens[marketCurrency].decimals)
+        .shiftedBy(marketToken.value.decimals)
         .toNumber();
 
       await TrustMarketplace.safePlaceBid(
@@ -287,7 +287,7 @@ export default defineComponent({
     };
     return {
       marketCurrency,
-      marketTocken,
+      marketToken,
       auction,
       onBack,
       buyNow,

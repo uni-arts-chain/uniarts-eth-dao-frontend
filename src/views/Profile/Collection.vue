@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="operate">
-            <button>List</button>
+            <button @click="() => openListDialog(v)">List</button>
             <button @click="() => openSendDialog(v)">Send</button>
             <!-- <button @click="() => pin(v)">Pin</button> -->
             <button disabled>Pin</button>
@@ -40,6 +40,64 @@
         <button v-loading="isLoading" @click="send">Send</button>
       </div>
     </Mobilecomfirm>
+    <Dialog v-if="!$store.state.global.isMobile" v-model="listDialog" type="small">
+      <div class="dialog-content">
+        <div v-show="!approving" class="list-select">
+          <!--          <span-->
+          <!--            :class="{ 'select-item': listSelect === 0 }"-->
+          <!--            class="list-item"-->
+          <!--            @click="listSelect = 0"-->
+          <!--          >-->
+          <!--            Listing to Auction-->
+          <!--          </span>-->
+          <span
+            :class="{ 'select-item': listSelect === 1 }"
+            class="list-item"
+            @click="listSelect = 1"
+          >
+            Listing to BuyNow Market
+          </span>
+        </div>
+        <div v-show="listSelect === 1">
+          <div class="input-body">
+            <span class="unit">{{ marketToken.symbol }}</span>
+            <input v-model="selectItem.price" />
+          </div>
+          <button v-loading="isLoading" @click="creatToBuyNowMarket">
+            {{ approving ? "Creat on Buynow Markrt" : "Approve" }}
+          </button>
+        </div>
+      </div>
+    </Dialog>
+    <Mobilecomfirm v-else v-model="listDialog" type="small">
+      <div class="dialog-content">
+        <div v-show="!approving" class="list-select">
+          <!--          <span-->
+          <!--            :class="{ 'select-item': listSelect === 0 }"-->
+          <!--            class="list-item"-->
+          <!--            @click="listSelect = 0"-->
+          <!--          >-->
+          <!--            Listing to Auction-->
+          <!--          </span>-->
+          <span
+            :class="{ 'select-item': listSelect === 1 }"
+            class="list-item"
+            @click="listSelect = 1"
+          >
+            Listing to BuyNow Market
+          </span>
+        </div>
+        <div v-show="listSelect === 1">
+          <div class="input-body">
+            <span class="unit">{{ marketToken.symbol }}</span>
+            <input v-model="selectItem.price" />
+          </div>
+          <button v-loading="isLoading" @click="creatToBuyNowMarket">
+            {{ approving ? "Creat on Buynow Markrt" : "Approve" }}
+          </button>
+        </div>
+      </div>
+    </Mobilecomfirm>
   </div>
 </template>
 
@@ -60,6 +118,8 @@ import Pin from "@/contracts/Collection";
 import { DAPP_CONFIG } from "@/config";
 import store from "@/store";
 import Web3 from "web3";
+import TrustMarketplace from "@/contracts/TrustMarketplace";
+import { toBN } from "web3-utils";
 
 export default defineComponent({
   name: "collection",
@@ -69,11 +129,16 @@ export default defineComponent({
     Progress,
   },
   setup() {
+    const marketCurrency = "WETH";
+    const marketToken = DAPP_CONFIG.tokens[marketCurrency];
     const width = 70;
     const sendDialog = ref(false);
+    const listDialog = ref(false);
+    const listSelect = ref(1);
     const sender = ref("");
     const isLoading = ref(false);
     const list = ref([]);
+    const approving = ref(false);
     const requestData = () => {
       // isLoading.value = true;
       http
@@ -94,13 +159,15 @@ export default defineComponent({
     onMounted(() => {
       requestData();
     });
-    let selectItem = null;
+    let selectItem = ref(null);
     const openSendDialog = (v) => {
-      selectItem = v;
+      selectItem.value = v;
       sendDialog.value = true;
+      listSelect.value = 0;
     };
     const closeSendDiaLog = () => {
       sendDialog.value = false;
+      selectItem.value = null;
       requestData();
     };
     const send = () => {
@@ -112,11 +179,11 @@ export default defineComponent({
       const erc721 = new Erc721(nft.address, nft.symbol);
       console.log({
         sender: sender.value,
-        token_id: selectItem.token_id,
+        token_id: selectItem.value.token_id,
       });
       let notifyId = notification.loading("In transferred assets");
       erc721
-        .sendNft(sender.value, selectItem.token_id, (err, txHash) => {
+        .sendNft(sender.value, selectItem.value.token_id, (err, txHash) => {
           if (err) {
             console.log(err);
             notification.dismiss(notifyId);
@@ -238,12 +305,117 @@ export default defineComponent({
           );
         });
     };
+    const openListDialog = (item) => {
+      console.log(item);
+      selectItem.value = item;
+      listDialog.value = true;
+      approving.value = false;
+    };
+    const closeListDialog = () => {
+      listDialog.value = false;
+      selectItem.value = null;
+      requestData();
+    };
+    const creatToBuyNowMarket = async () => {
+      isLoading.value = true;
+      const sender = store.state.user.info.address;
+      const nft = DAPP_CONFIG.nfts.UniartsNFT;
+      const erc721 = new Erc721(nft.address, nft.symbol);
+      const contract = TrustMarketplace;
+      if (approving.value) {
+        let notifyId = notification.loading("Wait For the Wallet");
+        try {
+          await contract.createOrder(
+            DAPP_CONFIG.nfts.UniartsNFT.address,
+            selectItem.value.token_id,
+            toBN(selectItem.value.price),
+            Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
+            (err, txHash) => {
+              if (err) {
+                console.log(err);
+                notification.dismiss(notifyId);
+                throw err;
+              }
+              if (txHash) {
+                // isLoading.value = true;
+                console.log({
+                  txHash,
+                  sender,
+                  address: contract.address,
+                  token_id: selectItem.value.token_id,
+                });
+                notification.dismiss(notifyId);
+                notification.success(txHash);
+                isLoading.value = false;
+                closeListDialog();
+              }
+            }
+          );
+          isLoading.value = false;
+          notification.dismiss(notifyId);
+          notification.success("Confirmed on Chain");
+        } catch (e) {
+          isLoading.value = false;
+          notification.dismiss(notifyId);
+          notification.error("Creat To Market Error");
+        }
+      } else {
+        let bool;
+        try {
+          const res = await erc721.getApproved(selectItem.value.token_id);
+          bool = res.toString() === Pin.address.toString();
+        } catch (err) {
+          console.log(err);
+          bool = false;
+        }
+        if (bool) {
+          approving.value = true;
+        } else {
+          let notifyId = notification.loading("Wait For the Wallet");
+          try {
+            await erc721.approve(
+              sender,
+              contract.address,
+              selectItem.value.token_id,
+              (err, txHash) => {
+                if (err) {
+                  console.log(err);
+                  notification.dismiss(notifyId);
+                  throw err;
+                }
+                if (txHash) {
+                  // isLoading.value = true;
+                  console.log({
+                    txHash,
+                    sender,
+                    address: contract.address,
+                    token_id: selectItem.value.token_id,
+                  });
+                  notification.dismiss(notifyId);
+                  notification.success(txHash);
+                  isLoading.value = false;
+                  approving.value = true;
+                }
+              }
+            );
+            isLoading.value = false;
+            notification.dismiss(notifyId);
+            notification.success("Approve Success");
+          } catch (e) {
+            isLoading.value = false;
+            notification.dismiss(notifyId);
+            notification.error("Approve Error");
+          }
+        }
+      }
+    };
     const router = useRouter();
     const goDetail = (id) => {
       router.push("/marketplace/detail/" + id);
     };
     return {
       pin,
+      selectItem,
       sendDialog,
       list,
       width,
@@ -252,6 +424,13 @@ export default defineComponent({
       isLoading,
       openSendDialog,
       goDetail,
+      openListDialog,
+      closeListDialog,
+      listDialog,
+      listSelect,
+      creatToBuyNowMarket,
+      marketToken,
+      approving,
     };
   },
 });
@@ -351,6 +530,35 @@ export default defineComponent({
 }
 
 .dialog-content {
+  .list-select {
+    //font-size: 18px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    :first-child {
+      border-top-left-radius: 10px;
+    }
+
+    :last-child {
+      border-top-right-radius: 10px;
+    }
+    .list-item {
+      padding-top: 10px;
+      padding-bottom: 10px;
+      flex: 1;
+      text-align: center;
+      background-color: #fff;
+      cursor: auto;
+    }
+
+    .select-item {
+      background-color: #d0d0d0;
+      color: #000;
+    }
+  }
+
   .input-body {
     margin-top: 20px;
     display: flex;
