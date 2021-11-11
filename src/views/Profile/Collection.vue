@@ -120,6 +120,7 @@ import store from "@/store";
 import Web3 from "web3";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
 import { toBN } from "web3-utils";
+import { BigNumber } from "@/plugins/bignumber";
 
 export default defineComponent({
   name: "collection",
@@ -328,7 +329,9 @@ export default defineComponent({
           await contract.createOrder(
             DAPP_CONFIG.nfts.UniartsNFT.address,
             selectItem.value.token_id,
-            toBN(selectItem.value.price),
+            BigNumber(selectItem.value.price)
+              .shiftedBy(DAPP_CONFIG.tokens.WETH.decimals)
+              .toString(),
             Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
             (err, txHash) => {
               if (err) {
@@ -537,6 +540,7 @@ export default defineComponent({
     width: 100%;
     display: flex;
     flex-direction: row;
+
     :first-child {
       border-top-left-radius: 10px;
     }
@@ -544,6 +548,7 @@ export default defineComponent({
     :last-child {
       border-top-right-radius: 10px;
     }
+
     .list-item {
       padding-top: 10px;
       padding-bottom: 10px;
