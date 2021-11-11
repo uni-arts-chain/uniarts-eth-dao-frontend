@@ -18,6 +18,9 @@
           <li class="menu-li">
             <router-link class="link" to="/profile/collection">My Collection</router-link>
           </li>
+          <!--          <li class="menu-li">-->
+          <!--            <router-link class="link" to="/profile/my_order">My Collection</router-link>-->
+          <!--          </li>-->
           <li class="menu-li">
             <router-link class="link" to="/profile/unbond">Unbond History</router-link>
           </li>

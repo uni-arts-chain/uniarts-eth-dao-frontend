@@ -84,6 +84,15 @@ const apiList = [
     params: {},
     options: {},
   },
+  // {
+  //   name: "getOrderNFT",
+  //   method: "GET",
+  //   desc: "我的挂单",
+  //   path: "/art_orders/mine",
+  //   mockPath: "/art_orders/mine",
+  //   params: {},
+  //   options: {},
+  // },
   {
     name: "getUnbindHistory",
     method: "GET",
