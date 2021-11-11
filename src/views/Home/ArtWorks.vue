@@ -7,19 +7,19 @@
       <div class="offers-head">Offers</div>
     </div>
     <div class="list-body">
-      <div class="auctions-body" v-if="auctions.length">
+      <div v-if="auctions.length" class="auctions-body">
         <div
           class="main-item"
           @click="$router.push(`/marketplace/auction/${auctions[0].auction_id}/${auctions[0].id}`)"
         >
-          <AdaptiveView :nft="auctions[0]" :isResponsive="true" :isPreview="true" />
+          <AdaptiveView :isPreview="true" :isResponsive="true" :nft="auctions[0]" />
         </div>
         <div class="artist-info">
           <div class="avatar">
             <div class="avatar-image" @click="$router.push('/artist/' + auctions[0].artist_uid)">
               <img
-                :src="auctions[0].artist_avatar || require('@/assets/images/avatar@2x.png')"
                 :alt="auctions[0].artist_name"
+                :src="auctions[0].artist_avatar || require('@/assets/images/avatar@2x.png')"
               />
               <div class="name">{{ auctions[0].artist_name }}</div>
             </div>
@@ -34,7 +34,7 @@
                     : auctions[0].auction_min_bid
                 }}
               </span>
-              <span> {{ " " + auctions[0].currency_code?.toUpperCase() }}</span>
+              <span> {{ " " + auctions[0].biding_coin }}</span>
             </div>
             <div class="vote-date">
               <img src="@/assets/images/date-clock.png" />
@@ -44,19 +44,19 @@
         </div>
       </div>
       <div
-        class="offers-body"
         v-if="auctions.filter((item, index) => index >= 1 && index <= 3).length"
+        class="offers-body"
       >
         <div
-          class="sub-item"
           v-for="item of auctions.filter((item, index) => index >= 1 && index <= 3)"
           :key="item.id"
+          class="sub-item"
         >
           <div
             class="item-content"
             @click="$router.push(`/marketplace/auction/${item.auction_id}/${item.id}`)"
           >
-            <AdaptiveView :nft="item" :isResponsive="true" :isPreview="true" />
+            <AdaptiveView :isPreview="true" :isResponsive="true" :nft="item" />
           </div>
           <div class="item-user">
             <div class="username">{{ item.name }}@</div>
@@ -66,22 +66,22 @@
                   ? item.auction_latest_price
                   : item.auction_min_bid) +
                 " " +
-                item.currency_code?.toUpperCase()
+                item.biding_coin
               }}
             </div>
           </div>
         </div>
       </div>
-      <div class="offers-body" v-else>No data temporarily</div>
+      <div v-else class="offers-body">No data temporarily</div>
     </div>
     <div class="list-head">
       <div class="auctions-head">Buy Now</div>
       <div class="offers-head">Offers</div>
     </div>
     <div class="list-body">
-      <div class="auctions-body" v-if="artOrderList.length">
+      <div v-if="artOrderList.length" class="auctions-body">
         <div class="main-item" @click="$router.push(`/marketplace/buy/${artOrderList[0].id}`)">
-          <AdaptiveView :nft="artOrderList[0].art" :isResponsive="true" :isPreview="true" />
+          <AdaptiveView :isPreview="true" :isResponsive="true" :nft="artOrderList[0].art" />
         </div>
         <div class="artist-info">
           <div class="avatar">
@@ -99,7 +99,7 @@
             <div class="vote-number">
               <span> Price </span>
               <span style="color: #fe0000">{{ artOrderList[0].price }}</span>
-              <span> {{ artOrderList[0].art.currency_code.toUpperCase() }} </span>
+              <span> {{ marketToken.symbol }} </span>
             </div>
             <!--            <div class="vote-date">-->
             <!--              <img src="@/assets/images/date-clock.png" />-->
@@ -109,26 +109,24 @@
         </div>
       </div>
       <div
-        class="offers-body"
         v-if="artOrderList.filter((item, index) => index >= 1 && index <= 3).length"
+        class="offers-body"
       >
         <div
-          class="sub-item"
           v-for="item of artOrderList.filter((item, index) => index >= 1 && index <= 3)"
           :key="item.id"
+          class="sub-item"
         >
           <div class="item-content" @click="$router.push(`/marketplace/buy/${item.id}`)">
-            <AdaptiveView :nft="item.art" :isResponsive="true" :isPreview="true" />
+            <AdaptiveView :isPreview="true" :isResponsive="true" :nft="item.art" />
           </div>
           <div class="item-user">
             <div class="username">{{ item.art.name }} @</div>
-            <div style="color: #fe0000">
-              {{ item.price }}{{ item.art.currency_code.toUpperCase() }}
-            </div>
+            <div style="color: #fe0000">{{ item.price }}{{ marketToken.symbol }}</div>
           </div>
         </div>
       </div>
-      <div class="offers-body" v-else>No data temporarily</div>
+      <div v-else class="offers-body">No data temporarily</div>
     </div>
   </div>
 </template>
@@ -139,6 +137,7 @@ import http from "@/plugins/http";
 import AdaptiveView from "@/components/AdaptiveView";
 import Auction from "@/contracts/Auction";
 import moment from "moment";
+import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
   name: "artworks",
@@ -146,6 +145,8 @@ export default defineComponent({
     AdaptiveView,
   },
   setup() {
+    const marketCurrency = "WETH";
+    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
     const auctions = ref([]);
     const now = ref(0);
     let interval = null;
@@ -215,7 +216,13 @@ export default defineComponent({
         clearInterval(interval);
       }
     });
-    return { auctions, getAuctionDateString, artOrderList };
+    return {
+      auctions,
+      getAuctionDateString,
+      artOrderList,
+      marketCurrency,
+      marketToken,
+    };
   },
 });
 </script>

@@ -15,7 +15,7 @@
         'img-origin': isOrigin,
       }"
       @load="imgOnLoad"
-      :src="url"
+      :src="cover"
     />
     <img
       ref="img"

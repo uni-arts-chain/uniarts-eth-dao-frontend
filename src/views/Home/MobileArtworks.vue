@@ -12,14 +12,14 @@
         </div>
       </div>
       <div v-if="curTab === 1" class="tab-body">
-        <div class="no-data" v-if="auctions.length == 0">No data</div>
+        <div v-if="auctions.length == 0" class="no-data">No data</div>
         <div v-for="item of auctions" :key="item.id" class="item">
           <AdaptiveView
+            :isPreview="true"
+            :isResponsive="true"
             :nft="item"
             height="330px"
             width="330px"
-            :isResponsive="true"
-            :isPreview="true"
             @click="$router.push(`/marketplace/auction/${item.auction_id}/${item.id}`)"
           />
           <div class="info">
@@ -36,21 +36,21 @@
                   ? item.auction_latest_price
                   : item.auction_min_bid) +
                 " " +
-                item.currency_code?.toUpperCase()
+                item.biding_coin
               }}</span>
             </div>
           </div>
         </div>
       </div>
       <div v-if="curTab === 2" class="tab-body">
-        <div class="no-data" v-if="artOrderList.length == 0">No data</div>
+        <div v-if="artOrderList.length == 0" class="no-data">No data</div>
         <div v-for="item of artOrderList" :key="item.id" class="item">
           <AdaptiveView
+            :isPreview="true"
+            :isResponsive="true"
             :nft="item.art"
             height="330px"
             width="330px"
-            :isResponsive="true"
-            :isPreview="true"
             @click="$router.push(`/marketplace/buy/${item.id}`)"
           />
           <div class="info">
@@ -59,9 +59,7 @@
             </div>
             <div class="price">
               Price
-              <span style="color: red">{{
-                item.price + " " + item.art.currency_code?.toUpperCase()
-              }}</span>
+              <span style="color: red">{{ item.price + " " + marketToken.symbol }}</span>
             </div>
           </div>
         </div>
@@ -74,6 +72,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
+import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
   name: "mobile-artworks",
@@ -81,6 +80,8 @@ export default defineComponent({
     AdaptiveView,
   },
   setup() {
+    const marketCurrency = "WETH";
+    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
     // TODO
     const curTab = ref(1);
     const auctions = ref([]);
@@ -108,6 +109,7 @@ export default defineComponent({
       curTab,
       artOrderList,
       auctions,
+      marketToken,
     };
   },
 });
@@ -181,6 +183,7 @@ export default defineComponent({
     }
   }
 }
+
 .no-data {
   color: #aaa;
   font-size: 13px;

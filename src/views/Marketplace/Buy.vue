@@ -25,8 +25,8 @@
         <!--        </div>-->
         <div class="button-group">
           <!--          <button @click="openMakeOfferDialog">Make an Offer</button>-->
-          <button @click="buyNow">
-            {{ isApproving ? "Collect Now" : "Approve & Collect Now" }}
+          <button v-loading="isLoading" @click="buyNow">
+            {{ isApproving ? "Collect Now" : "Approve" }}
           </button>
         </div>
         <div class="bid-list">
@@ -38,7 +38,7 @@
     </div>
     <div class="center">
       <div class="nft">
-        <AdaptiveView :nft="auction.art ? auction.art : {}" width="520px" height="515px" />
+        <AdaptiveView :nft="auction.art ? auction.art : {}" height="515px" width="520px" />
       </div>
       <!--      <div class="notice">-->
       <!--        <img src="@/assets/images/date-clock.png" />-->
@@ -120,8 +120,8 @@
       </div>
       <div class="bid-history">
         <div class="button-group">
-          <button @click="buyNow">
-            {{ isApproving ? "Collect Now" : "Approve & Collect Now" }}
+          <button v-loading="isLoading" @click="buyNow">
+            {{ isApproving ? "Collect Now" : "Approve" }}
           </button>
         </div>
       </div>
@@ -162,7 +162,6 @@ import AdaptiveView from "@/components/AdaptiveView";
 import { notification } from "@/components/Notification";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
 import { BigNumber } from "@/plugins/bignumber";
-import { toBN } from "web3-utils";
 // import Dialog from "@/components/Dialog";
 // import Mobilecomfirm from "@/components/MobileConfirm";
 
@@ -206,6 +205,17 @@ export default defineComponent({
       });
     });
     const buyNow = async () => {
+      let bool;
+      try {
+        const res = await TrustMarketplace.orderByAssetId(
+          DAPP_CONFIG.nfts.UniartsNFT.address,
+          auction.value.art.token_id
+        );
+        bool = new BigNumber(res[0]).toNumber();
+      } catch (e) {
+        bool = false;
+      }
+      if (!bool) return notification.info("NFT Has Been Sold");
       let notifyId = null;
       isLoading.value = true;
       const connectedAccount = store.state.user.info.address;
@@ -242,47 +252,47 @@ export default defineComponent({
           );
           throw err;
         }
-      }
-      // 购买nft
-      notification.dismiss(notifyId);
-      notifyId = notification.loading("Please wait for the wallet's response");
-      const amount = new BigNumber(auction.value.price)
-        .shiftedBy(marketToken.value.decimals)
-        .toNumber();
-
-      await TrustMarketplace.safePlaceBid(
-        DAPP_CONFIG.nfts.UniartsNFT.address,
-        auction.value.art.token_id,
-        toBN(amount),
-        Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
-        async (err, txHash) => {
-          if (err) {
-            console.log(err);
-            throw err;
+        notification.dismiss(notifyId);
+      } else {
+        // 购买nft
+        isLoading.value = true;
+        notifyId = notification.loading("Please wait for the wallet's response");
+        const amount = new BigNumber(auction.value.price).shiftedBy(marketToken.value.decimals);
+        await TrustMarketplace.safePlaceBid(
+          DAPP_CONFIG.nfts.UniartsNFT.address,
+          auction.value.art.token_id,
+          amount,
+          Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
+          async (err, txHash) => {
+            if (err) {
+              console.log(err);
+              throw err;
+            }
+            if (txHash) {
+              console.log(txHash);
+              notification.dismiss(notifyId);
+              notification.success(txHash);
+              notification.success("Purchasing");
+            }
           }
-          if (txHash) {
-            isLoading.value = true;
-            console.log(txHash);
+        )
+          .then((receipt) => {
+            isLoading.value = false;
             notification.dismiss(notifyId);
-            notification.success(txHash);
-            notification.success("Purchasing");
-          }
-        }
-      )
-        .then((receipt) => {
-          notification.dismiss(notifyId);
-          console.log("receipt: ", receipt);
-        })
-        .catch((err) => {
-          notification.dismiss(notifyId);
-          notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
-          );
-          console.log(err);
-        });
+            console.log("receipt: ", receipt);
+          })
+          .catch((err) => {
+            isLoading.value = false;
+            notification.dismiss(notifyId);
+            notification.error(
+              err.message.split("{")[0] ||
+                (err.head && err.head.msg) ||
+                err.message ||
+                (err.data && err.data.message)
+            );
+            console.log(err);
+          });
+      }
     };
     return {
       marketCurrency,
@@ -291,6 +301,7 @@ export default defineComponent({
       onBack,
       buyNow,
       isApproving,
+      isLoading,
     };
   },
 });

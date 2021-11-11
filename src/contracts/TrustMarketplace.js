@@ -15,6 +15,10 @@ class TrustMarketplace {
   async gasPrice() {
     return await this.web3.eth.getGasPrice();
   }
+  //查询订单是否存在
+  orderByAssetId(nftAddress, assetId) {
+    return this.contract.methods.orderByAssetId(nftAddress, assetId).call();
+  }
 
   // buyNow
   async safePlaceBid(nftAddress, assetId, priceInWei, expiresAt, callback) {
