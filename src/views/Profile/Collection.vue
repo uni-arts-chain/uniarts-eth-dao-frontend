@@ -60,8 +60,8 @@
         </div>
         <div v-show="listSelect === 1">
           <div class="input-body">
+            <input v-model="listPrice" />
             <span class="unit">{{ marketToken.symbol }}</span>
-            <input v-model="selectItem.price" />
           </div>
           <button v-loading="isLoading" @click="creatToBuyNowMarket">
             {{ approving ? "Creat on Buynow Markrt" : "Approve" }}
@@ -89,8 +89,8 @@
         </div>
         <div v-show="listSelect === 1">
           <div class="input-body">
+            <input v-model="listPrice" />
             <span class="unit">{{ marketToken.symbol }}</span>
-            <input v-model="selectItem.price" />
           </div>
           <button v-loading="isLoading" @click="creatToBuyNowMarket">
             {{ approving ? "Creat on Buynow Markrt" : "Approve" }}
@@ -129,6 +129,7 @@ export default defineComponent({
     Progress,
   },
   setup() {
+    const listPrice = ref("");
     const marketCurrency = "WETH";
     const marketToken = DAPP_CONFIG.tokens[marketCurrency];
     const width = 70;
@@ -168,7 +169,6 @@ export default defineComponent({
     const closeSendDiaLog = () => {
       sendDialog.value = false;
       selectItem.value = null;
-      requestData();
     };
     const send = () => {
       const bool = Web3.utils.isAddress(sender.value);
@@ -310,11 +310,12 @@ export default defineComponent({
       selectItem.value = item;
       listDialog.value = true;
       approving.value = false;
+      listPrice.value = "";
     };
     const closeListDialog = () => {
       listDialog.value = false;
       selectItem.value = null;
-      requestData();
+      listPrice.value = "";
     };
     const creatToBuyNowMarket = async () => {
       isLoading.value = true;
@@ -328,14 +329,15 @@ export default defineComponent({
           await contract.createOrder(
             DAPP_CONFIG.nfts.UniartsNFT.address,
             selectItem.value.token_id,
-            BigNumber(selectItem.value.price)
-              .shiftedBy(DAPP_CONFIG.tokens.WETH.decimals)
-              .toString(),
+            BigNumber(listPrice.value).shiftedBy(DAPP_CONFIG.tokens.WETH.decimals).toString(),
             Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
             (err, txHash) => {
               if (err) {
                 console.log(err);
                 notification.dismiss(notifyId);
+                notification.error(
+                  (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+                );
                 throw err;
               }
               if (txHash) {
@@ -356,16 +358,20 @@ export default defineComponent({
           isLoading.value = false;
           notification.dismiss(notifyId);
           notification.success("Confirmed on Chain");
-        } catch (e) {
+        } catch (err) {
           isLoading.value = false;
           notification.dismiss(notifyId);
-          notification.error("Creat To Market Error");
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
         }
       } else {
         let bool;
         try {
           const res = await erc721.getApproved(selectItem.value.token_id);
-          bool = res.toString() === Pin.address.toString();
+          bool = res.toString() === contract.address.toString();
+          isLoading.value = false;
+          notification.success("Your Approved");
         } catch (err) {
           console.log(err);
           bool = false;
@@ -433,6 +439,7 @@ export default defineComponent({
       creatToBuyNowMarket,
       marketToken,
       approving,
+      listPrice,
     };
   },
 });
@@ -591,6 +598,7 @@ export default defineComponent({
       line-height: 48px;
       padding: 0 10px;
       border-right: 1px solid #e3e4e5;
+      border-left: 1px solid #e3e4e5;
     }
   }
 

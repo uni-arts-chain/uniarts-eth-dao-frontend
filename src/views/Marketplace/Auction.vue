@@ -47,7 +47,7 @@
           >
             Collect Now
           </button>
-          <button v-if="startEnd.startDate && startEnd.endDate" @click="withdrawBid">
+          <button v-if="startEnd.startDate && startEnd.endDate && myOrder" @click="withdrawBid">
             Withdraw Bid
           </button>
           <span style="font-size: 14px; color: #666"
@@ -501,7 +501,7 @@ export default defineComponent({
           );
         });
     };
-
+    const myOrder = ref(null);
     const onBack = () => {
       router.back();
     };
@@ -539,10 +539,12 @@ export default defineComponent({
       }
     });
     let interval = null;
+
     onMounted(async () => {
       const { id, id2 } = route.params;
       http.globalGetAuctionBidsById({ aid: id2 }, { id }).then((res) => {
         auctionBids.value = res.list;
+        myOrder.value = (auctionBids.value || []).find((item) => item.is_mine);
       });
       const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
       auction.value = list && list.length > 0 ? list[0] : {};
@@ -652,6 +654,7 @@ export default defineComponent({
       buyApproving,
       approveLinkBuy,
       approveLinkBid,
+      myOrder,
     };
   },
 });

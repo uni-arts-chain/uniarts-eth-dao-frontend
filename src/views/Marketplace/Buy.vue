@@ -180,7 +180,6 @@ export default defineComponent({
     const auction = ref({});
     let isApproving = ref(false);
     let currentErc20 = null;
-    let token = null;
     const TrustMarketplaceMiningAddress = DAPP_CONFIG.contracts.TrustMarketplace;
     store.dispatch("global/SetNavText", "Auction");
     const onBack = () => {
@@ -191,8 +190,8 @@ export default defineComponent({
       http.globalGetArtOrderById({}, { id }).then((res) => {
         console.log(res);
         auction.value = res;
-        marketToken.value = DAPP_CONFIG.tokens[auction.value.biding_coin.toUpperCase()];
-        token = marketToken.value;
+        // marketToken.value = DAPP_CONFIG.tokens[auction.value.biding_coin.toUpperCase()];
+        const token = marketToken.value;
         const connectedAccount = store.state.user.info.address;
         currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
         // 查看链上权限
