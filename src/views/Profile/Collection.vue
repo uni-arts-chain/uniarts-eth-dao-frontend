@@ -119,7 +119,6 @@ import { DAPP_CONFIG } from "@/config";
 import store from "@/store";
 import Web3 from "web3";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
-import { toBN } from "web3-utils";
 import { BigNumber } from "@/plugins/bignumber";
 
 export default defineComponent({
