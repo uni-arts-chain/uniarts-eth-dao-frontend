@@ -24,7 +24,6 @@ class TrustMarketplace {
   async safePlaceBid(nftAddress, assetId, priceInWei, expiresAt, callback) {
     const sender = store.state.user.info.address;
     const gasPrice = await this.gasPrice();
-    console.info(priceInWei.toString());
     const tx = this.contract.methods.safePlaceBid(nftAddress, assetId, priceInWei, expiresAt);
     const gasLimit = await tx.estimateGas({
       value: 0,

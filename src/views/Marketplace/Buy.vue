@@ -162,6 +162,7 @@ import AdaptiveView from "@/components/AdaptiveView";
 import { notification } from "@/components/Notification";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
 import { BigNumber } from "@/plugins/bignumber";
+import { toBN } from "web3-utils";
 // import Dialog from "@/components/Dialog";
 // import Mobilecomfirm from "@/components/MobileConfirm";
 
@@ -257,7 +258,9 @@ export default defineComponent({
         // 购买nft
         isLoading.value = true;
         notifyId = notification.loading("Please wait for the wallet's response");
-        const amount = new BigNumber(auction.value.price).shiftedBy(marketToken.value.decimals);
+        const amount = toBN(
+          new BigNumber(auction.value.price).shiftedBy(marketToken.value.decimals).toNumber()
+        );
         await TrustMarketplace.safePlaceBid(
           DAPP_CONFIG.nfts.UniartsNFT.address,
           auction.value.art.token_id,
