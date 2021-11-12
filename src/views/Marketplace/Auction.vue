@@ -164,7 +164,7 @@
           >
             Collect Now
           </button>
-          <button v-if="startEnd.startDate && startEnd.endDate" @click="withdrawBid">
+          <button v-if="startEnd.startDate && startEnd.endDate && myOrder" @click="withdrawBid">
             Withdraw Bid
           </button>
           <div style="font-size: 14px; color: #595757; margin-bottom: 30px">
@@ -176,7 +176,6 @@
           <span>Total {{ auctionBids.length }} Bids</span>
         </div>
         Withdraw Bid
-
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
             made an offer of {{ item.bid }} {{ marketToken.symbol }}

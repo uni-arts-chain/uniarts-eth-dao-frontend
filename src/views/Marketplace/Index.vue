@@ -161,7 +161,9 @@
           </router-link>
           <div class="info">
             <div class="name">{{ item.art.name }}</div>
-            <div class="price">Price: {{ item.price }} {{ item.biding_coin }}</div>
+            <div class="price">
+              Price: <span style="color: red">{{ item.price }}</span> {{ " " + marketToken.symbol }}
+            </div>
           </div>
         </div>
         <router-link
