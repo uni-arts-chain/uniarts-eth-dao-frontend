@@ -52,12 +52,22 @@
     >
       <div class="dialog-content">
         <div class="tab">
-          <div class="tab-head">
+          <div class="tab-head" v-if="!getContractVersion(curNft.vote_contract)">
             <div class="tab-head-item" :class="{ active: dialogTab == 1 }" @click="dialogTab = 1">
               Retrieve to Wallet
             </div>
             <div class="tab-head-item" :class="{ active: dialogTab == 2 }" @click="dialogTab = 2">
               Retrieve to Bonded
+            </div>
+          </div>
+          <div class="tab-head" v-else>
+            <div
+              class="tab-head-item"
+              style="width: 100%; background-color: transparent; cursor: initial"
+              :class="{ active: dialogTab == 1 }"
+              @click="dialogTab = 1"
+            >
+              Retrieve to Wallet
             </div>
           </div>
           <div class="tab-content" v-if="dialogTab == 1">
@@ -100,12 +110,22 @@
     <MobileConfirm v-else v-model="dialogTableVisible" customClass="retrieve-confirm">
       <div class="confirm-content">
         <div class="tab">
-          <div class="tab-head">
+          <div class="tab-head" v-if="!getContractVersion(curNft.vote_contract)">
             <div class="tab-head-item" :class="{ active: dialogTab == 1 }" @click="dialogTab = 1">
               Retrieve to Wallet
             </div>
             <div class="tab-head-item" :class="{ active: dialogTab == 2 }" @click="dialogTab = 2">
               Retrieve to Bonded
+            </div>
+          </div>
+          <div class="tab-head" v-else>
+            <div
+              class="tab-head-item"
+              style="width: 100%; background-color: transparent; cursor: initial"
+              :class="{ active: dialogTab == 1 }"
+              @click="dialogTab = 1"
+            >
+              Retrieve to Wallet
             </div>
           </div>
           <div class="tab-content" v-if="dialogTab == 1">
