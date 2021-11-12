@@ -2,102 +2,24 @@
 <template>
   <div class="collection">
     <div v-if="list.length <= 0" class="no-data">No data</div>
-    <div v-for="v in list" :key="v" class="list">
+    <div v-for="v in list" :key="v.id" class="list">
       <div class="item">
-        <img :src="v.img_main_file1" alt="" @click="goDetail(v.id)" />
+        <div class="status" v-show="v.aasm_state !== 'online'">{{ v.aasm_state }}</div>
+        <img :src="v.art.img_main_file1.url" alt="" @click="goDetail(v.id)" />
         <div class="info">
           <div class="progress">
-            <Progress :value="v.number / v.total" />
+            <Progress :value="(v.art.number || 0) / (v.art.total || 1)" />
             <div class="value-group">
-              <span>Number of votes: {{ v.number }}</span>
-              <span>Total: {{ v.total }}</span>
+              <span>Number of votes: {{ v.art.number || 0 }}</span>
+              <span>Total: {{ v.art.total || 0 }}</span>
             </div>
           </div>
           <div class="operate">
-            <!--            <button @click="() => openListDialog(v)">List</button>-->
-            <!--            <button @click="() => openSendDialog(v)">Send</button>-->
-            <!-- <button @click="() => pin(v)">Pin</button> -->
-            <button disabled>Remove Order</button>
+            <button v-show="v.aasm_state === 'online'" @click="removeOrder(v)">Remove Order</button>
           </div>
         </div>
       </div>
     </div>
-    <Dialog v-if="!$store.state.global.isMobile" v-model="sendDialog" type="small">
-      <div class="dialog-content">
-        <div class="input-body">
-          <span class="unit">address</span>
-          <input v-model="sender" />
-        </div>
-        <button v-loading="isLoading" @click="send">Send</button>
-      </div>
-    </Dialog>
-    <Mobilecomfirm v-else v-model="sendDialog" type="small">
-      <div class="dialog-content">
-        <div class="input-body">
-          <span class="unit">address</span>
-          <input v-model="sender" />
-        </div>
-        <button v-loading="isLoading" @click="send">Send</button>
-      </div>
-    </Mobilecomfirm>
-    <Dialog v-if="!$store.state.global.isMobile" v-model="listDialog" type="small">
-      <div class="dialog-content">
-        <div v-show="!approving" class="list-select">
-          <!--          <span-->
-          <!--            :class="{ 'select-item': listSelect === 0 }"-->
-          <!--            class="list-item"-->
-          <!--            @click="listSelect = 0"-->
-          <!--          >-->
-          <!--            Listing to Auction-->
-          <!--          </span>-->
-          <span
-            :class="{ 'select-item': listSelect === 1 }"
-            class="list-item"
-            @click="listSelect = 1"
-          >
-            Listing to BuyNow Market
-          </span>
-        </div>
-        <div v-show="listSelect === 1">
-          <div class="input-body">
-            <input v-model="listPrice" />
-            <span class="unit">{{ marketToken.symbol }}</span>
-          </div>
-          <button v-loading="isLoading" @click="creatToBuyNowMarket">
-            {{ approving ? "Creat on Buynow Markrt" : "Approve" }}
-          </button>
-        </div>
-      </div>
-    </Dialog>
-    <Mobilecomfirm v-else v-model="listDialog" type="small">
-      <div class="dialog-content">
-        <div v-show="!approving" class="list-select">
-          <!--          <span-->
-          <!--            :class="{ 'select-item': listSelect === 0 }"-->
-          <!--            class="list-item"-->
-          <!--            @click="listSelect = 0"-->
-          <!--          >-->
-          <!--            Listing to Auction-->
-          <!--          </span>-->
-          <span
-            :class="{ 'select-item': listSelect === 1 }"
-            class="list-item"
-            @click="listSelect = 1"
-          >
-            Listing to BuyNow Market
-          </span>
-        </div>
-        <div v-show="listSelect === 1">
-          <div class="input-body">
-            <input v-model="listPrice" />
-            <span class="unit">{{ marketToken.symbol }}</span>
-          </div>
-          <button v-loading="isLoading" @click="creatToBuyNowMarket">
-            {{ approving ? "Creat on Buynow Markrt" : "Approve" }}
-          </button>
-        </div>
-      </div>
-    </Mobilecomfirm>
   </div>
 </template>
 
@@ -105,52 +27,32 @@
 import { defineComponent, ref, onMounted } from "vue";
 import Progress from "@/components/Progress";
 import { useRouter } from "vue-router";
-// import { BigNumber } from "@/plugins/bignumber";
-// import { DAPP_CONFIG } from "@/config";
-// import store from "@/store";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
-import Dialog from "@/components/Dialog";
-import config from "@/config/network";
-import Erc721 from "@/contracts/Erc721";
-import Mobilecomfirm from "@/components/MobileConfirm";
-import Pin from "@/contracts/Collection";
 import { DAPP_CONFIG } from "@/config";
-import store from "@/store";
-import Web3 from "web3";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
-import { BigNumber } from "@/plugins/bignumber";
 
 export default defineComponent({
   name: "MyOrder",
   components: {
-    Mobilecomfirm,
-    Dialog,
     Progress,
   },
   setup() {
-    const listPrice = ref("");
     const marketCurrency = "WETH";
     const marketToken = DAPP_CONFIG.tokens[marketCurrency];
     const width = 70;
-    const sendDialog = ref(false);
-    const listDialog = ref(false);
-    const listSelect = ref(1);
-    const sender = ref("");
     const isLoading = ref(false);
     const list = ref([]);
     const approving = ref(false);
     const requestData = () => {
-      // isLoading.value = true;
       http
         .userGetOrderNFT({})
         .then((res) => {
-          // isLoading.value = false;
-          list.value.splice(0, 0, ...res.list);
+          list.value.splice(0, 0, ...res);
+          console.log(list.value);
         })
         .catch((err) => {
           console.log(err);
-          // isLoading.value = false;
           notification.error(
             (err.head && err.head.msg) || err.message || (err.data && err.data.message)
           );
@@ -160,286 +62,60 @@ export default defineComponent({
     onMounted(() => {
       requestData();
     });
-    let selectItem = ref(null);
-    const openSendDialog = (v) => {
-      selectItem.value = v;
-      sendDialog.value = true;
-      listSelect.value = 0;
-    };
-    const closeSendDiaLog = () => {
-      sendDialog.value = false;
-      selectItem.value = null;
-    };
-    const send = () => {
-      const bool = Web3.utils.isAddress(sender.value);
-      if (!bool) {
-        return notification.info("Invalid address");
-      }
-      const nft = config.nfts.UniartsNFT;
-      const erc721 = new Erc721(nft.address, nft.symbol);
-      console.log({
-        sender: sender.value,
-        token_id: selectItem.value.token_id,
-      });
-      let notifyId = notification.loading("In transferred assets");
-      erc721
-        .sendNft(sender.value, selectItem.value.token_id, (err, txHash) => {
-          if (err) {
-            console.log(err);
-            notification.dismiss(notifyId);
-            notification.error(
-              err.message.split("{")[0] ||
-                (err.head && err.head.msg) ||
-                err.message ||
-                (err.data && err.data.message)
-            );
-            throw err;
-          }
-          if (txHash) {
-            closeSendDiaLog();
-            console.log(txHash);
-            notification.dismiss(notifyId);
-            notification.success(txHash);
-            notifyId = notification.loading("Confirming");
-          }
-        })
-        .then((res) => {
-          closeSendDiaLog();
-          console.log(res);
-          notification.dismiss(notifyId);
-          notification.success("Asset transfer succeeded");
-        })
-        .catch((err) => {
-          notification.dismiss(notifyId);
-          console.log(err);
-          notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
-          );
-        });
-    };
-    const pin = async (item) => {
-      let notifyId = notification.loading("Authorization in progress");
-      const sender = store.state.user.info.address;
-      const nft = DAPP_CONFIG.nfts.UniartsNFT;
-      const erc721 = new Erc721(nft.address, nft.symbol);
-      let bool = false;
-      try {
-        const res = await erc721.getApproved(item.token_id);
-        bool = res.toString() === Pin.address.toString();
-      } catch (err) {
-        console.log(err);
-        bool = false;
-      }
-      if (!bool) {
-        try {
-          console.log({
-            sender,
-            address: Pin.address,
-            token_id: item.token_id,
-          });
-          await erc721.approve(sender, Pin.address, item.token_id, (err, txHash) => {
-            if (err) {
-              console.log(err);
-              notification.dismiss(notifyId);
-              throw err;
-            }
-            if (txHash) {
-              // isLoading.value = true;
-              console.log(txHash);
-              notification.dismiss(notifyId);
-              notification.success(txHash);
-              notifyId = notification.loading("Pinning");
-            }
-          });
-          notification.dismiss(notifyId);
-          notification.success("Pin Success");
-        } catch (err) {
-          notification.dismiss(notifyId);
-          notification.error(err);
-          notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
-          );
-          return;
-        }
-      }
-
-      Pin.pin(nft.address, item.token_id, (err, txHash) => {
-        if (err) {
-          console.log(err);
-          notification.dismiss(notifyId);
-          notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
-          );
-          throw err;
-        }
-        if (txHash) {
-          // isLoading.value = true;
-          console.log(txHash);
-          notification.dismiss(notifyId);
-          notification.success(txHash);
-          notifyId = notification.success("Confirming");
-        }
-      })
-        .then((res) => {
-          console.log(res);
-          notification.dismiss(notifyId);
-          notifyId = notification.success("Pin Success");
-        })
-        .catch((err) => {
-          console.log(err);
-          notification.dismiss(notifyId);
-          notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
-          );
-        });
-    };
-    const openListDialog = (item) => {
-      console.log(item);
-      selectItem.value = item;
-      listDialog.value = true;
-      approving.value = false;
-      listPrice.value = "";
-    };
-    const closeListDialog = () => {
-      listDialog.value = false;
-      selectItem.value = null;
-      listPrice.value = "";
-    };
-    const creatToBuyNowMarket = async () => {
-      isLoading.value = true;
-      const sender = store.state.user.info.address;
-      const nft = DAPP_CONFIG.nfts.UniartsNFT;
-      const erc721 = new Erc721(nft.address, nft.symbol);
-      const contract = TrustMarketplace;
-      if (approving.value) {
-        let notifyId = notification.loading("Wait For the Wallet");
-        try {
-          await contract.createOrder(
-            DAPP_CONFIG.nfts.UniartsNFT.address,
-            selectItem.value.token_id,
-            BigNumber(listPrice.value).shiftedBy(DAPP_CONFIG.tokens.WETH.decimals).toString(),
-            Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
-            (err, txHash) => {
-              if (err) {
-                console.log(err);
-                notification.dismiss(notifyId);
-                notification.error(
-                  (err.head && err.head.msg) || err.message || (err.data && err.data.message)
-                );
-                throw err;
-              }
-              if (txHash) {
-                // isLoading.value = true;
-                console.log({
-                  txHash,
-                  sender,
-                  address: contract.address,
-                  token_id: selectItem.value.token_id,
-                });
-                notification.dismiss(notifyId);
-                notification.success(txHash);
-                isLoading.value = false;
-                closeListDialog();
-              }
-            }
-          );
-          isLoading.value = false;
-          notification.dismiss(notifyId);
-          notification.success("Confirmed on Chain");
-        } catch (err) {
-          isLoading.value = false;
-          notification.dismiss(notifyId);
-          notification.error(
-            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
-          );
-        }
-      } else {
-        let bool;
-        try {
-          const res = await erc721.getApproved(selectItem.value.token_id);
-          bool = res.toString() === contract.address.toString();
-          isLoading.value = false;
-          notification.success("Your Approved");
-        } catch (err) {
-          console.log(err);
-          bool = false;
-        }
-        if (bool) {
-          approving.value = true;
-        } else {
-          let notifyId = notification.loading("Wait For the Wallet");
-          try {
-            await erc721.approve(
-              sender,
-              contract.address,
-              selectItem.value.token_id,
-              (err, txHash) => {
-                if (err) {
-                  console.log(err);
-                  notification.dismiss(notifyId);
-                  throw err;
-                }
-                if (txHash) {
-                  // isLoading.value = true;
-                  console.log({
-                    txHash,
-                    sender,
-                    address: contract.address,
-                    token_id: selectItem.value.token_id,
-                  });
-                  notification.dismiss(notifyId);
-                  notification.success(txHash);
-                  isLoading.value = false;
-                  approving.value = true;
-                }
-              }
-            );
-            isLoading.value = false;
-            notification.dismiss(notifyId);
-            notification.success("Approve Success");
-          } catch (e) {
-            isLoading.value = false;
-            notification.dismiss(notifyId);
-            notification.error("Approve Error");
-          }
-        }
-      }
-    };
     const router = useRouter();
     const goDetail = (id) => {
       router.push("/marketplace/detail/" + id);
     };
+    const removeOrder = async (auction) => {
+      console.log(auction);
+      let loadingMessage = notification.loading("Please wait for the wallet's response");
+      isLoading.value = true;
+      try {
+        await TrustMarketplace.cancelOrder(
+          DAPP_CONFIG.nfts.UniartsNFT.address,
+          auction.art.token_id,
+          (err, txHash) => {
+            if (err) {
+              notification.clear(loadingMessage);
+              isLoading.value = false;
+              console.log(err);
+              notification.error(
+                err.message.split("{")[0] ||
+                  (err.head && err.head.msg) ||
+                  err.message ||
+                  (err.data && err.data.message)
+              );
+              throw err;
+            }
+            if (txHash) {
+              notification.success(txHash);
+              notification.dismiss(loadingMessage);
+              loadingMessage = notification.loading("Waiting for confirmation on the Chain");
+            }
+          }
+        );
+        notification.loading("Confirmed on Chain");
+      } catch (err) {
+        console.log(err);
+        notification.error(
+          err.message.split("{")[0] ||
+            (err.head && err.head.msg) ||
+            err.message ||
+            (err.data && err.data.message)
+        );
+      } finally {
+        notification.dismiss(loadingMessage);
+        isLoading.value = false;
+      }
+    };
     return {
-      pin,
-      selectItem,
-      sendDialog,
       list,
       width,
-      send,
-      sender,
       isLoading,
-      openSendDialog,
       goDetail,
-      openListDialog,
-      closeListDialog,
-      listDialog,
-      listSelect,
-      creatToBuyNowMarket,
       marketToken,
       approving,
-      listPrice,
+      removeOrder,
     };
   },
 });
@@ -450,6 +126,17 @@ export default defineComponent({
   .item {
     display: flex;
     margin-bottom: 72px;
+
+    .status {
+      position: absolute;
+      z-index: 100;
+      font-size: 16px;
+      margin: 7px;
+      padding: 7px;
+      color: #fff;
+      border-radius: 5px;
+      background-color: #00000088;
+    }
 
     img {
       min-width: 400px;
