@@ -175,7 +175,6 @@
           <span>Bid History</span>
           <span>Total {{ auctionBids.length }} Bids</span>
         </div>
-        Withdraw Bid
         <div class="bid-list">
           <div v-for="item of auctionBids" :key="item.address" class="item">
             made an offer of {{ item.bid }} {{ marketToken.symbol }}
@@ -542,6 +541,7 @@ export default defineComponent({
       const { id, id2 } = route.params;
       http.globalGetAuctionBidsById({ aid: id2 }, { id }).then((res) => {
         auctionBids.value = res.list;
+        console.log(auctionBids.value);
         myOrder.value = (auctionBids.value || []).find((item) => item.is_mine);
       });
       const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
