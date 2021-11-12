@@ -99,7 +99,7 @@
             <div class="vote-number">
               <span> Price </span>
               <span style="color: #fe0000">{{ artOrderList[0].price }}</span>
-              <span> {{ marketToken.symbol }} </span>
+              <span> {{ ` ${marketToken.symbol}` }} </span>
             </div>
             <!--            <div class="vote-date">-->
             <!--              <img src="@/assets/images/date-clock.png" />-->
@@ -122,7 +122,10 @@
           </div>
           <div class="item-user">
             <div class="username">{{ item.art.name }} @</div>
-            <div style="color: #fe0000">{{ item.price }}{{ marketToken.symbol }}</div>
+            <div>
+              <span style="color: #fe0000">{{ item.price }}</span>
+              <span>{{ ` ${marketToken.symbol}` }}</span>
+            </div>
           </div>
         </div>
       </div>

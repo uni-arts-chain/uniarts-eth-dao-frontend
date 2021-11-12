@@ -14,10 +14,10 @@
             </div>
           </div>
           <div class="operate">
-            <button @click="() => openListDialog(v)">List</button>
-            <button @click="() => openSendDialog(v)">Send</button>
+            <!--            <button @click="() => openListDialog(v)">List</button>-->
+            <!--            <button @click="() => openSendDialog(v)">Send</button>-->
             <!-- <button @click="() => pin(v)">Pin</button> -->
-            <button disabled>Pin</button>
+            <button disabled>Remove Order</button>
           </div>
         </div>
       </div>
@@ -143,7 +143,7 @@ export default defineComponent({
     const requestData = () => {
       // isLoading.value = true;
       http
-        .userGetMineNFT({})
+        .userGetOrderNFT({})
         .then((res) => {
           // isLoading.value = false;
           list.value.splice(0, 0, ...res.list);
