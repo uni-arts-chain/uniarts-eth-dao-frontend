@@ -15,7 +15,7 @@
         'img-origin': isOrigin,
       }"
       @load="imgOnLoad"
-      :src="cover"
+      :src="cover || url"
     />
     <img
       ref="img"
@@ -26,7 +26,7 @@
         'img-origin': isOrigin,
       }"
       @load="imgOnLoad"
-      :src="cover"
+      :src="cover || url"
     />
   </div>
 </template>
