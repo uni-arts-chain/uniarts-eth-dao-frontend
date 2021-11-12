@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { defineComponent, computed, onMounted } from "vue";
+import { defineComponent, computed, watch, onMounted } from "vue";
 import NavBar from "@/views/Layout/NavBar";
 import FooterBar from "@/views/Layout/FooterBar";
 import store from "@/store";
@@ -17,7 +17,8 @@ export default defineComponent({
     FooterBar,
   },
   setup() {
-    if (store.state.user.info.address) {
+    const connectAccount = computed(() => store.state.user.info.address);
+    if (connectAccount.value) {
       store.dispatch("user/GetInfo");
     }
 
@@ -28,6 +29,12 @@ export default defineComponent({
     window.onresize = () => {
       store.dispatch("global/WindowResize");
     };
+
+    watch(connectAccount, () => {
+      if (connectAccount.value) {
+        store.dispatch("user/GetInfo");
+      }
+    });
 
     onMounted(() => {
       store.dispatch("global/WindowResize");
