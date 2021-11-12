@@ -59,7 +59,8 @@
             </div>
             <div class="price">
               Price
-              <span style="color: red">{{ item.price + " " + marketToken.symbol }}</span>
+              <span style="color: red">{{ item.price + " " }}</span>
+              <span>{{ marketToken.symbol }}</span>
             </div>
           </div>
         </div>

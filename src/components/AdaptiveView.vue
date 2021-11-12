@@ -217,8 +217,11 @@ export default {
     position: absolute;
     z-index: 100;
     font-size: 16px;
-    margin: 10px;
+    margin: 7px;
+    padding: 7px;
     color: #fff;
+    border-radius: 5px;
+    background-color: #00000088;
   }
 
   .img-container.preview {
