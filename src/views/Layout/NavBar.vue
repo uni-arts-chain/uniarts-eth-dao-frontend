@@ -101,8 +101,10 @@
         <li>
           <router-link to="/profile" @click="onClickItem">Account</router-link>
         </li>
-        <li v-if="$store.getters['user/canMigrate']">
-          <router-link to="/migrate" @click="onClickItem">Migrate</router-link>
+        <li v-if="$store.getters['user/canMigrate']" class="icon-link">
+          <router-link to="/migrate" @click="onClickItem"
+            >Migrate<icon-svg icon-class="new"
+          /></router-link>
         </li>
         <li v-if="$store.state.user.info.address">
           <span @click="onLogout">Log out</span>
@@ -395,6 +397,18 @@ export default defineComponent({
   li:focus {
     background-color: none;
   }
+  li.icon-link {
+    > a {
+      position: relative;
+      .svg-icon {
+        position: absolute;
+        left: calc(100% + 5px);
+        bottom: calc(100% - 10px);
+        font-size: 27px;
+        color: red;
+      }
+    }
+  }
 }
 .ul-menu.bottom {
   margin-bottom: 40px;
@@ -425,7 +439,7 @@ export default defineComponent({
   }
   li.parter {
     margin: 0 auto;
-    margin-top: 160px;
+    margin-top: 120px;
     display: flex;
     flex-direction: column;
     line-height: 23px;
