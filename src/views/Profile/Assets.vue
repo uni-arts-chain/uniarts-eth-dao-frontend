@@ -71,7 +71,6 @@ import { DAPP_CONFIG, DAPP_CONTRACTS } from "@/config";
 import http from "@/plugins/http";
 import store from "@/store";
 import { notification } from "@/components/Notification";
-import VoteMining from "@/contracts/VoteMining";
 export default defineComponent({
   name: "assets",
   setup() {
@@ -94,22 +93,26 @@ export default defineComponent({
           assetsList.value.forEach((v) => {
             let token = DAPP_CONFIG.tokens[v.token.toUpperCase()];
             token
-              ? VoteMining.getRedeemableBalance(connectedAccount.value, token.address).then(
-                  (res) => {
+              ? DAPP_CONTRACTS[v.contract.toLowerCase()]?.contract
+                  .getRedeemableBalance(connectedAccount.value, token.address)
+                  .then((res) => {
                     res = new BigNumber(res);
                     if (!res.isZero()) {
                       v.available = res.shiftedBy(-token.decimals).toString();
                     }
-                  }
-                )
+                  })
               : "";
           });
-          const bonedTotal = await VoteMining.getBondedBalance(connectedAccount.value);
           const uartToken = assetsList.value.find(
             (v) => v.token.toLowerCase() === DAPP_CONFIG.tokens.UART.symbol.toLowerCase()
           );
-          if (uartToken && !bonedTotal.isZero()) {
-            uartToken.bound = bonedTotal.shiftedBy(-DAPP_CONFIG.tokens.UART.decimals).toString();
+          if (uartToken) {
+            const bonedTotal = await DAPP_CONTRACTS[
+              uartToken.contract.toLowerCase()
+            ]?.contract.getBondedBalance(connectedAccount.value);
+            if (!bonedTotal.isZero()) {
+              uartToken.bound = bonedTotal.shiftedBy(-DAPP_CONFIG.tokens.UART.decimals).toString();
+            }
           }
           isLoading.value = false;
         })

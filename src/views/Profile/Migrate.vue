@@ -15,8 +15,8 @@
     <div class="dialog-content dialog-body">
       <div class="title">
         <span
-          >Because your account still has a bonded balance in contract V1, please retrieve it to
-          bonded before migrating.</span
+          >Please retrieve your voted wETH before migrating. Voted UARTs will be migrated into new
+          contract automatically</span
         >
       </div>
       <button @click="onRetrieve">Retrieve</button>
@@ -26,8 +26,8 @@
     <div class="confirm-content">
       <div class="title">
         <span
-          >Because your account still has a bonded balance in contract V1, please retrieve it to
-          bonded before migrating.</span
+          >Please retrieve your voted wETH before migrating. Voted UARTs will be migrated into new
+          contract automatically</span
         >
       </div>
       <button @click="onRetrieve">Retrieve</button>

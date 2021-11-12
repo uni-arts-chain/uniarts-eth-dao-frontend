@@ -5,8 +5,6 @@
       <div class="bottom-logo">
         <div class="logo-bt">
           <img src="@/assets/images/footer-logo@2x.png" />
-          <div class="split—line"></div>
-          <img src="@/assets/images/certik.png" />
         </div>
         <div class="intro">
           Community guidelines•Terms of Service Privacy• Policy•Report content
@@ -34,12 +32,16 @@
           <img src="@/assets/images/acid.png" style="height: 25px" />
           <img src="@/assets/images/art.png" style="height: 34px" />
         </div>
-        <a
-          class="white-page"
-          href="https://github.com/uni-arts-chain/UniArts-white-paper/blob/master/UniArts_White_Paper.pdf"
-          target="_blank"
-          >Get project white papers</a
-        >
+        <div class="white-page-body">
+          <img src="@/assets/images/certik.png" />
+          <div class="split—line"></div>
+          <a
+            class="white-page"
+            href="https://github.com/uni-arts-chain/UniArts-white-paper/blob/master/UniArts_White_Paper.pdf"
+            target="_blank"
+            >Get project white papers</a
+          >
+        </div>
         <div class="desc">UniArts granted by Web3 Foundation</div>
       </div>
     </div>
@@ -80,15 +82,6 @@ export default defineComponent({
     margin-bottom: 15px;
     display: flex;
     flex-direction: row;
-    .split—line {
-      border: 1px solid #fff;
-      width: 1px;
-      height: 100%;
-      background-color: #fff;
-      margin-left: 10px;
-      margin-right: 10px;
-      position: relative;
-    }
     .img {
       height: 100%;
     }
@@ -137,16 +130,36 @@ export default defineComponent({
     }
   }
 
-  .white-page {
-    margin-top: 20px;
-    display: block;
-    width: 422px;
-    height: 71px;
-    background: url(~@/assets/images/white-page@2x.png);
-    background-size: 100% 111px;
-    position: relative;
-    padding: 30px 50px 0 50px;
-    color: white;
+  .white-page-body {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    .split—line {
+      width: 1px;
+      height: 40px;
+      background-color: #fff;
+      margin-left: 10px;
+      margin-right: 10px;
+      position: relative;
+      margin-top: 27px;
+    }
+    > img {
+      height: 60px;
+      margin-top: 27px;
+      margin-left: 20px;
+    }
+    .white-page {
+      margin-top: 20px;
+      display: block;
+      width: 422px;
+      height: 71px;
+      background: url(~@/assets/images/white-page@2x.png);
+      background-size: 100% 111px;
+      position: relative;
+      padding: 30px 50px 0 50px;
+      color: white;
+    }
   }
 }
 
