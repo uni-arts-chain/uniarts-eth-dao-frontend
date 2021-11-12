@@ -59,8 +59,8 @@ import { BigNumber } from "@/plugins/bignumber";
 import { DAPP_CONFIG } from "@/config";
 import Progress from "@/components/Progress";
 import Avatar from "@/assets/images/avatar@2x.png";
-import VoteMining from "@/contracts/VoteMining";
 import AdaptiveView from "@/components/AdaptiveView";
+import VoteMiningV1 from "@/contracts/VoteMiningV1";
 export default defineComponent({
   name: "auction",
   props: {
@@ -93,7 +93,7 @@ export default defineComponent({
 
     const getMintRewards = async () => {
       if (item && item.value.token_id) {
-        const tokenMint = await VoteMining.getMintRewards(
+        const tokenMint = await VoteMiningV1.getMintRewards(
           DAPP_CONFIG.nfts.UniartsNFT.address,
           item.value.token_id
         );

@@ -20,11 +20,11 @@ module.exports = {
       decimals: 18,
       address: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
     },
-    // USDT: {
-    //   symbol: "USDT",
-    //   decimals: 6,
-    //   address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-    // },
+    USDT: {
+      symbol: "USDT",
+      decimals: 6,
+      address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+    },
   },
   tokens: {
     UART: {
@@ -32,11 +32,11 @@ module.exports = {
       decimals: 12,
       address: "0x3c2915050347dCb122Aa5F7A148a5eED29Cccfa8",
     },
-    // USDT: {
-    //   symbol: "USDT",
-    //   decimals: 6,
-    //   address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-    // },
+    USDT: {
+      symbol: "USDT",
+      decimals: 6,
+      address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+    },
     WETH: {
       symbol: "wETH",
       decimals: 18,
@@ -64,26 +64,3 @@ module.exports = {
     },
   },
 };
-/**
- * ### Matic Mainnet
-
- - UART:
-
- - TokenLocker:
-
- - UniartsNFT:
-
- - USDT:
-
- - WETH:
-
- - Auction:
-
- - TrustMarketplace:
-
- - UartTreasury: 0x3c2915050347dCb122Aa5F7A148a5eED29Cccfa8
-
- - VoteMining:
-
- - Pin:
- */

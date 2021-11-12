@@ -18,9 +18,9 @@
           <li class="menu-li">
             <router-link class="link" to="/profile/collection">My Collection</router-link>
           </li>
-          <!--          <li class="menu-li">-->
-          <!--            <router-link class="link" to="/profile/my_order">My Collection</router-link>-->
-          <!--          </li>-->
+          <li class="menu-li">
+            <router-link class="link" to="/profile/my_order">My Order</router-link>
+          </li>
           <li class="menu-li">
             <router-link class="link" to="/profile/unbond">Unbond History</router-link>
           </li>
@@ -56,6 +56,11 @@
           <el-tab-pane label="My Colloection" name="3">
             <template #label>
               <router-link class="link" to="/profile/collection">My Collection</router-link>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane label="My Colloection" name="6">
+            <template #label>
+              <router-link class="link" to="/profile/my_order">My Order</router-link>
             </template>
           </el-tab-pane>
           <el-tab-pane label="Unbond History" name="4">

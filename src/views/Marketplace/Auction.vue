@@ -219,13 +219,13 @@ import Auction from "@/contracts/Auction";
 import Dialog from "@/components/Dialog";
 import AdaptiveView from "@/components/AdaptiveView";
 import { DAPP_CONFIG } from "@/config";
-import VoteMining from "@/contracts/VoteMining";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
 import Erc20 from "../../contracts/Erc20";
 import { toBN } from "web3-utils";
 import moment from "moment";
 import Mobilecomfirm from "@/components/MobileConfirm";
+import VoteMiningV1 from "@/contracts/VoteMiningV1";
 
 export default defineComponent({
   name: "auction",
@@ -550,7 +550,10 @@ export default defineComponent({
       auction.value = list && list.length > 0 ? list[0] : {};
       marketToken.value = DAPP_CONFIG.tokens[auction.value.biding_coin.toUpperCase()];
       if (auction.value.token_id) {
-        await VoteMining.getMintRewards(DAPP_CONFIG.nfts.UniartsNFT.address, auction.value.token_id)
+        await VoteMiningV1.getMintRewards(
+          DAPP_CONFIG.nfts.UniartsNFT.address,
+          auction.value.token_id
+        )
           .then((tokenMint) => {
             if (!new BigNumber(tokenMint).isZero()) {
               auction.value.token_mint = new BigNumber(tokenMint)
