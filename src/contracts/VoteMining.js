@@ -36,7 +36,7 @@ class VoteMining {
       );
     } catch (err) {
       let result = FormatRpcError(err);
-      return result
+      throw result
         ? {
             data: (result.message && result) || result?.data || result?.originalError,
           }
