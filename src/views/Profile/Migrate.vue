@@ -75,7 +75,6 @@ export default defineComponent({
           migrateLoading.value = false;
           if (err) {
             console.log(err);
-            throw err;
           }
           if (txHash) {
             console.log(txHash);
@@ -88,7 +87,6 @@ export default defineComponent({
         })
         .catch((err) => {
           migrateLoading.value = false;
-          console.log(err);
           notification.dismiss(notifyId);
           notification.error(
             (err.head && err.head.msg) || err.message || (err.data && err.data.message)
