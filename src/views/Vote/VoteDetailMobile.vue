@@ -90,13 +90,11 @@
           <button
             class="submit"
             :disabled="!voteTime || hasFinished"
-            v-if="isApproved"
             v-loading="isBonding"
             @click="onBonded"
           >
             Bonded
           </button>
-          <button class="submit" v-else v-loading="isApproving" @click="onApprove">Approve</button>
           <div class="balance">
             <span>Bonded Balance</span>
             <span>{{ bondedBalance }} UART</span>
