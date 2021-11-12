@@ -36,10 +36,11 @@ class VoteMining {
       );
     } catch (err) {
       let result = FormatRpcError(err);
-      result = {
-        data: (result.message && result) || result?.data || result?.originalError || err,
-      };
-      throw result ? result : err;
+      throw result
+        ? {
+            data: (result.message && result) || result?.data || result?.originalError,
+          }
+        : err;
     }
   }
   async stake(sender, nftAddr, nftId, token, amount, callback) {
