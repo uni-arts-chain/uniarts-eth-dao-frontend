@@ -18,7 +18,7 @@ module.exports = {
     UART: {
       symbol: "UART",
       decimals: 12,
-      address: "0x3c2915050347dCb122Aa5F7A148a5eED29Cccfa8",
+      address: "0xf244E91A46A9cdd48da295cA5d0B27894f8032B1",
     },
     WETH: {
       symbol: "wETH",
