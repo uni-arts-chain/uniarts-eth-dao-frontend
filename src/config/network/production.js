@@ -15,16 +15,21 @@ module.exports = {
     },
   },
   voteTokens: {
+    UART: {
+      symbol: "UART",
+      decimals: 12,
+      address: "0x3c2915050347dCb122Aa5F7A148a5eED29Cccfa8",
+    },
     WETH: {
       symbol: "wETH",
       decimals: 18,
       address: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
     },
-    USDT: {
-      symbol: "USDT",
-      decimals: 6,
-      address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-    },
+    // USDT: {
+    //   symbol: "USDT",
+    //   decimals: 6,
+    //   address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+    // },
   },
   tokens: {
     UART: {
