@@ -22,7 +22,7 @@
                   Number(item.auction_latest_price)
                     ? item.auction_latest_price
                     : item.auction_min_bid
-                } ${item.currency_code?.toUpperCase()}`
+                } ${item.biding_coin}`
               }}
             </div>
           </div>
@@ -67,7 +67,7 @@
                   Number(item.auction_latest_price)
                     ? item.auction_latest_price
                     : item.auction_min_bid
-                } ${item.currency_code?.toUpperCase()}`
+                } ${item.biding_coin}`
               }}
             </div>
           </div>

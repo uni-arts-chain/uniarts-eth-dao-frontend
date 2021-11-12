@@ -115,7 +115,7 @@
                   Number(item.auction_latest_price)
                     ? item.auction_latest_price
                     : item.auction_min_bid
-                } ${marketToken.symbol}`
+                } ${item.biding_coin}`
               }}
             </div>
           </div>
