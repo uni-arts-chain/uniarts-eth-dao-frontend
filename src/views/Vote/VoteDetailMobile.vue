@@ -173,9 +173,13 @@ export default defineComponent({
     const connectedAccount = store.state.user.info.address;
     const voteMiningAddress = DAPP_CONFIG.contracts.VoteMining;
     const getTokenAllowance = async () => {
-      tokenAllowance.value = (
-        await currentErc20.value.allowance(connectedAccount, voteMiningAddress)
-      ).toNumber();
+      try {
+        tokenAllowance.value = (
+          await currentErc20.value.allowance(connectedAccount, voteMiningAddress)
+        ).toNumber();
+      } catch (err) {
+        console.log(err);
+      }
     };
     const getTokenBalance = async () => {
       currentTokenBalance.value = (await currentErc20.value.balanceOf(connectedAccount)).toString();
@@ -290,14 +294,14 @@ export default defineComponent({
       );
       stakeTotal.value = new BigNumber(votedBalance.available)
         .plus(votedBalance.freezed)
-        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .shiftedBy(-currentToken.decimals)
         .toString();
     };
     const getBondedVoted = async () => {
       let votedBalance = await VoteMining.getVotedBalances(connectedAccount, artInfo.token_id);
       bondedTotal.value = new BigNumber(votedBalance.available)
         .plus(votedBalance.freezed)
-        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .shiftedBy(-currentToken.decimals)
         .toString();
     };
 
