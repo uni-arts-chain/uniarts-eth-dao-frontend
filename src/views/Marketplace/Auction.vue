@@ -548,7 +548,7 @@ export default defineComponent({
       auction.value = list && list.length > 0 ? list[0] : {};
       marketToken.value = DAPP_CONFIG.tokens[auction.value.biding_coin.toUpperCase()];
       try {
-        if (auction.value?.token_id && auction.value?.vote_contract) {
+        if (auction.value?.token_id >= 0 && auction.value?.vote_contract) {
           console.log(DAPP_CONTRACTS);
           const tokenMint = await DAPP_CONTRACTS[
             auction.value.vote_contract.toLowerCase()
