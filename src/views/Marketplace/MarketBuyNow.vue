@@ -16,9 +16,7 @@
           </router-link>
           <div class="info">
             <div class="name">{{ item.art.name }}</div>
-            <div class="price">
-              Price: {{ item.price }} {{ item.art.currency_code.toUpperCase() }}
-            </div>
+            <div class="price">Price: {{ item.price }} {{ marketToken.symbol }}</div>
           </div>
         </div>
       </div>
@@ -55,9 +53,7 @@
           </router-link>
           <div class="info">
             <div class="name">{{ item.art.name }}</div>
-            <div class="price">
-              Price: {{ item.price }} {{ item.art.currency_code.toUpperCase() }}
-            </div>
+            <div class="price">Price: {{ item.price }} {{ marketToken.symbol }}</div>
           </div>
         </div>
       </div>
@@ -85,6 +81,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import store from "@/store";
 import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
+import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
   name: "index",
@@ -92,6 +89,8 @@ export default defineComponent({
     AdaptiveView,
   },
   setup() {
+    const marketCurrency = "WETH";
+    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
     store.dispatch("global/SetNavText", "Market");
     // todo
     const buyList = ref([]);
@@ -141,6 +140,7 @@ export default defineComponent({
       isLoading,
       onPrev,
       onNext,
+      marketToken,
     };
   },
 });
