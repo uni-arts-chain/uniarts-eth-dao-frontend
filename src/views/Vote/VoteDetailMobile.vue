@@ -27,8 +27,8 @@
 
       <div class="vote-body">
         <div class="tabs">
-          <div :class="{ active: curTab == 1 }" @click="curTab = 1">Stake&Vote</div>
-          <div :class="{ active: curTab == 2 }" @click="curTab = 2">Bond&Vote</div>
+          <div :class="{ active: curTab == 1 }" @click="curTab = 1">From Wallet</div>
+          <div :class="{ active: curTab == 2 }" @click="curTab = 2">From Bonded</div>
         </div>
         <div class="form-body" v-if="curTab == 1">
           <div class="amount-input">
@@ -54,7 +54,7 @@
             v-loading="isVoting"
             @click="onVote"
           >
-            Stake
+            Stake & Vote
           </button>
           <button class="submit" v-else v-loading="isApproving" @click="onApprove">Approve</button>
           <div class="balance">
@@ -93,7 +93,7 @@
             v-loading="isBonding"
             @click="onBonded"
           >
-            Bonded
+            Vote with Bonded
           </button>
           <div class="balance">
             <span>Bonded Balance</span>
