@@ -105,7 +105,7 @@ export default defineComponent({
           // isWithdrawing.value = false;
           notification.dismiss(notifyId);
           notification.error(
-            err.message.split("{")[0] ||
+            err.message?.split("{")[0] ||
               (err.head && err.head.msg) ||
               err.message ||
               (err.data && err.data.message)
