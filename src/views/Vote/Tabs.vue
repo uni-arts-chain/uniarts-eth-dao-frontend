@@ -96,7 +96,7 @@ export default defineComponent({
 
     const onRequestData = () => {
       isLoading.value = true;
-      http
+      return http
         .globalGetVoteList({
           type: "voting",
         })
@@ -113,7 +113,7 @@ export default defineComponent({
 
     const onRequestAuctionData = () => {
       isLoading.value = true;
-      http
+      return http
         .globalGetAuctionsGroupVotes({})
         .then((res) => {
           isLoading.value = false;
