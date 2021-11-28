@@ -38,7 +38,7 @@
               Number(item.auction_latest_price) ? item.auction_latest_price : item.auction_min_bid
             }}</span
           >
-          {{ item.biding_coin }}
+          {{ item.biding_coin?.toUpperCase() }}
         </div>
       </div>
       <div class="bid-group">

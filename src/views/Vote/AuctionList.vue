@@ -49,9 +49,9 @@
               >
                 {{ formatPercent((v.number / (v.total || 1)) * 100 || 0) }}%
               </div>
-              <div class="total-per">Total: {{ v.total }} USDT</div>
+              <div class="total-per">Total: {{ v.total }} {{ v.biding_coin }}</div>
             </div>
-            <div class="number-vote">current high bid: ${{ v.number }}</div>
+            <div class="number-vote">current high bid: {{ v.number || 0 }} {{ v.biding_coin }}</div>
           </div>
           <button class="vote-button" @click="goAuction(v.auction_id, v.id)">Place a bid</button>
         </div>

@@ -29,6 +29,7 @@
             "
             >{{ formatNumber(item.token_mint) }}</span
           >
+          UART
         </div>
         <div class="bid">
           {{ Number(item.auction_latest_price) ? "Current High Bid" : "Price" }}：<span
@@ -38,7 +39,7 @@
               Number(item.auction_latest_price) ? item.auction_latest_price : item.auction_min_bid
             }}
           </span>
-          {{ item.currency_code?.toUpperCase() }}
+          {{ item.biding_coin?.toUpperCase() }}
         </div>
       </div>
       <div class="bid-group">
@@ -135,6 +136,9 @@ export default defineComponent({
   width: 100%;
   .title {
     font-size: 32px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     font-family: Montserrat-Medium;
     font-weight: 500;
     text-align: left;
