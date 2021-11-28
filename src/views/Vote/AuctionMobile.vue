@@ -60,7 +60,7 @@ import Progress from "@/components/Progress";
 import { DAPP_CONFIG } from "@/config";
 import Avatar from "@/assets/images/avatar@2x.png";
 import AdaptiveView from "@/components/AdaptiveView";
-import VoteMiningV1 from "@/contracts/VoteMiningV1";
+import VoteMining from "@/contracts/VoteMining";
 export default defineComponent({
   name: "auction",
   props: {
@@ -92,8 +92,8 @@ export default defineComponent({
     });
 
     const getMintRewards = async () => {
-      if (item && item.value.token_id) {
-        const tokenMint = await VoteMiningV1.getMintRewards(
+      if (item && item.value.token_id >= 0) {
+        const tokenMint = await VoteMining.getMintRewards(
           DAPP_CONFIG.nfts.UniartsNFT.address,
           item.value.token_id
         );
