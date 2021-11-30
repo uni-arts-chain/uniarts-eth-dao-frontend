@@ -188,12 +188,12 @@ export default defineComponent({
         return dataMessage;
       } else {
         let second = now.value / 1000;
-        const day = (second / (60 * 60 * 24)).toFixed(0);
+        const day = Math.floor(second / (60 * 60 * 24));
         second = second % (60 * 60 * 24);
-        const hour = (second / (60 * 60)).toFixed(0);
+        const hour = Math.floor(second / (60 * 60));
         second = second % (60 * 60);
-        const minute = (second / 60).toFixed(0);
-        second = (second % 60).toFixed(0);
+        const minute = Math.floor(second / 60);
+        second = Math.floor(second % 60);
         return `${day} Days ${hour} Hour ${minute} Minute ${second} Second`;
       }
     });
