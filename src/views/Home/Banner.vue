@@ -18,8 +18,21 @@
       <div class="text" :class="{ 'no-data-text': !recommmedInfo.id }">
         <img src="@/assets/images/banner-logo@2x.png" />
         <h4>Select the most in demand artwork NFT</h4>
-        <router-link :to="votePath" :style="{ background: recommmedInfo.id ? 'black' : '#909399' }">
+        <!-- <router-link :to="votePath" :style="{ background: recommmedInfo.id ? 'black' : '#909399' }">
           START VOTE
+        </router-link> -->
+        <router-link
+          :to="bidPath"
+          :style="{
+            background: 'black',
+            fontSize: '14px',
+            paddingTop: '15px',
+            paddingBottom: '15px',
+            paddingLeft: '90px',
+            paddingRight: '90px',
+          }"
+        >
+          Bid
         </router-link>
       </div>
     </div>
@@ -84,9 +97,14 @@ export default defineComponent({
       return recommmedInfo.value.id ? `/vote/${recommmedInfo.value.id}` : "";
     });
 
+    const bidPath = computed(() => {
+      return "/vote/auctionlist";
+    });
+
     return {
       recommmedInfo,
       votePath,
+      bidPath,
     };
   },
 });
