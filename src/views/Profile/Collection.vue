@@ -43,13 +43,13 @@
     <Dialog v-if="!$store.state.global.isMobile" v-model="listDialog" type="small">
       <div class="dialog-content">
         <div v-show="!approving" class="list-select">
-          <!--          <span-->
-          <!--            :class="{ 'select-item': listSelect === 0 }"-->
-          <!--            class="list-item"-->
-          <!--            @click="listSelect = 0"-->
-          <!--          >-->
-          <!--            Listing to Auction-->
-          <!--          </span>-->
+          <span
+            :class="{ 'select-item': listSelect === 0 }"
+            class="list-item"
+            @click="listSelect = 0"
+          >
+            Listing to Auction
+          </span>
           <span
             :class="{ 'select-item': listSelect === 1 }"
             class="list-item"
@@ -58,13 +58,42 @@
             Listing to BuyNow Market
           </span>
         </div>
+        <div v-show="listSelect === 0">
+          <div class="input-body">
+            <span class="unit">Start Block</span>
+            <input v-model="creatAuctionData.startBlock" />
+          </div>
+          <div class="block-height">Current block height : {{ blockHeight }}</div>
+          <div class="input-body">
+            <span class="unit">End Block</span>
+            <input v-model="creatAuctionData.endBlock" />
+          </div>
+          <div class="input-body">
+            <span class="unit">Starting Price</span>
+            <input v-model="creatAuctionData.startPrice" />
+            <span class="unit unit2">{{ marketToken.symbol }}</span>
+          </div>
+          <div class="input-body">
+            <span class="unit">Fixed Price</span>
+            <input v-model="creatAuctionData.fixedPrice" />
+            <span class="unit unit2">{{ marketToken.symbol }}</span>
+          </div>
+          <div class="input-body">
+            <span class="unit">Min Increment</span>
+            <input v-model="creatAuctionData.minIncrement" />
+            <span class="unit unit2">%</span>
+          </div>
+          <button v-loading="isLoading" @click="creatToAuctionMarket">
+            {{ auctionApproving ? "Creat on Auction Market" : "Approve" }}
+          </button>
+        </div>
         <div v-show="listSelect === 1">
           <div class="input-body">
             <input v-model="listPrice" />
-            <span class="unit">{{ marketToken.symbol }}</span>
+            <span class="unit unit2">{{ marketToken.symbol }}</span>
           </div>
           <button v-loading="isLoading" @click="creatToBuyNowMarket">
-            {{ approving ? "Creat on Buynow Markrt" : "Approve" }}
+            {{ approving ? "Creat on Buynow Market" : "Approve" }}
           </button>
         </div>
       </div>
@@ -72,13 +101,13 @@
     <Mobilecomfirm v-else v-model="listDialog" type="small">
       <div class="dialog-content">
         <div v-show="!approving" class="list-select">
-          <!--          <span-->
-          <!--            :class="{ 'select-item': listSelect === 0 }"-->
-          <!--            class="list-item"-->
-          <!--            @click="listSelect = 0"-->
-          <!--          >-->
-          <!--            Listing to Auction-->
-          <!--          </span>-->
+          <span
+            :class="{ 'select-item': listSelect === 0 }"
+            class="list-item"
+            @click="listSelect = 0"
+          >
+            Listing to Auction
+          </span>
           <span
             :class="{ 'select-item': listSelect === 1 }"
             class="list-item"
@@ -87,13 +116,42 @@
             Listing to BuyNow Market
           </span>
         </div>
+        <div v-show="listSelect === 0">
+          <div class="input-body">
+            <span class="unit">Start Block</span>
+            <input v-model="creatAuctionData.startBlock" />
+          </div>
+          <div class="block-height">Current block height : {{ blockHeight }}</div>
+          <div class="input-body">
+            <span class="unit">End Block</span>
+            <input v-model="creatAuctionData.endBlock" />
+          </div>
+          <div class="input-body">
+            <span class="unit">Starting Price</span>
+            <input v-model="creatAuctionData.startPrice" />
+            <span class="unit unit2">{{ marketToken.symbol }}</span>
+          </div>
+          <div class="input-body">
+            <span class="unit">Fixed Price</span>
+            <input v-model="creatAuctionData.fixedPrice" />
+            <span class="unit unit2">{{ marketToken.symbol }}</span>
+          </div>
+          <div class="input-body">
+            <span class="unit">Min Increment</span>
+            <input v-model="creatAuctionData.minIncrement" />
+            <span class="unit unit2">%</span>
+          </div>
+          <button v-loading="isLoading" @click="creatToAuctionMarket">
+            {{ auctionApproving ? "Creat on Auction Market" : "Approve" }}
+          </button>
+        </div>
         <div v-show="listSelect === 1">
           <div class="input-body">
             <input v-model="listPrice" />
-            <span class="unit">{{ marketToken.symbol }}</span>
+            <span class="unit unit2">{{ marketToken.symbol }}</span>
           </div>
           <button v-loading="isLoading" @click="creatToBuyNowMarket">
-            {{ approving ? "Creat on Buynow Markrt" : "Approve" }}
+            {{ approving ? "Creat on Buynow Market" : "Approve" }}
           </button>
         </div>
       </div>
@@ -102,7 +160,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
 import Progress from "@/components/Progress";
 import { useRouter } from "vue-router";
 // import { BigNumber } from "@/plugins/bignumber";
@@ -120,6 +178,7 @@ import store from "@/store";
 import Web3 from "web3";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
 import { BigNumber } from "@/plugins/bignumber";
+import Auction from "@/contracts/Auction";
 
 export default defineComponent({
   name: "collection",
@@ -129,6 +188,14 @@ export default defineComponent({
     Progress,
   },
   setup() {
+    const creatAuctionData = ref({
+      startBlock: null,
+      endBlock: null,
+      startPrice: 0,
+      fixedPrice: 0,
+      minIncrement: 10,
+    });
+    const blockHeight = ref(0);
     const listPrice = ref("");
     const marketCurrency = "WETH";
     const marketToken = DAPP_CONFIG.tokens[marketCurrency];
@@ -140,6 +207,7 @@ export default defineComponent({
     const isLoading = ref(false);
     const list = ref([]);
     const approving = ref(false);
+    const auctionApproving = ref(false);
     const requestData = () => {
       // isLoading.value = true;
       http
@@ -156,9 +224,14 @@ export default defineComponent({
           );
         });
     };
-
-    onMounted(() => {
+    let sto = 0;
+    onMounted(async () => {
       requestData();
+      const height = await Auction.dater.getDate();
+      blockHeight.value = height.block;
+    });
+    onBeforeUnmount(() => {
+      clearInterval(sto);
     });
     let selectItem = ref(null);
     const openSendDialog = (v) => {
@@ -307,8 +380,17 @@ export default defineComponent({
     };
     const openListDialog = (item) => {
       console.log(item);
+      creatAuctionData.value = {
+        startBlock: blockHeight.value + 300,
+        endBlock: "",
+        startPrice: 0,
+        fixedPrice: 0,
+        minIncrement: 10,
+      };
       selectItem.value = item;
+      console.log(selectItem.value);
       listDialog.value = true;
+      auctionApproving.value = false;
       approving.value = false;
       listPrice.value = "";
     };
@@ -316,6 +398,112 @@ export default defineComponent({
       listDialog.value = false;
       selectItem.value = null;
       listPrice.value = "";
+    };
+    const creatToAuctionMarket = async () => {
+      isLoading.value = true;
+      const sender = store.state.user.info.address;
+      const nft = DAPP_CONFIG.nfts.UniartsNFT;
+      const erc721 = new Erc721(nft.address, nft.symbol);
+      const contract = Auction;
+      if (auctionApproving.value) {
+        let notifyId = notification.loading("Wait For the Wallet");
+        isLoading.value = false;
+        notification.dismiss(notifyId);
+        notification.success("Confirmed on Chain");
+        try {
+          await Auction.creatAuction(
+            creatAuctionData.value.startBlock,
+            creatAuctionData.value.endBlock,
+            creatAuctionData.value.minIncrement,
+            nft.address,
+            selectItem.value.token_id,
+            creatAuctionData.value.startPrice,
+            creatAuctionData.value.fixedPrice,
+            (err, txHash) => {
+              if (err) {
+                console.log(err);
+                notification.dismiss(notifyId);
+                notification.error(
+                  (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+                );
+                throw err;
+              }
+              if (txHash) {
+                // isLoading.value = true;
+                console.log({
+                  txHash,
+                  sender,
+                  address: contract.address,
+                  token_id: selectItem.value.token_id,
+                });
+                notification.dismiss(notifyId);
+                notification.success(txHash);
+                isLoading.value = false;
+                closeListDialog();
+              }
+            }
+          );
+          isLoading.value = false;
+          notification.dismiss(notifyId);
+          notification.success("Confirmed on Chain");
+        } catch (err) {
+          isLoading.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        }
+      } else {
+        let bool;
+        try {
+          const res = await erc721.getApproved(selectItem.value.token_id);
+          bool = res.toString() === contract.address.toString();
+          isLoading.value = false;
+          notification.success("Your Approved");
+        } catch (err) {
+          console.log(err);
+          bool = false;
+        }
+        if (bool) {
+          auctionApproving.value = true;
+        } else {
+          let notifyId = notification.loading("Wait For the Wallet");
+          try {
+            await erc721.approve(
+              sender,
+              contract.address,
+              selectItem.value.token_id,
+              (err, txHash) => {
+                if (err) {
+                  console.log(err);
+                  notification.dismiss(notifyId);
+                  throw err;
+                }
+                if (txHash) {
+                  // isLoading.value = true;
+                  console.log({
+                    txHash,
+                    sender,
+                    address: contract.address,
+                    token_id: selectItem.value.token_id,
+                  });
+                  notification.dismiss(notifyId);
+                  notification.success(txHash);
+                  isLoading.value = false;
+                  auctionApproving.value = true;
+                }
+              }
+            );
+            isLoading.value = false;
+            notification.dismiss(notifyId);
+            notification.success("Approve Success");
+          } catch (e) {
+            isLoading.value = false;
+            notification.dismiss(notifyId);
+            notification.error("Approve Error");
+          }
+        }
+      }
     };
     const creatToBuyNowMarket = async () => {
       isLoading.value = true;
@@ -325,6 +513,9 @@ export default defineComponent({
       const contract = TrustMarketplace;
       if (approving.value) {
         let notifyId = notification.loading("Wait For the Wallet");
+        isLoading.value = false;
+        notification.dismiss(notifyId);
+        notification.success("Confirmed on Chain");
         try {
           await contract.createOrder(
             DAPP_CONFIG.nfts.UniartsNFT.address,
@@ -437,9 +628,13 @@ export default defineComponent({
       listDialog,
       listSelect,
       creatToBuyNowMarket,
+      creatToAuctionMarket,
       marketToken,
       approving,
+      auctionApproving,
       listPrice,
+      blockHeight,
+      creatAuctionData,
     };
   },
 });
@@ -546,6 +741,7 @@ export default defineComponent({
     width: 100%;
     display: flex;
     flex-direction: row;
+    cursor: pointer;
 
     :first-child {
       border-top-left-radius: 10px;
@@ -561,13 +757,17 @@ export default defineComponent({
       flex: 1;
       text-align: center;
       background-color: #fff;
-      cursor: auto;
+      cursor: pointer;
     }
 
     .select-item {
       background-color: #d0d0d0;
       color: #000;
     }
+  }
+
+  .block-height {
+    text-align: right;
   }
 
   .input-body {
@@ -588,8 +788,8 @@ export default defineComponent({
     }
 
     .unit {
-      width: 130px;
-      font-size: 16px;
+      width: 240px;
+      font-size: 14px;
       background-color: white;
       font-family: Montserrat-Regular;
       font-weight: 300;
@@ -599,6 +799,10 @@ export default defineComponent({
       padding: 0 10px;
       border-right: 1px solid #e3e4e5;
       border-left: 1px solid #e3e4e5;
+    }
+
+    .unit2 {
+      width: 120px;
     }
   }
 

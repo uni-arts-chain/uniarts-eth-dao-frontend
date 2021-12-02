@@ -59,6 +59,45 @@ class Auction {
     );
   }
 
+  async creatAuction(
+    openBlock,
+    expiryBlock,
+    minIncrement,
+    nftAddress,
+    tokenIndex,
+    startingPrice,
+    fixPrice,
+    callback
+  ) {
+    const matchId = `user-${new Date().getTime()}`;
+    // const openBlock = blockHeight + 1000;
+    const expiryExtension = 30;
+
+    const tx = this.contract.methods.createAuction(
+      matchId,
+      openBlock,
+      expiryBlock,
+      expiryExtension,
+      minIncrement,
+      [[nftAddress, tokenIndex, startingPrice, fixPrice]]
+    );
+    const gasPrice = await this.gasPrice();
+    const sender = store.state.user.info.address;
+    const gasLimit = await tx.estimateGas({
+      value: 0,
+      from: sender,
+      to: this.address,
+    });
+    return tx.send(
+      {
+        from: sender,
+        gasPrice: gasPrice,
+        gas: Math.round(gasLimit * 1.1),
+      },
+      callback
+    );
+  }
+
   async playerWithdrawBid(matchId, tokenIndex, callback, addressV2) {
     const contractAddress = addressV2 || this.address.toString();
     const contract = new this.web3.eth.Contract(AuctionABI, contractAddress);
