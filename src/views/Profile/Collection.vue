@@ -14,8 +14,13 @@
             </div>
           </div>
           <div class="operate">
-            <button @click="() => openListDialog(v)">List</button>
-            <button @click="() => openSendDialog(v)">Send</button>
+            <button v-if="v.auction_order || v.buy_now_order" @click="() => removeOrder(v)">
+              Cancel Listing
+            </button>
+            <button v-else @click="() => openListDialog(v)">List</button>
+            <button :disabled="v.auction_order || v.buy_now_order" @click="() => openSendDialog(v)">
+              Send
+            </button>
             <!-- <button @click="() => pin(v)">Pin</button> -->
             <button disabled>Pin</button>
           </div>
@@ -44,6 +49,7 @@
       <div class="dialog-content">
         <div v-show="!approving" class="list-select">
           <span
+            v-if="selectItem.can_list_to_auction"
             :class="{ 'select-item': listSelect === 0 }"
             class="list-item"
             @click="listSelect = 0"
@@ -51,6 +57,7 @@
             Listing to Auction
           </span>
           <span
+            v-if="selectItem.can_list_to_buy_now"
             :class="{ 'select-item': listSelect === 1 }"
             class="list-item"
             @click="listSelect = 1"
@@ -58,7 +65,7 @@
             Listing to BuyNow Market
           </span>
         </div>
-        <div v-show="listSelect === 0">
+        <div v-if="selectItem.can_list_to_auction" v-show="listSelect === 0">
           <div class="input-body">
             <span class="unit">Start Block</span>
             <input v-model="creatAuctionData.startBlock" />
@@ -87,7 +94,7 @@
             {{ auctionApproving ? "Creat on Auction Market" : "Approve" }}
           </button>
         </div>
-        <div v-show="listSelect === 1">
+        <div v-if="selectItem.can_list_to_buy_now" v-show="listSelect === 1">
           <div class="input-body">
             <input v-model="listPrice" />
             <span class="unit unit2">{{ marketToken.symbol }}</span>
@@ -102,6 +109,7 @@
       <div class="dialog-content">
         <div v-show="!approving" class="list-select">
           <span
+            v-if="selectItem.can_list_to_auction"
             :class="{ 'select-item': listSelect === 0 }"
             class="list-item"
             @click="listSelect = 0"
@@ -109,6 +117,7 @@
             Listing to Auction
           </span>
           <span
+            v-if="selectItem.can_list_to_buy_now"
             :class="{ 'select-item': listSelect === 1 }"
             class="list-item"
             @click="listSelect = 1"
@@ -116,7 +125,7 @@
             Listing to BuyNow Market
           </span>
         </div>
-        <div v-show="listSelect === 0">
+        <div v-if="selectItem.can_list_to_auction" v-show="listSelect === 0">
           <div class="input-body">
             <span class="unit">Start Block</span>
             <input v-model="creatAuctionData.startBlock" />
@@ -145,7 +154,7 @@
             {{ auctionApproving ? "Creat on Auction Market" : "Approve" }}
           </button>
         </div>
-        <div v-show="listSelect === 1">
+        <div v-if="selectItem.can_list_to_buy_now" v-show="listSelect === 1">
           <div class="input-body">
             <input v-model="listPrice" />
             <span class="unit unit2">{{ marketToken.symbol }}</span>
@@ -404,7 +413,9 @@ export default defineComponent({
       const sender = store.state.user.info.address;
       const nft = DAPP_CONFIG.nfts.UniartsNFT;
       const erc721 = new Erc721(nft.address, nft.symbol);
-      const contract = Auction;
+      // const contract = Auction;
+      const contractAddress = selectItem.value.auction_contract_address;
+      console.log(contractAddress);
       if (auctionApproving.value) {
         let notifyId = notification.loading("Wait For the Wallet");
         isLoading.value = false;
@@ -419,7 +430,7 @@ export default defineComponent({
             selectItem.value.token_id,
             creatAuctionData.value.startPrice,
             creatAuctionData.value.fixedPrice,
-            selectItem.value.auction_contract_address,
+            contractAddress,
             (err, txHash) => {
               if (err) {
                 console.log(err);
@@ -434,7 +445,7 @@ export default defineComponent({
                 console.log({
                   txHash,
                   sender,
-                  address: contract.address,
+                  address: contractAddress,
                   token_id: selectItem.value.token_id,
                 });
                 notification.dismiss(notifyId);
@@ -458,7 +469,7 @@ export default defineComponent({
         let bool;
         try {
           const res = await erc721.getApproved(selectItem.value.token_id);
-          bool = res.toString() === contract.address.toString();
+          bool = res.toString() === contractAddress.toString();
           isLoading.value = false;
           notification.success("Your Approved");
         } catch (err) {
@@ -472,7 +483,7 @@ export default defineComponent({
           try {
             await erc721.approve(
               sender,
-              contract.address,
+              contractAddress,
               selectItem.value.token_id,
               (err, txHash) => {
                 if (err) {
@@ -485,7 +496,7 @@ export default defineComponent({
                   console.log({
                     txHash,
                     sender,
-                    address: contract.address,
+                    address: contractAddress,
                     token_id: selectItem.value.token_id,
                   });
                   notification.dismiss(notifyId);
@@ -498,10 +509,12 @@ export default defineComponent({
             isLoading.value = false;
             notification.dismiss(notifyId);
             notification.success("Approve Success");
-          } catch (e) {
+          } catch (err) {
             isLoading.value = false;
             notification.dismiss(notifyId);
-            notification.error("Approve Error");
+            notification.error(
+              (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+            );
           }
         }
       }
@@ -601,11 +614,100 @@ export default defineComponent({
             isLoading.value = false;
             notification.dismiss(notifyId);
             notification.success("Approve Success");
-          } catch (e) {
+          } catch (err) {
             isLoading.value = false;
             notification.dismiss(notifyId);
-            notification.error("Approve Error");
+            notification.error(
+              (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+            );
           }
+        }
+      }
+    };
+    const removeOrder = async (auction) => {
+      isLoading.value = true;
+      let loadingMessage = notification.loading("Please wait for the wallet's response");
+      if (auction.auction_order) {
+        try {
+          console.log({
+            matchId: auction.latest_auction_uid,
+            token_id: auction.token_id,
+            addressV2: auction.auction_contract_address,
+          });
+          await Auction.cancelOrder(
+            auction.latest_auction_uid,
+            auction.token_id,
+            auction.auction_contract_address,
+            (err, txHash) => {
+              if (err) {
+                notification.clear(loadingMessage);
+                isLoading.value = false;
+                console.log(err);
+                notification.error(
+                  err.message.split("{")[0] ||
+                    (err.head && err.head.msg) ||
+                    err.message ||
+                    (err.data && err.data.message)
+                );
+                throw err;
+              }
+              if (txHash) {
+                notification.success(txHash);
+                notification.dismiss(loadingMessage);
+                loadingMessage = notification.loading("Waiting for confirmation on the Chain");
+              }
+            }
+          );
+          notification.success("Confirmed on Chain");
+        } catch (err) {
+          console.log(err);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
+        } finally {
+          notification.dismiss(loadingMessage);
+          isLoading.value = false;
+        }
+      } else if (auction.buy_now_order) {
+        try {
+          await TrustMarketplace.cancelOrder(
+            DAPP_CONFIG.nfts.UniartsNFT.address,
+            auction.token_id,
+            (err, txHash) => {
+              if (err) {
+                notification.clear(loadingMessage);
+                isLoading.value = false;
+                console.log(err);
+                notification.error(
+                  err.message.split("{")[0] ||
+                    (err.head && err.head.msg) ||
+                    err.message ||
+                    (err.data && err.data.message)
+                );
+                throw err;
+              }
+              if (txHash) {
+                notification.success(txHash);
+                notification.dismiss(loadingMessage);
+                loadingMessage = notification.loading("Waiting for confirmation on the Chain");
+              }
+            }
+          );
+          notification.success("Confirmed on Chain");
+        } catch (err) {
+          console.log(err);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
+        } finally {
+          notification.dismiss(loadingMessage);
+          isLoading.value = false;
         }
       }
     };
@@ -636,6 +738,7 @@ export default defineComponent({
       listPrice,
       blockHeight,
       creatAuctionData,
+      removeOrder,
     };
   },
 });
