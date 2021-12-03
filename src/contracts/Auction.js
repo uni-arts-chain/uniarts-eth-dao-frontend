@@ -67,13 +67,16 @@ class Auction {
     tokenIndex,
     startingPrice,
     fixPrice,
+    addressV2,
     callback
   ) {
+    const contractAddress = addressV2 || this.address.toString();
+    const contract = new this.web3.eth.Contract(AuctionABI, contractAddress);
     const matchId = `user-${new Date().getTime()}`;
     // const openBlock = blockHeight + 1000;
     const expiryExtension = 30;
 
-    const tx = this.contract.methods.createAuction(
+    const tx = contract.methods.createAuction(
       matchId,
       openBlock,
       expiryBlock,

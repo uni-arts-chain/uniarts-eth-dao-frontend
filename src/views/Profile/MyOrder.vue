@@ -4,7 +4,9 @@
     <div v-if="list.length <= 0" class="no-data">No data</div>
     <div v-for="v in list" :key="v.id" class="list">
       <div class="item">
-        <div class="status" v-show="v.aasm_state !== 'online'">{{ v.aasm_state }}</div>
+        <div class="status" v-show="v.aasm_state !== 'online'">
+          {{ v.aasm_state?.toString().toUpperCase() }}
+        </div>
         <img :src="v.art.img_main_file1.url" alt="" @click="goDetail(v.id)" />
         <div class="info">
           <div class="progress">
@@ -94,7 +96,7 @@ export default defineComponent({
             }
           }
         );
-        notification.loading("Confirmed on Chain");
+        notification.success("Confirmed on Chain");
       } catch (err) {
         console.log(err);
         notification.error(

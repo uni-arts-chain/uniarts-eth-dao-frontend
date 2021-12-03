@@ -419,6 +419,7 @@ export default defineComponent({
             selectItem.value.token_id,
             creatAuctionData.value.startPrice,
             creatAuctionData.value.fixedPrice,
+            selectItem.value.auction_contract_address,
             (err, txHash) => {
               if (err) {
                 console.log(err);
