@@ -206,6 +206,9 @@ export default defineComponent({
       });
     });
     const buyNow = async () => {
+      if (!store.state.user.info.address) {
+        return router.push("/login");
+      }
       let bool;
       try {
         const res = await TrustMarketplace.orderByAssetId(
