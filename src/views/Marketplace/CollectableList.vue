@@ -7,8 +7,8 @@
       <img src="@/assets/images/market-search@2x.png" />
     </div>
     <div class="market-category">
-      <div class="title select">Arts</div>
-      <router-link class="title" to="/marketplace-collectable">Collectable</router-link>
+      <router-link class="title" to="/marketplace">Arts</router-link>
+      <div class="title select">Collectable</div>
       <router-link class="title" to="/marketplace-souvenirs">Souvenirs</router-link>
     </div>
     <div v-if="auctionList.length" class="buy-now">
@@ -216,7 +216,7 @@ import http from "@/plugins/http";
 import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
-  name: "index",
+  name: "CollectableList",
   components: {
     AdaptiveView,
   },

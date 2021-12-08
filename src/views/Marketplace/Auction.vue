@@ -515,7 +515,10 @@ export default defineComponent({
           ((new Date() - startEnd.startDate) *
             (auction.value.auction_expiry_block - blockHeight.block)) /
           (blockHeight.block - auction.value.auction_open_block);
-        console.log(now.value);
+        if (now.value < 0) {
+          dataMessage.value = "Auction finished";
+          disabledAuction.value = true;
+        }
       } else {
         dataMessage.value = "Auction finished";
         disabledAuction.value = true;

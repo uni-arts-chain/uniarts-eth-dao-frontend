@@ -10,6 +10,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "airdrop" */ "../views/Airdrop/Index.vue"),
   },
   {
+    path: "/souvenirs",
+    name: "Souvenirs",
+    component: () => import(/* webpackChunkName: "airdrop" */ "../views/Souvenirs/Index.vue"),
+  },
+  {
     path: "/profile",
     name: "Profile",
     component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/Index.vue"),
@@ -40,6 +45,14 @@ const routes = [
         name: "collection",
         component: () =>
           import(/* webpackChunkName: "profile" */ "../views/Profile/Collection.vue"),
+        children: [
+          {
+            path: "arts",
+            name: "arts",
+            component: () =>
+              import(/* webpackChunkName: "profile" */ "../views/Profile/MarketCollection.vue"),
+          },
+        ],
       },
       {
         path: "my_order",
@@ -67,6 +80,22 @@ const routes = [
     path: "/marketplace",
     name: "marketplace",
     component: () => import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Index.vue"),
+  },
+  {
+    path: "/marketplace-collectable",
+    name: "marketplaceCollectable",
+    component: () =>
+      import(
+        /* webpackChunkName: "marketplaceCollectable" */ "../views/Marketplace/CollectableList.vue"
+      ),
+  },
+  {
+    path: "/marketplace-souvenirs",
+    name: "marketplaceSouvenirs",
+    component: () =>
+      import(
+        /* webpackChunkName: "marketplaceSouvenirs" */ "../views/Marketplace/SouvenirsList.vue"
+      ),
   },
   {
     path: "/marketplace/auctions",

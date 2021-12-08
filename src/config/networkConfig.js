@@ -1,6 +1,6 @@
 export default {
-  development: "https://af.uniarts.network",
+  development: "https://dapp.uniarts.network" && "https://af.uniarts.network",
   production: "https://dapp.uniarts.network",
-  networkDevelopment: "production",
+  networkDevelopment: "development" && "production",
   networkProduction: "development",
 };
