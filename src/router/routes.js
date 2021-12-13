@@ -12,7 +12,12 @@ const routes = [
   {
     path: "/souvenirs",
     name: "Souvenirs",
-    component: () => import(/* webpackChunkName: "airdrop" */ "../views/Souvenirs/Index.vue"),
+    component: () => import(/* webpackChunkName: "souvenirs" */ "../views/Souvenirs/Index.vue"),
+  },
+  {
+    path: "/souvenirs/detail/:id",
+    name: "SouvenirsDetail",
+    component: () => import(/* webpackChunkName: "souvenirs" */ "../views/Souvenirs/Detail.vue"),
   },
   {
     path: "/profile",
@@ -20,7 +25,7 @@ const routes = [
     component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/Index.vue"),
     children: [
       {
-        path: "",
+        path: "/assets",
         name: "assets",
         component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/Assets.vue"),
       },
@@ -51,6 +56,18 @@ const routes = [
             name: "arts",
             component: () =>
               import(/* webpackChunkName: "profile" */ "../views/Profile/MarketCollection.vue"),
+          },
+          {
+            path: "collectable",
+            name: "collectable",
+            component: () =>
+              import(/* webpackChunkName: "profile" */ "../views/Profile/MarketCollectable.vue"),
+          },
+          {
+            path: "souvenirs",
+            name: "souvenirs",
+            component: () =>
+              import(/* webpackChunkName: "profile" */ "../views/Profile/MarketSouvenirs.vue"),
           },
         ],
       },

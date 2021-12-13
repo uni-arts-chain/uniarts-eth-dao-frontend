@@ -205,6 +205,33 @@ const apiList = [
     params: {},
     options: {},
   },
+  {
+    name: "getSouvenirsSortTypes",
+    method: "GET",
+    desc: "获取纪念品排序类型",
+    path: "/souvenirs/sort_types",
+    mockPath: "/souvenirs/sort_types",
+    params: {},
+    options: {},
+  },
+  {
+    name: "getSouvenirsList",
+    method: "GET",
+    desc: "纪念品列表",
+    path: "/souvenirs/list",
+    mockPath: "/souvenirs/list",
+    params: {},
+    options: {},
+  },
+  {
+    name: "getSouvenirById",
+    method: "GET",
+    desc: "纪念品详情",
+    path: "/souvenirs/{:id}",
+    mockPath: "/souvenirs/{:id}",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;

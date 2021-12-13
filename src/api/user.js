@@ -129,6 +129,35 @@ const apiList = [
     params: {},
     options: {},
   },
+  {
+    name: "collectedSouvenirs",
+    method: "GET",
+    desc: "可收集纪念品清单",
+    path: "/souvenirs",
+    mockPath: "/souvenirs",
+    params: {},
+    options: {},
+  },
+  {
+    name: "collectMySouvenir",
+    method: "POST",
+    desc: "收集我的纪念品",
+    path: "/souvenirs/collect",
+    mockPath: "/souvenirs/collect",
+    params: {
+      uuid: "",
+    },
+    options: {},
+  },
+  {
+    name: "getSouvenirsMine",
+    method: "GET",
+    desc: "我的纪念品列表",
+    path: "/souvenirs/mine",
+    mockPath: "/souvenirs/mine",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;

@@ -18,9 +18,9 @@
           <li class="menu-li">
             <router-link class="link" to="/profile/collection/arts">My Collection</router-link>
           </li>
-          <li class="menu-li">
-            <router-link class="link" to="/profile/my_order">My Order</router-link>
-          </li>
+          <!--          <li class="menu-li">-->
+          <!--            <router-link class="link" to="/profile/my_order">My Order</router-link>-->
+          <!--          </li>-->
           <li class="menu-li">
             <router-link class="link" to="/profile/unbond">Unbond History</router-link>
           </li>
@@ -58,11 +58,11 @@
               <router-link class="link" to="/profile/collection/arts">My Collection</router-link>
             </template>
           </el-tab-pane>
-          <el-tab-pane label="My Colloection" name="6">
-            <template #label>
-              <router-link class="link" to="/profile/my_order">My Order</router-link>
-            </template>
-          </el-tab-pane>
+          <!--          <el-tab-pane label="My Colloection" name="6">-->
+          <!--            <template #label>-->
+          <!--              <router-link class="link" to="/profile/my_order">My Order</router-link>-->
+          <!--            </template>-->
+          <!--          </el-tab-pane>-->
           <el-tab-pane label="Unbond History" name="4">
             <template #label>
               <router-link class="link" to="/profile/unbond">Unbond History</router-link>
@@ -103,6 +103,8 @@ export default defineComponent({
         curTab.value = "4";
         break;
       case "/profile/collection/arts":
+      case "/profile/collection/souvenirs":
+      case "/profile/collection/collectable":
       case "/profile/collection":
         curTab.value = "3";
         break;

@@ -1,23 +1,108 @@
 <template>
   <div class="keepsake">
-    <div class="thumbnail">123</div>
+    <div class="thumbnail">
+      <img
+        :src="keepsake.sample || require('@/assets/images/jnp.png')"
+        class="thumbnail-img"
+        @click="openKeepsake"
+      />
+    </div>
     <div class="lattice">
-      <div class="title">Round 1 Vote Memorial</div>
-      <button class="Collect">Collect</button>
+      <div class="title" @click="openKeepsake">{{ keepsake.title }}</div>
+      <button v-loading="isLoading" :disabled="isDisable" class="collect" @click="collect">
+        Collect
+      </button>
     </div>
   </div>
 </template>
 
 <script>
+import { useRouter } from "vue-router";
+import http from "@/plugins/http";
+import { ref } from "vue";
+import { notification } from "@/components/Notification";
+
 export default {
   name: "Keepsake",
+  props: {
+    keepsake: {
+      type: Object,
+      default: null,
+    },
+  },
+  setup(props) {
+    const isDisable = ref(false);
+    const router = useRouter();
+    const isLoading = ref(false);
+    const openKeepsake = () => {
+      const keepsakeId = props.keepsake.id;
+      if (keepsakeId) router.push("/souvenirs/detail/" + props.keepsake.id);
+    };
+    const collect = async () => {
+      isLoading.value = false;
+      try {
+        await http.userCollectMySouvenir({ uuid: props.keepsake.uuid });
+        isDisable.value = true;
+        notification.success("Collect Success");
+      } catch (e) {
+        console.log(e);
+        notification.error(e);
+      } finally {
+        isLoading.value = true;
+      }
+    };
+    return {
+      openKeepsake,
+      collect,
+      isLoading,
+    };
+  },
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .keepsake {
   width: 386px;
-  .img {
+  text-align: center;
+
+  .thumbnail-img {
+    cursor: pointer;
+    display: block;
+    width: 286px;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  .lattice {
+    width: 258px;
+    height: 113px;
+    line-height: 20px;
+    border-radius: 4px;
+    background-color: rgba(251, 250, 250, 100);
+    text-align: center;
+    border: 1px solid rgba(187, 187, 187, 100);
+    margin: 12px auto 0;
+
+    .title {
+      cursor: pointer;
+      color: rgba(16, 16, 16, 100);
+      font-size: 16px;
+      font-family: SourceHanSansSC-bold;
+      line-height: 52px;
+    }
+
+    .collect {
+      cursor: pointer;
+      width: 223px;
+      height: 52px;
+      line-height: 29px;
+      border-radius: 10px 10px 10px 10px;
+      background-color: rgba(4, 0, 3, 100);
+      color: rgba(255, 255, 255, 100);
+      font-size: 20px;
+      text-align: center;
+      font-family: Roboto;
+    }
   }
 }
 </style>
