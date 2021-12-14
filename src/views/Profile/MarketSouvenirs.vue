@@ -44,11 +44,13 @@
         </span>
       </div>
       <div v-show="listSelect === 0">
-        <div class="input-body">
+        <div class="input-body" v-show="selectItem.amount > 1">
           <span class="unit">Amount</span>
           <input v-model="creatAuctionData.amount" />
         </div>
-        <div class="block-height">range:1-{{ selectItem.amount }}</div>
+        <div class="block-height" v-show="selectItem.amount > 1">
+          range: 1 - {{ selectItem.amount }}
+        </div>
         <div class="input-body">
           <span class="unit">Start Block</span>
           <input v-model="creatAuctionData.startBlock" />
@@ -183,7 +185,8 @@ export default defineComponent({
     margin-left: 37px;
 
     .title {
-      font-size: 20px;
+      margin-top: 25px;
+      font-size: 22px;
       margin-bottom: 40px;
     }
 

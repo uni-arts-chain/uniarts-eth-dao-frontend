@@ -24,6 +24,7 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .collectionList {
+  margin-bottom: 20px;
   padding: 0 20% 15px 20%;
   width: 100%;
   display: flex;

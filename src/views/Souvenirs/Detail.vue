@@ -18,12 +18,12 @@
         <div class="properties">
           <div class="properties-item">
             <div class="artist">ARTIST</div>
-            <div class="describe">HimBad</div>
+            <div class="describe">{{ souvenir.artist_name }}</div>
             <div class="trait"><span class="number">33%</span> have this trait</div>
           </div>
           <div class="properties-item">
             <div class="artist">ARTWORK</div>
-            <div class="describe">{{ souvenir.artist_name }}</div>
+            <div class="describe">******</div>
             <div class="trait"><span class="number">33%</span> have this trait</div>
           </div>
         </div>
