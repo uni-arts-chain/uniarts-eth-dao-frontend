@@ -11,84 +11,6 @@
       <div class="title select">Collectable</div>
       <router-link class="title" to="/marketplace-souvenirs">Souvenirs</router-link>
     </div>
-    <div v-if="auctionList.length" class="buy-now">
-      <div class="title">
-        <span>Timed Auctions</span>
-        <router-link
-          style="font-family: Montserrat-Light; font-size: 14px"
-          to="/marketplace/auctions"
-        >
-          MORE >
-        </router-link>
-      </div>
-      <div v-if="auctionList.length > 0" v-loading="auctionLoading" class="list">
-        <div v-for="item in auctionList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
-            <AdaptiveView
-              :isPreview="true"
-              :isResponsive="true"
-              :nft="item"
-              height="364px"
-              width="364px"
-            />
-          </router-link>
-          <div class="info">
-            <div class="name">{{ item.name }}</div>
-            <div class="price">
-              {{
-                `${Number(item.auction_latest_price) ? "Current Bid" : "Bid"}: ${
-                  Number(item.auction_latest_price)
-                    ? item.auction_latest_price
-                    : item.auction_min_bid
-                } ${item.biding_coin}`
-              }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="no-data"
-        style="min-height: 200px; text-align: center; line-height: 200px; color: #999"
-      >
-        No Data
-      </div>
-    </div>
-    <div v-if="buyList?.length" v-loading="buyLoading" class="buy-now">
-      <div class="title">
-        <span>Buy Now</span>
-        <router-link
-          style="font-family: Montserrat-Light; font-size: 14px"
-          to="/marketplace/buynow"
-        >
-          MORE >
-        </router-link>
-      </div>
-      <div v-if="buyList.length > 0" class="list">
-        <div v-for="item in buyList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/buy/${item.id}`">
-            <AdaptiveView
-              :isPreview="true"
-              :isResponsive="true"
-              :nft="item.art"
-              height="364px"
-              width="364px"
-            />
-          </router-link>
-          <div class="info">
-            <div class="name">{{ item.art.name }}</div>
-            <div class="price">Price: {{ item.price }} {{ marketToken.symbol }}</div>
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="no-data"
-        style="min-height: 200px; text-align: center; line-height: 200px; color: #999"
-      >
-        No Data
-      </div>
-    </div>
   </div>
   <div v-else class="index container">
     <h3 class="title">Market</h3>
@@ -96,130 +18,18 @@
       <input placeholder="Please enter keywords..." type="text" />
       <img src="@/assets/images/market-search@2x.png" />
     </div>
-    <div class="buy-now">
-      <div class="title">
-        <div :class="{ active: currentTab == 1 }" class="title-tab" @click="currentTab = 1">
-          Auctions
-        </div>
-        <div :class="{ active: currentTab == 2 }" class="title-tab" @click="currentTab = 2">
-          Buy Now
-        </div>
-      </div>
-      <div v-if="currentTab == 1" class="list">
-        <div v-for="item in auctionList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
-            <AdaptiveView
-              :isPreview="true"
-              :isResponsive="true"
-              :nft="item"
-              height="200px"
-              width="335px"
-            />
-          </router-link>
-          <div class="info">
-            <div class="name">{{ item.name }}</div>
-            <div class="price">
-              {{
-                `${Number(item.auction_latest_price) ? "Current Bid" : "Bid"}: ${
-                  Number(item.auction_latest_price)
-                    ? item.auction_latest_price
-                    : item.auction_min_bid
-                } ${item.biding_coin}`
-              }}
-            </div>
-          </div>
-        </div>
-        <router-link
-          v-if="auctionList.length > 0"
-          style="
-            font-size: 14px;
-            width: 100%;
-            text-align: center;
-            line-height: 50px;
-            border: 2px solid black;
-            color: black;
-            margin-top: 10px;
-          "
-          to="/marketplace/auctions"
-          >MORE
-        </router-link>
-        <div
-          v-if="auctionList.length == 0"
-          class="no-data"
-          style="
-            width: 100%;
-            min-height: 200px;
-            text-align: center;
-            line-height: 200px;
-            color: #999;
-          "
-        >
-          No Data
-        </div>
-      </div>
-      <div v-else v-show="buyList?.length" class="list">
-        <div v-for="item in buyList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/buy/${item.id}`">
-            <AdaptiveView
-              :isPreview="true"
-              :isResponsive="true"
-              :nft="item.art"
-              height="200px"
-              width="335px"
-            />
-          </router-link>
-          <div class="info">
-            <div class="name">{{ item.art.name }}</div>
-            <div class="price">
-              Price: <span style="color: red">{{ item.price }}</span> {{ " " + marketToken.symbol }}
-            </div>
-          </div>
-        </div>
-        <router-link
-          v-if="buyList.length > 0"
-          style="
-            font-size: 14px;
-            width: 100%;
-            text-align: center;
-            line-height: 50px;
-            border: 2px solid black;
-            color: black;
-            margin-top: 10px;
-          "
-          to="/marketplace/buynow"
-        >
-          MORE
-        </router-link>
-        <div
-          v-if="buyList.length == 0"
-          class="no-data"
-          style="
-            width: 100%;
-            min-height: 200px;
-            text-align: center;
-            line-height: 200px;
-            color: #999;
-          "
-        >
-          No Data
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import store from "@/store";
-import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
 import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
   name: "CollectableList",
-  components: {
-    AdaptiveView,
-  },
+  components: {},
   setup() {
     const marketCurrency = "WETH";
     const marketToken = DAPP_CONFIG.tokens[marketCurrency];

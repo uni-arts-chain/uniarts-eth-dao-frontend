@@ -75,7 +75,6 @@ class Auction {
     const matchId = `user-${new Date().getTime()}`;
     // const openBlock = blockHeight + 1000;
     const expiryExtension = 30;
-
     const tx = contract.methods.createAuction(
       matchId,
       openBlock,

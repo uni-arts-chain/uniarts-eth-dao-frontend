@@ -1,11 +1,7 @@
 <template>
   <div class="keepsake">
     <div class="thumbnail">
-      <img
-        :src="keepsake.sample || require('@/assets/images/jnp.png')"
-        class="thumbnail-img"
-        @click="openKeepsake"
-      />
+      <img :src="keepsake.sample" class="thumbnail-img" @click="openKeepsake" />
     </div>
     <div class="lattice">
       <div class="title" @click="openKeepsake">{{ keepsake.title }}</div>
@@ -36,7 +32,7 @@ export default {
     const isLoading = ref(false);
     const openKeepsake = () => {
       const keepsakeId = props.keepsake.id;
-      if (keepsakeId) router.push("/souvenirs/detail/" + props.keepsake.id);
+      if (keepsakeId) router.push("/souvenirs/detail/" + keepsakeId);
     };
     const collect = async () => {
       isLoading.value = false;

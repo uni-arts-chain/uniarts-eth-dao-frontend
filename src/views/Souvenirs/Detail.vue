@@ -2,18 +2,16 @@
 <template>
   <div class="detail">
     <div class="head">
-      <span>{{ "NFT NAME" }}</span>
+      <span>{{ souvenir.title }}</span>
       <button @click="$router.back()">Back</button>
     </div>
     <div class="keepsake">
-      <img :src="require('@/assets/images/jnp.png')" alt="keepsake" class="img" />
+      <img :src="souvenir.sample" alt="keepsake" class="img" />
     </div>
     <div class="info">
       <div class="info-item">
         <div class="title"><span>Description</span></div>
-        <div class="message">
-          Round 1 vote memorial. Original artwork "When will the rain stop", by Himbad
-        </div>
+        <div class="message">{{ souvenir.artist_info }}</div>
       </div>
       <div class="info-item">
         <div class="title"><span>Properties</span></div>
@@ -24,8 +22,8 @@
             <div class="trait"><span class="number">33%</span> have this trait</div>
           </div>
           <div class="properties-item">
-            <div class="artist">ARTIST</div>
-            <div class="describe">HimBad</div>
+            <div class="artist">ARTWORK</div>
+            <div class="describe">{{ souvenir.artist_name }}</div>
             <div class="trait"><span class="number">33%</span> have this trait</div>
           </div>
         </div>
@@ -39,7 +37,7 @@
           </div>
           <div class="details-item">
             <div class="key">Token ID</div>
-            <div class="value">10</div>
+            <div class="value">{{ souvenir.token_id }}</div>
           </div>
           <div class="details-item">
             <div class="key">Token Standard</div>
@@ -56,7 +54,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import http from "@/plugins/http";
 import copy from "clipboard-copy";
@@ -66,16 +64,18 @@ export default defineComponent({
   setup() {
     const onCopy = (v) => copy(v);
     const route = useRoute();
-    const initKeepsakeData = () => {
-      console.log(route.params);
+    const souvenir = ref({});
+    const initKeepsakeData = async () => {
       const { id } = route.params;
-      http.globalGetSouvenirById({}, { id });
+      souvenir.value = await http.globalGetSouvenirById({}, { id });
+      console.log(souvenir.value);
     };
     onMounted(() => {
       initKeepsakeData();
     });
     return {
       onCopy,
+      souvenir,
     };
   },
 });
