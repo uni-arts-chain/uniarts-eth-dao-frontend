@@ -7,6 +7,7 @@ module.exports = {
     Auction: "0x3415d9823EE52A8C21cd77C138c3774B44C9196D",
     TrustMarketplace: "0x061236A338FDE12f5c0d4dce33B27A4D9fD8E604",
     Collection: "0xb0F55f7468A6F781d09D0B84cfD14C34F5566A62",
+    MultiTokenTrustMarketplace: "0x4a7Eb7C858512C5F622fF08FF9348bc4E5af7Ad0",
   },
   nfts: {
     UniartsNFT: {
@@ -24,6 +25,18 @@ module.exports = {
       symbol: "USDT",
       decimals: 18,
       address: "0xFd9CA9e22bd54260B87834966d26055620aFdbFf",
+    },
+  },
+  souvenirListTokens: {
+    USDC: {
+      symbol: "USDC",
+      decimals: 6,
+      address: "0xFd9CA9e22bd54260B87834966d26055620aFdbFf",
+    },
+    WETH: {
+      symbol: "wETH",
+      decimals: 18,
+      address: "0xcA50286362Da797303cC81276EB7D4fD536fA7cD\n",
     },
   },
   tokens: {

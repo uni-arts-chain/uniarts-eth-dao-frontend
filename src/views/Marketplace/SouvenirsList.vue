@@ -14,7 +14,7 @@
     <div v-if="auctionList.length" class="buy-now">
       <div class="title">
         <span>Timed Auctions</span>
-        <router-link style="font-family: Montserrat-Light; font-size: 14px"> MORE > </router-link>
+        <router-link style="font-family: Montserrat-Light; font-size: 14px"> MORE ></router-link>
       </div>
       <div v-if="auctionList.length > 0" v-loading="auctionLoading" class="list"></div>
       <div
@@ -28,7 +28,7 @@
     <div v-if="buyList?.length" v-loading="buyLoading" class="buy-now">
       <div class="title">
         <span>Buy Now</span>
-        <router-link style="font-family: Montserrat-Light; font-size: 14px"> MORE > </router-link>
+        <router-link style="font-family: Montserrat-Light; font-size: 14px"> MORE ></router-link>
       </div>
       <div v-if="buyList.length > 0" class="list"></div>
       <div
@@ -143,7 +143,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 import store from "@/store";
 import AdaptiveView from "@/components/AdaptiveView";
-// import http from "@/plugins/http";
+import http from "@/plugins/http";
 import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
@@ -168,20 +168,21 @@ export default defineComponent({
     const auctionLoading = ref(false);
     const buyLoading = ref(false);
     const getAuctionListData = () => {
-      // auctionLoading.value = true;
-      // http
-      //   .globalGetAuctions({
-      //     page: auctionCurrentPage.value,
-      //     per_page: auctionPerPage.value,
-      //   })
-      //   .then((res) => {
-      //     auctionList.value = res.list || [];
-      //     auctionLoading.value = false;
-      //   })
-      //   .catch((err) => {
-      //     console.log(err);
-      //     auctionLoading.value = false;
-      //   });
+      auctionLoading.value = true;
+      http
+        .globalGetSouvenirsList({
+          page: auctionCurrentPage.value,
+          per_page: auctionPerPage.value,
+        })
+        .then((res) => {
+          auctionList.value = res.list || [];
+          auctionLoading.value = false;
+          console.log(auctionList.value);
+        })
+        .catch((err) => {
+          console.log(err);
+          auctionLoading.value = false;
+        });
       // // http.globalGetAuctionsGroup({}).then((res) => {
       // //   console.log(res);
       // // });
@@ -240,10 +241,12 @@ h3.title {
   padding: 0 20% 15px 20%;
   display: flex;
   flex-direction: row;
+
   .select {
     font-weight: 900;
     text-decoration: underline;
   }
+
   .title {
     text-align: center;
     flex: 1;

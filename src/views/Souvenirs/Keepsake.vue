@@ -26,7 +26,8 @@ export default {
       default: null,
     },
   },
-  setup(props) {
+  emits: ["reset"],
+  setup(props, { emit }) {
     const isDisable = ref(false);
     const router = useRouter();
     const isLoading = ref(false);
@@ -35,16 +36,17 @@ export default {
       if (keepsakeId) router.push("/souvenirs/detail/" + keepsakeId);
     };
     const collect = async () => {
-      isLoading.value = false;
+      isLoading.value = true;
       try {
         await http.userCollectMySouvenir({ uuid: props.keepsake.uuid });
         isDisable.value = true;
         notification.success("Collect Success");
+        emit("reset");
       } catch (e) {
         console.log(e);
         notification.error(e);
       } finally {
-        isLoading.value = true;
+        isLoading.value = false;
       }
     };
     return {

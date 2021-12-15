@@ -1,7 +1,12 @@
 <template>
   <div class="title">Collect Your Vote Memorials</div>
   <div class="list" v-if="keepsakes.length">
-    <keepsake v-for="keepsake of keepsakes" :key="keepsake" :keepsake="keepsake"></keepsake>
+    <keepsake
+      @reset="getMemorialsData"
+      v-for="keepsake of keepsakes"
+      :key="keepsake"
+      :keepsake="keepsake"
+    ></keepsake>
   </div>
   <div v-else class="no-list">no data</div>
 </template>
@@ -23,6 +28,7 @@ export default defineComponent({
       getMemorialsData();
     });
     return {
+      getMemorialsData,
       keepsakes,
     };
   },

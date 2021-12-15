@@ -6,12 +6,10 @@ import store from "@/store";
 class MultiTokenAuction {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
-    // this.address = DAPP_CONFIG.contracts.Auction;
-    // this.contract = new this.web3.eth.Contract(AuctionABI, this.address.toString());
   }
 
   async creatAuction(
-    addressV2,
+    contractAddress,
     payTokenName,
     openBlock,
     expiryBlock,
@@ -23,10 +21,8 @@ class MultiTokenAuction {
     fixedPrice,
     callback
   ) {
-    const contractAddress = addressV2;
     const contract = new this.web3.eth.Contract(MultiTokenAuctionABI, contractAddress);
     const matchId = `user-${new Date().getTime()}`;
-
     const expiryExtension = 30;
     const tx = contract.methods.createAuction(
       matchId,
@@ -52,6 +48,10 @@ class MultiTokenAuction {
       },
       callback
     );
+  }
+
+  async gasPrice() {
+    return await this.web3.eth.getGasPrice();
   }
 }
 
