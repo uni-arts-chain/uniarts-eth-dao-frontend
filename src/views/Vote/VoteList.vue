@@ -176,9 +176,16 @@ export default defineComponent({
     };
 
     const countdownTime = (startTime, endTime) => {
-      let value = DateFormatCountdown(startTime * 10, endTime * 10);
-      console.log(value);
-      return value ? `${value.day} Day ${value.hour} Hours ${value.minute} Minute` : "";
+      let now = new Date().getTime();
+      if (now < startTime * 1000) {
+        return "Vote not started";
+      } else if (now > endTime * 1000) {
+        return "Vote is over";
+      } else {
+        let value = DateFormatCountdown(startTime * 10, endTime * 10);
+        console.log(value);
+        return value ? `${value.day} Day ${value.hour} Hours ${value.minute} Minute` : "";
+      }
     };
 
     const formatPercent = (number) => {
