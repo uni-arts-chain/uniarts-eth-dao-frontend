@@ -49,7 +49,7 @@
           </div>
           <button
             class="submit"
-            :disabled="!voteTime || hasFinished"
+            :disabled="!hasStarted || hasFinished"
             v-if="isApproved"
             v-loading="isVoting"
             @click="onVote"
@@ -89,7 +89,7 @@
           </div>
           <button
             class="submit"
-            :disabled="!voteTime || hasFinished"
+            :disabled="!hasStarted || hasFinished"
             v-loading="isBonding"
             @click="onBonded"
           >
@@ -316,14 +316,16 @@ export default defineComponent({
       getStakeVoted();
       getBondedVoted();
     };
-
-    const voteTime = ref(null);
-    const getVoteTime = async (nftId) => {
-      voteTime.value = new BigNumber(await VoteMining.getGroupStartTime(nftId)).toNumber();
+    const hasStarted = ref(false);
+    const voteHasStarted = () => {
+      let now = new Date().getTime();
+      hasStarted.value = now >= artInfo.start_at * 1000 && now <= artInfo.end_at * 1000;
+      // voteTime.value = new BigNumber(await VoteMining.getGroupStartTime(nftId)).toNumber();
     };
     const hasFinished = ref(true);
-    const voteHasFinished = async (nftId) => {
-      hasFinished.value = await VoteMining.getGroupHasFinished(nftId);
+    const voteHasFinished = () => {
+      hasFinished.value = new Date().getTime() > artInfo.end_at * 1000;
+      // hasFinished.value = await VoteMining.getGroupHasFinished(nftId);
     };
 
     const artId = route.params.id;
@@ -340,8 +342,8 @@ export default defineComponent({
           Object.keys(res).forEach((key) => (artInfo[key] = res[key]));
           isLoading.value = false;
           init();
-          voteHasFinished(res.token_id);
-          getVoteTime(res.token_id);
+          voteHasFinished();
+          voteHasStarted();
         })
         .catch((err) => {
           console.log(err);
@@ -446,7 +448,7 @@ export default defineComponent({
       bondedBalance,
       bondAmount,
 
-      voteTime,
+      hasStarted,
       hasFinished,
     };
   },

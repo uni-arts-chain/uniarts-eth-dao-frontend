@@ -60,7 +60,7 @@ module.exports = {
     rinkeby: {
       chainId: "0x" + new Number(4).toString(16),
       chainName: "Rinkeby",
-      rpcUrls: ["https://rinkeby.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161"],
+      rpcUrls: ["https://dapp.uniarts.network/api/v1/rpc"],
       nativeCurrency: {
         name: "Rinkeby Ether",
         symbol: "ETH",
