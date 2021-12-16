@@ -15,21 +15,16 @@
             </div>
           </div>
           <div class="operate">
-            <button
-              @click="onCancelClick(v)"
-              style="cursor: pointer"
-              v-if="v.buy_now_order && v.can_cancel_buy_now_order"
-            >
+            <button @click="onCancelClick(v)" v-if="v.buy_now_order && v.can_cancel_buy_now_order">
               Cancel Listing
             </button>
-            <button
-              v-if="!v.buy_now_order && !v.auction_order"
-              style="cursor: pointer"
-              @click="openListDialog(v)"
-            >
+            <button disabled v-if="v.auction_order">Bidding</button>
+            <button v-if="!v.buy_now_order && !v.auction_order" @click="openListDialog(v)">
               List
             </button>
-            <button style="cursor: pointer" @click="openSendDialog(v)">Send</button>
+            <button :disabled="v.buy_now_order || v.auction_order" @click="openSendDialog(v)">
+              Send
+            </button>
           </div>
         </div>
       </div>
@@ -65,11 +60,6 @@
         <div class="input-body">
           <span class="unit">Starting Price</span>
           <input v-model="creatAuctionData.startPrice" />
-          <!-- <select v-model="selectToken" class="unit unit2">
-            <option v-for="(value, name) in souvenirListTokens" :key="name" :value="value">
-              {{ value.symbol }}
-            </option>
-          </select> -->
           <el-dropdown trigger="click" @command="onSelectAuctionToken">
             <span class="token-unit">
               {{ selectAuctionToken.symbol }}
@@ -87,15 +77,6 @@
         <div class="input-body">
           <span class="unit">Fixed Price</span>
           <input v-model="creatAuctionData.fixedPrice" />
-          <!-- <select v-model="selectToken" class="unit unit2">
-            <option
-              v-for="(value, name) in souvenirListTokens"
-              :key="name"
-              :value="value.symbol.toLowerCase()"
-            >
-              {{ value.symbol }}
-            </option>
-          </select> -->
           <el-dropdown trigger="click" @command="onSelectAuctionToken">
             <span class="token-unit">
               {{ selectAuctionToken.symbol }}
@@ -129,15 +110,6 @@
         </div>
         <div class="input-body">
           <input v-model="creatBuyNowData.price" />
-          <!-- <select v-model="selectToken" class="unit unit2">
-            <option
-              v-for="(value, name) in souvenirListTokens"
-              :key="name"
-              :value="value"
-            >
-              {{ value.symbol.toUpperCase() }}
-            </option>
-          </select> -->
           <el-dropdown trigger="click" @command="onSelectToken">
             <span class="token-unit">
               {{ selectToken.symbol }}
@@ -188,28 +160,36 @@
         <div class="input-body">
           <span class="unit">Starting Price</span>
           <input v-model="creatAuctionData.startPrice" />
-          <select v-model="selectToken" class="unit unit2">
-            <option
-              v-for="(value, name) in souvenirListTokens"
-              :key="name"
-              :value="value.symbol.toLowerCase()"
-            >
-              {{ value.symbol }}
-            </option>
-          </select>
+          <el-dropdown trigger="click" @command="onSelectAuctionToken">
+            <span class="token-unit">
+              {{ selectAuctionToken.symbol }}
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="(v, i) in souvenirListTokens" :key="i" :command="v">{{
+                  v.symbol
+                }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
         <div class="input-body">
           <span class="unit">Fixed Price</span>
           <input v-model="creatAuctionData.fixedPrice" />
-          <select v-model="selectToken" class="unit unit2">
-            <option
-              v-for="(value, name) in souvenirListTokens"
-              :key="name"
-              :value="value.symbol.toLowerCase()"
-            >
-              {{ value.symbol }}
-            </option>
-          </select>
+          <el-dropdown trigger="click" @command="onSelectToken">
+            <span class="token-unit">
+              {{ selectToken.symbol }}
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="(v, i) in souvenirListTokens" :key="i" :command="v">{{
+                  v.symbol
+                }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
         <div class="input-body">
           <span class="unit">Min Increment</span>
@@ -766,6 +746,7 @@ export default defineComponent({
         font-size: 14px;
         font-family: Montserrat-Medium;
         text-align: center;
+        cursor: pointer;
         color: #ffffff;
         width: 119px;
         height: 43px;
@@ -774,6 +755,7 @@ export default defineComponent({
 
       button:disabled {
         background-color: #8e8e8e;
+        cursor: not-allowed;
       }
     }
 
