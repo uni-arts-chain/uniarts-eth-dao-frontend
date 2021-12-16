@@ -49,6 +49,9 @@ export default defineComponent({
   margin: 0 auto 30px;
   display: flex;
   flex-direction: row;
+  @media screen and (max-width: 750px) {
+    display: unset;
+  }
 }
 .no-list {
   text-align: center;

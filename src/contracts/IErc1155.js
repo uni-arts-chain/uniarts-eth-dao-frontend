@@ -27,13 +27,24 @@ export default class IErc1155 {
   }
 
   /**
-   *
    * @param account address
    * @param operator address
    */
   async isApprovedForAll(operator) {
     const account = store.state.user.info.address;
     return await this.contract.methods.isApprovedForAll(account, operator).call();
+  }
+
+  async safeTransferFrom(to, id, amount, callback) {
+    const sender = store.state.user.info.address;
+    const gasPrice = await this.gasPrice();
+    const tx = this.contract.methods.safeTransferFrom(sender, to, id, amount, []);
+    const gasLimit = await tx.estimateGas({
+      value: 0,
+      from: sender,
+      to: this.address,
+    });
+    return tx.send({ from: sender, gasPrice: gasPrice, gas: Math.round(gasLimit * 1.1) }, callback);
   }
 
   async gasPrice() {

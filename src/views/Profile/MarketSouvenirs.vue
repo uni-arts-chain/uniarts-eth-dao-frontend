@@ -17,9 +17,9 @@
           <div class="operate">
             <!--            <button>Cancel Listing</button>-->
             <button @click="openListDialog(v)">List</button>
-            <button>Send</button>
+            <button @click="openSendDialog(v)">Send</button>
             <!-- <button @click="() => pin(v)">Pin</button> -->
-            <button disabled>Pin</button>
+            <!--            <button disabled>Pin</button>-->
           </div>
         </div>
       </div>
@@ -113,6 +113,126 @@
       </div>
     </div>
   </Dialog>
+  <mobilecomfirm v-else v-model="listDialog" type="small">
+    <div class="dialog-content">
+      <div class="list-select">
+        <span :class="{ 'select-item': tabStatus === 0 }" class="list-item" @click="tabStatus = 0">
+          Listing to Auction
+        </span>
+        <span :class="{ 'select-item': tabStatus === 1 }" class="list-item" @click="tabStatus = 1">
+          Listing to BuyNow Market
+        </span>
+      </div>
+      <div v-show="tabStatus === 0">
+        <div v-show="selectItem.amount > 1" class="input-body">
+          <span class="unit">Amount</span>
+          <input v-model="creatAuctionData.amount" />
+        </div>
+        <div v-show="selectItem.amount > 1" class="block-height">
+          range: 1 - {{ selectItem.amount }}
+        </div>
+        <div class="input-body">
+          <span class="unit">Start Block</span>
+          <input v-model="creatAuctionData.startBlock" />
+        </div>
+        <div class="block-height">Current block height : {{ blockHeight }}</div>
+        <div class="input-body">
+          <span class="unit">End Block</span>
+          <input v-model="creatAuctionData.endBlock" />
+        </div>
+        <div class="input-body">
+          <span class="unit">Starting Price</span>
+          <input v-model="creatAuctionData.startPrice" />
+          <select v-model="selectToken" class="unit unit2">
+            <option
+              v-for="(value, name) in souvenirListTokens"
+              :key="name"
+              :value="value.symbol.toLowerCase()"
+            >
+              {{ value.symbol }}
+            </option>
+          </select>
+        </div>
+        <div class="input-body">
+          <span class="unit">Fixed Price</span>
+          <input v-model="creatAuctionData.fixedPrice" />
+          <select v-model="selectToken" class="unit unit2">
+            <option
+              v-for="(value, name) in souvenirListTokens"
+              :key="name"
+              :value="value.symbol.toLowerCase()"
+            >
+              {{ value.symbol }}
+            </option>
+          </select>
+        </div>
+        <div class="input-body">
+          <span class="unit">Min Increment</span>
+          <input v-model="creatAuctionData.minIncrement" />
+          <span class="unit unit2">%</span>
+        </div>
+        <button v-loading="loading" @click="creatToAuctionMarket">
+          {{ listToAuctionApproving ? "Creat on Auction Market" : "Approve" }}
+        </button>
+      </div>
+      <div v-show="tabStatus === 1">
+        <div v-show="selectItem.amount > 1" class="input-body">
+          <span class="unit">Amount</span>
+          <input v-model="creatBuyNowData.amount" />
+        </div>
+        <div v-show="selectItem.amount > 1" class="block-height">
+          range: 1 - {{ selectItem.amount }}
+        </div>
+        <div class="input-body">
+          <input v-model="creatBuyNowData.price" />
+          <select v-model="selectToken" class="unit unit2">
+            <option
+              v-for="(value, name) in souvenirListTokens"
+              :key="name"
+              :value="value.symbol.toLowerCase()"
+            >
+              {{ value.symbol }}
+            </option>
+          </select>
+        </div>
+        <button v-loading="loading" @click="creatToBuyNowMarket">
+          {{ listToBuyNowApproving ? "Creat on BuyNow Market" : "Approve" }}
+        </button>
+      </div>
+    </div>
+  </mobilecomfirm>
+  <Dialog v-if="!$store.state.global.isMobile" v-model="sendDialog" type="small">
+    <div class="dialog-content">
+      <div v-show="sendDialogData.amount > 1" class="input-body">
+        <span class="unit">Amount</span>
+        <input v-model="creatBuyNowData.amount" />
+      </div>
+      <div v-show="sendDialogData.amount > 1" class="block-height">
+        range: 1 - {{ selectItem.amount }}
+      </div>
+      <div class="input-body">
+        <span class="unit">address</span>
+        <input v-model="sendDialogData.sender" />
+      </div>
+      <button v-loading="loading" @click="sendToAddress">Send</button>
+    </div>
+  </Dialog>
+  <Mobilecomfirm v-else v-model="sendDialog" type="small">
+    <div class="dialog-content">
+      <div v-show="sendDialogData.amount > 1" class="input-body">
+        <span class="unit">Amount</span>
+        <input v-model="creatBuyNowData.amount" />
+      </div>
+      <div v-show="sendDialogData.amount > 1" class="block-height">
+        range: 1 - {{ selectItem.amount }}
+      </div>
+      <div class="input-body">
+        <span class="unit">address</span>
+        <input v-model="sendDialogData.sender" />
+      </div>
+      <button v-loading="loading" @click="sendToAddress">Send</button>
+    </div>
+  </Mobilecomfirm>
 </template>
 
 <script>
@@ -128,10 +248,12 @@ import IErc1155 from "@/contracts/IErc1155";
 import { notification } from "@/components/Notification";
 import MultiTokenTrustMarketplace from "@/contracts/MultiTokenTrustMarketplace";
 import MultiTokenAuction from "@/contracts/MultiTokenAuction";
+import Mobilecomfirm from "@/components/MobileConfirm";
 
 export default defineComponent({
   name: "MarketSouvenirs",
   components: {
+    Mobilecomfirm,
     Dialog,
     Progress,
   },
@@ -152,6 +274,7 @@ export default defineComponent({
     const tabStatus = ref(0);
     // 弹出层开关
     const listDialog = ref(false);
+
     // 当前弹出层纪念品对象
     const selectItem = ref({});
     // 选择币种
@@ -175,10 +298,24 @@ export default defineComponent({
         price: 0,
       };
     };
+    const sendDialogData = ref({
+      amount: 1,
+      sender: "",
+    });
+    const openSendDialog = (item) => {
+      selectItem.value = item;
+      sendDialog.value = true;
+      sendDialogData.value = {
+        amount: 1,
+        sender: "",
+      };
+    };
+
     // 关闭所有弹窗
     const closeDialog = () => {
       selectItem.value = {};
       listDialog.value = false;
+      sendDialog.value = false;
     };
 
     // 获取当前合约状态
@@ -390,6 +527,42 @@ export default defineComponent({
       }
     };
 
+    // 纪念品转账
+    const sendToAddress = async () => {
+      loading.value = true;
+      let notifyId = notification.loading("Waiting for wallet response");
+      const nft = new IErc1155(selectItem.value.nft_contract);
+      try {
+        const res = await nft.safeTransferFrom(
+          sendDialogData.value.sender,
+          selectItem.value.id,
+          sendDialogData.value.amount,
+          (err, txHash) => {
+            notification.dismiss(notifyId);
+            if (err) {
+              console.log(err);
+              loading.value = false;
+              myNotificationErr(err);
+              throw err;
+            } else if (txHash) {
+              console.log(txHash);
+              notification.success(txHash);
+              notifyId = notification.loading("Waiting for confirmation on the chain");
+            }
+          }
+        );
+        listToAuctionApproving.value = true;
+        console.log(res);
+        notification.success("Transferred");
+      } catch (err) {
+        console.error(err);
+        myNotificationErr(err);
+      } finally {
+        loading.value = false;
+        notification.dismiss(notifyId);
+      }
+    };
+
     // 当前快高
     const blockHeight = ref(0);
     // 获取当前快高
@@ -398,6 +571,7 @@ export default defineComponent({
       blockHeight.value = block;
     };
 
+    const sendDialog = ref(false);
     // 查看详情
     const goDetail = (item) => {
       const keepsakeId = item.id;
@@ -432,6 +606,10 @@ export default defineComponent({
       souvenirListTokens,
       selectToken,
       loading,
+      openSendDialog,
+      sendDialog,
+      sendDialogData,
+      sendToAddress,
     };
   },
 });

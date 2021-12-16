@@ -24,6 +24,11 @@ export default defineComponent({
 </script>
 <style lang="scss" scoped>
 .collectionList {
+  @media screen and (max-width: 750px) {
+    padding-left: 20px;
+    padding-right: 20px;
+    text-align: center;
+  }
   margin-bottom: 20px;
   padding: 0 20% 15px 20%;
   width: 100%;
