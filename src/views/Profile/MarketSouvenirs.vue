@@ -88,6 +88,13 @@
         </button>
       </div>
       <div v-show="tabStatus === 1">
+        <div v-show="selectItem.amount > 1" class="input-body">
+          <span class="unit">Amount</span>
+          <input v-model="creatBuyNowData.amount" />
+        </div>
+        <div v-show="selectItem.amount > 1" class="block-height">
+          range: 1 - {{ selectItem.amount }}
+        </div>
         <div class="input-body">
           <input v-model="creatBuyNowData.price" />
           <select v-model="selectToken" class="unit unit2">
@@ -164,6 +171,7 @@ export default defineComponent({
         minIncrement: 10,
       };
       creatBuyNowData.value = {
+        amount: 1,
         price: 0,
       };
     };
@@ -184,6 +192,7 @@ export default defineComponent({
 
     // 一口价挂单输入对象
     const creatBuyNowData = ref({
+      amount: 1,
       price: 0,
     });
     // 一口价挂单合约授权
@@ -199,8 +208,86 @@ export default defineComponent({
         listToAuctionApproving.value = false;
       }
     };
+
+    // BuyNow合约授权
+    const approveBuyNow = async (souvenir) => {
+      loading.value = true;
+      let notifyId = notification.loading("Waiting for wallet response");
+      const nft = new IErc1155(souvenir.nft_contract);
+      console.log(souvenir.auction_contract);
+      try {
+        const res = await nft.setApprovalForAll(
+          MultiTokenTrustMarketplace.address,
+          (err, txHash) => {
+            notification.dismiss(notifyId);
+            if (err) {
+              console.log(err);
+              loading.value = false;
+              myNotificationErr(err);
+              throw err;
+            } else if (txHash) {
+              console.log(txHash);
+              notification.success(txHash);
+              notifyId = notification.loading("Waiting for confirmation on the chain");
+            }
+          }
+        );
+        listToBuyNowApproving.value = true;
+        console.log(res);
+        notification.success("Approved");
+      } catch (err) {
+        console.error(err);
+        myNotificationErr(err);
+      } finally {
+        loading.value = false;
+        notification.dismiss(notifyId);
+      }
+    };
+
     // 挂单到一口价市场
-    const creatToBuyNowMarket = () => {};
+    const creatBuyNowList = async (souvenir) => {
+      loading.value = true;
+      let notifyId = notification.loading("Waiting for wallet response");
+      try {
+        await MultiTokenTrustMarketplace.createOrder(
+          selectToken.value,
+          souvenir.nft_contract,
+          souvenir.id,
+          creatBuyNowData.value.amount,
+          creatBuyNowData.value.price,
+          (err, txHash) => {
+            notification.dismiss(notifyId);
+            if (err) {
+              console.log(err);
+              loading.value = false;
+              myNotificationErr(err);
+              throw err;
+            } else if (txHash) {
+              console.log(txHash);
+              notification.success(txHash);
+              notifyId = notification.loading("Waiting for confirmation on the chain");
+            }
+          }
+        );
+        notification.success("Creat To Buy Now List Success");
+        closeDialog();
+        initSouvenirs();
+      } catch (err) {
+        myNotificationErr(err);
+      } finally {
+        notification.dismiss(notifyId);
+        loading.value = false;
+      }
+    };
+
+    // 挂单到一口价市场事件
+    const creatToBuyNowMarket = () => {
+      if (listToBuyNowApproving.value) {
+        creatBuyNowList(selectItem.value);
+      } else {
+        approveBuyNow(selectItem.value);
+      }
+    };
 
     // 拍卖挂单输入对象
     const creatAuctionData = ref({
@@ -259,18 +346,6 @@ export default defineComponent({
       let notifyId = notification.loading("Waiting for wallet response");
       console.log(souvenir, MultiTokenAuction);
       try {
-        console.log(
-          souvenir.auction_contract,
-          selectToken.value,
-          creatAuctionData.value.startBlock,
-          creatAuctionData.value.endBlock,
-          creatAuctionData.value.minIncrement,
-          souvenir.nft_contract,
-          souvenir.id,
-          creatAuctionData.value.amount,
-          creatAuctionData.value.startPrice,
-          creatAuctionData.value.fixedPrice
-        );
         await MultiTokenAuction.creatAuction(
           souvenir.auction_contract,
           selectToken.value,
