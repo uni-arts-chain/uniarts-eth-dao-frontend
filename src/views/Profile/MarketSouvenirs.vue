@@ -8,18 +8,28 @@
         <div class="info">
           <div class="title">{{ v.title }}</div>
           <div class="progress">
-            <Progress :value="0" />
+            <Progress :value="parseInt((v.number / v.total) * 100)" />
             <div class="value-group">
-              <span>Number of votes: {{ "v.number" }}</span>
-              <span>Total: {{ "v.total" }}</span>
+              <span>Number of votes: {{ v.number }}</span>
+              <span>Total: {{ v.total }}</span>
             </div>
           </div>
           <div class="operate">
-            <!--            <button>Cancel Listing</button>-->
-            <button @click="openListDialog(v)">List</button>
-            <button @click="openSendDialog(v)">Send</button>
-            <!-- <button @click="() => pin(v)">Pin</button> -->
-            <!--            <button disabled>Pin</button>-->
+            <button
+              @click="onCancelClick(v)"
+              style="cursor: pointer"
+              v-if="v.buy_now_order && v.can_cancel_buy_now_order"
+            >
+              Cancel Listing
+            </button>
+            <button
+              v-if="!v.buy_now_order && !v.auction_order"
+              style="cursor: pointer"
+              @click="openListDialog(v)"
+            >
+              List
+            </button>
+            <button style="cursor: pointer" @click="openSendDialog(v)">Send</button>
           </div>
         </div>
       </div>
@@ -55,20 +65,29 @@
         <div class="input-body">
           <span class="unit">Starting Price</span>
           <input v-model="creatAuctionData.startPrice" />
-          <select v-model="selectToken" class="unit unit2">
-            <option
-              v-for="(value, name) in souvenirListTokens"
-              :key="name"
-              :value="value.symbol.toLowerCase()"
-            >
+          <!-- <select v-model="selectToken" class="unit unit2">
+            <option v-for="(value, name) in souvenirListTokens" :key="name" :value="value">
               {{ value.symbol }}
             </option>
-          </select>
+          </select> -->
+          <el-dropdown trigger="click" @command="onSelectAuctionToken">
+            <span class="token-unit">
+              {{ selectAuctionToken.symbol }}
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="(v, i) in souvenirListTokens" :key="i" :command="v">{{
+                  v.symbol
+                }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
         <div class="input-body">
           <span class="unit">Fixed Price</span>
           <input v-model="creatAuctionData.fixedPrice" />
-          <select v-model="selectToken" class="unit unit2">
+          <!-- <select v-model="selectToken" class="unit unit2">
             <option
               v-for="(value, name) in souvenirListTokens"
               :key="name"
@@ -76,7 +95,20 @@
             >
               {{ value.symbol }}
             </option>
-          </select>
+          </select> -->
+          <el-dropdown trigger="click" @command="onSelectAuctionToken">
+            <span class="token-unit">
+              {{ selectAuctionToken.symbol }}
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="(v, i) in souvenirListTokens" :key="i" :command="v">{{
+                  v.symbol
+                }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
         <div class="input-body">
           <span class="unit">Min Increment</span>
@@ -97,18 +129,31 @@
         </div>
         <div class="input-body">
           <input v-model="creatBuyNowData.price" />
-          <select v-model="selectToken" class="unit unit2">
+          <!-- <select v-model="selectToken" class="unit unit2">
             <option
               v-for="(value, name) in souvenirListTokens"
               :key="name"
-              :value="value.symbol.toLowerCase()"
+              :value="value"
             >
-              {{ value.symbol }}
+              {{ value.symbol.toUpperCase() }}
             </option>
-          </select>
+          </select> -->
+          <el-dropdown trigger="click" @command="onSelectToken">
+            <span class="token-unit">
+              {{ selectToken.symbol }}
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="(v, i) in souvenirListTokens" :key="i" :command="v">{{
+                  v.symbol
+                }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
         <button v-loading="loading" @click="creatToBuyNowMarket">
-          {{ listToBuyNowApproving ? "Creat on BuyNow Market" : "Approve" }}
+          {{ listToBuyNowApproving ? "Create on BuyNow Market" : "Approve" }}
         </button>
       </div>
     </div>
@@ -172,7 +217,7 @@
           <span class="unit unit2">%</span>
         </div>
         <button v-loading="loading" @click="creatToAuctionMarket">
-          {{ listToAuctionApproving ? "Creat on Auction Market" : "Approve" }}
+          {{ listToAuctionApproving ? "Create on Auction Market" : "Approve" }}
         </button>
       </div>
       <div v-show="tabStatus === 1">
@@ -196,7 +241,7 @@
           </select>
         </div>
         <button v-loading="loading" @click="creatToBuyNowMarket">
-          {{ listToBuyNowApproving ? "Creat on BuyNow Market" : "Approve" }}
+          {{ listToBuyNowApproving ? "Create on BuyNow Market" : "Approve" }}
         </button>
       </div>
     </div>
@@ -233,6 +278,12 @@
       <button v-loading="loading" @click="sendToAddress">Send</button>
     </div>
   </Mobilecomfirm>
+  <Dialog v-if="!$store.state.global.isMobile" v-model="cancelDialog" type="small">
+    <div class="dialog-content">
+      <div class="dialog-title">Are you sure to cancel the order?</div>
+      <button v-loading="loading" @click="onCancelBuyNowOrder">Confirm</button>
+    </div>
+  </Dialog>
 </template>
 
 <script>
@@ -249,6 +300,7 @@ import { notification } from "@/components/Notification";
 import MultiTokenTrustMarketplace from "@/contracts/MultiTokenTrustMarketplace";
 import MultiTokenAuction from "@/contracts/MultiTokenAuction";
 import Mobilecomfirm from "@/components/MobileConfirm";
+import { BigNumber } from "@/plugins/bignumber";
 
 export default defineComponent({
   name: "MarketSouvenirs",
@@ -278,13 +330,14 @@ export default defineComponent({
     // 当前弹出层纪念品对象
     const selectItem = ref({});
     // 选择币种
-    const selectToken = ref(config.souvenirListTokens.WETH.symbol.toLowerCase());
+    const selectToken = ref(config.souvenirListTokens.WETH);
     // 打开弹出层事件
     const openListDialog = (item) => {
       getApproveStatus(item);
       selectItem.value = item;
       listDialog.value = true;
-      selectToken.value = config.souvenirListTokens.WETH.symbol.toLowerCase();
+      selectToken.value = config.souvenirListTokens.WETH;
+      selectAuctionToken.value = config.souvenirListTokens.WETH;
       creatAuctionData.value = {
         amount: 1,
         startBlock: blockHeight.value + 200,
@@ -385,13 +438,16 @@ export default defineComponent({
     const creatBuyNowList = async (souvenir) => {
       loading.value = true;
       let notifyId = notification.loading("Waiting for wallet response");
+      console.log("selectToken: ", selectToken.value);
       try {
         await MultiTokenTrustMarketplace.createOrder(
-          selectToken.value,
+          selectToken.value.symbol.toLowerCase(),
           souvenir.nft_contract,
-          souvenir.id,
+          souvenir.token_id,
           creatBuyNowData.value.amount,
-          creatBuyNowData.value.price,
+          new BigNumber(creatBuyNowData.value.price)
+            .shiftedBy(selectToken.value.decimals)
+            .toString(),
           (err, txHash) => {
             notification.dismiss(notifyId);
             if (err) {
@@ -401,19 +457,20 @@ export default defineComponent({
               throw err;
             } else if (txHash) {
               console.log(txHash);
+              loading.value = false;
               notification.success(txHash);
               notifyId = notification.loading("Waiting for confirmation on the chain");
+              closeDialog();
+              initSouvenirs();
             }
           }
         );
-        notification.success("Creat To Buy Now List Success");
-        closeDialog();
-        initSouvenirs();
+        notification.success("Create To Buy Now List Success");
       } catch (err) {
+        loading.value = false;
         myNotificationErr(err);
       } finally {
         notification.dismiss(notifyId);
-        loading.value = false;
       }
     };
 
@@ -477,6 +534,12 @@ export default defineComponent({
         notification.dismiss(notifyId);
       }
     };
+
+    const selectAuctionToken = ref({});
+    const onSelectAuctionToken = (item) => {
+      selectAuctionToken.value = item;
+    };
+
     // 挂单到拍卖市场
     const creatAuctionList = async (souvenir) => {
       loading.value = true;
@@ -485,12 +548,12 @@ export default defineComponent({
       try {
         await MultiTokenAuction.creatAuction(
           souvenir.auction_contract,
-          selectToken.value,
+          selectAuctionToken.value.symbol.toLowerCase(),
           creatAuctionData.value.startBlock,
           creatAuctionData.value.endBlock,
           creatAuctionData.value.minIncrement,
           souvenir.nft_contract,
-          souvenir.id,
+          souvenir.token_id,
           creatAuctionData.value.amount,
           creatAuctionData.value.startPrice,
           creatAuctionData.value.fixedPrice,
@@ -503,19 +566,19 @@ export default defineComponent({
               throw err;
             } else if (txHash) {
               console.log(txHash);
+              loading.value = false;
               notification.success(txHash);
+              notification.success("Creat To Auction List Success");
               notifyId = notification.loading("Waiting for confirmation on the chain");
+              closeDialog();
+              initSouvenirs();
             }
           }
         );
-        notification.success("Creat To Auction List Success");
-        closeDialog();
-        initSouvenirs();
       } catch (err) {
         myNotificationErr(err);
       } finally {
         notification.dismiss(notifyId);
-        loading.value = false;
       }
     };
     // 挂单到拍卖市场事件
@@ -535,7 +598,7 @@ export default defineComponent({
       try {
         const res = await nft.safeTransferFrom(
           sendDialogData.value.sender,
-          selectItem.value.id,
+          selectItem.value.token_id,
           sendDialogData.value.amount,
           (err, txHash) => {
             notification.dismiss(notifyId);
@@ -547,7 +610,9 @@ export default defineComponent({
             } else if (txHash) {
               console.log(txHash);
               notification.success(txHash);
+              loading.value = false;
               notifyId = notification.loading("Waiting for confirmation on the chain");
+              closeDialog();
             }
           }
         );
@@ -555,10 +620,10 @@ export default defineComponent({
         console.log(res);
         notification.success("Transferred");
       } catch (err) {
+        loading.value = false;
         console.error(err);
         myNotificationErr(err);
       } finally {
-        loading.value = false;
         notification.dismiss(notifyId);
       }
     };
@@ -589,6 +654,54 @@ export default defineComponent({
           err.message ||
           (err.data && err.data.message)
       );
+
+    const onSelectToken = (item) => {
+      selectToken.value = item;
+    };
+
+    const cancelDialog = ref(false);
+    const cancelSouvenir = ref({});
+
+    // 取消BuyNow订单
+    const onCancelClick = (souvenir) => {
+      cancelDialog.value = true;
+      cancelSouvenir.value = souvenir;
+    };
+
+    // 取消BuyNow订单合约交互
+    const onCancelBuyNowOrder = async () => {
+      loading.value = true;
+      let notifyId = notification.loading("Waiting for wallet response");
+      try {
+        await MultiTokenTrustMarketplace.cancelOrder(
+          cancelSouvenir.value.nft_contract,
+          cancelSouvenir.value.buy_now_order_id,
+          (err, txHash) => {
+            notification.dismiss(notifyId);
+            if (err) {
+              console.log(err);
+              loading.value = false;
+              myNotificationErr(err);
+              throw err;
+            } else if (txHash) {
+              console.log(txHash);
+              loading.value = false;
+              notification.success(txHash);
+              notifyId = notification.loading("Waiting for confirmation on the chain");
+              cancelDialog.value = false;
+              initSouvenirs();
+            }
+          }
+        );
+        notification.success("Success");
+      } catch (err) {
+        loading.value = false;
+        myNotificationErr(err);
+      } finally {
+        notification.dismiss(notifyId);
+      }
+    };
+
     return {
       goDetail,
       souvenirList,
@@ -603,13 +716,20 @@ export default defineComponent({
       creatToAuctionMarket,
       creatBuyNowData,
       selectItem,
+      onSelectAuctionToken,
       souvenirListTokens,
       selectToken,
+      selectAuctionToken,
       loading,
       openSendDialog,
       sendDialog,
       sendDialogData,
       sendToAddress,
+
+      onSelectToken,
+      onCancelBuyNowOrder,
+      onCancelClick,
+      cancelDialog,
     };
   },
 });
@@ -751,6 +871,12 @@ export default defineComponent({
     text-align: right;
   }
 
+  .dialog-title {
+    font-size: 19px;
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
   .input-body {
     margin-top: 20px;
     display: flex;
@@ -785,6 +911,24 @@ export default defineComponent({
     .unit2 {
       height: 100%;
       width: 120px;
+    }
+
+    :deep .el-dropdown {
+      height: 100%;
+    }
+
+    .token-unit {
+      display: block;
+      width: 100px;
+      font-size: 14px;
+      background-color: white;
+      font-family: Montserrat-Regular;
+      font-weight: 300;
+      text-align: center;
+      color: #000000;
+      line-height: 48px;
+      padding: 0 10px;
+      border-left: 1px solid #e3e4e5;
     }
   }
 

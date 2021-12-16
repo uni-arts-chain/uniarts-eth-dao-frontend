@@ -41,6 +41,7 @@ export default {
         await http.userCollectMySouvenir({ uuid: props.keepsake.uuid });
         isDisable.value = true;
         notification.success("Collect Success");
+        isLoading.value = false;
         emit("reset");
       } catch (e) {
         console.log(e);

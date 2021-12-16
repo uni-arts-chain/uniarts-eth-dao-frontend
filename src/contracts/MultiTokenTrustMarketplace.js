@@ -16,8 +16,27 @@ class MultiTokenTrustMarketplace {
   }
 
   async createOrder(tokenName, nftAddress, id, amount, price, callback) {
-    const endDade = Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0));
-    const tx = this.contract.methods.createOrder(tokenName, nftAddress, id, amount, price, endDade);
+    const endDate = Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0));
+    const tx = this.contract.methods.createOrder(tokenName, nftAddress, id, amount, price, endDate);
+    const gasPrice = await this.gasPrice();
+    const sender = store.state.user.info.address;
+    const gasLimit = await tx.estimateGas({
+      value: 0,
+      from: sender,
+      to: this.address,
+    });
+    return tx.send(
+      {
+        from: sender,
+        gasPrice: gasPrice,
+        gas: Math.round(gasLimit * 1.1),
+      },
+      callback
+    );
+  }
+
+  async cancelOrder(nftAddress, orderId, callback) {
+    const tx = this.contract.methods.cancelOrder(nftAddress, orderId);
     const gasPrice = await this.gasPrice();
     const sender = store.state.user.info.address;
     const gasLimit = await tx.estimateGas({
