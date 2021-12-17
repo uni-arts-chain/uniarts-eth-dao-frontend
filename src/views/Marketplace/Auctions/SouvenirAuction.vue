@@ -2,28 +2,17 @@
 <template>
   <div v-if="!$store.state.global.isMobile" class="auction container">
     <div class="left">
-      <div class="title">{{ auction.name }}</div>
+      <div class="title">{{ auction.title }}</div>
       <div class="desc-title">Artwork description</div>
       <div class="desc-content" v-html="auction.details"></div>
-      <div class="more">More ></div>
+      <router-link :to="`/souvenirs/detail/${auction.id}`" class="more">More ></router-link>
       <div class="token-info">
-        <div class="token">
-          <span>Token Mint: </span>
-          <span
-            class="value"
-            style="overflow: hidden; text-overflow: ellipsis; max-width: 150px; white-space: nowrap"
-            >{{ formatNumber(auction.token_mint) }}</span
-          >
-          <span>UART</span>
-        </div>
         <div class="bid">
           <span>{{
             `${Number(auction.auction_latest_price) ? "Current High Bid: " : "Current Price: "}  `
           }}</span>
           <span class="value">{{
-            Number(auction.auction_latest_price)
-              ? auction.auction_latest_price
-              : auction.auction_min_bid
+            Number(auction.auction_latest_price) ? auction.latest_price : auction.auction_min_bid
           }}</span>
           <span>{{ marketToken.symbol }}</span>
         </div>
@@ -63,7 +52,7 @@
     </div>
     <div class="center">
       <div class="nft">
-        <AdaptiveView :nft="auction" height="515px" width="520px" />
+        <AdaptiveImage :url="auction.sample" height="515px" width="520px" />
       </div>
       <div class="notice">
         <img src="@/assets/images/date-clock.png" />
@@ -215,11 +204,11 @@ import store from "@/store";
 import http from "@/plugins/http";
 import Auction from "@/contracts/Auction";
 import Dialog from "@/components/Dialog";
-import AdaptiveView from "@/components/AdaptiveView";
-import { DAPP_CONFIG, DAPP_CONTRACTS } from "@/config";
+import AdaptiveImage from "@/components/AdaptiveImage";
+import { DAPP_CONFIG } from "@/config";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
-import Erc20 from "../../contracts/Erc20";
+import Erc20 from "../../../contracts/Erc20";
 import { toBN } from "web3-utils";
 import moment from "moment";
 import Mobilecomfirm from "@/components/MobileConfirm";
@@ -229,7 +218,7 @@ export default defineComponent({
   components: {
     Mobilecomfirm,
     // Progress,
-    AdaptiveView,
+    AdaptiveImage,
     Dialog,
   },
   setup() {
@@ -541,30 +530,14 @@ export default defineComponent({
     let interval = null;
 
     onMounted(async () => {
-      const { id, id2 } = route.params;
-      http.globalGetAuctionBidsById({ aid: id2 }, { id }).then((res) => {
-        auctionBids.value = res.list;
-        console.log(auctionBids.value);
-        myOrder.value = (auctionBids.value || []).find((item) => item.is_mine);
-      });
-      const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
-      auction.value = list && list.length > 0 ? list[0] : {};
-      marketToken.value = DAPP_CONFIG.tokens[auction.value.biding_coin.toUpperCase()];
-      try {
-        if (auction.value?.token_id >= 0 && auction.value?.vote_contract) {
-          console.log(DAPP_CONTRACTS);
-          const tokenMint = await DAPP_CONTRACTS[
-            auction.value.vote_contract.toLowerCase()
-          ]?.contract.getMintRewards(DAPP_CONFIG.nfts.UniartsNFT.address, auction.value.token_id);
-          if (!new BigNumber(tokenMint).isZero()) {
-            auction.value.token_mint = new BigNumber(tokenMint)
-              .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
-              .toString();
-          }
-        }
-      } catch (e) {
-        console.error(e);
-      }
+      const { id } = route.params;
+      // http.globalGetSouvenirById({}, { id }).then((res) => {
+      //   auctionBids.value = res;
+      //   console.log(auctionBids.value);
+      //   myOrder.value = (auctionBids.value || []).find((item) => item.is_mine);
+      // });
+      const res = await http.globalGetSouvenirById({}, { id });
+      auction.value = res;
       await findApproveValue();
       try {
         const { timestamp: startDate } = await Auction.dater.getBlockWrapper(

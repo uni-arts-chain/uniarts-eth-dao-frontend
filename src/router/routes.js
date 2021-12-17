@@ -97,51 +97,88 @@ const routes = [
     path: "/marketplace",
     name: "marketplace",
     component: () => import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Index.vue"),
-  },
-  {
-    path: "/marketplace-collectable",
-    name: "marketplaceCollectable",
-    component: () =>
-      import(
-        /* webpackChunkName: "marketplaceCollectable" */ "../views/Marketplace/CollectableList.vue"
-      ),
-  },
-  {
-    path: "/marketplace-souvenirs",
-    name: "marketplaceSouvenirs",
-    component: () =>
-      import(
-        /* webpackChunkName: "marketplaceSouvenirs" */ "../views/Marketplace/SouvenirsList.vue"
-      ),
+    children: [
+      {
+        path: "",
+        name: "marketplaceArt",
+        component: () =>
+          import(/* webpackChunkName: "marketplace" */ "@/views/Marketplace/List/ArtList.vue"),
+      },
+      {
+        path: "collectable",
+        name: "marketplaceCollectable",
+        component: () =>
+          import(
+            /* webpackChunkName: "marketplace" */ "../views/Marketplace/List/CollectableList.vue"
+          ),
+      },
+      {
+        path: "souvenirs",
+        name: "marketplaceSouvenirs",
+        component: () =>
+          import(
+            /* webpackChunkName: "marketplace" */ "../views/Marketplace/List/SouvenirsList.vue"
+          ),
+      },
+    ],
   },
   {
     path: "/marketplace/auctions",
     name: "marketplaceAuctions",
     component: () =>
-      import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/MarketAuctions.vue"),
+      import(
+        /* webpackChunkName: "marketplace" */ "../views/Marketplace/Markets/ArtMarketAuctions.vue"
+      ),
+  },
+  {
+    path: "/marketplace/souvenirs/auctions",
+    name: "marketplaceSouvenirsAuctions",
+    component: () =>
+      import(
+        /* webpackChunkName: "souvenirs" */ "../views/Marketplace/Markets/SouvenirsMarketAuctions.vue"
+      ),
   },
   {
     path: "/marketplace/buynow",
     name: "marketplaceBuyNow",
     component: () =>
-      import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/MarketBuyNow.vue"),
+      import(
+        /* webpackChunkName: "marketplace" */ "../views/Marketplace/Markets/ArtMarketBuyNow.vue"
+      ),
+  },
+  {
+    path: "/marketplace/souvenirs/buynow",
+    name: "marketplaceBuyNow",
+    component: () =>
+      import(
+        /* webpackChunkName: "souvenirs" */ "../views/Marketplace/Markets/SouvenirsMarketBuyNow.vue"
+      ),
   },
   {
     path: "/marketplace/detail/:id",
     name: "nftDetail",
     component: () =>
-      import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Detail.vue"),
+      import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Details/ArtDetail.vue"),
   },
   {
     path: "/marketplace/auction/:id/:id2",
     name: "auctionDetail",
     component: () =>
-      import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Auction.vue"),
+      import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Auctions/ArtAuction.vue"),
+  },
+  {
+    path: "/marketplace/souvenir-auction/:id",
+    name: "auctionSouvenirDetail",
+    component: () =>
+      import(
+        /* webpackChunkName: "souvenirs" */ "../views/Marketplace/Auctions/SouvenirAuction.vue"
+      ),
   },
   {
     path: "/marketplace/buy/:id",
     name: "buyDetail",
-    component: () => import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Buy.vue"),
+    component: () =>
+      import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/BuyNows/ArtBuy.vue"),
   },
   {
     path: "/vote",

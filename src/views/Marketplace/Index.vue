@@ -7,88 +7,18 @@
       <img src="@/assets/images/market-search@2x.png" />
     </div>
     <div class="market-category">
-      <div class="title select">Arts</div>
-      <router-link class="title" to="/marketplace-collectable">Collectable</router-link>
-      <router-link class="title" to="/marketplace-souvenirs">Souvenirs</router-link>
-    </div>
-    <div v-if="auctionList.length" class="buy-now">
-      <div class="title">
-        <span>Timed Auctions</span>
-        <router-link
-          style="font-family: Montserrat-Light; font-size: 14px"
-          to="/marketplace/auctions"
-        >
-          MORE >
-        </router-link>
-      </div>
-      <div v-if="auctionList.length > 0" v-loading="auctionLoading" class="list">
-        <div v-for="item in auctionList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
-            <AdaptiveView
-              :isPreview="true"
-              :isResponsive="true"
-              :nft="item"
-              height="364px"
-              width="364px"
-            />
-          </router-link>
-          <div class="info">
-            <div class="name">{{ item.name }}</div>
-            <div class="price">
-              {{
-                `${Number(item.auction_latest_price) ? "Current Bid" : "Bid"}: ${
-                  Number(item.auction_latest_price)
-                    ? item.auction_latest_price
-                    : item.auction_min_bid
-                } ${item.biding_coin}`
-              }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="no-data"
-        style="min-height: 200px; text-align: center; line-height: 200px; color: #999"
+      <router-link :class="{ title: true, select: $route.path == '/marketplace' }" to="/marketplace"
+        >Arts</router-link
       >
-        No Data
-      </div>
-    </div>
-    <div v-if="buyList?.length" v-loading="buyLoading" class="buy-now">
-      <div class="title">
-        <span>Buy Now</span>
-        <router-link
-          style="font-family: Montserrat-Light; font-size: 14px"
-          to="/marketplace/buynow"
-        >
-          MORE >
-        </router-link>
-      </div>
-      <div v-if="buyList.length > 0" class="list">
-        <div v-for="item in buyList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/buy/${item.id}`">
-            <AdaptiveView
-              :isPreview="true"
-              :isResponsive="true"
-              :nft="item.art"
-              height="364px"
-              width="364px"
-            />
-          </router-link>
-          <div class="info">
-            <div class="name">{{ item.art.name }}</div>
-            <div class="price">Price: {{ item.price }} {{ marketToken.symbol }}</div>
-          </div>
-        </div>
-      </div>
-      <div
-        v-else
-        class="no-data"
-        style="min-height: 200px; text-align: center; line-height: 200px; color: #999"
+      <div class="title" style="color: #aaa">Collectable</div>
+      <router-link
+        :class="{ title: true, select: $route.path == '/marketplace/souvenirs' }"
+        class="title"
+        to="/marketplace/souvenirs"
+        >Souvenirs</router-link
       >
-        No Data
-      </div>
     </div>
+    <router-view />
   </div>
   <div v-else class="index container">
     <h3 class="title">Market</h3>
@@ -96,194 +26,30 @@
       <input placeholder="Please enter keywords..." type="text" />
       <img src="@/assets/images/market-search@2x.png" />
     </div>
-    <div class="buy-now">
-      <div class="title">
-        <div :class="{ active: currentTab == 1 }" class="title-tab" @click="currentTab = 1">
-          Auctions
-        </div>
-        <div :class="{ active: currentTab == 2 }" class="title-tab" @click="currentTab = 2">
-          Buy Now
-        </div>
-      </div>
-      <div v-if="currentTab == 1" class="list">
-        <div v-for="item in auctionList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
-            <AdaptiveView
-              :isPreview="true"
-              :isResponsive="true"
-              :nft="item"
-              height="200px"
-              width="335px"
-            />
-          </router-link>
-          <div class="info">
-            <div class="name">{{ item.name }}</div>
-            <div class="price">
-              {{
-                `${Number(item.auction_latest_price) ? "Current Bid" : "Bid"}: ${
-                  Number(item.auction_latest_price)
-                    ? item.auction_latest_price
-                    : item.auction_min_bid
-                } ${item.biding_coin}`
-              }}
-            </div>
-          </div>
-        </div>
-        <router-link
-          v-if="auctionList.length > 0"
-          style="
-            font-size: 14px;
-            width: 100%;
-            text-align: center;
-            line-height: 50px;
-            border: 2px solid black;
-            color: black;
-            margin-top: 10px;
-          "
-          to="/marketplace/auctions"
-          >MORE
-        </router-link>
-        <div
-          v-if="auctionList.length == 0"
-          class="no-data"
-          style="
-            width: 100%;
-            min-height: 200px;
-            text-align: center;
-            line-height: 200px;
-            color: #999;
-          "
-        >
-          No Data
-        </div>
-      </div>
-      <div v-else v-show="buyList?.length" class="list">
-        <div v-for="item in buyList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/buy/${item.id}`">
-            <AdaptiveView
-              :isPreview="true"
-              :isResponsive="true"
-              :nft="item.art"
-              height="200px"
-              width="335px"
-            />
-          </router-link>
-          <div class="info">
-            <div class="name">{{ item.art.name }}</div>
-            <div class="price">
-              Price: <span style="color: red">{{ item.price }}</span> {{ " " + marketToken.symbol }}
-            </div>
-          </div>
-        </div>
-        <router-link
-          v-if="buyList.length > 0"
-          style="
-            font-size: 14px;
-            width: 100%;
-            text-align: center;
-            line-height: 50px;
-            border: 2px solid black;
-            color: black;
-            margin-top: 10px;
-          "
-          to="/marketplace/buynow"
-        >
-          MORE
-        </router-link>
-        <div
-          v-if="buyList.length == 0"
-          class="no-data"
-          style="
-            width: 100%;
-            min-height: 200px;
-            text-align: center;
-            line-height: 200px;
-            color: #999;
-          "
-        >
-          No Data
-        </div>
-      </div>
+    <div class="market-category">
+      <router-link :class="{ title: true, select: $route.path == '/marketplace' }" to="/marketplace"
+        >Arts</router-link
+      >
+      <div class="title" style="color: #aaa">Collectable</div>
+      <router-link
+        :class="{ title: true, select: $route.path == '/marketplace/souvenirs' }"
+        class="title"
+        to="/marketplace/souvenirs"
+        >Souvenirs</router-link
+      >
     </div>
+    <router-view />
   </div>
 </template>
 
 <script>
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent } from "vue";
 import store from "@/store";
-import AdaptiveView from "@/components/AdaptiveView";
-import http from "@/plugins/http";
-import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
   name: "index",
-  components: {
-    AdaptiveView,
-  },
   setup() {
-    const marketCurrency = "WETH";
-    const marketToken = DAPP_CONFIG.tokens[marketCurrency];
     store.dispatch("global/SetNavText", "Market");
-
-    const auctionList = ref([]);
-    const auctionCurrentPage = ref(1);
-    const auctionPerPage = ref(6);
-    // todo
-    const buyList = ref([]);
-    const buyListCurrentPage = ref(1);
-    const buyListPerPage = ref(6);
-
-    const currentTab = ref(1);
-    const auctionLoading = ref(false);
-    const buyLoading = ref(false);
-    const getAuctionListData = () => {
-      auctionLoading.value = true;
-      http
-        .globalGetAuctions({
-          page: auctionCurrentPage.value,
-          per_page: auctionPerPage.value,
-        })
-        .then((res) => {
-          auctionList.value = res.list || [];
-          auctionLoading.value = false;
-        })
-        .catch((err) => {
-          console.log(err);
-          auctionLoading.value = false;
-        });
-      // http.globalGetAuctionsGroup({}).then((res) => {
-      //   console.log(res);
-      // });
-      buyLoading.value = true;
-      http
-        .globalGetArtOrder({
-          page: buyListCurrentPage.value,
-          per_page: buyListPerPage.value,
-        })
-        .then((res) => {
-          buyList.value = res.list || [];
-          buyLoading.value = false;
-        })
-        .catch((err) => {
-          console.log(err);
-          buyLoading.value = false;
-        });
-    };
-    onMounted(() => getAuctionListData());
-    return {
-      // marketCurrency,
-      // marketToken,
-      auctionList,
-      auctionCurrentPage,
-      auctionPerPage,
-      buyList,
-      buyListCurrentPage,
-      buyListPerPage,
-      currentTab,
-      auctionLoading,
-      buyLoading,
-      marketToken,
-    };
   },
 });
 </script>
@@ -306,16 +72,17 @@ h3.title {
 }
 
 .market-category {
-  padding: 0 20% 15px 20%;
+  padding: 0 15px;
   display: flex;
-  flex-direction: row;
+  justify-content: center;
+  margin: 40px 0 50px 0;
   .select {
     font-weight: 900;
     text-decoration: underline;
   }
   .title {
     text-align: center;
-    flex: 1;
+    width: 200px;
   }
 }
 
@@ -351,75 +118,6 @@ h3.title {
   }
 }
 
-.buy-now {
-  .title {
-    font-size: 18px;
-    font-family: Montserrat-Medium;
-    color: #040000;
-    line-height: 23px;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .list {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  .list .item {
-    width: 364px;
-    display: flex;
-    flex-direction: column;
-    margin-right: 34px;
-    margin-bottom: 60px;
-  }
-
-  .list .item:nth-child(3n) {
-    margin-right: 0px;
-  }
-
-  .list .item-img {
-    width: 364px;
-    height: 364px;
-    background-color: black;
-  }
-
-  .list .item .info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 25px;
-    width: 100%;
-  }
-
-  .name {
-    width: 50%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 15px;
-    text-align: left;
-    font-family: Montserrat-Regular;
-    color: #040000;
-    line-height: 23px;
-  }
-
-  .price {
-    width: 50%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 14px;
-    font-family: Montserrat-Regular;
-    font-weight: 300;
-    text-align: right;
-    color: #595757;
-    line-height: 23px;
-  }
-}
-
 @media screen and (max-width: 750px) {
   .index {
     width: 100%;
@@ -449,43 +147,18 @@ h3.title {
       }
     }
 
-    .buy-now .title {
+    .market-category {
+      padding: 0 15px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-    }
-
-    .buy-now .title-tab {
-      padding: 17px 10px;
-      width: 50%;
-      text-align: center;
-      border-bottom: 2px solid #ddd;
-      font-family: Montserrat-Medium;
-    }
-
-    .buy-now .title-tab.active {
-      border-bottom-color: black;
-    }
-
-    .buy-now .list .item {
-      width: 100%;
-      margin-right: 0;
-
-      .item-img {
-        width: 100%;
-        height: 200px;
+      margin: 40px 0 30px 0;
+      .select {
+        font-weight: 900;
+        text-decoration: underline;
       }
-
-      .info {
-        margin-top: 15px;
-      }
-
-      .info .name {
-        font-size: 15px;
-      }
-
-      .info .price {
-        font-size: 15px;
+      .title {
+        text-align: center;
+        width: auto;
       }
     }
   }

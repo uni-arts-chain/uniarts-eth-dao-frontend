@@ -4,7 +4,7 @@
     <div v-if="souvenirList.length <= 0" class="no-data">No data</div>
     <div v-for="v in souvenirList" :key="v" class="list">
       <div class="item">
-        <img :src="v.sample" alt="" @click="goDetail(v)" />
+        <AdaptiveImage :url="v.sample" width="349px" height="260px" @click="goDetail(v)" />
         <div class="info">
           <div class="title">{{ v.title }}</div>
           <div class="progress">
@@ -15,14 +15,40 @@
             </div>
           </div>
           <div class="operate">
-            <button @click="onCancelClick(v)" v-if="v.buy_now_order && v.can_cancel_buy_now_order">
+            <button disabled v-if="v.auction_order || v.can_cancel_auction_order">Bidding</button>
+            <button disabled v-if="v.buy_now_order">On sale</button>
+            <button
+              @click="onCancelBuyNowClick(v)"
+              v-if="v.buy_now_order && v.can_cancel_buy_now_order"
+            >
               Cancel Listing
             </button>
-            <button disabled v-if="v.auction_order">Bidding</button>
-            <button v-if="!v.buy_now_order && !v.auction_order" @click="openListDialog(v)">
+            <button
+              @click="onCancelAuctionClick(v)"
+              v-if="!v.auction_order && v.can_cancel_auction_order"
+            >
+              Cancel Listing
+            </button>
+            <button
+              v-if="
+                !v.buy_now_order &&
+                !v.auction_order &&
+                !v.can_cancel_auction_order &&
+                !v.can_cancel_buy_now_order
+              "
+              @click="openListDialog(v)"
+            >
               List
             </button>
-            <button :disabled="v.buy_now_order || v.auction_order" @click="openSendDialog(v)">
+            <button
+              :disabled="
+                v.buy_now_order ||
+                v.auction_order ||
+                v.can_cancel_auction_order ||
+                v.can_cancel_buy_now_order
+              "
+              @click="openSendDialog(v)"
+            >
               Send
             </button>
           </div>
@@ -43,11 +69,11 @@
       <div class="form-body" v-show="tabStatus === 0">
         <div v-show="selectItem.amount > 1" class="input-body">
           <span class="unit">Amount</span>
-          <input v-model="creatAuctionData.amount" />
+          <input :value="selectItem.amount" disabled />
         </div>
-        <div v-show="selectItem.amount > 1" class="block-height">
+        <!-- <div v-show="selectItem.amount > 1" class="block-height">
           range: 1 - {{ selectItem.amount }}
-        </div>
+        </div> -->
         <div class="input-body">
           <span class="unit">Start Block</span>
           <input v-model="creatAuctionData.startBlock" />
@@ -262,22 +288,35 @@
       <button v-loading="loading" @click="sendToAddress">Send</button>
     </div>
   </Mobilecomfirm>
-  <Dialog v-if="!$store.state.global.isMobile" v-model="cancelDialog" type="small">
+  <Dialog v-if="!$store.state.global.isMobile" v-model="cancelOrderDialog" type="small">
     <div class="dialog-content">
       <div class="dialog-title">Are you sure to cancel the order?</div>
       <button v-loading="loading" @click="onCancelBuyNowOrder">Confirm</button>
     </div>
   </Dialog>
-  <Mobilecomfirm v-else v-model="cancelDialog" type="small">
+  <Mobilecomfirm v-else v-model="cancelOrderDialog" type="small">
     <div class="dialog-content">
       <div class="dialog-title" style="margin-top: 40px">Are you sure to cancel the order?</div>
       <button v-loading="loading" @click="onCancelBuyNowOrder">Confirm</button>
+    </div>
+  </Mobilecomfirm>
+  <Dialog v-if="!$store.state.global.isMobile" v-model="cancelAuctionDialog" type="small">
+    <div class="dialog-content">
+      <div class="dialog-title">Are you sure to cancel the auction?</div>
+      <button v-loading="loading" @click="onCancelAuctionOrder">Confirm</button>
+    </div>
+  </Dialog>
+  <Mobilecomfirm v-else v-model="cancelAuctionDialog" type="small">
+    <div class="dialog-content">
+      <div class="dialog-title" style="margin-top: 40px">Are you sure to cancel the auction?</div>
+      <button v-loading="loading" @click="onCancelAuctionOrder">Confirm</button>
     </div>
   </Mobilecomfirm>
 </template>
 
 <script>
 import { defineComponent, onMounted, ref } from "vue";
+import AdaptiveImage from "@/components/AdaptiveImage";
 import Progress from "@/components/Progress";
 import http from "@/plugins/http";
 import { useRouter } from "vue-router";
@@ -298,6 +337,7 @@ export default defineComponent({
     Mobilecomfirm,
     Dialog,
     Progress,
+    AdaptiveImage,
   },
   setup() {
     const souvenirListTokens = ref(config.souvenirListTokens);
@@ -536,6 +576,9 @@ export default defineComponent({
       let notifyId = notification.loading("Waiting for wallet response");
       console.log(souvenir, MultiTokenAuction);
       try {
+        // 强制全量挂单
+        creatAuctionData.value.amount = selectItem.value.amount;
+
         await MultiTokenAuction.creatAuction(
           souvenir.auction_contract,
           selectAuctionToken.value.symbol.toLowerCase(),
@@ -545,8 +588,12 @@ export default defineComponent({
           souvenir.nft_contract,
           souvenir.token_id,
           creatAuctionData.value.amount,
-          creatAuctionData.value.startPrice,
-          creatAuctionData.value.fixedPrice,
+          new BigNumber(creatAuctionData.value.startPrice)
+            .shiftedBy(selectAuctionToken.value.decimals)
+            .toString(),
+          new BigNumber(creatAuctionData.value.fixedPrice)
+            .shiftedBy(selectAuctionToken.value.decimals)
+            .toString(),
           (err, txHash) => {
             notification.dismiss(notifyId);
             if (err) {
@@ -567,6 +614,7 @@ export default defineComponent({
         );
       } catch (err) {
         myNotificationErr(err);
+        loading.value = false;
       } finally {
         notification.dismiss(notifyId);
       }
@@ -649,12 +697,13 @@ export default defineComponent({
       selectToken.value = item;
     };
 
-    const cancelDialog = ref(false);
+    const cancelOrderDialog = ref(false);
+    const cancelAuctionDialog = ref(false);
     const cancelSouvenir = ref({});
 
     // 取消BuyNow订单
-    const onCancelClick = (souvenir) => {
-      cancelDialog.value = true;
+    const onCancelBuyNowClick = (souvenir) => {
+      cancelOrderDialog.value = true;
       cancelSouvenir.value = souvenir;
     };
 
@@ -678,7 +727,46 @@ export default defineComponent({
               loading.value = false;
               notification.success(txHash);
               notifyId = notification.loading("Waiting for confirmation on the chain");
-              cancelDialog.value = false;
+              cancelOrderDialog.value = false;
+              initSouvenirs();
+            }
+          }
+        );
+        notification.success("Success");
+      } catch (err) {
+        loading.value = false;
+        myNotificationErr(err);
+      } finally {
+        notification.dismiss(notifyId);
+      }
+    };
+
+    // 取消BuyNow订单
+    const onCancelAuctionClick = (souvenir) => {
+      cancelAuctionDialog.value = true;
+      cancelSouvenir.value = souvenir;
+    };
+
+    // 取消Auction订单合约交互
+    const onCancelAuctionOrder = async () => {
+      loading.value = true;
+      let notifyId = notification.loading("Waiting for wallet response");
+      try {
+        await MultiTokenTrustMarketplace.creatorWithdrawNftBatch(
+          cancelSouvenir.value.nft_contract,
+          (err, txHash) => {
+            notification.dismiss(notifyId);
+            if (err) {
+              console.log(err);
+              loading.value = false;
+              myNotificationErr(err);
+              throw err;
+            } else if (txHash) {
+              console.log(txHash);
+              loading.value = false;
+              notification.success(txHash);
+              notifyId = notification.loading("Waiting for confirmation on the chain");
+              cancelAuctionDialog.value = false;
               initSouvenirs();
             }
           }
@@ -718,8 +806,11 @@ export default defineComponent({
 
       onSelectToken,
       onCancelBuyNowOrder,
-      onCancelClick,
-      cancelDialog,
+      onCancelAuctionOrder,
+      onCancelBuyNowClick,
+      onCancelAuctionClick,
+      cancelOrderDialog,
+      cancelAuctionDialog,
     };
   },
 });
@@ -730,11 +821,11 @@ export default defineComponent({
   .item {
     display: flex;
     margin-bottom: 72px;
-
+    /* 
     img {
       min-width: 400px;
       max-width: 400px;
-    }
+    } */
   }
 
   .info {
@@ -742,7 +833,7 @@ export default defineComponent({
     margin-left: 37px;
 
     .title {
-      margin-top: 25px;
+      margin-top: 15px;
       font-size: 22px;
       margin-bottom: 40px;
     }
@@ -789,11 +880,11 @@ export default defineComponent({
     display: flex;
     flex-direction: column;
 
-    img {
+    /* img {
       min-width: 100% !important;
       width: 100%;
       height: auto;
-    }
+    } */
   }
   .list .info {
     margin-top: 20px;

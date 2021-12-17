@@ -1,22 +1,154 @@
 /** * Created by Lay Hunt on 2021-09-08 18:13:44. */
 <template>
   <div v-if="!$store.state.global.isMobile" class="index container">
-    <h3 class="title">Market</h3>
-    <div class="search">
-      <input placeholder="Please enter keywords to search work" type="text" />
-      <img src="@/assets/images/market-search@2x.png" />
+    <div class="loading" v-if="auctionLoading" v-loading="auctionLoading"></div>
+    <div v-if="auctionList.length" class="buy-now">
+      <div class="title">
+        <span>Timed Auctions</span>
+        <router-link
+          to="/marketplace/souvenirs/auctions"
+          style="font-family: Montserrat-Light; font-size: 14px"
+        >
+          MORE ></router-link
+        >
+      </div>
+      <div v-if="auctionList.length > 0" class="list">
+        <div v-for="item in auctionList" :key="item.id" class="item">
+          <router-link :to="`/marketplace/souvenir-auction/${item.id}`">
+            <AdaptiveImage
+              :isPreview="true"
+              :isResponsive="true"
+              :url="item.sample"
+              height="266px"
+              width="364px"
+            />
+          </router-link>
+          <div class="info">
+            <div class="name">{{ item.title }}</div>
+            <div class="price">
+              {{ `Current Bid: ${item.latest_price} ${item.biding_coin.toUpperCase()}` }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="no-data"
+        v-else
+        style="min-height: 200px; text-align: center; line-height: 200px; color: #999"
+      >
+        No Data
+      </div>
     </div>
-    <div class="market-category">
-      <router-link class="title" to="/marketplace">Arts</router-link>
-      <div class="title select">Collectable</div>
-      <router-link class="title" to="/marketplace-souvenirs">Souvenirs</router-link>
+    <div v-if="buyList?.length" class="buy-now">
+      <div class="title">
+        <span>Buy Now</span>
+        <router-link
+          to="/marketplace/souvenirs/buynow"
+          style="font-family: Montserrat-Light; font-size: 14px"
+        >
+          MORE ></router-link
+        >
+      </div>
+      <div v-if="buyList.length > 0" class="list"></div>
+      <div
+        v-else
+        class="no-data"
+        style="min-height: 200px; text-align: center; line-height: 200px; color: #999"
+      >
+        No Data
+      </div>
     </div>
   </div>
   <div v-else class="index container">
-    <h3 class="title">Market</h3>
-    <div class="search">
-      <input placeholder="Please enter keywords..." type="text" />
-      <img src="@/assets/images/market-search@2x.png" />
+    <div class="buy-now">
+      <div class="title">
+        <div :class="{ active: currentTab == 1 }" class="title-tab" @click="currentTab = 1">
+          Auctions
+        </div>
+        <div :class="{ active: currentTab == 2 }" class="title-tab" @click="currentTab = 2">
+          Buy Now
+        </div>
+      </div>
+      <div v-if="currentTab == 1" class="list">
+        <div v-for="item in auctionList" :key="item.id" class="item">
+          <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
+            <AdaptiveView
+              :isPreview="true"
+              :isResponsive="true"
+              :nft="item"
+              height="200px"
+              width="335px"
+            />
+          </router-link>
+          <div class="info">
+            <div class="name">{{ item.name }}</div>
+            <div class="price">
+              {{
+                `${Number(item.auction_latest_price) ? "Current Bid" : "Bid"}: ${
+                  Number(item.auction_latest_price)
+                    ? item.auction_latest_price
+                    : item.auction_min_bid
+                } ${item.biding_coin}`
+              }}
+            </div>
+          </div>
+        </div>
+        <router-link
+          v-if="auctionList.length > 0"
+          style="
+            font-size: 14px;
+            width: 100%;
+            text-align: center;
+            line-height: 50px;
+            border: 2px solid black;
+            color: black;
+            margin-top: 10px;
+          "
+          >MORE
+        </router-link>
+        <div
+          v-if="auctionList.length == 0"
+          class="no-data"
+          style="
+            width: 100%;
+            min-height: 200px;
+            text-align: center;
+            line-height: 200px;
+            color: #999;
+          "
+        >
+          No Data
+        </div>
+      </div>
+      <div v-else v-show="buyList?.length" class="list">
+        <router-link
+          v-if="buyList.length > 0"
+          style="
+            font-size: 14px;
+            width: 100%;
+            text-align: center;
+            line-height: 50px;
+            border: 2px solid black;
+            color: black;
+            margin-top: 10px;
+          "
+        >
+          MORE
+        </router-link>
+        <div
+          v-if="buyList.length == 0"
+          class="no-data"
+          style="
+            width: 100%;
+            min-height: 200px;
+            text-align: center;
+            line-height: 200px;
+            color: #999;
+          "
+        >
+          No Data
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -24,12 +156,15 @@
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import store from "@/store";
+import AdaptiveImage from "@/components/AdaptiveImage";
 import http from "@/plugins/http";
 import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
-  name: "CollectableList",
-  components: {},
+  name: "index",
+  components: {
+    AdaptiveImage,
+  },
   setup() {
     const marketCurrency = "WETH";
     const marketToken = DAPP_CONFIG.tokens[marketCurrency];
@@ -46,43 +181,27 @@ export default defineComponent({
     const currentTab = ref(1);
     const auctionLoading = ref(false);
     const buyLoading = ref(false);
-    const getAuctionListData = () => {
+    const getSouvenirsListData = () => {
       auctionLoading.value = true;
       http
-        .globalGetAuctions({
+        .globalGetSouvenirsList({
           page: auctionCurrentPage.value,
           per_page: auctionPerPage.value,
         })
         .then((res) => {
           auctionList.value = res.list || [];
           auctionLoading.value = false;
+          console.log(auctionList.value);
         })
         .catch((err) => {
           console.log(err);
           auctionLoading.value = false;
         });
-      // http.globalGetAuctionsGroup({}).then((res) => {
-      //   console.log(res);
-      // });
-      buyLoading.value = true;
-      http
-        .globalGetArtOrder({
-          page: buyListCurrentPage.value,
-          per_page: buyListPerPage.value,
-        })
-        .then((res) => {
-          buyList.value = res.list || [];
-          buyLoading.value = false;
-        })
-        .catch((err) => {
-          console.log(err);
-          buyLoading.value = false;
-        });
     };
-    onMounted(() => getAuctionListData());
+    onMounted(() => {
+      getSouvenirsListData();
+    });
     return {
-      // marketCurrency,
-      // marketToken,
       auctionList,
       auctionCurrentPage,
       auctionPerPage,
@@ -119,14 +238,21 @@ h3.title {
   padding: 0 20% 15px 20%;
   display: flex;
   flex-direction: row;
+
   .select {
     font-weight: 900;
     text-decoration: underline;
   }
+
   .title {
     text-align: center;
     flex: 1;
   }
+}
+
+.loading {
+  height: 238px;
+  width: 100%;
 }
 
 .search {

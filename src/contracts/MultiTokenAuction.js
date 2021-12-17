@@ -50,6 +50,27 @@ class MultiTokenAuction {
     );
   }
 
+  async creatorWithdrawNftBatch(contractAddress, callback) {
+    const contract = new this.web3.eth.Contract(MultiTokenAuctionABI, contractAddress);
+    const matchId = `user-${new Date().getTime()}`;
+    const tx = contract.methods.creator_withdraw_nft_batch(matchId);
+    const gasPrice = await this.gasPrice();
+    const sender = store.state.user.info.address;
+    const gasLimit = await tx.estimateGas({
+      value: 0,
+      from: sender,
+      to: this.address,
+    });
+    return tx.send(
+      {
+        from: sender,
+        gasPrice: gasPrice,
+        gas: Math.round(gasLimit * 1.1),
+      },
+      callback
+    );
+  }
+
   async gasPrice() {
     return await this.web3.eth.getGasPrice();
   }

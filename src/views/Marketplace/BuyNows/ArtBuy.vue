@@ -157,7 +157,7 @@ import { useRoute, useRouter } from "vue-router";
 import store from "@/store";
 import http from "@/plugins/http";
 import { DAPP_CONFIG } from "@/config";
-import Erc20 from "../../contracts/Erc20";
+import Erc20 from "../../../contracts/Erc20";
 import AdaptiveView from "@/components/AdaptiveView";
 import { notification } from "@/components/Notification";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
