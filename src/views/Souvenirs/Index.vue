@@ -1,14 +1,16 @@
 <template>
   <div class="title">Collect Your Vote Memorials</div>
-  <div class="list" v-if="keepsakes.length">
-    <keepsake
-      @reset="getMemorialsData"
-      v-for="keepsake of keepsakes"
-      :key="keepsake"
-      :keepsake="keepsake"
-    ></keepsake>
+  <div v-loading="isLoading">
+    <div class="list" v-if="keepsakes.length">
+      <keepsake
+        @reset="getMemorialsData"
+        v-for="keepsake of keepsakes"
+        :key="keepsake"
+        :keepsake="keepsake"
+      ></keepsake>
+    </div>
+    <div v-else class="no-list">no data</div>
   </div>
-  <div v-else class="no-list">no data</div>
 </template>
 <script>
 import { defineComponent, onMounted, ref } from "vue";
@@ -20,8 +22,11 @@ export default defineComponent({
   components: { Keepsake },
   setup() {
     const keepsakes = ref([]);
+    const isLoading = ref(false);
     const getMemorialsData = async () => {
+      isLoading.value = true;
       keepsakes.value = await http.userCollectedSouvenirs({});
+      isLoading.value = false;
       console.log(keepsakes.value);
     };
     onMounted(() => {
@@ -30,6 +35,7 @@ export default defineComponent({
     return {
       getMemorialsData,
       keepsakes,
+      isLoading,
     };
   },
 });

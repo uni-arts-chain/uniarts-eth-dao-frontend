@@ -1,6 +1,6 @@
 /** * Created by Lay Hunt on 2021-09-08 14:14:13. */
 <template>
-  <div class="collection">
+  <div class="collection" v-loading="loading">
     <div v-if="souvenirList.length <= 0" class="no-data">No data</div>
     <div v-for="v in souvenirList" :key="v" class="list">
       <div class="item">
@@ -40,7 +40,7 @@
           Listing to BuyNow Market
         </span>
       </div>
-      <div v-show="tabStatus === 0">
+      <div class="form-body" v-show="tabStatus === 0">
         <div v-show="selectItem.amount > 1" class="input-body">
           <span class="unit">Amount</span>
           <input v-model="creatAuctionData.amount" />
@@ -59,7 +59,7 @@
         </div>
         <div class="input-body">
           <span class="unit">Starting Price</span>
-          <input v-model="creatAuctionData.startPrice" />
+          <input class="unit-input" v-model="creatAuctionData.startPrice" />
           <el-dropdown trigger="click" @command="onSelectAuctionToken">
             <span class="token-unit">
               {{ selectAuctionToken.symbol }}
@@ -76,7 +76,7 @@
         </div>
         <div class="input-body">
           <span class="unit">Fixed Price</span>
-          <input v-model="creatAuctionData.fixedPrice" />
+          <input class="unit-input" v-model="creatAuctionData.fixedPrice" />
           <el-dropdown trigger="click" @command="onSelectAuctionToken">
             <span class="token-unit">
               {{ selectAuctionToken.symbol }}
@@ -93,14 +93,14 @@
         </div>
         <div class="input-body">
           <span class="unit">Min Increment</span>
-          <input v-model="creatAuctionData.minIncrement" />
+          <input class="unit-input" v-model="creatAuctionData.minIncrement" />
           <span class="unit unit2">%</span>
         </div>
         <button v-loading="loading" @click="creatToAuctionMarket">
           {{ listToAuctionApproving ? "Creat on Auction Market" : "Approve" }}
         </button>
       </div>
-      <div v-show="tabStatus === 1">
+      <div class="form-body" v-show="tabStatus === 1">
         <div v-show="selectItem.amount > 1" class="input-body">
           <span class="unit">Amount</span>
           <input v-model="creatBuyNowData.amount" />
@@ -109,7 +109,7 @@
           range: 1 - {{ selectItem.amount }}
         </div>
         <div class="input-body">
-          <input v-model="creatBuyNowData.price" />
+          <input style="width: calc(100% - 100px)" v-model="creatBuyNowData.price" />
           <el-dropdown trigger="click" @command="onSelectToken">
             <span class="token-unit">
               {{ selectToken.symbol }}
@@ -137,10 +137,10 @@
           Listing to Auction
         </span>
         <span :class="{ 'select-item': tabStatus === 1 }" class="list-item" @click="tabStatus = 1">
-          Listing to BuyNow Market
+          Listing to BuyNow
         </span>
       </div>
-      <div v-show="tabStatus === 0">
+      <div class="list-form-body" v-show="tabStatus === 0">
         <div v-show="selectItem.amount > 1" class="input-body">
           <span class="unit">Amount</span>
           <input v-model="creatAuctionData.amount" />
@@ -158,8 +158,8 @@
           <input v-model="creatAuctionData.endBlock" />
         </div>
         <div class="input-body">
-          <span class="unit">Starting Price</span>
-          <input v-model="creatAuctionData.startPrice" />
+          <span class="unit">Min Price</span>
+          <input style="width: calc(100% - 200px)" v-model="creatAuctionData.startPrice" />
           <el-dropdown trigger="click" @command="onSelectAuctionToken">
             <span class="token-unit">
               {{ selectAuctionToken.symbol }}
@@ -176,7 +176,7 @@
         </div>
         <div class="input-body">
           <span class="unit">Fixed Price</span>
-          <input v-model="creatAuctionData.fixedPrice" />
+          <input style="width: calc(100% - 200px)" v-model="creatAuctionData.fixedPrice" />
           <el-dropdown trigger="click" @command="onSelectToken">
             <span class="token-unit">
               {{ selectToken.symbol }}
@@ -192,15 +192,15 @@
           </el-dropdown>
         </div>
         <div class="input-body">
-          <span class="unit">Min Increment</span>
-          <input v-model="creatAuctionData.minIncrement" />
+          <span class="unit">Increment</span>
+          <input style="width: calc(100% - 200px)" v-model="creatAuctionData.minIncrement" />
           <span class="unit unit2">%</span>
         </div>
         <button v-loading="loading" @click="creatToAuctionMarket">
           {{ listToAuctionApproving ? "Create on Auction Market" : "Approve" }}
         </button>
       </div>
-      <div v-show="tabStatus === 1">
+      <div class="list-form-body" v-show="tabStatus === 1">
         <div v-show="selectItem.amount > 1" class="input-body">
           <span class="unit">Amount</span>
           <input v-model="creatBuyNowData.amount" />
@@ -210,15 +210,19 @@
         </div>
         <div class="input-body">
           <input v-model="creatBuyNowData.price" />
-          <select v-model="selectToken" class="unit unit2">
-            <option
-              v-for="(value, name) in souvenirListTokens"
-              :key="name"
-              :value="value.symbol.toLowerCase()"
-            >
-              {{ value.symbol }}
-            </option>
-          </select>
+          <el-dropdown trigger="click" @command="onSelectToken">
+            <span class="token-unit">
+              {{ selectToken.symbol }}
+              <i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item v-for="(v, i) in souvenirListTokens" :key="i" :command="v">{{
+                  v.symbol
+                }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
         <button v-loading="loading" @click="creatToBuyNowMarket">
           {{ listToBuyNowApproving ? "Create on BuyNow Market" : "Approve" }}
@@ -264,6 +268,12 @@
       <button v-loading="loading" @click="onCancelBuyNowOrder">Confirm</button>
     </div>
   </Dialog>
+  <Mobilecomfirm v-else v-model="cancelDialog" type="small">
+    <div class="dialog-content">
+      <div class="dialog-title" style="margin-top: 40px">Are you sure to cancel the order?</div>
+      <button v-loading="loading" @click="onCancelBuyNowOrder">Confirm</button>
+    </div>
+  </Mobilecomfirm>
 </template>
 
 <script>
@@ -802,7 +812,17 @@ export default defineComponent({
 
     button {
       width: 30%;
+      min-width: 120px;
     }
+  }
+  .list-form-body {
+    margin-top: 30px;
+  }
+  .dialog-content .input-body span.unit {
+    width: 100px;
+  }
+  .dialog-content .list-form-body .input-body > input {
+    width: calc(100% - 100px);
   }
 }
 
@@ -851,12 +871,17 @@ export default defineComponent({
 
   .block-height {
     text-align: right;
+    margin-top: 20px;
   }
 
   .dialog-title {
     font-size: 19px;
     text-align: center;
     margin-bottom: 50px;
+  }
+
+  .form-body {
+    margin-top: 40px;
   }
 
   .input-body {
@@ -866,9 +891,19 @@ export default defineComponent({
     height: 50px;
     border: 1px solid #e3e4e5;
 
-    input {
+    > input {
       height: 100%;
-      width: calc(100% - 50px);
+      width: calc(100% - 180px);
+      outline: none;
+      background-color: white;
+      font-size: 17px;
+      border: none;
+      padding: 0 15px;
+    }
+
+    .unit-input {
+      height: 100%;
+      width: calc(100% - 280px);
       outline: none;
       background-color: white;
       font-size: 17px;
@@ -877,7 +912,7 @@ export default defineComponent({
     }
 
     .unit {
-      width: 240px;
+      width: 180px;
       font-size: 14px;
       background-color: white;
       font-family: Montserrat-Regular;
@@ -892,7 +927,7 @@ export default defineComponent({
 
     .unit2 {
       height: 100%;
-      width: 120px;
+      width: 100px;
     }
 
     :deep .el-dropdown {

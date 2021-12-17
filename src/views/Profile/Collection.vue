@@ -4,9 +4,10 @@
     <router-link active-class="select" class="title" to="/profile/collection/arts">
       Arts
     </router-link>
-    <router-link active-class="select" class="title" to="/profile/collection/collectable">
+    <!-- <router-link active-class="select" class="title" to="/profile/collection/collectable">
       Collectable
-    </router-link>
+    </router-link> -->
+    <span class="title">Collectable</span>
     <router-link active-class="select" class="title" to="/profile/collection/souvenirs">
       Souvenirs
     </router-link>
@@ -38,6 +39,10 @@ export default defineComponent({
 
   .title {
     /* flex: 1; */
+  }
+
+  span.title {
+    color: #bbb;
   }
 
   .select {

@@ -1,6 +1,6 @@
 /** * Created by Lay Hunt on 2021-09-08 14:14:13. */
 <template>
-  <div class="collection">
+  <div class="collection" v-loading="dataLoading">
     <div v-if="list.length <= 0" class="no-data">No data</div>
     <div v-for="v in list" :key="v" class="list">
       <div class="item">
@@ -214,17 +214,18 @@ export default defineComponent({
     const list = ref([]);
     const approving = ref(false);
     const auctionApproving = ref(false);
+    const dataLoading = ref(false);
     const requestData = () => {
-      // isLoading.value = true;
+      dataLoading.value = true;
       http
         .userGetMineNFT({})
         .then((res) => {
-          // isLoading.value = false;
+          dataLoading.value = false;
           list.value.splice(0, 0, ...res.list);
         })
         .catch((err) => {
           console.log(err);
-          // isLoading.value = false;
+          dataLoading.value = false;
           notification.error(
             err.message.split("{")[0] ||
               (err.head && err.head.msg) ||
@@ -755,6 +756,7 @@ export default defineComponent({
       blockHeight,
       creatAuctionData,
       removeOrder,
+      dataLoading,
     };
   },
 });
