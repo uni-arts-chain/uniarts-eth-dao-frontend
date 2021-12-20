@@ -83,7 +83,7 @@
   <div v-else class="auction container">
     <div class="center">
       <div class="nft">
-        <AdaptiveView :nft="auction.art ? auction.art : {}" />
+        <AdaptiveView :nft="auction.art ? auction.art : {}" height="340px" />
       </div>
       <!--      <div class="notice">-->
       <!--        <img src="@/assets/images/date-clock.png" />-->

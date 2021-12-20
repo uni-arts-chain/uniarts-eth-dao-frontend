@@ -8,6 +8,7 @@
       fullscreen: type == 'fullscreen',
       message: displayType == 'PluginError',
     }"
+    :width="width"
     :modal="false"
     v-model="dialogVisible"
     :append-to-body="true"
@@ -53,6 +54,10 @@ export default {
     showClose: {
       type: Boolean,
       default: true,
+    },
+    width: {
+      type: String,
+      default: "50%",
     },
   },
   watch: {
