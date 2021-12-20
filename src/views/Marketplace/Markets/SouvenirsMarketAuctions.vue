@@ -5,7 +5,11 @@
     <div v-loading="isLoading" class="buy-now">
       <div class="list" v-if="list?.length">
         <div v-for="item in list" :key="item.id" class="item">
-          <router-link :to="`/marketplace/souvenir-auction/${item.id}`">
+          <router-link
+            style="position: relative"
+            :to="`/marketplace/souvenir-auction/${item.uid}/${item.id}`"
+          >
+            <div class="label-sold" v-if="item.aasm_state == 'sold'">SOLD</div>
             <AdaptiveImage
               :url="item.sample"
               width="364px"
@@ -123,21 +127,21 @@ export default defineComponent({
         });
     };
 
-    const getSortType = () => {
-      http
-        .globalGetSouvenirsSortTypes({})
-        .then((res) => {
-          list.value = res.list || [];
-          let totalCount = res.total_count || 0;
-          totalPage.value = Math.ceil(totalCount / perPage.value);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    };
+    // const getSortType = () => {
+    //   http
+    //     .globalGetSouvenirsSortTypes({})
+    //     .then((res) => {
+    //       list.value = res.list || [];
+    //       let totalCount = res.total_count || 0;
+    //       totalPage.value = Math.ceil(totalCount / perPage.value);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //     });
+    // };
     onMounted(async () => {
       isLoading.value = true;
-      await getSortType();
+      // await getSortType();
       await getSouvenirsListData();
       isLoading.value = false;
     });
@@ -274,6 +278,17 @@ h3.title {
     opacity: 0.5;
     cursor: not-allowed;
   }
+}
+
+.label-sold {
+  position: absolute;
+  z-index: 100;
+  font-size: 16px;
+  margin: 7px;
+  padding: 7px;
+  color: #fff;
+  border-radius: 5px;
+  background-color: #00000088;
 }
 
 @media screen and (max-width: 750px) {

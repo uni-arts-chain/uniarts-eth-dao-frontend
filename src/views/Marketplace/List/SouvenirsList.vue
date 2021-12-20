@@ -14,7 +14,11 @@
       </div>
       <div v-if="auctionList.length > 0" class="list">
         <div v-for="item in auctionList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/souvenir-auction/${item.id}`">
+          <router-link
+            style="position: relative"
+            :to="`/marketplace/souvenir-auction/${item.uid}/${item.id}`"
+          >
+            <div class="label-sold" v-if="item.aasm_state == 'sold'">SOLD</div>
             <AdaptiveImage
               :isPreview="true"
               :isResponsive="true"
@@ -57,6 +61,13 @@
       >
         No Data
       </div>
+    </div>
+    <div
+      class="no-data"
+      v-if="auctionList.length == 0 && buyList?.length == 0 && !auctionLoading"
+      style="min-height: 200px; text-align: center; line-height: 200px; color: #999"
+    >
+      No Data
     </div>
   </div>
   <div v-else class="index container">
@@ -354,6 +365,17 @@ h3.title {
     color: #595757;
     line-height: 23px;
   }
+}
+
+.label-sold {
+  position: absolute;
+  z-index: 100;
+  font-size: 16px;
+  margin: 7px;
+  padding: 7px;
+  color: #fff;
+  border-radius: 5px;
+  background-color: #00000088;
 }
 
 @media screen and (max-width: 750px) {

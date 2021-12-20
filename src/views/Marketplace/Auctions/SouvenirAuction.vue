@@ -2,7 +2,7 @@
 <template>
   <div v-if="!$store.state.global.isMobile" class="auction container">
     <div class="left">
-      <div class="title">{{ auction.title }}</div>
+      <div class="title">{{ auction.name }}</div>
       <div class="desc-title">Artwork description</div>
       <div class="desc-content" v-html="auction.details"></div>
       <router-link :to="`/souvenirs/detail/${auction.id}`" class="more">More ></router-link>
@@ -12,7 +12,9 @@
             `${Number(auction.auction_latest_price) ? "Current High Bid: " : "Current Price: "}  `
           }}</span>
           <span class="value">{{
-            Number(auction.auction_latest_price) ? auction.latest_price : auction.auction_min_bid
+            Number(auction.auction_latest_price)
+              ? auction.auction_latest_price
+              : auction.auction_min_bid
           }}</span>
           <span>{{ marketToken.symbol }}</span>
         </div>
@@ -52,7 +54,7 @@
     </div>
     <div class="center">
       <div class="nft">
-        <AdaptiveImage :url="auction.sample" height="515px" width="520px" />
+        <AdaptiveView :nft="auction" height="515px" width="520px" />
       </div>
       <div class="notice">
         <img src="@/assets/images/date-clock.png" />
@@ -202,9 +204,9 @@ import { useRoute, useRouter } from "vue-router";
 import store from "@/store";
 // import Progress from "@/components/Progress";
 import http from "@/plugins/http";
-import Auction from "@/contracts/Auction";
+import Auction from "@/contracts/MultiTokenAuction";
 import Dialog from "@/components/Dialog";
-import AdaptiveImage from "@/components/AdaptiveImage";
+import AdaptiveView from "@/components/AdaptiveView";
 import { DAPP_CONFIG } from "@/config";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
@@ -218,7 +220,7 @@ export default defineComponent({
   components: {
     Mobilecomfirm,
     // Progress,
-    AdaptiveImage,
+    AdaptiveView,
     Dialog,
   },
   setup() {
@@ -256,7 +258,7 @@ export default defineComponent({
       }
       // 检查买断授权
       try {
-        const data = await currentErc20.allowance(connectedAccount, DAPP_CONFIG.contracts.Auction);
+        const data = await currentErc20.allowance(connectedAccount, auction.value.auction_contract);
         if (data.toNumber() !== 0) {
           buyApproving.value = true;
           console.log("Authorized", data.toNumber());
@@ -377,7 +379,7 @@ export default defineComponent({
       console.log(Number(bidAmount.value));
       if (Number(bidAmount.value) <= Number(auction.value.auction_min_bid)) {
         isLoading.value = false;
-        const message = `amount cannot be less than${Number(auction.value.auction_min_bid)}`;
+        const message = `amount cannot be less than ${Number(auction.value.auction_min_bid)}`;
         notification.error(message);
         throw new Error(message);
       }
@@ -530,14 +532,16 @@ export default defineComponent({
     let interval = null;
 
     onMounted(async () => {
-      const { id } = route.params;
-      // http.globalGetSouvenirById({}, { id }).then((res) => {
-      //   auctionBids.value = res;
-      //   console.log(auctionBids.value);
-      //   myOrder.value = (auctionBids.value || []).find((item) => item.is_mine);
-      // });
-      const res = await http.globalGetSouvenirById({}, { id });
-      auction.value = res;
+      const { id, uid } = route.params;
+      const res = await http.globalGetAuctionById({ aid: id }, { id: uid });
+      auction.value = res?.list[0] || {};
+      http
+        .globalGetAuctionBidsById({ aid: id }, { id: auction.value.auction_id })
+        .then((response) => {
+          auctionBids.value = response.list;
+          console.log(auctionBids.value);
+          myOrder.value = (auctionBids.value || []).find((item) => item.is_mine);
+        });
       await findApproveValue();
       try {
         const { timestamp: startDate } = await Auction.dater.getBlockWrapper(

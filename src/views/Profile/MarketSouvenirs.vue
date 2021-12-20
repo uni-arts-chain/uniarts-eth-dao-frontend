@@ -1,6 +1,6 @@
 /** * Created by Lay Hunt on 2021-09-08 14:14:13. */
 <template>
-  <div class="collection" v-loading="loading">
+  <div class="collection" v-loading="dataLoading">
     <div v-if="souvenirList.length <= 0" class="no-data">No data</div>
     <div v-for="v in souvenirList" :key="v" class="list">
       <div class="item">
@@ -15,9 +15,9 @@
             </div>
           </div>
           <div class="operate">
-            <button disabled v-if="v.auction_order || v.can_cancel_auction_order">Bidding</button>
-            <button disabled v-if="v.buy_now_order">On sale</button>
-            <button
+            <!-- <button disabled v-if="v.can_list_to_buy_now && !v.can_list_to_auction">Bidding</button>
+            <button disabled v-if="v.buy_now_order">On sale</button> -->
+            <!-- <button
               @click="onCancelBuyNowClick(v)"
               v-if="v.buy_now_order && v.can_cancel_buy_now_order"
             >
@@ -28,25 +28,15 @@
               v-if="!v.auction_order && v.can_cancel_auction_order"
             >
               Cancel Listing
-            </button>
+            </button> -->
             <button
-              v-if="
-                !v.buy_now_order &&
-                !v.auction_order &&
-                !v.can_cancel_auction_order &&
-                !v.can_cancel_buy_now_order
-              "
+              :disabled="!v.can_list_to_auction || !v.can_list_to_auction"
               @click="openListDialog(v)"
             >
               List
             </button>
             <button
-              :disabled="
-                v.buy_now_order ||
-                v.auction_order ||
-                v.can_cancel_auction_order ||
-                v.can_cancel_buy_now_order
-              "
+              :disabled="!v.can_list_to_auction || !v.can_list_to_auction"
               @click="openSendDialog(v)"
             >
               Send
@@ -343,13 +333,14 @@ export default defineComponent({
     const souvenirListTokens = ref(config.souvenirListTokens);
     const router = useRouter();
     const loading = ref(false);
+    const dataLoading = ref(false);
     // 我的纪念品列表
     const souvenirList = ref([]);
     // 刷新我的纪念品列表
     const initSouvenirs = async () => {
-      loading.value = true;
+      dataLoading.value = true;
       souvenirList.value = await http.userGetSouvenirsMine({});
-      loading.value = false;
+      dataLoading.value = false;
     };
 
     // 弹出层内tab选择器
@@ -368,8 +359,10 @@ export default defineComponent({
       listDialog.value = true;
       selectToken.value = config.souvenirListTokens.WETH;
       selectAuctionToken.value = config.souvenirListTokens.WETH;
+      console.log("123123123");
+      console.log("item", item);
       creatAuctionData.value = {
-        amount: 1,
+        amount: item.amount,
         startBlock: blockHeight.value + 200,
         endBlock: blockHeight.value + 1200,
         startPrice: 0,
@@ -377,7 +370,7 @@ export default defineComponent({
         minIncrement: 10,
       };
       creatBuyNowData.value = {
-        amount: 1,
+        amount: item.amount,
         price: 0,
       };
     };
@@ -576,9 +569,6 @@ export default defineComponent({
       let notifyId = notification.loading("Waiting for wallet response");
       console.log(souvenir, MultiTokenAuction);
       try {
-        // 强制全量挂单
-        creatAuctionData.value.amount = selectItem.value.amount;
-
         await MultiTokenAuction.creatAuction(
           souvenir.auction_contract,
           selectAuctionToken.value.symbol.toLowerCase(),
@@ -752,8 +742,9 @@ export default defineComponent({
       loading.value = true;
       let notifyId = notification.loading("Waiting for wallet response");
       try {
-        await MultiTokenTrustMarketplace.creatorWithdrawNftBatch(
-          cancelSouvenir.value.nft_contract,
+        await MultiTokenAuction.creatorWithdrawNftBatch(
+          cancelSouvenir.value.auction_contract,
+          cancelSouvenir.value.auction_match_id,
           (err, txHash) => {
             notification.dismiss(notifyId);
             if (err) {
@@ -799,6 +790,7 @@ export default defineComponent({
       selectToken,
       selectAuctionToken,
       loading,
+      dataLoading,
       openSendDialog,
       sendDialog,
       sendDialogData,
@@ -873,6 +865,10 @@ export default defineComponent({
       color: #595757;
     }
   }
+}
+
+.adaptive-image {
+  cursor: pointer;
 }
 
 @media screen and (max-width: 750px) {

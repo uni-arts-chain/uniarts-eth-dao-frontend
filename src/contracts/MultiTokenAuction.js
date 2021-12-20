@@ -1,11 +1,13 @@
 import Web3 from "web3";
 import Wallet from "@/plugins/wallet";
+import EthDater from "ethereum-block-by-date";
 import MultiTokenAuctionABI from "@/contracts/abi/MultiTokenAuction.json";
 import store from "@/store";
 
 class MultiTokenAuction {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
+    this.dater = new EthDater(this.web3.eth);
   }
 
   async creatAuction(
@@ -50,9 +52,8 @@ class MultiTokenAuction {
     );
   }
 
-  async creatorWithdrawNftBatch(contractAddress, callback) {
+  async creatorWithdrawNftBatch(contractAddress, matchId, callback) {
     const contract = new this.web3.eth.Contract(MultiTokenAuctionABI, contractAddress);
-    const matchId = `user-${new Date().getTime()}`;
     const tx = contract.methods.creator_withdraw_nft_batch(matchId);
     const gasPrice = await this.gasPrice();
     const sender = store.state.user.info.address;

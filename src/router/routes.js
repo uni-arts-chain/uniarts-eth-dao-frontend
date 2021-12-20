@@ -167,7 +167,7 @@ const routes = [
       import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Auctions/ArtAuction.vue"),
   },
   {
-    path: "/marketplace/souvenir-auction/:id",
+    path: "/marketplace/souvenir-auction/:uid/:id",
     name: "auctionSouvenirDetail",
     component: () =>
       import(

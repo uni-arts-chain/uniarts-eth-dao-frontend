@@ -6,7 +6,7 @@
       <button @click="$router.back()">Back</button>
     </div>
     <div class="keepsake">
-      <img :src="souvenir.sample" alt="keepsake" class="img" />
+      <AdaptiveView height="400px" :nft="souvenir" />
     </div>
     <div class="info">
       <div class="info-item">
@@ -23,7 +23,7 @@
           </div>
           <div class="properties-item">
             <div class="artist">ARTWORK</div>
-            <div class="describe">******</div>
+            <div class="describe">{{ souvenir.souvenir_artist_name }}</div>
             <div class="trait"><span class="number">33%</span> have this trait</div>
           </div>
         </div>
@@ -33,7 +33,7 @@
         <div class="details">
           <div class="details-item">
             <div class="key">Contract Address</div>
-            <div class="value">0x............</div>
+            <div class="value">{{ souvenir.nft_contract?.toUpperCase() }}</div>
           </div>
           <div class="details-item">
             <div class="key">Token ID</div>
@@ -41,13 +41,17 @@
           </div>
           <div class="details-item">
             <div class="key">Token Standard</div>
-            <div class="value">ERC-721</div>
+            <div class="value">{{ souvenir.token_standard }}</div>
           </div>
           <div class="details-item">
             <div class="key">Blockchain</div>
-            <div class="value">Polygon</div>
+            <div class="value">{{ souvenir.souvenir_blockchain }}</div>
           </div>
         </div>
+      </div>
+      <div class="info-item">
+        <div class="title"><span>Order Status</span></div>
+        <div class="details"></div>
       </div>
     </div>
   </div>
@@ -56,19 +60,28 @@
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
+import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
+import store from "@/store";
 import copy from "clipboard-copy";
 
 export default defineComponent({
   name: "Detail",
+  components: {
+    AdaptiveView,
+  },
   setup() {
     const onCopy = (v) => copy(v);
     const route = useRoute();
     const souvenir = ref({});
+    const souvenirOrder = ref({});
     const initKeepsakeData = async () => {
       const { id } = route.params;
       souvenir.value = await http.globalGetSouvenirById({}, { id });
       console.log(souvenir.value);
+      if (store.state.user.info.address) {
+        souvenirOrder.value = await http.userGetSouvenirsStatus({});
+      }
     };
     onMounted(() => {
       initKeepsakeData();
@@ -76,6 +89,7 @@ export default defineComponent({
     return {
       onCopy,
       souvenir,
+      souvenirOrder,
     };
   },
 });
@@ -114,13 +128,6 @@ export default defineComponent({
   .keepsake {
     margin-top: 31px;
     width: 100%;
-
-    .img {
-      display: block;
-      width: 100%;
-      height: auto;
-      background-color: black;
-    }
   }
 
   .info {

@@ -158,6 +158,15 @@ const apiList = [
     params: {},
     options: {},
   },
+  {
+    name: "getSouvenirsStatus",
+    method: "GET",
+    desc: "纪念品状态",
+    path: "/souvenirs/my_orders",
+    mockPath: "/souvenirs/my_orders",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;
