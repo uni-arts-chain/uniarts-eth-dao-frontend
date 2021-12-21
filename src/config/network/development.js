@@ -36,7 +36,7 @@ module.exports = {
     WETH: {
       symbol: "wETH",
       decimals: 18,
-      address: "0xcA50286362Da797303cC81276EB7D4fD536fA7cD\n",
+      address: "0xcA50286362Da797303cC81276EB7D4fD536fA7cD",
     },
   },
   tokens: {

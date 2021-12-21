@@ -6,15 +6,27 @@
       <button @click="$router.back()">Back</button>
     </div>
     <div class="keepsake">
-      <AdaptiveView height="400px" :nft="souvenir" />
+      <AdaptiveView height="540px" :nft="souvenir" />
     </div>
     <div class="info">
       <div class="info-item">
-        <div class="title"><span>Description</span></div>
+        <div class="title">
+          <img
+            style="width: 22px; height: 27px; margin-right: 18px"
+            src="@/assets/images/souvenir-desc.png"
+            alt=""
+          /><span>Description</span>
+        </div>
         <div class="message">{{ souvenir.artist_info }}</div>
       </div>
       <div class="info-item">
-        <div class="title"><span>Properties</span></div>
+        <div class="title">
+          <img
+            style="width: 26px; height: 23px; margin-right: 14px"
+            src="@/assets/images/souvenir-pro.png"
+            alt=""
+          /><span>Properties</span>
+        </div>
         <div class="properties">
           <div class="properties-item">
             <div class="artist">ARTIST</div>
@@ -29,7 +41,13 @@
         </div>
       </div>
       <div class="info-item">
-        <div class="title"><span>Details</span></div>
+        <div class="title">
+          <img
+            style="width: 22px; height: 21px; margin-right: 18px"
+            src="@/assets/images/souvenir-details.png"
+            alt=""
+          /><span>Details</span>
+        </div>
         <div class="details">
           <div class="details-item">
             <div class="key">Contract Address</div>
@@ -49,39 +67,101 @@
           </div>
         </div>
       </div>
-      <div class="info-item" v-if="souvenirOrderList.length > 0">
-        <div class="title"><span>Order Status</span></div>
-        <div class="details">
-          <div class="order-item" v-for="(v, i) in souvenirOrderList" :key="i">
-            <div class="order-info" v-if="v.order_type == 'auction_order'">
-              <span style="width: 130px">Timed Auction</span>
-              <span>Price: {{ v.latest_price }} {{ v.order_coin }}</span>
-            </div>
-            <div class="order-info" v-if="v.order_type == 'buy_now_order'">
-              <span style="width: 130px">BuyNow</span>
-              <span>Price: {{ v.latest_price }} {{ v.order_coin }}</span>
-            </div>
-            <div class="order-operate">
-              <button
-                :disabled="!v.can_cancel_order"
-                v-if="v.can_cancel_order && v.order_type == 'auction_order'"
-                @click="onCancelAuctionClick(v)"
-              >
-                Cancel
-              </button>
-              <button
-                :disabled="!v.can_cancel_order"
-                v-if="v.can_cancel_order && v.order_type == 'buy_now_order'"
-                @click="onCancelBuyNowClick(v)"
-              >
-                Cancel
-              </button>
-            </div>
+      <div class="info-item list-info-item">
+        <div class="title">
+          <div class="title-label">
+            <img
+              style="width: 26px; height: 26px; margin-right: 14px"
+              src="@/assets/images/souvenir-offer.png"
+              alt=""
+            /><span>Listings</span>
           </div>
+        </div>
+        <div class="details">
+          <div class="table-head">
+            <span style="width: 300px">Unit Price</span>
+            <span style="width: calc(100% - 500px)">From</span>
+            <span style="width: 200px"></span>
+          </div>
+          <el-scrollbar max-height="300px" @scroll="onScroll">
+            <div
+              class="empty"
+              style="height: 299px; line-height: 299px; text-align: center; color: #aaa"
+              v-if="souvenirMineOrderList.length <= 0 && souvenirOrderList.length <= 0"
+            >
+              Empty
+            </div>
+            <div class="order-item" v-for="(v, i) in souvenirMineOrderList" :key="i">
+              <div class="order-info" style="width: 300px">
+                <img
+                  style="width: 20px"
+                  :src="require(`@/assets/images/${v.order_coin?.toLowerCase()}.png`)"
+                />
+                <span style="margin-left: 5px; color: black; font-weight: 800">{{
+                  v.latest_price
+                }}</span>
+                <span style="margin-left: 5px">{{ v.order_coin }}</span>
+              </div>
+              <div class="order-info" style="width: calc(100% - 500px)">
+                <span>You</span>
+              </div>
+              <div class="order-operate" style="width: 200px">
+                <button :disabled="!v.can_cancel_order" @click="onCancelBuyNowClick(v)">
+                  Cancel
+                </button>
+              </div>
+            </div>
+            <div class="order-item order-item-buy" v-for="(v, i) in souvenirOrderList" :key="i">
+              <div class="order-info" style="width: 300px">
+                <img
+                  style="width: 20px"
+                  :src="require(`@/assets/images/${v.coin?.toLowerCase()}.png`)"
+                />
+                <span style="margin-left: 5px; color: black; font-weight: 800">{{
+                  v.uint_price
+                }}</span>
+                <span style="margin-left: 5px">{{ v.coin }}</span>
+              </div>
+              <div class="order-info" style="width: calc(100% - 500px)">
+                <span>{{ v.from }}</span>
+              </div>
+              <div class="order-operate" style="width: 200px">
+                <button @click="onBuyOrder(v)">Buy</button>
+              </div>
+            </div>
+          </el-scrollbar>
         </div>
       </div>
     </div>
   </div>
+  <Dialog
+    custom-class="buy-now-dialog"
+    v-if="!$store.state.global.isMobile"
+    v-model="buyDialog"
+    type="small"
+  >
+    <div class="dialog-content">
+      <div class="dialog-title">Confirm Order Information</div>
+      <div class="dialog-order-info">
+        <div class="dialog-order-info-item">
+          <span>Price: </span>
+          <span style="font-weight: 600; color: black">0.001 WETH</span>
+        </div>
+        <div class="dialog-order-info-item">
+          <span>From:</span>
+          <span>0x2341cb98575aed1adf3cba7eab2dd0a27bcdd06f</span>
+        </div>
+      </div>
+      <button v-if="isApproving" v-loading="nftLoading" @click="buyOrder">Buy</button>
+      <button v-else v-loading="nftLoading" @click="onApprove">Approve</button>
+    </div>
+  </Dialog>
+  <MobileConfirm v-else v-model="buyDialog" type="small">
+    <div class="dialog-content">
+      <div class="dialog-title" style="margin-top: 40px">Are you sure to cancel the order?</div>
+      <button v-loading="nftLoading" @click="onCancelBuyNowOrder">Confirm</button>
+    </div>
+  </MobileConfirm>
   <Dialog v-if="!$store.state.global.isMobile" v-model="cancelOrderDialog" type="small">
     <div class="dialog-content">
       <div class="dialog-title">Are you sure to cancel the order?</div>
@@ -120,6 +200,8 @@ import MultiTokenAuction from "@/contracts/MultiTokenAuction";
 import http from "@/plugins/http";
 import store from "@/store";
 import copy from "clipboard-copy";
+import { DAPP_CONFIG } from "@/config";
+import Erc20 from "@/contracts/Erc20";
 
 export default defineComponent({
   name: "Detail",
@@ -132,15 +214,141 @@ export default defineComponent({
     const onCopy = (v) => copy(v);
     const route = useRoute();
     const souvenir = ref({});
-    const souvenirOrderList = ref({});
+    const souvenirOrderList = ref([]);
+    const souvenirMineOrderList = ref([]);
+    const souvenirOrderTotal = ref(0);
+    const page = ref(1);
+    const per_page = ref(6);
+    const { id } = route.params;
     const initKeepsakeData = async () => {
-      const { id } = route.params;
       souvenir.value = await http.globalGetSouvenirById({}, { id });
       console.log(souvenir.value);
       if (store.state.user.info.address) {
-        souvenirOrderList.value = (await http.userGetSouvenirsStatus({}))?.list || [];
+        let list = await http.userGetSouvenirsStatus({});
+        souvenirMineOrderList.value = list?.list || [];
       }
+      requestOrderList();
     };
+    const requestOrderList = async () => {
+      let list = await http.globalGetSouvenirOrders(
+        {
+          page: page.value,
+          per_page: per_page.value,
+        },
+        { id }
+      );
+      souvenirOrderList.value = souvenirOrderList.value.concat(list?.list || []);
+      souvenirOrderTotal.value = list?.total_count || [];
+    };
+
+    const isApproving = ref(false);
+    let currentErc20 = {};
+    const nftLoading = ref(false);
+    const buyDialog = ref(false);
+    const selectItem = ref({});
+    const getApproveStatus = () => {
+      const token = Object.values(DAPP_CONFIG.souvenirListTokens).find(
+        (v) => selectItem.value.coin.toUpperCase() == v.symbol.toUpperCase()
+      );
+      console.log(token);
+      if (!token) return;
+      const connectedAccount = store.state.user.info.address;
+      currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
+      // 查看链上权限
+      nftLoading.value = true;
+      currentErc20
+        .allowance(connectedAccount, DAPP_CONFIG.contracts.MultiTokenTrustMarketplace)
+        .then((data) => {
+          isApproving.value = data.toNumber() !== 0;
+          nftLoading.value = false;
+        })
+        .catch(() => {
+          isApproving.value = false;
+          nftLoading.value = true;
+        });
+    };
+
+    const onBuyOrder = (item) => {
+      buyDialog.value = true;
+      selectItem.value = item;
+      getApproveStatus();
+    };
+
+    const onApprove = async () => {
+      let notifyId = null;
+      nftLoading.value = true;
+      try {
+        notifyId = notification.loading("Authorizing");
+        const receipt = await currentErc20
+          .approveMax(
+            store.state.user.info.address,
+            DAPP_CONFIG.contracts.MultiTokenTrustMarketplace,
+            async (err, txHash) => {
+              if (err) {
+                console.log(err);
+                throw err;
+              }
+              if (txHash) {
+                console.log(txHash);
+                notification.dismiss(notifyId);
+                notification.success(txHash);
+              }
+            }
+          )
+          .then(() => {
+            nftLoading.value = false;
+            isApproving.value = true;
+          });
+        console.log("receipt: ", receipt);
+      } catch (err) {
+        nftLoading.value = false;
+        notification.dismiss(notifyId);
+        notification.error(
+          err.message.split("{")[0] ||
+            (err.head && err.head.msg) ||
+            err.message ||
+            (err.data && err.data.message)
+        );
+        throw err;
+      }
+      notification.dismiss(notifyId);
+    };
+
+    const buyOrder = async () => {
+      // 购买nft
+      nftLoading.value = true;
+      const notifyId = notification.loading("Please wait for the wallet's response");
+
+      await MultiTokenTrustMarketplace.safePlaceBid(async (err, txHash) => {
+        if (err) {
+          console.log(err);
+          throw err;
+        }
+        if (txHash) {
+          console.log(txHash);
+          notification.dismiss(notifyId);
+          notification.success(txHash);
+          notification.success("Purchasing");
+        }
+      })
+        .then((receipt) => {
+          nftLoading.value = false;
+          notification.dismiss(notifyId);
+          console.log("receipt: ", receipt);
+        })
+        .catch((err) => {
+          nftLoading.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            err.message.split("{")[0] ||
+              (err.head && err.head.msg) ||
+              err.message ||
+              (err.data && err.data.message)
+          );
+          console.log(err);
+        });
+    };
+
     onMounted(() => {
       initKeepsakeData();
     });
@@ -158,11 +366,13 @@ export default defineComponent({
     const cancelOrderDialog = ref(false);
     const cancelAuctionDialog = ref(false);
     const cancelSouvenir = ref({});
+    const cancelSouvenirIndex = ref({});
 
     // 取消BuyNow订单
-    const onCancelBuyNowClick = (souvenir) => {
+    const onCancelBuyNowClick = (souvenir, index) => {
       cancelOrderDialog.value = true;
       cancelSouvenir.value = souvenir;
+      cancelSouvenirIndex.value = index;
     };
 
     // 取消BuyNow订单合约交互
@@ -240,10 +450,23 @@ export default defineComponent({
       }
     };
 
+    const onScroll = (event) => {
+      if (
+        event.scrollTop >=
+        page.value * per_page.value * 60 + souvenirMineOrderList.value.length * 60 - 300
+      ) {
+        if (Math.ceil(souvenirOrderTotal.value / per_page.value) > page.value) {
+          page.value++;
+          requestOrderList();
+        }
+      }
+    };
+
     return {
       onCopy,
       souvenir,
       souvenirOrderList,
+      souvenirMineOrderList,
 
       onCancelBuyNowOrder,
       onCancelAuctionOrder,
@@ -251,6 +474,16 @@ export default defineComponent({
       onCancelAuctionClick,
       cancelOrderDialog,
       cancelAuctionDialog,
+      onScroll,
+
+      buyDialog,
+      onBuyOrder,
+      nftLoading,
+      loading,
+      isApproving,
+
+      onApprove,
+      buyOrder,
     };
   },
 });
@@ -300,13 +533,16 @@ export default defineComponent({
     .info-item {
       margin-bottom: 33px;
 
-      .title {
+      .title,
+      .title-label {
+        display: flex;
+        align-items: center;
         height: 40px;
         color: black;
-        font-size: 28px;
+        font-size: 24px;
         text-align: left;
         font-weight: 600;
-        margin-bottom: 33px;
+        margin-bottom: 20px;
       }
 
       .message {
@@ -375,37 +611,80 @@ export default defineComponent({
             flex: 2;
           }
         }
+      }
+    }
 
-        .order-item {
-          border: 2px solid black;
-          padding: 10px;
-          height: 60px;
-          margin-bottom: 20px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+    .list-info-item {
+      width: 100%;
+      .title {
+        justify-content: space-between;
+        align-items: center;
+      }
+      .title-label {
+        margin-bottom: 0px;
+      }
+      .details {
+        max-height: 341px;
+        border-radius: 10px;
+        border: 1px solid #a2a2a2;
+        font-size: 16px;
+        font-weight: 600;
+        padding: 0px 0px 0px 0;
+      }
+      .table-head {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px;
+        border-bottom: 1px solid #a2a2a2;
+        > span {
+          display: block;
         }
-        .order-info {
-          display: flex;
-          span {
-            margin: 0 10px;
-            display: block;
-          }
+      }
+      .order-item:first-child {
+        border-top: 1px solid transparent;
+      }
+      .order-item {
+        border-top: 1px solid #a2a2a2;
+        padding: 16px 16px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .order-item-buy {
+        .order-operate button {
+          margin: 0 10px;
+          border: 1px solid black;
+          border-radius: 10px;
+          color: black;
+          background-color: transparent;
+          padding: 10px 0;
+          font-weight: 600;
+          width: 100px;
+          cursor: pointer;
         }
-        .order-operate {
-          button {
-            margin: 0 10px;
-            background-color: black;
-            border-radius: 6px;
-            color: white;
-            padding: 10px 0;
-            width: 100px;
-            cursor: pointer;
-          }
-          button:disabled {
-            cursor: not-allowed;
-            opacity: 0.4;
-          }
+      }
+      .order-info {
+        display: flex;
+        span {
+          color: rgb(67, 67, 67);
+        }
+      }
+      .order-operate {
+        text-align: right;
+        button {
+          margin: 0 10px;
+          border-radius: 10px;
+          color: white;
+          background-color: black;
+          padding: 10px 0;
+          font-weight: 600;
+          width: 100px;
+          cursor: pointer;
+        }
+        button:disabled {
+          cursor: not-allowed;
+          opacity: 0.4;
         }
       }
     }
@@ -563,6 +842,20 @@ export default defineComponent({
     width: 343px;
     margin: 0 auto;
     margin-top: 21px;
+  }
+
+  .dialog-order-info {
+    .dialog-order-info-item {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0px;
+      > span {
+        font-size: 16px;
+      }
+      > span:first-child {
+        width: 100px;
+      }
+    }
   }
 }
 

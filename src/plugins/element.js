@@ -9,6 +9,7 @@ import {
   ElDrawer,
   ElTabPane,
   ElTabs,
+  ElScrollbar,
 } from "element-plus";
 import "element-plus/dist/index.css";
 
@@ -24,5 +25,6 @@ export default {
     vue.use(ElDrawer);
     vue.use(ElTabPane);
     vue.use(ElTabs);
+    vue.use(ElScrollbar);
   },
 };

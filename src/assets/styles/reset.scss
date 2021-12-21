@@ -298,6 +298,13 @@
     
   }
 }
+.el-dialog.buy-now-dialog {
+  padding: 30px 60px 30px;
+  .el-dialog__body {
+    padding: 20px 20px;
+    
+  }
+}
 
 .el-dialog.vote-dialog.retrieve-dialog {
   padding: 0;

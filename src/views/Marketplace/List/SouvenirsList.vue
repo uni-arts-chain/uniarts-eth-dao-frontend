@@ -54,7 +54,7 @@
       </div>
       <div v-if="buyList.length > 0" class="list">
         <div v-for="item in buyList" :key="item.id" class="item">
-          <router-link style="position: relative" :to="`/marketplace/souvenir-buy/${item.id}`">
+          <router-link style="position: relative" :to="`/souvenirs/detail/${item.id}`">
             <!-- <div class="label-sold" v-if="item.aasm_state == 'sold'">SOLD</div> -->
             <AdaptiveImage
               :isPreview="true"
