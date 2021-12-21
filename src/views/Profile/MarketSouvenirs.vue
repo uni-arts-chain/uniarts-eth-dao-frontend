@@ -13,13 +13,17 @@
         />
         <div class="info">
           <div class="title">{{ v.title }}</div>
-          <div class="progress">
+          <div class="amount">
+            <span>Amount</span>
+            <span>{{ v.amount }}</span>
+          </div>
+          <!-- <div class="progress">
             <Progress :value="parseInt((v.number / v.total) * 100)" />
             <div class="value-group">
               <span>Number of votes: {{ v.number }}</span>
               <span>Total: {{ v.total }}</span>
             </div>
-          </div>
+          </div> -->
           <div class="operate">
             <button :disabled="v.amount <= 0" @click="openListDialog(v)">List</button>
             <button :disabled="v.amount <= 0" @click="openSendDialog(v)">Send</button>
@@ -30,18 +34,19 @@
   </div>
   <Dialog v-if="!$store.state.global.isMobile" v-model="listDialog" type="small">
     <div class="dialog-content">
-      <div class="list-select">
+      <div style="text-align: center; font-size: 20px">Listing to BuyNow Market</div>
+      <!-- <div class="list-select">
         <span :class="{ 'select-item': tabStatus === 0 }" class="list-item" @click="tabStatus = 0">
           Listing to Auction
         </span>
         <span :class="{ 'select-item': tabStatus === 1 }" class="list-item" @click="tabStatus = 1">
           Listing to BuyNow Market
         </span>
-      </div>
+      </div> -->
       <div class="form-body" v-show="tabStatus === 0">
         <div v-show="selectItem.amount > 1" class="input-body">
           <span class="unit">Amount</span>
-          <input :value="selectItem.amount" disabled />
+          <input :value="creatAuctionData.amount" disabled />
         </div>
         <!-- <div v-show="selectItem.amount > 1" class="block-height">
           range: 1 - {{ selectItem.amount }}
@@ -103,9 +108,9 @@
           <span class="unit">Amount</span>
           <input v-model="creatBuyNowData.amount" disabled />
         </div>
-        <div v-show="selectItem.amount > 1" class="block-height">
+        <!-- <div v-show="selectItem.amount > 1" class="block-height">
           range: 1 - {{ selectItem.amount }}
-        </div>
+        </div> -->
         <div class="input-body">
           <input style="width: calc(100% - 100px)" v-model="creatBuyNowData.price" />
           <el-dropdown trigger="click" @command="onSelectToken">
@@ -130,14 +135,15 @@
   </Dialog>
   <mobilecomfirm v-else v-model="listDialog" type="small">
     <div class="dialog-content">
-      <div class="list-select">
+      <div style="text-align: center; font-size: 20px">Listing to BuyNow Market</div>
+      <!-- <div class="list-select">
         <span :class="{ 'select-item': tabStatus === 0 }" class="list-item" @click="tabStatus = 0">
           Listing to Auction
         </span>
         <span :class="{ 'select-item': tabStatus === 1 }" class="list-item" @click="tabStatus = 1">
           Listing to BuyNow
         </span>
-      </div>
+      </div> -->
       <div class="list-form-body" v-show="tabStatus === 0">
         <div v-show="selectItem.amount > 1" class="input-body">
           <span class="unit">Amount</span>
@@ -203,9 +209,9 @@
           <span class="unit">Amount</span>
           <input v-model="creatBuyNowData.amount" disabled />
         </div>
-        <div v-show="selectItem.amount > 1" class="block-height">
+        <!-- <div v-show="selectItem.amount > 1" class="block-height">
           range: 1 - {{ selectItem.amount }}
-        </div>
+        </div> -->
         <div class="input-body">
           <input v-model="creatBuyNowData.price" />
           <el-dropdown trigger="click" @command="onSelectToken">
@@ -265,7 +271,7 @@
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import AdaptiveImage from "@/components/AdaptiveImage";
-import Progress from "@/components/Progress";
+// import Progress from "@/components/Progress";
 import http from "@/plugins/http";
 import { useRouter } from "vue-router";
 import Auction from "@/contracts/Auction";
@@ -284,7 +290,7 @@ export default defineComponent({
   components: {
     Mobilecomfirm,
     Dialog,
-    Progress,
+    // Progress,
     AdaptiveImage,
   },
   setup() {
@@ -302,7 +308,7 @@ export default defineComponent({
     };
 
     // 弹出层内tab选择器
-    const tabStatus = ref(0);
+    const tabStatus = ref(1);
     // 弹出层开关
     const listDialog = ref(false);
 
@@ -698,16 +704,16 @@ export default defineComponent({
 
     .operate {
       display: flex;
-      margin-top: 69px;
+      margin-top: 26px;
 
       button {
-        margin: 0 5px;
+        margin: 0 1%;
         font-size: 14px;
         font-family: Montserrat-Medium;
         text-align: center;
         cursor: pointer;
         color: #ffffff;
-        width: 119px;
+        width: 48%;
         height: 43px;
         background-color: black;
       }
@@ -729,6 +735,19 @@ export default defineComponent({
       font-weight: 300;
       text-align: left;
       color: #595757;
+    }
+
+    .amount {
+      display: flex;
+      flex-direction: column;
+      span:first-child {
+        font-size: 15px;
+      }
+      span:last-child {
+        margin-top: 15px;
+        font-size: 45px;
+        text-align: center;
+      }
     }
   }
 }
@@ -764,7 +783,7 @@ export default defineComponent({
     margin-top: 20px;
 
     button {
-      width: 30%;
+      width: 48%;
       min-width: 120px;
     }
   }
