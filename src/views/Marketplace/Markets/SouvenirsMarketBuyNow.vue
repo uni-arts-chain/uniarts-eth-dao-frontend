@@ -42,22 +42,25 @@
     </div>
   </div>
   <div v-else class="index container">
-    <h3 class="title">Buy Now</h3>
+    <h3 class="title">Souvenir Buy Now</h3>
     <div class="buy-now" v-loading="isLoading">
       <div v-if="buyList?.length" class="list">
         <div v-for="item in buyList" :key="item.id" class="item">
           <router-link :to="`/souvenirs/detail/${item.id}`">
-            <AdaptiveView
-              :nft="item.art"
-              width="335px"
-              height="200px"
+            <AdaptiveImage
+              :url="item.sample"
+              width="100%"
+              height="267px"
               :isResponsive="true"
               :isPreview="true"
             />
           </router-link>
           <div class="info">
-            <div class="name">{{ item.art.name }}</div>
-            <div class="price">Price: {{ item.price }} {{ marketToken.symbol }}</div>
+            <div class="name">{{ item.title }}</div>
+            <div class="price">
+              Price: {{ item.price_range[0]?.highest_price }}
+              {{ item.price_range[0]?.coin?.toUpperCase() }}
+            </div>
           </div>
         </div>
       </div>

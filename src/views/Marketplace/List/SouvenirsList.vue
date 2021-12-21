@@ -90,6 +90,7 @@
     </div>
   </div>
   <div v-else class="index container">
+    <div class="loading" v-if="buyLoading" v-loading="buyLoading"></div>
     <div class="buy-now">
       <!-- <div class="title">
         <div :class="{ active: currentTab == 1 }" class="title-tab" @click="currentTab = 1">
@@ -151,8 +152,27 @@
         </div>
       </div> -->
       <div v-show="buyList?.length" class="list">
+        <div v-for="item in buyList" :key="item.id" class="item">
+          <router-link style="position: relative" :to="`/souvenirs/detail/${item.id}`">
+            <AdaptiveImage
+              :isPreview="true"
+              :isResponsive="true"
+              :url="item.sample"
+              height="266px"
+              width="100%"
+            />
+          </router-link>
+          <div class="info">
+            <div class="name">{{ item.title }}</div>
+            <div class="price">
+              Price: {{ item.price_range[0]?.highest_price }}
+              {{ item.price_range[0]?.coin?.toUpperCase() }}
+            </div>
+          </div>
+        </div>
         <router-link
           v-if="buyList.length > 0"
+          to="/marketplace/souvenirs/buynow"
           style="
             font-size: 14px;
             width: 100%;
@@ -484,6 +504,9 @@ h3.title {
       .info .price {
         font-size: 15px;
       }
+    }
+    .adaptive-image {
+      max-width: 100%;
     }
   }
 }

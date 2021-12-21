@@ -1068,6 +1068,7 @@ export default defineComponent({
   .dialog-content .dialog-order-info .dialog-order-info-item > span:last-child {
     width: calc(100% - 70px);
     text-align: right;
+    word-wrap: break-word;
   }
 }
 </style>
