@@ -5,18 +5,22 @@
     <div v-loading="isLoading" class="buy-now">
       <div class="list" v-if="buyList?.length">
         <div v-for="item in buyList" :key="item.id" class="item">
-          <router-link :to="`/marketplace/buy/${item.id}`">
-            <AdaptiveView
-              :nft="item.art"
+          <router-link style="position: relative" :to="`/marketplace/souvenir-buy/${item.id}`">
+            <!-- <div class="label-sold" v-if="item.aasm_state == 'sold'">SOLD</div> -->
+            <AdaptiveImage
+              :url="item.sample"
               width="364px"
-              height="364px"
+              height="267px"
               :isResponsive="true"
               :isPreview="true"
             />
           </router-link>
           <div class="info">
-            <div class="name">{{ item.art.name }}</div>
-            <div class="price">Price: {{ item.price }} {{ marketToken.symbol }}</div>
+            <div class="name">{{ item.title }}</div>
+            <div class="price">
+              Price: {{ item.price_range[0]?.highest_price }}
+              {{ item.price_range[0]?.coin?.toUpperCase() }}
+            </div>
           </div>
         </div>
       </div>
@@ -79,14 +83,15 @@
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import store from "@/store";
-import AdaptiveView from "@/components/AdaptiveView";
+// import AdaptiveView from "@/components/AdaptiveView";
+import AdaptiveImage from "@/components/AdaptiveImage";
 import http from "@/plugins/http";
 import { DAPP_CONFIG } from "@/config";
 
 export default defineComponent({
   name: "index",
   components: {
-    AdaptiveView,
+    AdaptiveImage,
   },
   setup() {
     const marketCurrency = "WETH";
@@ -103,7 +108,7 @@ export default defineComponent({
     const getAuctionListData = () => {
       isLoading.value = true;
       http
-        .globalGetArtOrder({
+        .globalGetSouvenirsList({
           page: currentPage.value,
           per_page: perPage.value,
         })
@@ -253,6 +258,17 @@ h3.title {
     opacity: 0.5;
     cursor: not-allowed;
   }
+}
+
+.label-sold {
+  position: absolute;
+  z-index: 100;
+  font-size: 16px;
+  margin: 7px;
+  padding: 7px;
+  color: #fff;
+  border-radius: 5px;
+  background-color: #00000088;
 }
 
 @media screen and (max-width: 750px) {

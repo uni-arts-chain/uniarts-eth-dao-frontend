@@ -4,7 +4,13 @@
     <div v-if="souvenirList.length <= 0" class="no-data">No data</div>
     <div v-for="v in souvenirList" :key="v" class="list">
       <div class="item">
-        <AdaptiveImage :url="v.sample" width="349px" height="260px" @click="goDetail(v)" />
+        <AdaptiveImage
+          :url="v.sample"
+          style="max-width: 100%"
+          width="349px"
+          height="260px"
+          @click="goDetail(v)"
+        />
         <div class="info">
           <div class="title">{{ v.title }}</div>
           <div class="progress">
@@ -15,32 +21,8 @@
             </div>
           </div>
           <div class="operate">
-            <!-- <button disabled v-if="v.can_list_to_buy_now && !v.can_list_to_auction">Bidding</button>
-            <button disabled v-if="v.buy_now_order">On sale</button> -->
-            <!-- <button
-              @click="onCancelBuyNowClick(v)"
-              v-if="v.buy_now_order && v.can_cancel_buy_now_order"
-            >
-              Cancel Listing
-            </button>
-            <button
-              @click="onCancelAuctionClick(v)"
-              v-if="!v.auction_order && v.can_cancel_auction_order"
-            >
-              Cancel Listing
-            </button> -->
-            <button
-              :disabled="!v.can_list_to_auction || !v.can_list_to_auction"
-              @click="openListDialog(v)"
-            >
-              List
-            </button>
-            <button
-              :disabled="!v.can_list_to_auction || !v.can_list_to_auction"
-              @click="openSendDialog(v)"
-            >
-              Send
-            </button>
+            <button :disabled="v.amount <= 0" @click="openListDialog(v)">List</button>
+            <button :disabled="v.amount <= 0" @click="openSendDialog(v)">Send</button>
           </div>
         </div>
       </div>
@@ -119,7 +101,7 @@
       <div class="form-body" v-show="tabStatus === 1">
         <div v-show="selectItem.amount > 1" class="input-body">
           <span class="unit">Amount</span>
-          <input v-model="creatBuyNowData.amount" />
+          <input v-model="creatBuyNowData.amount" disabled />
         </div>
         <div v-show="selectItem.amount > 1" class="block-height">
           range: 1 - {{ selectItem.amount }}
@@ -159,7 +141,7 @@
       <div class="list-form-body" v-show="tabStatus === 0">
         <div v-show="selectItem.amount > 1" class="input-body">
           <span class="unit">Amount</span>
-          <input v-model="creatAuctionData.amount" />
+          <input v-model="creatAuctionData.amount" disabled />
         </div>
         <div v-show="selectItem.amount > 1" class="block-height">
           range: 1 - {{ selectItem.amount }}
@@ -219,7 +201,7 @@
       <div class="list-form-body" v-show="tabStatus === 1">
         <div v-show="selectItem.amount > 1" class="input-body">
           <span class="unit">Amount</span>
-          <input v-model="creatBuyNowData.amount" />
+          <input v-model="creatBuyNowData.amount" disabled />
         </div>
         <div v-show="selectItem.amount > 1" class="block-height">
           range: 1 - {{ selectItem.amount }}
@@ -276,30 +258,6 @@
         <input v-model="sendDialogData.sender" />
       </div>
       <button v-loading="loading" @click="sendToAddress">Send</button>
-    </div>
-  </Mobilecomfirm>
-  <Dialog v-if="!$store.state.global.isMobile" v-model="cancelOrderDialog" type="small">
-    <div class="dialog-content">
-      <div class="dialog-title">Are you sure to cancel the order?</div>
-      <button v-loading="loading" @click="onCancelBuyNowOrder">Confirm</button>
-    </div>
-  </Dialog>
-  <Mobilecomfirm v-else v-model="cancelOrderDialog" type="small">
-    <div class="dialog-content">
-      <div class="dialog-title" style="margin-top: 40px">Are you sure to cancel the order?</div>
-      <button v-loading="loading" @click="onCancelBuyNowOrder">Confirm</button>
-    </div>
-  </Mobilecomfirm>
-  <Dialog v-if="!$store.state.global.isMobile" v-model="cancelAuctionDialog" type="small">
-    <div class="dialog-content">
-      <div class="dialog-title">Are you sure to cancel the auction?</div>
-      <button v-loading="loading" @click="onCancelAuctionOrder">Confirm</button>
-    </div>
-  </Dialog>
-  <Mobilecomfirm v-else v-model="cancelAuctionDialog" type="small">
-    <div class="dialog-content">
-      <div class="dialog-title" style="margin-top: 40px">Are you sure to cancel the auction?</div>
-      <button v-loading="loading" @click="onCancelAuctionOrder">Confirm</button>
     </div>
   </Mobilecomfirm>
 </template>
@@ -359,10 +317,8 @@ export default defineComponent({
       listDialog.value = true;
       selectToken.value = config.souvenirListTokens.WETH;
       selectAuctionToken.value = config.souvenirListTokens.WETH;
-      console.log("123123123");
-      console.log("item", item);
       creatAuctionData.value = {
-        amount: item.amount,
+        amount: 1,
         startBlock: blockHeight.value + 200,
         endBlock: blockHeight.value + 1200,
         startPrice: 0,
@@ -370,7 +326,7 @@ export default defineComponent({
         minIncrement: 10,
       };
       creatBuyNowData.value = {
-        amount: item.amount,
+        amount: 1,
         price: 0,
       };
     };
@@ -687,90 +643,6 @@ export default defineComponent({
       selectToken.value = item;
     };
 
-    const cancelOrderDialog = ref(false);
-    const cancelAuctionDialog = ref(false);
-    const cancelSouvenir = ref({});
-
-    // 取消BuyNow订单
-    const onCancelBuyNowClick = (souvenir) => {
-      cancelOrderDialog.value = true;
-      cancelSouvenir.value = souvenir;
-    };
-
-    // 取消BuyNow订单合约交互
-    const onCancelBuyNowOrder = async () => {
-      loading.value = true;
-      let notifyId = notification.loading("Waiting for wallet response");
-      try {
-        await MultiTokenTrustMarketplace.cancelOrder(
-          cancelSouvenir.value.nft_contract,
-          cancelSouvenir.value.buy_now_order_id,
-          (err, txHash) => {
-            notification.dismiss(notifyId);
-            if (err) {
-              console.log(err);
-              loading.value = false;
-              myNotificationErr(err);
-              throw err;
-            } else if (txHash) {
-              console.log(txHash);
-              loading.value = false;
-              notification.success(txHash);
-              notifyId = notification.loading("Waiting for confirmation on the chain");
-              cancelOrderDialog.value = false;
-              initSouvenirs();
-            }
-          }
-        );
-        notification.success("Success");
-      } catch (err) {
-        loading.value = false;
-        myNotificationErr(err);
-      } finally {
-        notification.dismiss(notifyId);
-      }
-    };
-
-    // 取消BuyNow订单
-    const onCancelAuctionClick = (souvenir) => {
-      cancelAuctionDialog.value = true;
-      cancelSouvenir.value = souvenir;
-    };
-
-    // 取消Auction订单合约交互
-    const onCancelAuctionOrder = async () => {
-      loading.value = true;
-      let notifyId = notification.loading("Waiting for wallet response");
-      try {
-        await MultiTokenAuction.creatorWithdrawNftBatch(
-          cancelSouvenir.value.auction_contract,
-          cancelSouvenir.value.auction_match_id,
-          (err, txHash) => {
-            notification.dismiss(notifyId);
-            if (err) {
-              console.log(err);
-              loading.value = false;
-              myNotificationErr(err);
-              throw err;
-            } else if (txHash) {
-              console.log(txHash);
-              loading.value = false;
-              notification.success(txHash);
-              notifyId = notification.loading("Waiting for confirmation on the chain");
-              cancelAuctionDialog.value = false;
-              initSouvenirs();
-            }
-          }
-        );
-        notification.success("Success");
-      } catch (err) {
-        loading.value = false;
-        myNotificationErr(err);
-      } finally {
-        notification.dismiss(notifyId);
-      }
-    };
-
     return {
       goDetail,
       souvenirList,
@@ -797,12 +669,6 @@ export default defineComponent({
       sendToAddress,
 
       onSelectToken,
-      onCancelBuyNowOrder,
-      onCancelAuctionOrder,
-      onCancelBuyNowClick,
-      onCancelAuctionClick,
-      cancelOrderDialog,
-      cancelAuctionDialog,
     };
   },
 });
@@ -832,10 +698,10 @@ export default defineComponent({
 
     .operate {
       display: flex;
-      justify-content: space-between;
       margin-top: 69px;
 
       button {
+        margin: 0 5px;
         font-size: 14px;
         font-family: Montserrat-Medium;
         text-align: center;

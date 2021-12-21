@@ -164,7 +164,9 @@ const apiList = [
     desc: "纪念品状态",
     path: "/souvenirs/my_orders",
     mockPath: "/souvenirs/my_orders",
-    params: {},
+    params: {
+      state: "",
+    },
     options: {},
   },
 ];

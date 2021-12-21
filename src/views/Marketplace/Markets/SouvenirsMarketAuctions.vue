@@ -5,10 +5,7 @@
     <div v-loading="isLoading" class="buy-now">
       <div class="list" v-if="list?.length">
         <div v-for="item in list" :key="item.id" class="item">
-          <router-link
-            style="position: relative"
-            :to="`/marketplace/souvenir-auction/${item.uid}/${item.id}`"
-          >
+          <router-link style="position: relative" :to="`/marketplace/souvenir-auction/${item.id}`">
             <div class="label-sold" v-if="item.aasm_state == 'sold'">SOLD</div>
             <AdaptiveImage
               :url="item.sample"
@@ -21,7 +18,11 @@
           <div class="info">
             <div class="name">{{ item.title }}</div>
             <div class="price">
-              {{ `Current Bid: ${item.latest_price} ${item.biding_coin.toUpperCase()}` }}
+              {{
+                `Current Bid: ${
+                  item.price_range[0]?.highest_price
+                } ${item.price_range[0]?.coin?.toUpperCase()}`
+              }}
             </div>
           </div>
         </div>
@@ -48,7 +49,7 @@
     <div class="buy-now" v-loading="isLoading">
       <div v-if="list?.length" class="list">
         <div v-for="item in list" :key="item.id" class="item">
-          <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
+          <router-link :to="`/marketplace/auction/${item.id}`">
             <AdaptiveImage
               :nft="item"
               width="335px"

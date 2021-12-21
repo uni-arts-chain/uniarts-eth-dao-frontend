@@ -39,6 +39,9 @@ class MultiTokenTrustMarketplace {
     const tx = this.contract.methods.cancelOrder(nftAddress, orderId);
     const gasPrice = await this.gasPrice();
     const sender = store.state.user.info.address;
+    console.log(sender);
+    console.log(nftAddress);
+    console.log(orderId);
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,

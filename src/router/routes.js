@@ -167,7 +167,7 @@ const routes = [
       import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/Auctions/ArtAuction.vue"),
   },
   {
-    path: "/marketplace/souvenir-auction/:uid/:id",
+    path: "/marketplace/souvenir-auction/:id",
     name: "auctionSouvenirDetail",
     component: () =>
       import(
@@ -179,6 +179,12 @@ const routes = [
     name: "buyDetail",
     component: () =>
       import(/* webpackChunkName: "marketplace" */ "../views/Marketplace/BuyNows/ArtBuy.vue"),
+  },
+  {
+    path: "/marketplace/souvenir-buy/:id",
+    name: "buySouvenirDetail",
+    component: () =>
+      import(/* webpackChunkName: "souvenirs" */ "../views/Marketplace/BuyNows/SouvenirBuy.vue"),
   },
   {
     path: "/vote",

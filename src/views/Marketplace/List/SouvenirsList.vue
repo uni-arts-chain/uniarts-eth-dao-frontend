@@ -1,8 +1,8 @@
 /** * Created by Lay Hunt on 2021-09-08 18:13:44. */
 <template>
   <div v-if="!$store.state.global.isMobile" class="index container">
-    <div class="loading" v-if="auctionLoading" v-loading="auctionLoading"></div>
-    <div v-if="auctionList.length" class="buy-now">
+    <div class="loading" v-if="buyLoading" v-loading="buyLoading"></div>
+    <!-- <div v-if="auctionList.length" class="buy-now">
       <div class="title">
         <span>Timed Auctions</span>
         <router-link
@@ -16,7 +16,7 @@
         <div v-for="item in auctionList" :key="item.id" class="item">
           <router-link
             style="position: relative"
-            :to="`/marketplace/souvenir-auction/${item.uid}/${item.id}`"
+            :to="`/marketplace/souvenir-auction/${item.id}`"
           >
             <div class="label-sold" v-if="item.aasm_state == 'sold'">SOLD</div>
             <AdaptiveImage
@@ -30,8 +30,7 @@
           <div class="info">
             <div class="name">{{ item.title }}</div>
             <div class="price">
-              {{ `Current Bid: ${item.latest_price} ${item.biding_coin.toUpperCase()}` }}
-            </div>
+              {{ `Current Bid: ${item.price_range[0]?.highest_price} ${item.price_range[0]?.coin?.toUpperCase()}` }}</div>
           </div>
         </div>
       </div>
@@ -42,7 +41,7 @@
       >
         No Data
       </div>
-    </div>
+    </div> -->
     <div v-if="buyList?.length" class="buy-now">
       <div class="title">
         <span>Buy Now</span>
@@ -53,7 +52,27 @@
           MORE ></router-link
         >
       </div>
-      <div v-if="buyList.length > 0" class="list"></div>
+      <div v-if="buyList.length > 0" class="list">
+        <div v-for="item in buyList" :key="item.id" class="item">
+          <router-link style="position: relative" :to="`/marketplace/souvenir-buy/${item.id}`">
+            <!-- <div class="label-sold" v-if="item.aasm_state == 'sold'">SOLD</div> -->
+            <AdaptiveImage
+              :isPreview="true"
+              :isResponsive="true"
+              :url="item.sample"
+              height="266px"
+              width="364px"
+            />
+          </router-link>
+          <div class="info">
+            <div class="name">{{ item.title }}</div>
+            <div class="price">
+              Price: {{ item.price_range[0]?.highest_price }}
+              {{ item.price_range[0]?.coin?.toUpperCase() }}
+            </div>
+          </div>
+        </div>
+      </div>
       <div
         v-else
         class="no-data"
@@ -64,7 +83,7 @@
     </div>
     <div
       class="no-data"
-      v-if="auctionList.length == 0 && buyList?.length == 0 && !auctionLoading"
+      v-if="buyList?.length == 0 && !buyLoading"
       style="min-height: 200px; text-align: center; line-height: 200px; color: #999"
     >
       No Data
@@ -72,15 +91,15 @@
   </div>
   <div v-else class="index container">
     <div class="buy-now">
-      <div class="title">
+      <!-- <div class="title">
         <div :class="{ active: currentTab == 1 }" class="title-tab" @click="currentTab = 1">
           Auctions
         </div>
         <div :class="{ active: currentTab == 2 }" class="title-tab" @click="currentTab = 2">
           Buy Now
         </div>
-      </div>
-      <div v-if="currentTab == 1" class="list">
+      </div> -->
+      <!-- <div v-if="currentTab == 1" class="list">
         <div v-for="item in auctionList" :key="item.id" class="item">
           <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
             <AdaptiveView
@@ -130,8 +149,8 @@
         >
           No Data
         </div>
-      </div>
-      <div v-else v-show="buyList?.length" class="list">
+      </div> -->
+      <div v-show="buyList?.length" class="list">
         <router-link
           v-if="buyList.length > 0"
           style="
@@ -168,6 +187,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 import store from "@/store";
 import AdaptiveImage from "@/components/AdaptiveImage";
+// import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
 import { DAPP_CONFIG } from "@/config";
 
@@ -175,6 +195,7 @@ export default defineComponent({
   name: "index",
   components: {
     AdaptiveImage,
+    // AdaptiveView,
   },
   setup() {
     const marketCurrency = "WETH";
@@ -192,25 +213,43 @@ export default defineComponent({
     const currentTab = ref(1);
     const auctionLoading = ref(false);
     const buyLoading = ref(false);
-    const getSouvenirsListData = () => {
-      auctionLoading.value = true;
+    // const getSouvenirsListData = () => {
+    //   auctionLoading.value = true;
+    //   http
+    //     .globalGetSouvenirsList({
+    //       page: auctionCurrentPage.value,
+    //       per_page: auctionPerPage.value,
+    //     })
+    //     .then((res) => {
+    //       auctionList.value = res.list || [];
+    //       auctionLoading.value = false;
+    //       console.log(auctionList.value);
+    //     })
+    //     .catch((err) => {
+    //       console.log(err);
+    //       auctionLoading.value = false;
+    //     });
+    // };
+    const getSouvenirsListOrderData = () => {
+      buyLoading.value = true;
       http
         .globalGetSouvenirsList({
-          page: auctionCurrentPage.value,
-          per_page: auctionPerPage.value,
+          page: buyListCurrentPage.value,
+          per_page: buyListPerPage.value,
         })
         .then((res) => {
-          auctionList.value = res.list || [];
-          auctionLoading.value = false;
+          buyList.value = res.list || [];
+          buyLoading.value = false;
           console.log(auctionList.value);
         })
         .catch((err) => {
           console.log(err);
-          auctionLoading.value = false;
+          buyLoading.value = false;
         });
     };
     onMounted(() => {
-      getSouvenirsListData();
+      // getSouvenirsListData();
+      getSouvenirsListOrderData();
     });
     return {
       auctionList,

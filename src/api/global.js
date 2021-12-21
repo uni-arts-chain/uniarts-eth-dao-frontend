@@ -232,6 +232,15 @@ const apiList = [
     params: {},
     options: {},
   },
+  {
+    name: "getSouvenirOrders",
+    method: "GET",
+    desc: "纪念品详情",
+    path: "/souvenirs/{:id}/orders",
+    mockPath: "/souvenirs/{:id}/orders",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;
