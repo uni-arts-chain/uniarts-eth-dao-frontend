@@ -1,31 +1,34 @@
 /** * Created by Lay Hunt on 2021-09-09 22:08:39. */
 <template>
   <div class="detail">
-    <div class="head">
+    <div class="head" v-if="!$store.state.global.isMobile">
       <span>{{ souvenir.souvenir_title }}</span>
       <button @click="$router.back()">Back</button>
     </div>
+    <div class="head" v-else>
+      <button style="background: transparent; width: auto" @click="$router.back()">
+        &lt; Back
+      </button>
+      <span>{{ souvenir.souvenir_title }}</span>
+    </div>
     <div class="keepsake">
-      <AdaptiveView height="540px" :nft="souvenir" />
+      <AdaptiveView v-if="!$store.state.global.isMobile" height="540px" :nft="souvenir" />
+      <AdaptiveView v-else height="300px" :nft="souvenir" />
     </div>
     <div class="info">
       <div class="info-item">
         <div class="title">
-          <img
-            style="width: 22px; height: 27px; margin-right: 18px"
-            src="@/assets/images/souvenir-desc.png"
-            alt=""
-          /><span>Description</span>
+          <img class="desc-icon" src="@/assets/images/souvenir-desc.png" alt="" /><span
+            >Description</span
+          >
         </div>
         <div class="message">{{ souvenir.artist_info }}</div>
       </div>
       <div class="info-item">
         <div class="title">
-          <img
-            style="width: 26px; height: 23px; margin-right: 14px"
-            src="@/assets/images/souvenir-pro.png"
-            alt=""
-          /><span>Properties</span>
+          <img class="pro-icon" src="@/assets/images/souvenir-pro.png" alt="" /><span
+            >Properties</span
+          >
         </div>
         <div class="properties">
           <div class="properties-item">
@@ -42,11 +45,9 @@
       </div>
       <div class="info-item">
         <div class="title">
-          <img
-            style="width: 22px; height: 21px; margin-right: 18px"
-            src="@/assets/images/souvenir-details.png"
-            alt=""
-          /><span>Details</span>
+          <img class="detail-icon" src="@/assets/images/souvenir-details.png" alt="" /><span
+            >Details</span
+          >
         </div>
         <div class="details">
           <div class="details-item">
@@ -70,14 +71,12 @@
       <div class="info-item list-info-item">
         <div class="title">
           <div class="title-label">
-            <img
-              style="width: 26px; height: 26px; margin-right: 14px"
-              src="@/assets/images/souvenir-offer.png"
-              alt=""
-            /><span>Listings</span>
+            <img class="list-icon" src="@/assets/images/souvenir-offer.png" alt="" /><span
+              >Listings</span
+            >
           </div>
         </div>
-        <div class="details">
+        <div class="details" v-if="!$store.state.global.isMobile">
           <div class="table-head">
             <span style="width: 300px">Unit Price</span>
             <span style="width: calc(100% - 500px)">From</span>
@@ -103,7 +102,7 @@
                 <span style="margin-left: 5px">{{ v.order_coin }}</span>
               </div>
               <div class="order-info" style="width: calc(100% - 500px)">
-                <span>You</span>
+                <span>Yourself</span>
               </div>
               <div class="order-operate" style="width: 200px">
                 <button :disabled="!v.can_cancel_order" @click="onCancelBuyNowClick(v)">
@@ -126,6 +125,65 @@
                 <span>{{ v.from }}</span>
               </div>
               <div class="order-operate" style="width: 200px">
+                <button @click="onBuyOrder(v)">Buy</button>
+              </div>
+            </div>
+          </el-scrollbar>
+        </div>
+        <div class="details" v-else>
+          <el-scrollbar max-height="600px" @scroll="onScroll">
+            <div
+              class="empty"
+              style="height: 600px; line-height: 1000px; text-align: center; color: #aaa"
+              v-if="souvenirMineOrderList.length <= 0 && souvenirOrderList.length <= 0"
+            >
+              Empty
+            </div>
+            <div class="order-item" v-for="(v, i) in souvenirMineOrderList" :key="i">
+              <div class="order-info">
+                <div class="label">Unit Price</div>
+                <div class="value">
+                  <img
+                    style="width: 20px"
+                    :src="require(`@/assets/images/${v.order_coin?.toLowerCase()}.png`)"
+                  />
+                  <span style="margin-left: 5px; color: black; font-weight: 800">{{
+                    v.latest_price
+                  }}</span>
+                  <span style="margin-left: 5px">{{ v.order_coin }}</span>
+                </div>
+              </div>
+              <div class="order-info">
+                <div class="label">From</div>
+                <div class="value">Yourself</div>
+              </div>
+              <div class="order-operate">
+                <button :disabled="!v.can_cancel_order" @click="onCancelBuyNowClick(v)">
+                  Cancel
+                </button>
+              </div>
+            </div>
+            <div class="order-item order-item-buy" v-for="(v, i) in souvenirOrderList" :key="i">
+              <div class="order-info">
+                <div class="label">Unit Price</div>
+                <div class="value">
+                  <img
+                    style="width: 20px"
+                    :src="require(`@/assets/images/${v.coin?.toLowerCase()}.png`)"
+                  />
+                  <span style="margin-left: 5px; color: black; font-weight: 800">{{
+                    v.uint_price
+                  }}</span>
+                  <span style="margin-left: 5px">{{ v.coin }}</span>
+                </div>
+              </div>
+              <div class="order-info">
+                <div class="label">From</div>
+                <div class="value">
+                  {{ v.from }}
+                </div>
+              </div>
+              <div class="order-operate">
                 <button @click="onBuyOrder(v)">Buy</button>
               </div>
             </div>
@@ -158,8 +216,19 @@
   </Dialog>
   <MobileConfirm v-else v-model="buyDialog" type="small">
     <div class="dialog-content">
-      <div class="dialog-title" style="margin-top: 40px">Are you sure to cancel the order?</div>
-      <button v-loading="nftLoading" @click="onCancelBuyNowOrder">Confirm</button>
+      <div class="dialog-title">Confirm Order Information</div>
+      <div class="dialog-order-info">
+        <div class="dialog-order-info-item">
+          <span>Price: </span>
+          <span style="font-weight: 600; color: black">0.001 WETH</span>
+        </div>
+        <div class="dialog-order-info-item">
+          <span>From:</span>
+          <span style="">0x2341cb98575aed1adf3cba7eab2dd0a27bcdd06f</span>
+        </div>
+      </div>
+      <button v-if="isApproving" v-loading="nftLoading" @click="buyOrder">Buy</button>
+      <button v-else v-loading="nftLoading" @click="onApprove">Approve</button>
     </div>
   </MobileConfirm>
   <Dialog v-if="!$store.state.global.isMobile" v-model="cancelOrderDialog" type="small">
@@ -450,10 +519,14 @@ export default defineComponent({
       }
     };
 
+    const itemHeight = ref(store.state.global.isMobile ? 201 : 60);
+    const itemListHeight = ref(store.state.global.isMobile ? 600 : 300);
     const onScroll = (event) => {
       if (
         event.scrollTop >=
-        page.value * per_page.value * 60 + souvenirMineOrderList.value.length * 60 - 300
+        page.value * per_page.value * itemHeight.value +
+          souvenirMineOrderList.value.length * itemHeight.value -
+          itemListHeight.value
       ) {
         if (Math.ceil(souvenirOrderTotal.value / per_page.value) > page.value) {
           page.value++;
@@ -543,6 +616,27 @@ export default defineComponent({
         text-align: left;
         font-weight: 600;
         margin-bottom: 20px;
+      }
+
+      .desc-icon {
+        width: 22px;
+        height: 27px;
+        margin-right: 18px;
+      }
+      .pro-icon {
+        width: 26px;
+        height: 23px;
+        margin-right: 14px;
+      }
+      .detail-icon {
+        width: 22px;
+        height: 21px;
+        margin-right: 18px;
+      }
+      .list-icon {
+        width: 26px;
+        height: 26px;
+        margin-right: 14px;
       }
 
       .message {
@@ -860,11 +954,120 @@ export default defineComponent({
 }
 
 @media screen and (max-width: 750px) {
+  .detail {
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-top: 20px;
+    .head {
+      flex-direction: column;
+      height: auto;
+      align-items: flex-start;
+    }
+    .info {
+      margin-top: 20px;
+    }
+    .info .info-item .title {
+      font-size: 17px;
+
+      .desc-icon {
+        width: 16px;
+        height: auto;
+        margin-right: 18px;
+      }
+      .pro-icon {
+        width: 19px;
+        height: auto;
+        margin-right: 14px;
+      }
+      .detail-icon {
+        width: 19px;
+        height: auto;
+        margin-right: 13px;
+      }
+      .list-icon {
+        width: 26px;
+        height: 26px;
+        margin-right: 14px;
+      }
+    }
+    .info .info-item .properties {
+      flex-direction: column;
+    }
+    .info .info-item .properties .properties-item {
+      margin-bottom: 20px;
+      width: 100%;
+      height: 140px;
+      justify-content: center;
+    }
+    .info .info-item .details .details-item {
+      flex-direction: column;
+      margin-bottom: 10px;
+      .key {
+        font-size: 16px;
+        color: #393939;
+      }
+      .value {
+        max-width: 100%;
+        word-wrap: break-word;
+      }
+    }
+    .info .list-info-item .order-info {
+      flex-direction: column;
+      margin-bottom: 20px;
+      width: 100%;
+      .label {
+        font-size: 15px;
+        color: #393939;
+        margin-bottom: 5px;
+      }
+      .value {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        width: 100%;
+        flex-wrap: wrap;
+        word-break: break-all;
+      }
+    }
+    .info .list-info-item .details {
+      max-height: 600px;
+    }
+    .info .list-info-item .order-item {
+      flex-direction: column;
+      height: auto;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+    .info .list-info-item .order-operate {
+      width: 100%;
+      button {
+        width: 100%;
+        margin: 0;
+      }
+    }
+    .info .list-info-item .order-item-buy .order-operate {
+      width: 100%;
+      button {
+        width: 100%;
+        margin: 0;
+      }
+    }
+  }
+
   .dialog-content .input-body span.unit {
     width: 100px;
   }
   .dialog-content .list-form-body .input-body > input {
     width: calc(100% - 100px);
+  }
+
+  .dialog-content .dialog-order-info .dialog-order-info-item > span:first-child {
+    width: 70px;
+  }
+  .dialog-content .dialog-order-info .dialog-order-info-item > span:last-child {
+    width: calc(100% - 70px);
+    text-align: right;
   }
 }
 </style>
