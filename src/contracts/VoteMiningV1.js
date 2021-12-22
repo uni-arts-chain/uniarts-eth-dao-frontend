@@ -14,6 +14,11 @@ class VoteMining {
     this.contract = new this.web3.eth.Contract(VoteMiningABIV1, this.address?.toString());
     this.defaultGasPrice = 20000000000;
   }
+  init() {
+    this.web3 = new Web3(Wallet.provider);
+    this.address = DappConfig.config?.contracts?.VoteMiningV1;
+    this.contract = new this.web3.eth.Contract(VoteMiningABIV1, this.address?.toString());
+  }
   async gasPrice() {
     return await this.web3.eth.getGasPrice();
   }

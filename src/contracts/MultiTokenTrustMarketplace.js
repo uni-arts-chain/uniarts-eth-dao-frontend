@@ -14,6 +14,15 @@ class MultiTokenTrustMarketplace {
       this.address?.toString()
     );
   }
+  init() {
+    this.web3 = new Web3(Wallet.provider);
+    this.address = DappConfig.config?.contracts?.MultiTokenTrustMarketplace;
+    // 初始化合约
+    this.contract = new this.web3.eth.Contract(
+      MultiTokenTrustMarketplaceABI,
+      this.address?.toString()
+    );
+  }
 
   async sendTransaction(tx, sender, callback) {
     try {

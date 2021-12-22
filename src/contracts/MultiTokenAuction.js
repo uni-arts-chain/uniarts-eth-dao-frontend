@@ -9,6 +9,11 @@ class MultiTokenAuction {
     this.dater = new EthDater(this.web3.eth);
   }
 
+  init() {
+    this.web3 = new Web3(Wallet.provider);
+    this.dater = new EthDater(this.web3.eth);
+  }
+
   async creatAuction(
     contractAddress,
     payTokenName,

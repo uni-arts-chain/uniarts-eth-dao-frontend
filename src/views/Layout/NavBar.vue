@@ -29,7 +29,7 @@
           <div>
             <button class="network-button" v-if="currentChainInfo.chainId">
               <icon-svg
-                :icon-class="currentChainInfo.chainName?.toLowerCase()"
+                :icon-class="currentChainInfo.chainName?.toLowerCase().split(' ').join('-')"
                 v-if="currentChainInfo.hasIcon"
               />
               <span style="text-transform: capitalize">{{ currentChainInfo.chainName }}</span>
@@ -43,7 +43,9 @@
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item :command="v" v-for="(v, i) in networkList" :key="i">
-                <icon-svg :icon-class="v.chainName.toLowerCase()" /><span>{{ v.chainName }}</span>
+                <icon-svg :icon-class="v.chainName.toLowerCase().split(' ').join('-')" /><span>{{
+                  v.chainName
+                }}</span>
               </el-dropdown-item>
             </el-dropdown-menu>
           </template>
@@ -116,7 +118,7 @@
         <li class="network">
           <button class="network-button" v-if="currentChainInfo.chainId" @click="showDialog">
             <icon-svg
-              :icon-class="currentChainInfo.chainName?.toLowerCase()"
+              :icon-class="currentChainInfo.chainName?.toLowerCase().split(' ').join('-')"
               v-if="currentChainInfo.hasIcon"
             />
             <span style="text-transform: capitalize">{{ currentChainInfo.chainName }}</span>
@@ -137,7 +139,9 @@
       <div class="title">Select Network</div>
       <div class="list">
         <div class="item" v-for="(v, i) in networkList" :key="i" @click="onNetworkChange(v)">
-          <icon-svg :icon-class="v.chainName.toLowerCase()" /><span>{{ v.chainName }}</span>
+          <icon-svg :icon-class="v.chainName.toLowerCase().split(' ').join('-')" /><span>{{
+            v.chainName
+          }}</span>
         </div>
       </div>
     </div>
@@ -194,18 +198,14 @@ export default defineComponent({
     const currentChainInfo = ref({});
     const getCurrentChainInfo = (currentChainId) => {
       if (!wallet.provider) return;
-      const chainInfo = wallet.getChainById(currentChainId);
-      currentChainInfo.value = {
-        chainName: chainInfo.name?.toLowerCase(),
-        chainId: chainInfo.chainId,
-      };
       const item = Object.values(DappConfig.networks).find(
         (v) => v.network.chainId == currentChainId
       );
 
-      if (item) currentChainInfo.value = item.network;
-      currentChainInfo.value.hasIcon = item ? true : false;
-      console.log(currentChainInfo.value);
+      if (item) {
+        currentChainInfo.value = item.network;
+        currentChainInfo.value.hasIcon = item ? true : false;
+      }
     };
 
     onMounted(() => {
@@ -467,15 +467,18 @@ export default defineComponent({
     margin-bottom: 30px;
     margin-top: 30px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     .item {
-      width: 100%;
+      width: 80%;
+      min-width: 310px;
+      padding: 15px 10px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
     }
     .item .svg-icon {
-      margin-right: 15px;
+      margin-right: 30px;
       font-size: 27px;
     }
     .item > span {

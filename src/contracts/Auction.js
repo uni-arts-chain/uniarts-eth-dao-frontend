@@ -14,6 +14,14 @@ class Auction {
     this.dater = new EthDater(this.web3.eth);
   }
 
+  init() {
+    this.web3 = new Web3(Wallet.provider);
+    console.log(DappConfig);
+    this.address = DappConfig.config?.contracts?.Auction;
+    this.contract = new this.web3.eth.Contract(AuctionABI, this.address?.toString());
+    this.dater = new EthDater(this.web3.eth);
+  }
+
   async playerBid(matchId, tokenIndex, amount, callback, addressV2) {
     const sender = this.web3.selectAddres;
     const gasPrice = await this.gasPrice();

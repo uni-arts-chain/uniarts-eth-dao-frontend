@@ -12,6 +12,13 @@ class TokenLocker {
     this.contract = new this.web3.eth.Contract(TokenLockerABI, this.address?.toString());
   }
 
+  init() {
+    this.web3 = new Web3(Wallet.provider);
+    this.address = DappConfig.config?.contracts?.TokenLocker;
+    // 初始化合约
+    this.contract = new this.web3.eth.Contract(TokenLockerABI, this.address?.toString());
+  }
+
   // 查询锁仓
   async queryLockPosition(i) {
     const contract = this.contract.methods.locks(this.web3.selectAddres, i.toString());

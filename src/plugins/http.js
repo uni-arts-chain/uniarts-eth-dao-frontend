@@ -3,7 +3,7 @@ import _assign from "lodash/assign";
 import API from "@/api/index";
 
 import assert from "assert";
-import { HTTP_DEFAULT_CONFIG } from "@/config";
+import Config from "@/config";
 
 function _normoalize(options, data) {
   if (!data) return options;
@@ -33,7 +33,6 @@ export class MakeApi {
       this.apiBuilder({
         api: options.apiModules[namespace],
         namespace,
-        config: options.config,
       });
     });
   }
@@ -42,12 +41,13 @@ export class MakeApi {
       const apiName = `${options.namespace}${_firstUpperCase(api.name)}`;
       Object.defineProperty(this.request, apiName, {
         value(outerParams, outerOptions) {
-          let prefix = api.prefix || options.config.prefix;
-          // prefix = options.config.isProd ? prefix : `/test${prefix}`;
+          console.log(Config);
+          let prefix = api.prefix || Config.HTTP_DEFAULT_CONFIG?.prefix;
+          // prefix = Config.isProd ? prefix : `/test${prefix}`;
           const url = prefix + api.path;
-          api.baseURL = api.baseURL ? api.baseURL : options.config.baseURL;
-          options.config.debug && assert(api.name, `${url} :接口name属性不能为空`);
-          options.config.debug &&
+          api.baseURL = api.baseURL ? api.baseURL : Config.HTTP_DEFAULT_CONFIG?.baseURL;
+          Config.HTTP_DEFAULT_CONFIG?.debug && assert(api.name, `${url} :接口name属性不能为空`);
+          Config.HTTP_DEFAULT_CONFIG?.debug &&
             assert(url.indexOf("/") === 0, `${url} :接口路径path，首字符应为/`);
           let _data = outerParams;
           let keysList = Object.keys(outerParams);
@@ -94,5 +94,4 @@ export class MakeApi {
 
 export default new MakeApi({
   apiModules: API,
-  config: HTTP_DEFAULT_CONFIG,
 }).request;

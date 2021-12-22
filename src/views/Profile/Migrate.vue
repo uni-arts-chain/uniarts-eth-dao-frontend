@@ -39,7 +39,7 @@
 import { defineComponent, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import store from "@/store";
-import { DAPP_CONTRACTS } from "@/config";
+import Config from "@/config";
 import { notification } from "@/components/Notification";
 import Dialog from "@/components/Dialog";
 import MobileConfirm from "@/components/MobileConfirm";
@@ -66,10 +66,10 @@ export default defineComponent({
         migrateLoading.value = false;
         return;
       }
-      let contractModule = DAPP_CONTRACTS[migrateItem?.vote_contract?.toLowerCase()];
+      let contractModule = Config.DAPP_CONTRACTS[migrateItem?.vote_contract?.toLowerCase()];
       const notifyId = notification.loading("Please wait for the wallet's response");
       console.log(migrateItem?.vote_contract?.toLowerCase());
-      console.log(DAPP_CONTRACTS);
+      console.log(Config.DAPP_CONTRACTS);
       contractModule?.contract
         ?.migrate((err, txHash) => {
           migrateLoading.value = false;

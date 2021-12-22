@@ -9,6 +9,13 @@ class Collection {
     this.address = DappConfig.config?.contracts?.Collection;
     this.contract = new this.web3.eth.Contract(CollectionABI, this.address?.toString());
   }
+
+  init() {
+    this.web3 = new Web3(Wallet.provider);
+    this.address = DappConfig.config?.contracts?.Collection;
+    this.contract = new this.web3.eth.Contract(CollectionABI, this.address?.toString());
+  }
+
   async gasPrice() {
     return await this.web3.eth.getGasPrice();
   }

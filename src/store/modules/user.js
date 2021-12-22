@@ -2,6 +2,7 @@ import { setLocalStore, getLocalStore, removeLocalStore } from "@/plugins/storag
 import http from "@/plugins/http";
 import Wallet from "@/plugins/wallet";
 import routerInstance from "@/router";
+import DappConfig from "@/config/dapp";
 
 export default {
   namespaced: true,
@@ -33,7 +34,7 @@ export default {
   actions: {
     async ConnectWallet({ dispatch }) {
       await Wallet.connect();
-      dispatch("InitWallet");
+      return dispatch("InitWallet");
     },
     async InitWallet({ state, dispatch }) {
       await Wallet.init();
@@ -53,8 +54,10 @@ export default {
           );
         }
       };
+      DappConfig.checkChainInfo(Wallet.chainId);
     },
     GetInfo({ commit, dispatch }) {
+      console.log(http.userGetInfo);
       http
         .userGetInfo({})
         .then((info) => {

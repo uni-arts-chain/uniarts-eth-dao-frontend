@@ -11,6 +11,13 @@ class TrustMarketplace {
     this.contract = new this.web3.eth.Contract(TrustMarketplaceABI, this.address?.toString());
   }
 
+  init() {
+    this.web3 = new Web3(Wallet.provider);
+    this.address = DappConfig.config?.contracts?.TrustMarketplace;
+    // 初始化合约
+    this.contract = new this.web3.eth.Contract(TrustMarketplaceABI, this.address?.toString());
+  }
+
   async gasPrice() {
     return await this.web3.eth.getGasPrice();
   }

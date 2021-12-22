@@ -216,7 +216,7 @@ import http from "@/plugins/http";
 import Auction from "@/contracts/Auction";
 import Dialog from "@/components/Dialog";
 import AdaptiveView from "@/components/AdaptiveView";
-import { DAPP_CONTRACTS } from "@/config";
+import Config from "@/config";
 import DappConfig from "@/config/dapp";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
@@ -556,8 +556,8 @@ export default defineComponent({
       marketToken.value = DappConfig.config.tokens[auction.value.biding_coin.toUpperCase()];
       try {
         if (auction.value?.token_id >= 0 && auction.value?.vote_contract) {
-          console.log(DAPP_CONTRACTS);
-          const tokenMint = await DAPP_CONTRACTS[
+          console.log(Config.DAPP_CONTRACTS);
+          const tokenMint = await Config.DAPP_CONTRACTS[
             auction.value.vote_contract.toLowerCase()
           ]?.contract.getMintRewards(
             DappConfig.config.nfts.UniartsNFT.address,

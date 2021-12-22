@@ -175,7 +175,7 @@ import Dialog from "@/components/Dialog";
 import AdaptiveView from "@/components/AdaptiveView";
 import MobileConfirm from "@/components/MobileConfirm";
 import { notification } from "@/components/Notification";
-import { DAPP_CONTRACTS } from "@/config";
+import Config from "@/config";
 import DappConfig from "@/config/dapp";
 import { Erc20 } from "@/contracts";
 import { BigNumber } from "bignumber.js";
@@ -237,7 +237,7 @@ export default defineComponent({
     const curNft = ref({});
     const getStakeVoted = async () => {
       const voteMiningContract =
-        DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
+        Config.DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
       console.log(voteMiningContract);
       let votedBalance = await voteMiningContract.getAvailableBalance(
         connectedAccount,
@@ -252,7 +252,7 @@ export default defineComponent({
     const availableBondedVotedBalance = ref(0);
     const getBondedVoted = async () => {
       const voteMiningContract =
-        DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
+        Config.DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
       let votedBalance = await voteMiningContract.getUnvotableBalance(
         connectedAccount,
         DappConfig.config.nfts.UniartsNFT.address,
@@ -288,7 +288,7 @@ export default defineComponent({
     const isUnstaking = ref(false);
     const unStake = async () => {
       const voteMiningContract =
-        DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
+        Config.DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
       const amount = new BigNumber(inputRetrieveAmount.value);
       if (amount.isNaN() || amount.isZero()) {
         notification.error("Invalid value");
@@ -341,7 +341,7 @@ export default defineComponent({
     const isUnBonding = ref(false);
     const unVoteBonded = async () => {
       const voteMiningContract =
-        DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
+        Config.DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
       const amount = new BigNumber(inputUnbondAmount.value);
       if (amount.isNaN() || amount.isZero()) {
         notification.error("Invalid value");
@@ -408,7 +408,7 @@ export default defineComponent({
     };
 
     const getContractVersion = (address) => {
-      let version = DAPP_CONTRACTS[address?.toLowerCase()]?.name || "";
+      let version = Config.DAPP_CONTRACTS[address?.toLowerCase()]?.name || "";
       let index = version.search(/V\d$/);
       version = index ? version.substr(index) : version;
       return DappConfig.config.contracts.VoteMining !== address ? version : "";

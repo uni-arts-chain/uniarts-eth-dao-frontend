@@ -77,7 +77,7 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { BigNumber } from "@/plugins/bignumber";
-import { DAPP_CONTRACTS } from "@/config";
+import Config from "@/config";
 import DappConfig from "@/config/dapp";
 import http from "@/plugins/http";
 import store from "@/store";
@@ -104,7 +104,7 @@ export default defineComponent({
           assetsList.value.forEach((v) => {
             let token = DappConfig.config.tokens[v.token.toUpperCase()];
             token
-              ? DAPP_CONTRACTS[v.contract.toLowerCase()]?.contract
+              ? Config.DAPP_CONTRACTS[v.contract.toLowerCase()]?.contract
                   .getRedeemableBalance(connectedAccount.value, token.address)
                   .then((res) => {
                     res = new BigNumber(res);
@@ -118,7 +118,7 @@ export default defineComponent({
             (v) => v.token.toLowerCase() === DappConfig.config.tokens.UART.symbol.toLowerCase()
           );
           if (uartToken) {
-            const bonedTotal = await DAPP_CONTRACTS[
+            const bonedTotal = await Config.DAPP_CONTRACTS[
               uartToken.contract.toLowerCase()
             ]?.contract.getBondedBalance(connectedAccount.value);
             if (!bonedTotal.isZero()) {
@@ -143,7 +143,7 @@ export default defineComponent({
     });
 
     const getContractVersion = (address) => {
-      let version = DAPP_CONTRACTS[address.toLowerCase()]?.name || "";
+      let version = Config.DAPP_CONTRACTS[address.toLowerCase()]?.name || "";
       let index = version.search(/V\d$/);
       version = index ? version.substr(index) : version;
       console.log(version);

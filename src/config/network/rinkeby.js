@@ -68,4 +68,9 @@ module.exports = {
     blockExplorerUrls: ["https://rinkeby.etherscan.io"],
     iconUrls: [],
   },
+  api: {
+    prefix: "/api/v1",
+    baseURL: "https://dapp.uniarts.network",
+    debug: process.env.NODE_ENV !== "production",
+  },
 };

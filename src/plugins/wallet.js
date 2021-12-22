@@ -76,6 +76,7 @@ class Wallet {
       this.provider.on("chainChanged", (chainId) => {
         this.state.chainId = parseInt(chainId);
         this.chainChanged();
+        location.href = location.protocol + "//" + location.host + location.pathname;
         // if (store.state.user.info.token) {
         //   store.dispatch("user/Quit");
         //   routerInstance.push(

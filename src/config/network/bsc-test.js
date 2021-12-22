@@ -56,18 +56,28 @@ module.exports = {
       address: "0xcA50286362Da797303cC81276EB7D4fD536fA7cD",
     },
   },
-  networks: {
-    rinkeby: {
-      chainId: "0x" + new Number(4).toString(16),
-      chainName: "Rinkeby",
-      rpcUrls: ["https://dapp.uniarts.network/api/v1/rpc"],
-      nativeCurrency: {
-        name: "Rinkeby Ether",
-        symbol: "ETH",
-        decimals: 18,
-      },
-      blockExplorerUrls: ["https://rinkeby.etherscan.io"],
-      iconUrls: [],
+  network: {
+    chainId: "0x" + new Number(97).toString(16),
+    chainName: "Binance Smart Chain Testnet",
+    rpcUrls: [
+      "https://data-seed-prebsc-1-s1.binance.org:8545",
+      "https://data-seed-prebsc-2-s1.binance.org:8545",
+      "https://data-seed-prebsc-1-s2.binance.org:8545",
+      "https://data-seed-prebsc-2-s2.binance.org:8545",
+      "https://data-seed-prebsc-1-s3.binance.org:8545",
+      "https://data-seed-prebsc-2-s3.binance.org:8545",
+    ],
+    nativeCurrency: {
+      name: "Binance Chain Native Token",
+      symbol: "tBNB",
+      decimals: 18,
     },
+    blockExplorerUrls: ["https://testnet.bscscan.com"],
+    iconUrls: [],
+  },
+  api: {
+    prefix: "/api/v1",
+    baseURL: "https://dapp.uniarts.network",
+    debug: process.env.NODE_ENV !== "production",
   },
 };

@@ -15,6 +15,7 @@ function _isJSON(str) {
 }
 
 export function requestSuccessFunc(config) {
+  console.log(config);
   // 自定义请求拦截逻辑，可以处理权限，请求发送监控等
   const method = config.method.toUpperCase();
 
