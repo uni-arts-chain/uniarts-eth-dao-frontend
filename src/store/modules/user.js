@@ -1,7 +1,7 @@
 import { setLocalStore, getLocalStore, removeLocalStore } from "@/plugins/storage";
 import http from "@/plugins/http";
 import Wallet from "@/plugins/wallet";
-import routerInstance from "@/router";
+// import routerInstance from "@/router";
 import DappConfig from "@/config/dapp";
 
 export default {
@@ -38,21 +38,25 @@ export default {
     },
     async InitWallet({ state, dispatch }) {
       await Wallet.init();
-      Wallet.accountsChanged = () => {
+      Wallet.accountsChanged = async () => {
         if (state.info.token) {
-          dispatch("Quit");
-          routerInstance.push(
-            "/login?back=" + location.pathname == "/" ? encodeURIComponent(location.pathname) : ""
-          );
+          await dispatch("Quit");
+          // location.href = (
+          //   "/login?back=" + (location.pathname !== "/" ? encodeURIComponent(location.pathname) : "")
+          // );
         }
       };
-      Wallet.chainChanged = () => {
+      Wallet.chainChanged = async () => {
         if (state.info.token) {
-          dispatch("Quit");
-          routerInstance.push(
-            "/login?back=" + location.pathname == "/" ? encodeURIComponent(location.pathname) : ""
-          );
+          console.log("----");
+          await dispatch("Quit");
+          let path =
+            "/login?back=" +
+            (location.pathname !== "/" ? encodeURIComponent(location.pathname) : "");
+          location.href = path;
         }
+        DappConfig.reset();
+        dispatch("global/DetectNetwork", null, { root: true });
       };
       DappConfig.checkChainInfo(Wallet.chainId);
     },
@@ -98,7 +102,7 @@ export default {
     },
     Quit({ commit, state }) {
       if (state.info.token) {
-        http
+        return http
           .userLogout({})
           .then(() => {
             removeLocalStore("user_token");

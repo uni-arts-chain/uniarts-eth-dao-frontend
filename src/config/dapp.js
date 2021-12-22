@@ -29,6 +29,9 @@ class DappConfig {
   get isOnline() {
     return this.state._isOnline;
   }
+  reset() {
+    this.state._currentChain = null;
+  }
   checkChainInfo(chainId) {
     console.log(chainId);
     const item = Object.values(this.networks).find(

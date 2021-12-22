@@ -430,10 +430,7 @@ export default defineComponent({
 
     const myNotificationErr = (err) =>
       notification.error(
-        err.message.split("{")[0] ||
-          (err.head && err.head.msg) ||
-          err.message ||
-          (err.data && err.data.message)
+        (err.head && err.head.msg) || err.message || (err.data && err.data.message)
       );
 
     const cancelOrderDialog = ref(false);

@@ -1,4 +1,6 @@
 import Detect from "@/plugins/detect";
+import { ElLoading } from "element-plus";
+import Config from "@/config";
 export default {
   namespaced: true,
   state: {
@@ -6,6 +8,7 @@ export default {
     theme: "light",
     isMobile: Detect.device.type === "mobile",
     navText: "",
+    isPageLoading: true,
   },
   mutations: {
     SET_CHAIN(state, data) {
@@ -23,6 +26,9 @@ export default {
     SET_NAV_TEXT(state, text) {
       state.navText = text;
     },
+    SET_PAGE_LOADING(state, status) {
+      state.isPageLoading = status;
+    },
   },
   actions: {
     SetChain({ commit }, data) {
@@ -39,6 +45,25 @@ export default {
     },
     WindowResize({ commit }) {
       commit("SET_DEVICE", Detect.getInstance().getDevice().type);
+    },
+    DetectNetwork({ dispatch, commit }) {
+      dispatch("WindowResize");
+      commit("SET_PAGE_LOADING", true);
+      const loadingInstance = ElLoading.service({
+        text: "Detecting network...",
+        customClass: "service-loading",
+      });
+      setTimeout(async () => {
+        try {
+          await dispatch("user/ConnectWallet", null, { root: true });
+          await Config.init();
+          commit("SET_PAGE_LOADING", false);
+          loadingInstance.close();
+        } catch (e) {
+          commit("SET_PAGE_LOADING", false);
+          loadingInstance.close();
+        }
+      }, 2000);
     },
   },
 };
