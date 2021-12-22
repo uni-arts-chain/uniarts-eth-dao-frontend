@@ -59,6 +59,7 @@ module.exports = {
   network: {
     chainId: "0x" + new Number(4).toString(16),
     chainName: "Rinkeby",
+    headerChainName: "rinkeby",
     rpcUrls: ["https://dapp.uniarts.network/api/v1/rpc"],
     nativeCurrency: {
       name: "Rinkeby Ether",

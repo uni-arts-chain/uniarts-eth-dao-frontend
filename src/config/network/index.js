@@ -7,8 +7,8 @@
 
 // export default config;
 
-import poylogon from "./poylogon";
+import polygon from "./polygon";
 import bsc from "./bsc";
 import rinkeby from "./rinkeby";
 
-export default { poylogon, bsc, rinkeby };
+export default { polygon, bsc, rinkeby };

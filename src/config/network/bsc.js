@@ -59,6 +59,7 @@ module.exports = {
   network: {
     chainId: "0x" + new Number(56).toString(16),
     chainName: "Binance Smart Chain",
+    headerChainName: "bsc",
     rpcUrls: [
       "https://bsc-dataseed1.binance.org",
       "https://bsc-dataseed2.binance.org",

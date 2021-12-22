@@ -3,6 +3,7 @@ import crypto from "crypto";
 import routerInstance from "@/router";
 import { getLocalStore } from "@/plugins/storage";
 import store from "@/store";
+import DappConfig from "@/config/dapp";
 
 function _isJSON(str) {
   try {
@@ -15,7 +16,6 @@ function _isJSON(str) {
 }
 
 export function requestSuccessFunc(config) {
-  console.log(config);
   // 自定义请求拦截逻辑，可以处理权限，请求发送监控等
   const method = config.method.toUpperCase();
 
@@ -73,6 +73,7 @@ export function requestSuccessFunc(config) {
   //         languageStr = store.state.global.language;
   // }
   config.headers["Accept-Language"] = languageStr;
+  config.headers["chain_name"] = DappConfig.config?.network?.headerChainName;
   return config;
 }
 

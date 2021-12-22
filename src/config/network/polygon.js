@@ -51,6 +51,7 @@ module.exports = {
   network: {
     chainId: "0x" + new Number(137).toString(16), // A 0x-prefixed hexadecimal string
     chainName: "Polygon",
+    headerChainName: "ploygon",
     nativeCurrency: {
       name: "Matic Token",
       symbol: "MATIC", // 2-6 characters long
