@@ -73,7 +73,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 
 export default defineComponent({
   name: "mobile-artworks",
@@ -82,7 +82,7 @@ export default defineComponent({
   },
   setup() {
     const marketCurrency = "WETH";
-    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
+    const marketToken = ref(DappConfig.config.tokens[marketCurrency]);
     // TODO
     const curTab = ref(1);
     const auctions = ref([]);

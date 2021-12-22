@@ -1,18 +1,17 @@
 import Web3 from "web3";
 import Wallet from "@/plugins/wallet";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import MultiTokenTrustMarketplaceABI from "@/contracts/abi/MultiTokenTrustMarketplace.json";
-import store from "@/store";
 import { FormatRpcError } from "@/utils";
 
 class MultiTokenTrustMarketplace {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DAPP_CONFIG.contracts.MultiTokenTrustMarketplace;
+    this.address = DappConfig.config?.contracts?.MultiTokenTrustMarketplace;
     // 初始化合约
     this.contract = new this.web3.eth.Contract(
       MultiTokenTrustMarketplaceABI,
-      this.address.toString()
+      this.address?.toString()
     );
   }
 
@@ -45,13 +44,13 @@ class MultiTokenTrustMarketplace {
   async createOrder(tokenName, nftAddress, id, amount, price, callback) {
     const endDate = Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0));
     const tx = this.contract.methods.createOrder(tokenName, nftAddress, id, amount, price, endDate);
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     return this.sendTransaction(tx, sender, callback);
   }
 
   async cancelOrder(nftAddress, orderId, callback) {
     const tx = this.contract.methods.cancelOrder(nftAddress, orderId);
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     return this.sendTransaction(tx, sender, callback);
   }
 
@@ -64,7 +63,7 @@ class MultiTokenTrustMarketplace {
       priceInWei,
       expiresAt
     );
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     return this.sendTransaction(tx, sender, callback);
   }
 

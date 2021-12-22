@@ -1,20 +1,19 @@
 import Web3 from "web3";
 import Wallet from "@/plugins/wallet";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import CollectionABI from "@/contracts/abi/Collection.json";
-import store from "@/store";
 
 class Collection {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DAPP_CONFIG.contracts.Collection;
-    this.contract = new this.web3.eth.Contract(CollectionABI, this.address.toString());
+    this.address = DappConfig.config?.contracts?.Collection;
+    this.contract = new this.web3.eth.Contract(CollectionABI, this.address?.toString());
   }
   async gasPrice() {
     return await this.web3.eth.getGasPrice();
   }
   async pin(nftAddress, nftId, callback) {
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasPrice = await this.gasPrice();
     console.log({ nftAddress, nftId, address: this.address, sender });
     const tx = this.contract.methods.pin(nftAddress, nftId);

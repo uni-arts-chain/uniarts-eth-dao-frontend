@@ -333,3 +333,11 @@
 div.el-overlay {
   background-color: transparent;
 }
+
+.service-loading {
+  .el-loading-spinner .el-loading-text {
+    color: black;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+}

@@ -1,13 +1,8 @@
 /* eslint-disable no-unused-vars */
 import Web3 from "web3";
-import { toBN, BN, isBN } from "web3-utils";
-import { MAX_UINT256 } from "./constants";
 import { BigNumber } from "@/plugins/bignumber";
-// import config from "@/config/network";
 import ABI from "@/contracts/abi/Erc721.json";
 import Wallet from "@/plugins/wallet";
-import config from "@/config/network";
-import store from "@/store";
 
 export class Erc721 {
   constructor(address, symbol) {
@@ -34,7 +29,7 @@ export class Erc721 {
   }
 
   async sendNft(address, tokenId, callback) {
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasPrice = await this.gasPrice();
     //第一个地址是自己钱包地址，第二个地址是用户填写的地址
     const tx = this.contract.methods.safeTransferFrom(sender, address, tokenId);

@@ -1,7 +1,6 @@
 import Web3 from "web3";
 import Wallet from "@/plugins/wallet";
 import ABI from "@/contracts/abi/IErc1155.json";
-import store from "@/store";
 
 export default class IErc1155 {
   constructor(address) {
@@ -15,7 +14,7 @@ export default class IErc1155 {
    * @param callback function
    */
   async setApprovalForAll(operator, callback) {
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.setApprovalForAll(operator, true);
     const gasLimit = await tx.estimateGas({
@@ -31,12 +30,12 @@ export default class IErc1155 {
    * @param operator address
    */
   async isApprovedForAll(operator) {
-    const account = store.state.user.info.address;
+    const account = this.web3.selectAddres;
     return await this.contract.methods.isApprovedForAll(account, operator).call();
   }
 
   async safeTransferFrom(to, id, amount, callback) {
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.safeTransferFrom(sender, to, id, amount, []);
     const gasLimit = await tx.estimateGas({

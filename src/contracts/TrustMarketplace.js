@@ -1,15 +1,14 @@
 import Web3 from "web3";
 import Wallet from "@/plugins/wallet";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import TrustMarketplaceABI from "@/contracts/abi/TrustMarketplace.json";
-import store from "@/store";
 
 class TrustMarketplace {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DAPP_CONFIG.contracts.TrustMarketplace;
+    this.address = DappConfig.config?.contracts?.TrustMarketplace;
     // 初始化合约
-    this.contract = new this.web3.eth.Contract(TrustMarketplaceABI, this.address.toString());
+    this.contract = new this.web3.eth.Contract(TrustMarketplaceABI, this.address?.toString());
   }
 
   async gasPrice() {
@@ -23,7 +22,7 @@ class TrustMarketplace {
 
   // 取消我的挂单
   async cancelOrder(nftAddress, assetId, callback) {
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.cancelOrder(nftAddress, assetId);
     const gasLimit = await tx.estimateGas({
@@ -43,7 +42,7 @@ class TrustMarketplace {
 
   // buyNow
   async safePlaceBid(nftAddress, assetId, priceInWei, expiresAt, callback) {
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.safePlaceBid(nftAddress, assetId, priceInWei, expiresAt);
     const gasLimit = await tx.estimateGas({
@@ -62,7 +61,7 @@ class TrustMarketplace {
   }
 
   async createOrder(nftAddress, assetId, priceInWei, expiresAt, callback) {
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.createOrder(nftAddress, assetId, priceInWei, expiresAt);
     const gasLimit = await tx.estimateGas({

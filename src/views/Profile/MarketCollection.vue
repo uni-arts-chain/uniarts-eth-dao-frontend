@@ -179,7 +179,7 @@ import config from "@/config/network";
 import Erc721 from "@/contracts/Erc721";
 import Mobilecomfirm from "@/components/MobileConfirm";
 import Pin from "@/contracts/Collection";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import store from "@/store";
 import Web3 from "web3";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
@@ -204,7 +204,7 @@ export default defineComponent({
     const blockHeight = ref(0);
     const listPrice = ref("");
     const marketCurrency = "WETH";
-    const marketToken = DAPP_CONFIG.tokens[marketCurrency];
+    const marketToken = DappConfig.config.tokens[marketCurrency];
     const width = 70;
     const sendDialog = ref(false);
     const listDialog = ref(false);
@@ -306,7 +306,7 @@ export default defineComponent({
     const pin = async (item) => {
       let notifyId = notification.loading("Authorization in progress");
       const sender = store.state.user.info.address;
-      const nft = DAPP_CONFIG.nfts.UniartsNFT;
+      const nft = DappConfig.config.nfts.UniartsNFT;
       const erc721 = new Erc721(nft.address, nft.symbol);
       let bool = false;
       try {
@@ -412,7 +412,7 @@ export default defineComponent({
     const creatToAuctionMarket = async () => {
       isLoading.value = true;
       const sender = store.state.user.info.address;
-      const nft = DAPP_CONFIG.nfts.UniartsNFT;
+      const nft = DappConfig.config.nfts.UniartsNFT;
       const erc721 = new Erc721(nft.address, nft.symbol);
       // const contract = Auction;
       const contractAddress = selectItem.value.auction_contract_address;
@@ -530,7 +530,7 @@ export default defineComponent({
     const creatToBuyNowMarket = async () => {
       isLoading.value = true;
       const sender = store.state.user.info.address;
-      const nft = DAPP_CONFIG.nfts.UniartsNFT;
+      const nft = DappConfig.config.nfts.UniartsNFT;
       const erc721 = new Erc721(nft.address, nft.symbol);
       const contract = TrustMarketplace;
       if (approving.value) {
@@ -540,9 +540,9 @@ export default defineComponent({
         notification.success("Confirmed on Chain");
         try {
           await contract.createOrder(
-            DAPP_CONFIG.nfts.UniartsNFT.address,
+            DappConfig.config.nfts.UniartsNFT.address,
             selectItem.value.token_id,
-            BigNumber(listPrice.value).shiftedBy(DAPP_CONFIG.tokens.WETH.decimals).toString(),
+            BigNumber(listPrice.value).shiftedBy(DappConfig.config.tokens.WETH.decimals).toString(),
             Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
             (err, txHash) => {
               if (err) {
@@ -691,7 +691,7 @@ export default defineComponent({
       } else if (auction.buy_now_order) {
         try {
           await TrustMarketplace.cancelOrder(
-            DAPP_CONFIG.nfts.UniartsNFT.address,
+            DappConfig.config.nfts.UniartsNFT.address,
             auction.token_id,
             (err, txHash) => {
               if (err) {

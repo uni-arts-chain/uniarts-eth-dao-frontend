@@ -1,6 +1,7 @@
 import { setLocalStore, getLocalStore, removeLocalStore } from "@/plugins/storage";
 import http from "@/plugins/http";
 import Wallet from "@/plugins/wallet";
+import routerInstance from "@/router";
 
 export default {
   namespaced: true,
@@ -34,8 +35,24 @@ export default {
       await Wallet.connect();
       dispatch("InitWallet");
     },
-    async InitWallet() {
+    async InitWallet({ state, dispatch }) {
       await Wallet.init();
+      Wallet.accountsChanged = () => {
+        if (state.info.token) {
+          dispatch("Quit");
+          routerInstance.push(
+            "/login?back=" + location.pathname == "/" ? encodeURIComponent(location.pathname) : ""
+          );
+        }
+      };
+      Wallet.chainChanged = () => {
+        if (state.info.token) {
+          dispatch("Quit");
+          routerInstance.push(
+            "/login?back=" + location.pathname == "/" ? encodeURIComponent(location.pathname) : ""
+          );
+        }
+      };
     },
     GetInfo({ commit, dispatch }) {
       http

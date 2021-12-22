@@ -133,7 +133,7 @@ import { notification } from "@/components/Notification";
 import http from "@/plugins/http";
 import Avatar from "@/assets/images/avatar@2x.png";
 import AdaptiveView from "@/components/AdaptiveView";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import store from "@/store";
 import Erc20 from "@/contracts/Erc20";
 import VoteMining from "@/contracts/VoteMining";
@@ -156,7 +156,7 @@ export default defineComponent({
       history.go(-1);
     };
 
-    const tokenList = Object.values(DAPP_CONFIG.voteTokens);
+    const tokenList = Object.values(DappConfig.config.voteTokens);
     let currentToken = reactive({});
     tokenList.length > 0
       ? Object.keys(tokenList[0]).forEach((v) => (currentToken[v] = tokenList[0][v]))
@@ -171,7 +171,7 @@ export default defineComponent({
     const currentTokenBalance = ref(0);
     const tokenAllowance = ref(0);
     const connectedAccount = store.state.user.info.address;
-    const voteMiningAddress = DAPP_CONFIG.contracts.VoteMining;
+    const voteMiningAddress = DappConfig.config.contracts.VoteMining;
     const getTokenAllowance = async () => {
       try {
         tokenAllowance.value = (
@@ -245,14 +245,14 @@ export default defineComponent({
       isVoting.value = true;
       console.log(
         connectedAccount,
-        DAPP_CONFIG.nfts.UniartsNFT.address,
+        DappConfig.config.nfts.UniartsNFT.address,
         artInfo.token_id,
         currentToken.address
       );
       const notifyId = notification.loading("Please wait for the wallet's response");
       VoteMining.stake(
         connectedAccount,
-        DAPP_CONFIG.nfts.UniartsNFT.address,
+        DappConfig.config.nfts.UniartsNFT.address,
         artInfo.token_id,
         currentToken.address,
         amount.shiftedBy(currentToken.decimals),
@@ -367,7 +367,7 @@ export default defineComponent({
       const notifyId = notification.loading("Please wait for the wallet's response");
       VoteMining.voteBonded(
         connectedAccount,
-        DAPP_CONFIG.nfts.UniartsNFT.address,
+        DappConfig.config.nfts.UniartsNFT.address,
         artInfo.token_id,
         amount.shiftedBy(currentToken.decimals),
         async (err, txHash) => {
@@ -401,7 +401,7 @@ export default defineComponent({
     const bondedBalance = ref(0);
     const getBondedBalance = async () => {
       bondedBalance.value = (await VoteMining.getBondedBalance(connectedAccount))
-        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .shiftedBy(-DappConfig.config.tokens.UART.decimals)
         .toFixed(8, 1);
     };
 
@@ -411,7 +411,7 @@ export default defineComponent({
 
     watch(curTab, (value) => {
       console.log(value);
-      onItemClick(DAPP_CONFIG.tokens.UART);
+      onItemClick(DappConfig.config.tokens.UART);
       if (value == 1) {
         getTokenBalance();
       } else {

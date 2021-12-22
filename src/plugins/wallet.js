@@ -1,8 +1,6 @@
 import { BigNumber } from "@/plugins/bignumber";
 import Web3Utils from "web3-utils";
 import { reactive } from "vue";
-import store from "@/store";
-import routerInstance from "@/router";
 import { getChainByChainId } from "evm-chains";
 class Wallet {
   constructor() {
@@ -13,6 +11,8 @@ class Wallet {
       accountBalance: "",
       isConnected: false,
     });
+    this.accountsChanged = () => {};
+    this.chainChanged = () => {};
   }
   get connectedAccount() {
     return this.state.connectedAccount;
@@ -65,21 +65,23 @@ class Wallet {
     if (this.provider.on) {
       this.provider.on("accountsChanged", (accounts) => {
         this.state.connectedAccount = accounts[0];
-        if (store.state.user.info.token) {
-          store.dispatch("user/Quit");
-          routerInstance.push(
-            "/login?back=" + location.pathname == "/" ? encodeURIComponent(location.pathname) : ""
-          );
-        }
+        this.accountsChanged();
+        // if (store.state.user.info.token) {
+        //   store.dispatch("user/Quit");
+        //   routerInstance.push(
+        //     "/login?back=" + location.pathname == "/" ? encodeURIComponent(location.pathname) : ""
+        //   );
+        // }
       });
       this.provider.on("chainChanged", (chainId) => {
         this.state.chainId = parseInt(chainId);
-        if (store.state.user.info.token) {
-          store.dispatch("user/Quit");
-          routerInstance.push(
-            "/login?back=" + location.pathname == "/" ? encodeURIComponent(location.pathname) : ""
-          );
-        }
+        this.chainChanged();
+        // if (store.state.user.info.token) {
+        //   store.dispatch("user/Quit");
+        //   routerInstance.push(
+        //     "/login?back=" + location.pathname == "/" ? encodeURIComponent(location.pathname) : ""
+        //   );
+        // }
       });
     }
   }

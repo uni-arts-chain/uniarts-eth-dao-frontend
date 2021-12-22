@@ -216,7 +216,8 @@ import http from "@/plugins/http";
 import Auction from "@/contracts/Auction";
 import Dialog from "@/components/Dialog";
 import AdaptiveView from "@/components/AdaptiveView";
-import { DAPP_CONFIG, DAPP_CONTRACTS } from "@/config";
+import { DAPP_CONTRACTS } from "@/config";
+import DappConfig from "@/config/dapp";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
 import Erc20 from "../../../contracts/Erc20";
@@ -234,7 +235,7 @@ export default defineComponent({
   },
   setup() {
     const marketCurrency = "WETH";
-    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
+    const marketToken = ref(DappConfig.config.tokens[marketCurrency]);
     // TODO
     const bidAmount = ref(null);
     const router = useRouter();
@@ -267,7 +268,10 @@ export default defineComponent({
       }
       // 检查买断授权
       try {
-        const data = await currentErc20.allowance(connectedAccount, DAPP_CONFIG.contracts.Auction);
+        const data = await currentErc20.allowance(
+          connectedAccount,
+          DappConfig.config.contracts.Auction
+        );
         if (data.toNumber() !== 0) {
           buyApproving.value = true;
           console.log("Authorized", data.toNumber());
@@ -285,7 +289,7 @@ export default defineComponent({
       isLoading.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
-      const AuctionMiningAddress = auction.value.auction_contract; // DAPP_CONFIG.contracts.Auction;
+      const AuctionMiningAddress = auction.value.auction_contract; // DappConfig.config.contracts.Auction;
       const token = marketToken.value;
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       try {
@@ -328,7 +332,7 @@ export default defineComponent({
       isLoading.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
-      const AuctionMiningAddress = auction.value.auction_contract; // DAPP_CONFIG.contracts.Auction;
+      const AuctionMiningAddress = auction.value.auction_contract; // DappConfig.config.contracts.Auction;
       const token = marketToken.value;
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       try {
@@ -549,16 +553,19 @@ export default defineComponent({
       });
       const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
       auction.value = list && list.length > 0 ? list[0] : {};
-      marketToken.value = DAPP_CONFIG.tokens[auction.value.biding_coin.toUpperCase()];
+      marketToken.value = DappConfig.config.tokens[auction.value.biding_coin.toUpperCase()];
       try {
         if (auction.value?.token_id >= 0 && auction.value?.vote_contract) {
           console.log(DAPP_CONTRACTS);
           const tokenMint = await DAPP_CONTRACTS[
             auction.value.vote_contract.toLowerCase()
-          ]?.contract.getMintRewards(DAPP_CONFIG.nfts.UniartsNFT.address, auction.value.token_id);
+          ]?.contract.getMintRewards(
+            DappConfig.config.nfts.UniartsNFT.address,
+            auction.value.token_id
+          );
           if (!new BigNumber(tokenMint).isZero()) {
             auction.value.token_mint = new BigNumber(tokenMint)
-              .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+              .shiftedBy(-DappConfig.config.tokens.UART.decimals)
               .toString();
           }
         }

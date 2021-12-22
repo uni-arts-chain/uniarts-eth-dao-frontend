@@ -1,3 +1,6 @@
+import contractsMap from "@/contracts";
+import DappConfig from "@/config/dapp";
+
 const envConfig = require("./networkConfig.js").default;
 
 export const NODE_ENV = process.env.NODE_ENV || "development";
@@ -21,18 +24,16 @@ export const CHAIN_DEFAULT_CONFIG = window.NODE_CONFIG || {};
 
 console.log(envConfig);
 
-export const DAPP_CONFIG = require(`./network/${
-  isProd ? envConfig.networkProduction : envConfig.networkDevelopment
-}`);
-
 export const DAPP_CONTRACTS = (() => {
   const contracts = {};
-  Object.keys(DAPP_CONFIG.contracts).map((key) => {
-    const contractModule = require(`../contracts/${key}`);
-    contracts[DAPP_CONFIG.contracts[key].toLowerCase()] = {
-      name: key,
-      contract: contractModule.default,
-    };
-  });
+  console.log(contractsMap);
+  if (DappConfig.config?.contracts) {
+    Object.keys(DappConfig.config?.contracts).map((key) => {
+      contracts[DappConfig.config?.contracts[key].toLowerCase()] = {
+        name: key,
+        contract: contractsMap[key],
+      };
+    });
+  }
   return contracts;
 })();

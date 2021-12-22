@@ -140,7 +140,7 @@ import http from "@/plugins/http";
 import AdaptiveView from "@/components/AdaptiveView";
 import Auction from "@/contracts/Auction";
 import moment from "moment";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 
 export default defineComponent({
   name: "artworks",
@@ -149,7 +149,7 @@ export default defineComponent({
   },
   setup() {
     const marketCurrency = "WETH";
-    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
+    const marketToken = ref(DappConfig.config.tokens[marketCurrency]);
     const auctions = ref([]);
     const now = ref(0);
     let interval = null;

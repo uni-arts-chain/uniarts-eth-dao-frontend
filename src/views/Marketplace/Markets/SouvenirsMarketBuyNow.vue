@@ -89,7 +89,7 @@ import store from "@/store";
 // import AdaptiveView from "@/components/AdaptiveView";
 import AdaptiveImage from "@/components/AdaptiveImage";
 import http from "@/plugins/http";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 
 export default defineComponent({
   name: "index",
@@ -98,7 +98,7 @@ export default defineComponent({
   },
   setup() {
     const marketCurrency = "WETH";
-    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
+    const marketToken = ref(DappConfig.config.tokens[marketCurrency]);
     store.dispatch("global/SetNavText", "Market");
     // todo
     const buyList = ref([]);

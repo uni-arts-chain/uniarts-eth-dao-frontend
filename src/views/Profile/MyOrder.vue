@@ -31,7 +31,7 @@ import Progress from "@/components/Progress";
 import { useRouter } from "vue-router";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
 
 export default defineComponent({
@@ -41,7 +41,7 @@ export default defineComponent({
   },
   setup() {
     const marketCurrency = "WETH";
-    const marketToken = DAPP_CONFIG.tokens[marketCurrency];
+    const marketToken = DappConfig.config.tokens[marketCurrency];
     const width = 70;
     const isLoading = ref(false);
     const list = ref([]);
@@ -74,7 +74,7 @@ export default defineComponent({
       isLoading.value = true;
       try {
         await TrustMarketplace.cancelOrder(
-          DAPP_CONFIG.nfts.UniartsNFT.address,
+          DappConfig.config.nfts.UniartsNFT.address,
           auction.art.token_id,
           (err, txHash) => {
             if (err) {

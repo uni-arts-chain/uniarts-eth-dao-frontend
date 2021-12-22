@@ -58,7 +58,7 @@ import { defineComponent, toRefs, watch } from "vue";
 import { useRouter } from "vue-router";
 import { BigNumber } from "@/plugins/bignumber";
 import Progress from "@/components/Progress";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import Avatar from "@/assets/images/avatar@2x.png";
 import AdaptiveView from "@/components/AdaptiveView";
 import VoteMining from "@/contracts/VoteMining";
@@ -95,12 +95,12 @@ export default defineComponent({
     const getMintRewards = async () => {
       if (item && item.value.token_id >= 0) {
         const tokenMint = await VoteMining.getMintRewards(
-          DAPP_CONFIG.nfts.UniartsNFT.address,
+          DappConfig.config.nfts.UniartsNFT.address,
           item.value.token_id
         );
         if (!new BigNumber(tokenMint).isZero()) {
           item.value.token_mint = new BigNumber(tokenMint)
-            .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+            .shiftedBy(-DappConfig.config.tokens.UART.decimals)
             .toString();
         }
       }

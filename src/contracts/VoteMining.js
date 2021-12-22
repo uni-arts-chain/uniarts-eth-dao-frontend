@@ -2,17 +2,16 @@ import Web3 from "web3";
 import { BigNumber } from "@/plugins/bignumber";
 import { toBN } from "web3-utils";
 import Wallet from "@/plugins/wallet";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import VoteMiningABI from "@/contracts/abi/VoteMining";
-import store from "@/store";
 import { FormatRpcError } from "@/utils";
 // import store from "@/store";
 
 class VoteMining {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DAPP_CONFIG.contracts.VoteMining;
-    this.contract = new this.web3.eth.Contract(VoteMiningABI, this.address.toString());
+    this.address = DappConfig.config?.contracts?.VoteMining;
+    this.contract = new this.web3.eth.Contract(VoteMiningABI, this.address?.toString());
     this.defaultGasPrice = 20000000000;
   }
   async gasPrice() {
@@ -85,13 +84,13 @@ class VoteMining {
   }
   async getUID(nftId) {
     const nftInternalId = await this.contract.methods
-      .nfts(DAPP_CONFIG.nfts.UniartsNFT.address, nftId)
+      .nfts(DappConfig.config.nfts.UniartsNFT.address, nftId)
       .call();
     return nftInternalId;
   }
   async getBalances(userAddress, tokenAddress, nftId) {
     const nftInternalId = await this.contract.methods
-      .nfts(DAPP_CONFIG.nfts.UniartsNFT.address, nftId)
+      .nfts(DappConfig.config.nfts.UniartsNFT.address, nftId)
       .call();
     const balances = await this.contract.methods
       .balances(userAddress, tokenAddress, nftInternalId)
@@ -101,7 +100,7 @@ class VoteMining {
   }
   async getVotedBalances(userAddress, nftId) {
     const nftInternalId = await this.contract.methods
-      .nfts(DAPP_CONFIG.nfts.UniartsNFT.address, nftId)
+      .nfts(DappConfig.config.nfts.UniartsNFT.address, nftId)
       .call();
     const balances = await this.contract.methods.votedBalances(userAddress, nftInternalId).call();
     console.log(balances);
@@ -122,14 +121,14 @@ class VoteMining {
   }
   async getNftVotes(nftId) {
     const nftInternalId = await this.contract.methods
-      .nfts(DAPP_CONFIG.nfts.UniartsNFT.address, nftId)
+      .nfts(DappConfig.config.nfts.UniartsNFT.address, nftId)
       .call();
     let nftVotes = await this.contract.methods.nftVotes(nftInternalId).call();
     return nftVotes;
   }
   async getGroupVotes(nftId) {
     const nftInternalId = await this.contract.methods
-      .nfts(DAPP_CONFIG.nfts.UniartsNFT.address, nftId)
+      .nfts(DappConfig.config.nfts.UniartsNFT.address, nftId)
       .call();
     const groupId = await this.contract.methods.nftGroup(nftInternalId).call();
     let groupVotes = await this.contract.methods.groupVotes(groupId).call();
@@ -150,7 +149,7 @@ class VoteMining {
 
   async collectFromLock(lockId, callback) {
     const tx = this.contract.methods.collectFromLock(lockId);
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     return this.sendTransaction(tx, sender, callback);
   }
 
@@ -168,7 +167,7 @@ class VoteMining {
 
   async migrate(callback) {
     const tx = this.contract.methods.migrate();
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     return this.sendTransaction(tx, sender, callback);
   }
 }

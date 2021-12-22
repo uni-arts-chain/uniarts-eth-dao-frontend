@@ -259,7 +259,7 @@ import MultiTokenAuction from "@/contracts/MultiTokenAuction";
 import http from "@/plugins/http";
 import store from "@/store";
 import copy from "clipboard-copy";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import Erc20 from "@/contracts/Erc20";
 import { BigNumber } from "@/plugins/bignumber";
 
@@ -310,7 +310,7 @@ export default defineComponent({
     const buyDialog = ref(false);
     const selectItem = ref({});
     const getApproveStatus = () => {
-      const token = Object.values(DAPP_CONFIG.souvenirListTokens).find(
+      const token = Object.values(DappConfig.config.souvenirListTokens).find(
         (v) => selectItem.value.coin.toUpperCase() == v.symbol.toUpperCase()
       );
       console.log(token);
@@ -320,7 +320,7 @@ export default defineComponent({
       // 查看链上权限
       nftLoading.value = true;
       currentErc20
-        .allowance(connectedAccount, DAPP_CONFIG.contracts.MultiTokenTrustMarketplace)
+        .allowance(connectedAccount, DappConfig.config.contracts.MultiTokenTrustMarketplace)
         .then((data) => {
           isApproving.value = data.toNumber() !== 0;
           nftLoading.value = false;
@@ -345,7 +345,7 @@ export default defineComponent({
         const receipt = await currentErc20
           .approveMax(
             store.state.user.info.address,
-            DAPP_CONFIG.contracts.MultiTokenTrustMarketplace,
+            DappConfig.config.contracts.MultiTokenTrustMarketplace,
             async (err, txHash) => {
               if (err) {
                 console.log(err);

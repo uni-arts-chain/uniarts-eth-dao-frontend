@@ -42,11 +42,7 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item
-                :command="v.chainName.toLowerCase()"
-                v-for="(v, i) in networkList"
-                :key="i"
-              >
+              <el-dropdown-item :command="v" v-for="(v, i) in networkList" :key="i">
                 <icon-svg :icon-class="v.chainName.toLowerCase()" /><span>{{ v.chainName }}</span>
               </el-dropdown-item>
             </el-dropdown-menu>
@@ -140,12 +136,7 @@
     <div class="confirm-content">
       <div class="title">Select Network</div>
       <div class="list">
-        <div
-          class="item"
-          v-for="(v, i) in networkList"
-          :key="i"
-          @click="onNetworkChange(v.chainName.toLowerCase())"
-        >
+        <div class="item" v-for="(v, i) in networkList" :key="i" @click="onNetworkChange(v)">
           <icon-svg :icon-class="v.chainName.toLowerCase()" /><span>{{ v.chainName }}</span>
         </div>
       </div>
@@ -157,7 +148,7 @@
 import { defineComponent, computed, ref, watch, onMounted } from "vue";
 import MobileConfirm from "@/components/MobileConfirm";
 import { useRoute, useRouter } from "vue-router";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import { notification } from "@/components/Notification";
 import wallet from "@/plugins/wallet";
 import store from "@/store";
@@ -208,10 +199,11 @@ export default defineComponent({
         chainName: chainInfo.name?.toLowerCase(),
         chainId: chainInfo.chainId,
       };
-      const item = Object.values(DAPP_CONFIG.networks).find(
-        (v) => v.chainId == "0x" + new Number(currentChainId).toString(16)
+      const item = Object.values(DappConfig.networks).find(
+        (v) => v.network.chainId == currentChainId
       );
-      if (item) currentChainInfo.value = item;
+
+      if (item) currentChainInfo.value = item.network;
       currentChainInfo.value.hasIcon = item ? true : false;
       console.log(currentChainInfo.value);
     };
@@ -235,12 +227,12 @@ export default defineComponent({
       if (!wallet.provider) {
         notification.error("Please install the wallet first");
       }
-      const chainInfo = DAPP_CONFIG.networks[command];
+      const chainInfo = command;
       await wallet.switchNetwork(chainInfo);
       dialogTableVisible.value = false;
     };
 
-    const networkList = ref(Object.values(DAPP_CONFIG.networks));
+    const networkList = ref(Object.values(DappConfig.networks).map((v) => v.network));
 
     const dialogTableVisible = ref(false);
 

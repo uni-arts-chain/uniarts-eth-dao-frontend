@@ -200,7 +200,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import store from "@/store";
 import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 
 export default defineComponent({
   name: "index",
@@ -209,7 +209,7 @@ export default defineComponent({
   },
   setup() {
     const marketCurrency = "WETH";
-    const marketToken = DAPP_CONFIG.tokens[marketCurrency];
+    const marketToken = DappConfig.config.tokens[marketCurrency];
     store.dispatch("global/SetNavText", "Market");
 
     const auctionList = ref([]);

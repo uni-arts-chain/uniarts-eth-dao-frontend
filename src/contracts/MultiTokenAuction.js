@@ -2,7 +2,6 @@ import Web3 from "web3";
 import Wallet from "@/plugins/wallet";
 import EthDater from "ethereum-block-by-date";
 import MultiTokenAuctionABI from "@/contracts/abi/MultiTokenAuction.json";
-import store from "@/store";
 
 class MultiTokenAuction {
   constructor() {
@@ -36,7 +35,7 @@ class MultiTokenAuction {
       [[nftAddress, tokenId, amount, minBid, fixedPrice]]
     );
     const gasPrice = await this.gasPrice();
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,
@@ -56,7 +55,7 @@ class MultiTokenAuction {
     const contract = new this.web3.eth.Contract(MultiTokenAuctionABI, contractAddress);
     const tx = contract.methods.creator_withdraw_nft_batch(matchId);
     const gasPrice = await this.gasPrice();
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,

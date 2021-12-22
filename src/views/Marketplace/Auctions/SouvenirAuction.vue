@@ -207,7 +207,7 @@ import http from "@/plugins/http";
 import Auction from "@/contracts/MultiTokenAuction";
 import Dialog from "@/components/Dialog";
 import AdaptiveView from "@/components/AdaptiveView";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import { BigNumber } from "@/plugins/bignumber";
 import { notification } from "@/components/Notification";
 import Erc20 from "../../../contracts/Erc20";
@@ -225,7 +225,7 @@ export default defineComponent({
   },
   setup() {
     const marketCurrency = "WETH";
-    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
+    const marketToken = ref(DappConfig.config.tokens[marketCurrency]);
     // TODO
     const bidAmount = ref(null);
     const router = useRouter();
@@ -276,7 +276,7 @@ export default defineComponent({
       isLoading.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
-      const AuctionMiningAddress = auction.value.auction_contract; // DAPP_CONFIG.contracts.Auction;
+      const AuctionMiningAddress = auction.value.auction_contract; // DappConfig.config.contracts.Auction;
       const token = marketToken.value;
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       try {
@@ -319,7 +319,7 @@ export default defineComponent({
       isLoading.value = true;
       const notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
-      const AuctionMiningAddress = auction.value.auction_contract; // DAPP_CONFIG.contracts.Auction;
+      const AuctionMiningAddress = auction.value.auction_contract; // DappConfig.config.contracts.Auction;
       const token = marketToken.value;
       const currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
       try {

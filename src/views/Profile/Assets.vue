@@ -77,7 +77,8 @@
 <script>
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { BigNumber } from "@/plugins/bignumber";
-import { DAPP_CONFIG, DAPP_CONTRACTS } from "@/config";
+import { DAPP_CONTRACTS } from "@/config";
+import DappConfig from "@/config/dapp";
 import http from "@/plugins/http";
 import store from "@/store";
 import { notification } from "@/components/Notification";
@@ -101,7 +102,7 @@ export default defineComponent({
         .then(async (res) => {
           assetsList.value = res.list;
           assetsList.value.forEach((v) => {
-            let token = DAPP_CONFIG.tokens[v.token.toUpperCase()];
+            let token = DappConfig.config.tokens[v.token.toUpperCase()];
             token
               ? DAPP_CONTRACTS[v.contract.toLowerCase()]?.contract
                   .getRedeemableBalance(connectedAccount.value, token.address)
@@ -114,14 +115,16 @@ export default defineComponent({
               : "";
           });
           const uartToken = assetsList.value.find(
-            (v) => v.token.toLowerCase() === DAPP_CONFIG.tokens.UART.symbol.toLowerCase()
+            (v) => v.token.toLowerCase() === DappConfig.config.tokens.UART.symbol.toLowerCase()
           );
           if (uartToken) {
             const bonedTotal = await DAPP_CONTRACTS[
               uartToken.contract.toLowerCase()
             ]?.contract.getBondedBalance(connectedAccount.value);
             if (!bonedTotal.isZero()) {
-              uartToken.bound = bonedTotal.shiftedBy(-DAPP_CONFIG.tokens.UART.decimals).toString();
+              uartToken.bound = bonedTotal
+                .shiftedBy(-DappConfig.config.tokens.UART.decimals)
+                .toString();
             }
           }
           isLoading.value = false;
@@ -144,7 +147,7 @@ export default defineComponent({
       let index = version.search(/V\d$/);
       version = index ? version.substr(index) : version;
       console.log(version);
-      return DAPP_CONFIG.contracts.VoteMining !== address ? version : "";
+      return DappConfig.config.contracts.VoteMining !== address ? version : "";
     };
 
     return {

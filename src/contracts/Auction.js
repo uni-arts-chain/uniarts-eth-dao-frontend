@@ -1,23 +1,23 @@
 import Web3 from "web3";
 import Wallet from "@/plugins/wallet";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import AuctionABI from "@/contracts/abi/Auction.json";
 import EthDater from "ethereum-block-by-date";
 import { toBN } from "web3-utils";
-import store from "@/store";
 
 class Auction {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DAPP_CONFIG.contracts.Auction;
-    this.contract = new this.web3.eth.Contract(AuctionABI, this.address.toString());
+    console.log(DappConfig);
+    this.address = DappConfig.config?.contracts?.Auction;
+    this.contract = new this.web3.eth.Contract(AuctionABI, this.address?.toString());
     this.dater = new EthDater(this.web3.eth);
   }
 
   async playerBid(matchId, tokenIndex, amount, callback, addressV2) {
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasPrice = await this.gasPrice();
-    const contractAddress = addressV2 || this.address.toString();
+    const contractAddress = addressV2 || this.address?.toString();
     const contract = new this.web3.eth.Contract(AuctionABI, contractAddress);
     const tx = contract.methods.player_bid(matchId, tokenIndex, toBN(amount));
     const gasLimit = await tx.estimateGas({
@@ -43,7 +43,7 @@ class Auction {
   async playerFixedPrice(matchId, tokenIndex, callback) {
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.player_fixed_price(matchId, tokenIndex);
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,
@@ -70,7 +70,7 @@ class Auction {
     addressV2,
     callback
   ) {
-    const contractAddress = addressV2 || this.address.toString();
+    const contractAddress = addressV2 || this.address?.toString();
     const contract = new this.web3.eth.Contract(AuctionABI, contractAddress);
     const matchId = `user-${new Date().getTime()}`;
     // const openBlock = blockHeight + 1000;
@@ -84,7 +84,7 @@ class Auction {
       [[nftAddress, tokenIndex, startingPrice, fixPrice]]
     );
     const gasPrice = await this.gasPrice();
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,
@@ -101,11 +101,11 @@ class Auction {
   }
 
   async playerWithdrawBid(matchId, tokenIndex, callback, addressV2) {
-    const contractAddress = addressV2 || this.address.toString();
+    const contractAddress = addressV2 || this.address?.toString();
     const contract = new this.web3.eth.Contract(AuctionABI, contractAddress);
     const gasPrice = await this.gasPrice();
     const tx = contract.methods.player_withdraw_bid(matchId, tokenIndex);
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,
@@ -126,9 +126,9 @@ class Auction {
   }
 
   async cancelOrder(matchId, tokenIndex, addressV2, callback) {
-    const sender = store.state.user.info.address;
+    const sender = this.web3.selectAddres;
     const gasPrice = await this.gasPrice();
-    const contractAddress = addressV2 || this.address.toString();
+    const contractAddress = addressV2 || this.address?.toString();
     const contract = new this.web3.eth.Contract(AuctionABI, contractAddress);
     const tx = contract.methods.creator_withdraw_nft(matchId, tokenIndex);
     const gasLimit = await tx.estimateGas({

@@ -175,7 +175,8 @@ import Dialog from "@/components/Dialog";
 import AdaptiveView from "@/components/AdaptiveView";
 import MobileConfirm from "@/components/MobileConfirm";
 import { notification } from "@/components/Notification";
-import { DAPP_CONFIG, DAPP_CONTRACTS } from "@/config";
+import { DAPP_CONTRACTS } from "@/config";
+import DappConfig from "@/config/dapp";
 import { Erc20 } from "@/contracts";
 import { BigNumber } from "bignumber.js";
 import store from "@/store";
@@ -221,7 +222,7 @@ export default defineComponent({
     });
 
     const connectedAccount = store.state.user.info.address;
-    const tokenList = Object.values(DAPP_CONFIG.voteTokens);
+    const tokenList = Object.values(DappConfig.config.voteTokens);
     let currentToken = reactive({});
     const availableVotedBalance = ref(0);
     tokenList.length > 0
@@ -241,7 +242,7 @@ export default defineComponent({
       let votedBalance = await voteMiningContract.getAvailableBalance(
         connectedAccount,
         currentToken.address,
-        DAPP_CONFIG.nfts.UniartsNFT.address,
+        DappConfig.config.nfts.UniartsNFT.address,
         curNft.value.token_id
       );
       availableVotedBalance.value = new BigNumber(votedBalance)
@@ -254,11 +255,11 @@ export default defineComponent({
         DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
       let votedBalance = await voteMiningContract.getUnvotableBalance(
         connectedAccount,
-        DAPP_CONFIG.nfts.UniartsNFT.address,
+        DappConfig.config.nfts.UniartsNFT.address,
         curNft.value.token_id
       );
       availableBondedVotedBalance.value = new BigNumber(votedBalance)
-        .shiftedBy(-DAPP_CONFIG.tokens.UART.decimals)
+        .shiftedBy(-DappConfig.config.tokens.UART.decimals)
         .toString();
     };
 
@@ -297,7 +298,7 @@ export default defineComponent({
       const notifyId = notification.loading("Please wait for the wallet's response");
       console.log(
         connectedAccount,
-        DAPP_CONFIG.nfts.UniartsNFT.address,
+        DappConfig.config.nfts.UniartsNFT.address,
         curNft.value.token_id,
         currentToken.address,
         amount.shiftedBy(currentToken.decimals)
@@ -305,7 +306,7 @@ export default defineComponent({
       voteMiningContract
         .unstake(
           connectedAccount,
-          DAPP_CONFIG.nfts.UniartsNFT.address,
+          DappConfig.config.nfts.UniartsNFT.address,
           curNft.value.token_id,
           currentToken.address,
           amount.shiftedBy(currentToken.decimals),
@@ -350,14 +351,14 @@ export default defineComponent({
       const notifyId = notification.loading("Please wait for the wallet's response");
       console.log(
         connectedAccount,
-        DAPP_CONFIG.nfts.UniartsNFT.address,
+        DappConfig.config.nfts.UniartsNFT.address,
         curNft.value.token_id,
         amount.shiftedBy(currentToken.decimals)
       );
       voteMiningContract
         .unvoteBonded(
           connectedAccount,
-          DAPP_CONFIG.nfts.UniartsNFT.address,
+          DappConfig.config.nfts.UniartsNFT.address,
           curNft.value.token_id,
           amount.shiftedBy(currentToken.decimals),
           async (err, txHash) => {
@@ -410,7 +411,7 @@ export default defineComponent({
       let version = DAPP_CONTRACTS[address?.toLowerCase()]?.name || "";
       let index = version.search(/V\d$/);
       version = index ? version.substr(index) : version;
-      return DAPP_CONFIG.contracts.VoteMining !== address ? version : "";
+      return DappConfig.config.contracts.VoteMining !== address ? version : "";
     };
 
     return {

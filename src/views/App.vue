@@ -1,6 +1,6 @@
 <template>
   <nav-bar />
-  <main>
+  <main v-if="isConnected">
     <router-view />
   </main>
   <footer-bar v-if="!isMobile" />
@@ -11,12 +11,16 @@ import { defineComponent, computed, watch, onMounted } from "vue";
 import NavBar from "@/views/Layout/NavBar";
 import FooterBar from "@/views/Layout/FooterBar";
 import store from "@/store";
+import Wallet from "@/plugins/wallet";
+import { ElLoading } from "element-plus";
 export default defineComponent({
   components: {
     NavBar,
     FooterBar,
   },
   setup() {
+    const isConnected = computed(() => Wallet.isConnected);
+
     const connectAccount = computed(() => store.state.user.info.address);
     if (connectAccount.value) {
       store.dispatch("user/GetInfo");
@@ -38,11 +42,20 @@ export default defineComponent({
 
     onMounted(() => {
       store.dispatch("global/WindowResize");
-      setTimeout(() => store.dispatch("user/ConnectWallet"), 2000);
+      const loadingInstance = ElLoading.service({
+        text: "Detecting network...",
+        customClass: "service-loading",
+      });
+      setTimeout(async () => {
+        await store.dispatch("user/ConnectWallet");
+        loadingInstance.close();
+      }, 2000);
     });
 
     return {
       isMobile,
+      connectAccount,
+      isConnected,
     };
   },
 });

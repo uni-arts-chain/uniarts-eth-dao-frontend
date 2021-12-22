@@ -92,7 +92,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import store from "@/store";
 import http from "@/plugins/http";
-import { DAPP_CONFIG } from "@/config";
+import DappConfig from "@/config/dapp";
 import Erc20 from "../../../contracts/Erc20";
 import AdaptiveView from "@/components/AdaptiveView";
 import { notification } from "@/components/Notification";
@@ -109,14 +109,14 @@ export default defineComponent({
   },
   setup() {
     const marketCurrency = "WETH";
-    const marketToken = ref(DAPP_CONFIG.tokens[marketCurrency]);
+    const marketToken = ref(DappConfig.config.tokens[marketCurrency]);
     const isLoading = ref(false);
     const router = useRouter();
     const route = useRoute();
     const auction = ref({});
     let isApproving = ref(false);
     let currentErc20 = null;
-    const TrustMarketplaceMiningAddress = DAPP_CONFIG.contracts.TrustMarketplace;
+    const TrustMarketplaceMiningAddress = DappConfig.config.contracts.TrustMarketplace;
     store.dispatch("global/SetNavText", "Auction");
     const onBack = () => {
       router.back();
@@ -126,7 +126,7 @@ export default defineComponent({
       http.globalGetSouvenirById({}, { id }).then((res) => {
         console.log(res);
         auction.value = res;
-        // marketToken.value = DAPP_CONFIG.tokens[auction.value.biding_coin.toUpperCase()];
+        // marketToken.value = DappConfig.config.tokens[auction.value.biding_coin.toUpperCase()];
         const token = marketToken.value;
         const connectedAccount = store.state.user.info.address;
         currentErc20 = new Erc20(token.address, token.symbol, token.decimals);
@@ -149,7 +149,7 @@ export default defineComponent({
       let bool;
       try {
         const res = await TrustMarketplace.orderByAssetId(
-          DAPP_CONFIG.nfts.UniartsNFT.address,
+          DappConfig.config.nfts.UniartsNFT.address,
           auction.value.art.token_id
         );
         bool = new BigNumber(res[0]).toNumber();
@@ -202,7 +202,7 @@ export default defineComponent({
           new BigNumber(auction.value.price).shiftedBy(marketToken.value.decimals).toNumber()
         );
         await TrustMarketplace.safePlaceBid(
-          DAPP_CONFIG.nfts.UniartsNFT.address,
+          DappConfig.config.nfts.UniartsNFT.address,
           auction.value.art.token_id,
           amount,
           Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
