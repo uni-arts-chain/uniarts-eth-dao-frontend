@@ -189,11 +189,13 @@
       <div class="dialog-order-info">
         <div class="dialog-order-info-item">
           <span>Price: </span>
-          <span style="font-weight: 600; color: black">0.001 WETH</span>
+          <span style="font-weight: 600; color: black"
+            >{{ selectItem.uint_price }} {{ selectItem.coin?.toUpperCase() }}</span
+          >
         </div>
         <div class="dialog-order-info-item">
           <span>From:</span>
-          <span>0x2341cb98575aed1adf3cba7eab2dd0a27bcdd06f</span>
+          <span>{{ selectItem.from }}</span>
         </div>
       </div>
       <button v-if="isApproving" v-loading="nftLoading" @click="buyOrder">Buy</button>
@@ -206,11 +208,13 @@
       <div class="dialog-order-info">
         <div class="dialog-order-info-item">
           <span>Price: </span>
-          <span style="font-weight: 600; color: black">0.001 WETH</span>
+          <span style="font-weight: 600; color: black"
+            >{{ selectItem.uint_price }} {{ selectItem.coin?.toUpperCase() }}</span
+          >
         </div>
         <div class="dialog-order-info-item">
           <span>From:</span>
-          <span style="">0x2341cb98575aed1adf3cba7eab2dd0a27bcdd06f</span>
+          <span style="">{{ selectItem.from }}</span>
         </div>
       </div>
       <button v-if="isApproving" v-loading="nftLoading" @click="buyOrder">Buy</button>
@@ -349,24 +353,24 @@ export default defineComponent({
               }
               if (txHash) {
                 console.log(txHash);
+                nftLoading.value = false;
                 notification.dismiss(notifyId);
                 notification.success(txHash);
+                notifyId = notification.loading("Waiting for confirmation on the chain");
               }
             }
           )
           .then(() => {
             nftLoading.value = false;
             isApproving.value = true;
+            notification.dismiss(notifyId);
           });
         console.log("receipt: ", receipt);
       } catch (err) {
         nftLoading.value = false;
         notification.dismiss(notifyId);
         notification.error(
-          err.message.split("{")[0] ||
-            (err.head && err.head.msg) ||
-            err.message ||
-            (err.data && err.data.message)
+          (err.head && err.head.msg) || err.message || (err.data && err.data.message)
         );
         throw err;
       }
@@ -410,11 +414,9 @@ export default defineComponent({
         .catch((err) => {
           nftLoading.value = false;
           notification.dismiss(notifyId);
+          console.log(err);
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
           );
           console.log(err);
         });
@@ -568,6 +570,7 @@ export default defineComponent({
 
       formateDate,
       isLoadingList,
+      selectItem,
     };
   },
 });
