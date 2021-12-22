@@ -28,11 +28,11 @@ module.exports = {
     },
   },
   souvenirListTokens: {
-    USDC: {
-      symbol: "USDC",
-      decimals: 18,
-      address: "0xFd9CA9e22bd54260B87834966d26055620aFdbFf",
-    },
+    // USDC: {
+    //   symbol: "USDC",
+    //   decimals: 18,
+    //   address: "0xFd9CA9e22bd54260B87834966d26055620aFdbFf",
+    // },
     WETH: {
       symbol: "wETH",
       decimals: 18,

@@ -78,9 +78,10 @@
         </div>
         <div class="details" v-if="!$store.state.global.isMobile">
           <div class="table-head">
-            <span style="width: 300px">Unit Price</span>
+            <span style="width: 200px">Unit Price</span>
+            <span style="width: 150px">Expiration</span>
             <span style="width: calc(100% - 500px)">From</span>
-            <span style="width: 200px"></span>
+            <span style="width: 150px"></span>
           </div>
           <el-scrollbar max-height="300px" @scroll="onScroll">
             <div
@@ -90,28 +91,8 @@
             >
               Empty
             </div>
-            <div class="order-item" v-for="(v, i) in souvenirMineOrderList" :key="i">
-              <div class="order-info" style="width: 300px">
-                <img
-                  style="width: 20px"
-                  :src="require(`@/assets/images/${v.order_coin?.toLowerCase()}.png`)"
-                />
-                <span style="margin-left: 5px; color: black; font-weight: 800">{{
-                  v.latest_price
-                }}</span>
-                <span style="margin-left: 5px">{{ v.order_coin }}</span>
-              </div>
-              <div class="order-info" style="width: calc(100% - 500px)">
-                <span>Yourself</span>
-              </div>
-              <div class="order-operate" style="width: 200px">
-                <button :disabled="!v.can_cancel_order" @click="onCancelBuyNowClick(v)">
-                  Cancel
-                </button>
-              </div>
-            </div>
             <div class="order-item order-item-buy" v-for="(v, i) in souvenirOrderList" :key="i">
-              <div class="order-info" style="width: 300px">
+              <div class="order-info" style="width: 200px">
                 <img
                   style="width: 20px"
                   :src="require(`@/assets/images/${v.coin?.toLowerCase()}.png`)"
@@ -121,11 +102,22 @@
                 }}</span>
                 <span style="margin-left: 5px">{{ v.coin }}</span>
               </div>
+              <div class="order-info" style="width: 150px">
+                <span>in {{ formateDate(v.expired_at) }} days</span>
+              </div>
               <div class="order-info" style="width: calc(100% - 500px)">
                 <span>{{ v.from }}</span>
               </div>
-              <div class="order-operate" style="width: 200px">
-                <button @click="onBuyOrder(v)">Buy</button>
+              <div class="order-operate" style="width: 150px">
+                <button
+                  class="cancel-button"
+                  v-if="v.is_mine"
+                  :disabled="!v.is_mine"
+                  @click="onCancelBuyNowClick(v)"
+                >
+                  Cancel
+                </button>
+                <button class="buy-button" v-else @click="onBuyOrder(v)">Buy</button>
               </div>
             </div>
           </el-scrollbar>
@@ -134,34 +126,10 @@
           <el-scrollbar max-height="600px" @scroll="onScroll">
             <div
               class="empty"
-              style="height: 600px; line-height: 1000px; text-align: center; color: #aaa"
+              style="height: 600px; line-height: 600px; text-align: center; color: #aaa"
               v-if="souvenirMineOrderList.length <= 0 && souvenirOrderList.length <= 0"
             >
               Empty
-            </div>
-            <div class="order-item" v-for="(v, i) in souvenirMineOrderList" :key="i">
-              <div class="order-info">
-                <div class="label">Unit Price</div>
-                <div class="value">
-                  <img
-                    style="width: 20px"
-                    :src="require(`@/assets/images/${v.order_coin?.toLowerCase()}.png`)"
-                  />
-                  <span style="margin-left: 5px; color: black; font-weight: 800">{{
-                    v.latest_price
-                  }}</span>
-                  <span style="margin-left: 5px">{{ v.order_coin }}</span>
-                </div>
-              </div>
-              <div class="order-info">
-                <div class="label">From</div>
-                <div class="value">Yourself</div>
-              </div>
-              <div class="order-operate">
-                <button :disabled="!v.can_cancel_order" @click="onCancelBuyNowClick(v)">
-                  Cancel
-                </button>
-              </div>
             </div>
             <div class="order-item order-item-buy" v-for="(v, i) in souvenirOrderList" :key="i">
               <div class="order-info">
@@ -178,13 +146,25 @@
                 </div>
               </div>
               <div class="order-info">
+                <div class="label">Expiration</div>
+                <div class="value">in {{ formateDate(v.expired_at) }} days</div>
+              </div>
+              <div class="order-info">
                 <div class="label">From</div>
                 <div class="value">
                   {{ v.from }}
                 </div>
               </div>
               <div class="order-operate">
-                <button @click="onBuyOrder(v)">Buy</button>
+                <button
+                  class="cancel-button"
+                  v-if="v.is_mine"
+                  :disabled="!v.is_mine"
+                  @click="onCancelBuyNowClick(v)"
+                >
+                  Cancel
+                </button>
+                <button class="buy-button" v-else @click="onBuyOrder(v)">Buy</button>
               </div>
             </div>
           </el-scrollbar>
@@ -271,6 +251,7 @@ import store from "@/store";
 import copy from "clipboard-copy";
 import { DAPP_CONFIG } from "@/config";
 import Erc20 from "@/contracts/Erc20";
+import { BigNumber } from "@/plugins/bignumber";
 
 export default defineComponent({
   name: "Detail",
@@ -292,10 +273,10 @@ export default defineComponent({
     const initKeepsakeData = async () => {
       souvenir.value = await http.globalGetSouvenirById({}, { id });
       console.log(souvenir.value);
-      if (store.state.user.info.address) {
-        let list = await http.userGetSouvenirsStatus({});
-        souvenirMineOrderList.value = list?.list || [];
-      }
+      // if (store.state.user.info.address) {
+      //   let list = await http.userGetSouvenirsStatus({});
+      //   souvenirMineOrderList.value = list?.list || [];
+      // }
       requestOrderList();
     };
     const requestOrderList = async () => {
@@ -386,24 +367,36 @@ export default defineComponent({
     const buyOrder = async () => {
       // 购买nft
       nftLoading.value = true;
-      const notifyId = notification.loading("Please wait for the wallet's response");
+      let notifyId = notification.loading("Please wait for the wallet's response");
 
-      await MultiTokenTrustMarketplace.safePlaceBid(async (err, txHash) => {
-        if (err) {
-          console.log(err);
-          throw err;
+      await MultiTokenTrustMarketplace.safePlaceBid(
+        selectItem.value.order_id,
+        souvenir.value.souvenir_nft_contract,
+        souvenir.value.souvenir_token_id,
+        selectItem.value.amount,
+        new BigNumber(selectItem.value.uint_price).shiftedBy(selectItem.value.decimals).toString(),
+        selectItem.value.expired_at,
+        async (err, txHash) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          if (txHash) {
+            console.log(txHash);
+            nftLoading.value = false;
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+            notification.success("Purchasing");
+            notifyId = notification.loading("Waiting for confirmation on the chain");
+            buyDialog.value = false;
+          }
         }
-        if (txHash) {
-          console.log(txHash);
-          notification.dismiss(notifyId);
-          notification.success(txHash);
-          notification.success("Purchasing");
-        }
-      })
+      )
         .then((receipt) => {
           nftLoading.value = false;
           notification.dismiss(notifyId);
           console.log("receipt: ", receipt);
+          requestOrderList();
         })
         .catch((err) => {
           nftLoading.value = false;
@@ -519,7 +512,7 @@ export default defineComponent({
       }
     };
 
-    const itemHeight = ref(store.state.global.isMobile ? 201 : 60);
+    const itemHeight = ref(store.state.global.isMobile ? 291 : 60);
     const itemListHeight = ref(store.state.global.isMobile ? 600 : 300);
     const onScroll = (event) => {
       if (
@@ -533,6 +526,12 @@ export default defineComponent({
           requestOrderList();
         }
       }
+    };
+
+    const formateDate = (time) => {
+      let now = new Date().getTime() / 1000;
+      let date = time - now;
+      return Math.ceil(date / (3600 * 24));
     };
 
     return {
@@ -557,6 +556,8 @@ export default defineComponent({
 
       onApprove,
       buyOrder,
+
+      formateDate,
     };
   },
 });
@@ -745,19 +746,6 @@ export default defineComponent({
         align-items: center;
         justify-content: space-between;
       }
-      .order-item-buy {
-        .order-operate button {
-          margin: 0 10px;
-          border: 1px solid black;
-          border-radius: 10px;
-          color: black;
-          background-color: transparent;
-          padding: 10px 0;
-          font-weight: 600;
-          width: 100px;
-          cursor: pointer;
-        }
-      }
       .order-info {
         display: flex;
         span {
@@ -766,11 +754,22 @@ export default defineComponent({
       }
       .order-operate {
         text-align: right;
-        button {
+        button.cancel-button {
           margin: 0 10px;
           border-radius: 10px;
           color: white;
           background-color: black;
+          padding: 10px 0;
+          font-weight: 600;
+          width: 100px;
+          cursor: pointer;
+        }
+        button.buy-button {
+          margin: 0 10px;
+          border: 1px solid black;
+          border-radius: 10px;
+          color: black;
+          background-color: transparent;
           padding: 10px 0;
           font-weight: 600;
           width: 100px;
