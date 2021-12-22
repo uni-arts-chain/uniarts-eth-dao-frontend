@@ -120,6 +120,9 @@
                 <button class="buy-button" v-else @click="onBuyOrder(v)">Buy</button>
               </div>
             </div>
+            <div class="loading" v-if="isLoadingList">
+              <icon-svg icon-class="loading" />
+            </div>
           </el-scrollbar>
         </div>
         <div class="details" v-else>
@@ -166,6 +169,9 @@
                 </button>
                 <button class="buy-button" v-else @click="onBuyOrder(v)">Buy</button>
               </div>
+            </div>
+            <div class="loading" v-if="isLoadingList">
+              <icon-svg icon-class="loading" />
             </div>
           </el-scrollbar>
         </div>
@@ -279,7 +285,9 @@ export default defineComponent({
       // }
       requestOrderList();
     };
+    const isLoadingList = ref(false);
     const requestOrderList = async () => {
+      isLoadingList.value = true;
       let list = await http.globalGetSouvenirOrders(
         {
           page: page.value,
@@ -289,6 +297,7 @@ export default defineComponent({
       );
       souvenirOrderList.value = souvenirOrderList.value.concat(list?.list || []);
       souvenirOrderTotal.value = list?.total_count || [];
+      isLoadingList.value = false;
     };
 
     const isApproving = ref(false);
@@ -558,6 +567,7 @@ export default defineComponent({
       buyOrder,
 
       formateDate,
+      isLoadingList,
     };
   },
 });
@@ -689,7 +699,13 @@ export default defineComponent({
       .details {
         display: flex;
         flex-direction: column;
-
+        .loading {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 16px 0;
+          border-top: 1px solid #a2a2a2;
+        }
         .details-item {
           display: flex;
           flex-direction: row;
