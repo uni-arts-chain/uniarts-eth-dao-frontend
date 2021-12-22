@@ -277,7 +277,7 @@ import { useRouter } from "vue-router";
 import Auction from "@/contracts/Auction";
 import moment from "moment";
 import Dialog from "@/components/Dialog";
-import config from "@/config/network";
+import { DAPP_CONFIG } from "@/config";
 import IErc1155 from "@/contracts/IErc1155";
 import { notification } from "@/components/Notification";
 import MultiTokenTrustMarketplace from "@/contracts/MultiTokenTrustMarketplace";
@@ -294,7 +294,7 @@ export default defineComponent({
     AdaptiveImage,
   },
   setup() {
-    const souvenirListTokens = ref(config.souvenirListTokens);
+    const souvenirListTokens = ref(DAPP_CONFIG.souvenirListTokens);
     const router = useRouter();
     const loading = ref(false);
     const dataLoading = ref(false);
@@ -315,14 +315,14 @@ export default defineComponent({
     // 当前弹出层纪念品对象
     const selectItem = ref({});
     // 选择币种
-    const selectToken = ref(config.souvenirListTokens.WETH);
+    const selectToken = ref(DAPP_CONFIG.souvenirListTokens.WETH);
     // 打开弹出层事件
     const openListDialog = (item) => {
       getApproveStatus(item);
       selectItem.value = item;
       listDialog.value = true;
-      selectToken.value = config.souvenirListTokens.WETH;
-      selectAuctionToken.value = config.souvenirListTokens.WETH;
+      selectToken.value = DAPP_CONFIG.souvenirListTokens.WETH;
+      selectAuctionToken.value = DAPP_CONFIG.souvenirListTokens.WETH;
       creatAuctionData.value = {
         amount: 1,
         startBlock: blockHeight.value + 200,
