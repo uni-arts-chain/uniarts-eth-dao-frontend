@@ -241,6 +241,15 @@ const apiList = [
     params: {},
     options: {},
   },
+  {
+    name: "getSettings",
+    method: "GET",
+    desc: "纪念品详情",
+    path: "/arts/settings",
+    mockPath: "/arts/settings",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;

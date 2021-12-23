@@ -53,21 +53,6 @@ export default defineComponent({
 
     onMounted(async () => {
       store.dispatch("global/DetectNetwork");
-      // const loadingInstance = ElLoading.service({
-      //   text: "Detecting network...",
-      //   customClass: "service-loading",
-      // });
-      // setTimeout(async () => {
-      //   try {
-      //     await store.dispatch("user/ConnectWallet");
-      //     await Config.init();
-      //     isLoading.value = false;
-      //     loadingInstance.close();
-      //   } catch (e) {
-      //     isLoading.value = false;
-      //     loadingInstance.close();
-      //   }
-      // }, 2000);
     });
 
     return {

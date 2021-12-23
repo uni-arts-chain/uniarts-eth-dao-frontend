@@ -1,6 +1,8 @@
 import Detect from "@/plugins/detect";
 import { ElLoading } from "element-plus";
 import Config from "@/config";
+import http from "@/plugins/http";
+
 export default {
   namespaced: true,
   state: {
@@ -9,6 +11,7 @@ export default {
     isMobile: Detect.device.type === "mobile",
     navText: "",
     isPageLoading: true,
+    setting: {},
   },
   mutations: {
     SET_CHAIN(state, data) {
@@ -28,6 +31,9 @@ export default {
     },
     SET_PAGE_LOADING(state, status) {
       state.isPageLoading = status;
+    },
+    SET_SETTING(state, setting) {
+      state.setting = setting;
     },
   },
   actions: {
@@ -57,9 +63,13 @@ export default {
         try {
           await dispatch("user/ConnectWallet", null, { root: true });
           await Config.init();
+          let settings = await http.globalGetSettings({});
+          console.log(settings);
+          settings && commit("SET_SETTING", settings);
           commit("SET_PAGE_LOADING", false);
           loadingInstance.close();
         } catch (e) {
+          console.log(e);
           commit("SET_PAGE_LOADING", false);
           loadingInstance.close();
         }

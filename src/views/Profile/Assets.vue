@@ -11,10 +11,7 @@
       <div class="no-data" v-if="assetsList.length == 0">No data</div>
       <el-row class="row" v-for="(v, i) in assetsList" :key="i">
         <el-col :span="4" class="item" style="justify-content: flex-start">
-          <img
-            style="width: 30px"
-            :src="require(`@/assets/images/${v.token?.toLowerCase()}.png`)"
-          />
+          <img style="width: 30px" :src="getIcon(v.token?.toLowerCase())" />
           {{ v.token }}
           <span class="version" v-if="getContractVersion(v.contract)">{{
             getContractVersion(v.contract)
@@ -42,7 +39,7 @@
       <div class="item-col" style="margin-bottom: 20px">
         <span class="label">Token</span>
         <span class="value" style="display: flex; align-center: center; justify-content: center">
-          <img style="width: 30px" :src="getIcon(v.token)" />
+          <img style="width: 30px" :src="getIcon(v.token?.toLowerCase())" />
           <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{
             v.token
           }}</span>
@@ -149,15 +146,15 @@ export default defineComponent({
         : "";
     };
 
-    const getIcon = async (tokenName) => {
+    const getIcon = (tokenName) => {
       try {
-        const icon = await import(`@/assets/images/${tokenName?.toLowerCase()}.png`);
-        console.log(icon);
+        if (!tokenName) return;
+        let token = store.state.global.setting?.tokens[tokenName.toUpperCase()];
+        let icon = token && token.icon ? token.icon : "";
         return icon;
       } catch (err) {
         console.log(err);
       }
-      return;
     };
 
     return {

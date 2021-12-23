@@ -93,10 +93,7 @@
             </div>
             <div class="order-item order-item-buy" v-for="(v, i) in souvenirOrderList" :key="i">
               <div class="order-info" style="width: 200px">
-                <img
-                  style="width: 20px"
-                  :src="require(`@/assets/images/${v.coin?.toLowerCase()}.png`)"
-                />
+                <img style="width: 20px" :src="getIcon(v.coin?.toLowerCase())" />
                 <span style="margin-left: 5px; color: black; font-weight: 800">{{
                   v.uint_price
                 }}</span>
@@ -138,10 +135,7 @@
               <div class="order-info">
                 <div class="label">Unit Price</div>
                 <div class="value">
-                  <img
-                    style="width: 20px"
-                    :src="require(`@/assets/images/${v.coin?.toLowerCase()}.png`)"
-                  />
+                  <img style="width: 20px" :src="getIcon(v.coin?.toLowerCase())" />
                   <span style="margin-left: 5px; color: black; font-weight: 800">{{
                     v.uint_price
                   }}</span>
@@ -542,6 +536,17 @@ export default defineComponent({
       return Math.ceil(date / (3600 * 24));
     };
 
+    const getIcon = (tokenName) => {
+      try {
+        if (!tokenName) return;
+        let token = store.state.global.setting?.tokens[tokenName.toUpperCase()];
+        let icon = token && token.icon ? token.icon : "";
+        return icon;
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
     return {
       onCopy,
       souvenir,
@@ -568,6 +573,8 @@ export default defineComponent({
       formateDate,
       isLoadingList,
       selectItem,
+
+      getIcon,
     };
   },
 });
