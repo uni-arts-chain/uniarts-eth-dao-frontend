@@ -122,7 +122,7 @@ class Wallet {
         params: [chainInfo],
       });
     } catch (addError) {
-      console.loog(addError);
+      console.log(addError);
     }
   }
   async switchNetwork(chainInfo) {

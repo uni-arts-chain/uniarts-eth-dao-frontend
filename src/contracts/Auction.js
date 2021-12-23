@@ -23,7 +23,7 @@ class Auction {
   }
 
   async playerBid(matchId, tokenIndex, amount, callback, addressV2) {
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasPrice = await this.gasPrice();
     const contractAddress = addressV2 || this.address?.toString();
     const contract = new this.web3.eth.Contract(AuctionABI, contractAddress);
@@ -51,7 +51,7 @@ class Auction {
   async playerFixedPrice(matchId, tokenIndex, callback) {
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.player_fixed_price(matchId, tokenIndex);
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,
@@ -92,7 +92,7 @@ class Auction {
       [[nftAddress, tokenIndex, startingPrice, fixPrice]]
     );
     const gasPrice = await this.gasPrice();
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,
@@ -113,7 +113,7 @@ class Auction {
     const contract = new this.web3.eth.Contract(AuctionABI, contractAddress);
     const gasPrice = await this.gasPrice();
     const tx = contract.methods.player_withdraw_bid(matchId, tokenIndex);
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,
@@ -134,7 +134,7 @@ class Auction {
   }
 
   async cancelOrder(matchId, tokenIndex, addressV2, callback) {
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasPrice = await this.gasPrice();
     const contractAddress = addressV2 || this.address?.toString();
     const contract = new this.web3.eth.Contract(AuctionABI, contractAddress);

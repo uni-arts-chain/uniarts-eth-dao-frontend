@@ -21,7 +21,7 @@ class TokenLocker {
 
   // 查询锁仓
   async queryLockPosition(i) {
-    const contract = this.contract.methods.locks(this.web3.selectAddres, i.toString());
+    const contract = this.contract.methods.locks(Wallet.connectedAccount, i.toString());
     const response = await contract.call();
     // 确定精度
     response.amount = BigNumber(response.amount)
@@ -31,7 +31,7 @@ class TokenLocker {
   }
   // 空投次数
   queryLockNum() {
-    return this.contract.methods.numLocks(this.web3.selectAddres).call();
+    return this.contract.methods.numLocks(Wallet.connectedAccount).call();
   }
 }
 

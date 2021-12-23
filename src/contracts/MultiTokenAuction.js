@@ -40,7 +40,7 @@ class MultiTokenAuction {
       [[nftAddress, tokenId, amount, minBid, fixedPrice]]
     );
     const gasPrice = await this.gasPrice();
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,
@@ -60,7 +60,7 @@ class MultiTokenAuction {
     const contract = new this.web3.eth.Contract(MultiTokenAuctionABI, contractAddress);
     const tx = contract.methods.creator_withdraw_nft_batch(matchId);
     const gasPrice = await this.gasPrice();
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasLimit = await tx.estimateGas({
       value: 0,
       from: sender,

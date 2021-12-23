@@ -42,10 +42,7 @@
       <div class="item-col" style="margin-bottom: 20px">
         <span class="label">Token</span>
         <span class="value" style="display: flex; align-center: center; justify-content: center">
-          <img
-            style="width: 30px"
-            :src="require(`@/assets/images/${v.token?.toLowerCase()}.png`)"
-          />
+          <img style="width: 30px" :src="getIcon(v.token)" />
           <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{
             v.token
           }}</span>
@@ -152,11 +149,23 @@ export default defineComponent({
         : "";
     };
 
+    const getIcon = async (tokenName) => {
+      try {
+        const icon = await import(`@/assets/images/${tokenName?.toLowerCase()}.png`);
+        console.log(icon);
+        return icon;
+      } catch (err) {
+        console.log(err);
+      }
+      return;
+    };
+
     return {
       assetsList,
       connectedAccount,
 
       getContractVersion,
+      getIcon,
     };
   },
 });

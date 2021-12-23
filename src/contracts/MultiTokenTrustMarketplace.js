@@ -53,13 +53,13 @@ class MultiTokenTrustMarketplace {
   async createOrder(tokenName, nftAddress, id, amount, price, callback) {
     const endDate = Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0));
     const tx = this.contract.methods.createOrder(tokenName, nftAddress, id, amount, price, endDate);
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     return this.sendTransaction(tx, sender, callback);
   }
 
   async cancelOrder(nftAddress, orderId, callback) {
     const tx = this.contract.methods.cancelOrder(nftAddress, orderId);
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     return this.sendTransaction(tx, sender, callback);
   }
 
@@ -72,7 +72,7 @@ class MultiTokenTrustMarketplace {
       priceInWei,
       expiresAt
     );
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     return this.sendTransaction(tx, sender, callback);
   }
 

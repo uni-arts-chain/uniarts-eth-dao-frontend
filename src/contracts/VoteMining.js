@@ -154,7 +154,7 @@ class VoteMining {
 
   async collectFromLock(lockId, callback) {
     const tx = this.contract.methods.collectFromLock(lockId);
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     return this.sendTransaction(tx, sender, callback);
   }
 
@@ -172,7 +172,7 @@ class VoteMining {
 
   async migrate(callback) {
     const tx = this.contract.methods.migrate();
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     return this.sendTransaction(tx, sender, callback);
   }
 }

@@ -14,7 +14,7 @@ export default class IErc1155 {
    * @param callback function
    */
   async setApprovalForAll(operator, callback) {
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.setApprovalForAll(operator, true);
     const gasLimit = await tx.estimateGas({
@@ -30,12 +30,12 @@ export default class IErc1155 {
    * @param operator address
    */
   async isApprovedForAll(operator) {
-    const account = this.web3.selectAddres;
+    const account = Wallet.connectedAccount;
     return await this.contract.methods.isApprovedForAll(account, operator).call();
   }
 
   async safeTransferFrom(to, id, amount, callback) {
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.safeTransferFrom(sender, to, id, amount, []);
     const gasLimit = await tx.estimateGas({

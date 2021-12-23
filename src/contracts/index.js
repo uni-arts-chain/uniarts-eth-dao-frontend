@@ -22,3 +22,17 @@ export default {
   VoteMining,
   VoteMiningV1,
 };
+
+export {
+  Erc20,
+  Auction,
+  Pin,
+  Erc721,
+  IErc1155,
+  MultiTokenAuction,
+  MultiTokenTrustMarketplace,
+  TokenLocker,
+  TrustMarketplace,
+  VoteMining,
+  VoteMiningV1,
+};

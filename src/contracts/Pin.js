@@ -20,7 +20,7 @@ class Pin {
     return await this.web3.eth.getGasPrice();
   }
   async pin(nftAddress, nftId, callback) {
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasPrice = await this.gasPrice();
     console.log({ nftAddress, nftId, address: this.address, sender });
     const tx = this.contract.methods.pin(nftAddress, nftId);

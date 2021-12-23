@@ -29,7 +29,7 @@ export class Erc721 {
   }
 
   async sendNft(address, tokenId, callback) {
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasPrice = await this.gasPrice();
     //第一个地址是自己钱包地址，第二个地址是用户填写的地址
     const tx = this.contract.methods.safeTransferFrom(sender, address, tokenId);

@@ -29,7 +29,7 @@ class TrustMarketplace {
 
   // 取消我的挂单
   async cancelOrder(nftAddress, assetId, callback) {
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.cancelOrder(nftAddress, assetId);
     const gasLimit = await tx.estimateGas({
@@ -49,7 +49,7 @@ class TrustMarketplace {
 
   // buyNow
   async safePlaceBid(nftAddress, assetId, priceInWei, expiresAt, callback) {
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.safePlaceBid(nftAddress, assetId, priceInWei, expiresAt);
     const gasLimit = await tx.estimateGas({
@@ -68,7 +68,7 @@ class TrustMarketplace {
   }
 
   async createOrder(nftAddress, assetId, priceInWei, expiresAt, callback) {
-    const sender = this.web3.selectAddres;
+    const sender = Wallet.connectedAccount;
     const gasPrice = await this.gasPrice();
     const tx = this.contract.methods.createOrder(nftAddress, assetId, priceInWei, expiresAt);
     const gasLimit = await tx.estimateGas({
