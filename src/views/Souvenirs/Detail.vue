@@ -52,15 +52,15 @@
         <div class="details">
           <div class="details-item">
             <div class="key">Contract Address</div>
-            <div class="value">{{ souvenir.nft_contract?.toUpperCase() }}</div>
+            <div class="value">{{ souvenir.souvenir_contract?.toUpperCase() }}</div>
           </div>
           <div class="details-item">
             <div class="key">Token ID</div>
-            <div class="value">{{ souvenir.token_id }}</div>
+            <div class="value">{{ souvenir.souvenir_token_id }}</div>
           </div>
           <div class="details-item">
             <div class="key">Token Standard</div>
-            <div class="value">{{ souvenir.token_standard }}</div>
+            <div class="value">{{ souvenir.souvenir_token_standard }}</div>
           </div>
           <div class="details-item">
             <div class="key">Blockchain</div>
