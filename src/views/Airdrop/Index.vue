@@ -83,7 +83,6 @@ export default defineComponent({
         return notification.error("Has been collected");
       }
       let notifyId = notification.loading("Waiting for Wallet");
-      console.log(airDropBalanceSelecter.value.toString());
       VoteMining.collectFromLock(airDropBalanceSelecter.value.toString(), async (err, txHash) => {
         if (err) {
           console.log(err);
@@ -121,7 +120,6 @@ export default defineComponent({
           airDropBalance.value = value;
         }
       }
-      console.log(airDropBalanceList);
     });
 
     return {
