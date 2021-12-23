@@ -6,6 +6,7 @@ module.exports = {
     VoteMiningV1: "",
     Auction: "0x03028ca721E0fc26bD0279B3f2Be9473DdAa2806",
     TrustMarketplace: "0xdE55Bf6319fE45437D7E9978b316fA43f83fA7Db",
+    Pin: "0x90A71F2e271E3990A3f0F1A31E532519385a6041",
     MultiTokenTrustMarketplace: "0xA198d4814773C298266467D43dA1d12183E429Cc",
   },
   nfts: {
