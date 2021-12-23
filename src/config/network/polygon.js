@@ -6,7 +6,7 @@ module.exports = {
     VoteMining: "0x4FA3DECEFcd83EdAe0828FdE49221C448961016b",
     Auction: "0xCE7c240079CC64bA531612dADfD086841427855C",
     TrustMarketplace: "0xCe37caCC1c616c6736Da974116b37102C3431f21",
-    Collection: "0xb4873626519754185FF5a8A368D442230645e524",
+    MultiTokenTrustMarketplace: "0x53d5881C315e416DDcEEF2c7c516B287a4821053",
   },
   nfts: {
     UniartsNFT: {
@@ -25,22 +25,29 @@ module.exports = {
       decimals: 18,
       address: "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619",
     },
-    // USDT: {
-    //   symbol: "USDT",
-    //   decimals: 6,
-    //   address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
-    // },
+  },
+  souvenirListTokens: {
+    USDC: {
+      symbol: "USDC",
+      decimals: 6,
+      address: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
+    },
   },
   tokens: {
     UART: {
       symbol: "UART",
       decimals: 12,
-      address: "0x3c2915050347dCb122Aa5F7A148a5eED29Cccfa8",
+      address: "0xf244E91A46A9cdd48da295cA5d0B27894f8032B1",
     },
     USDT: {
       symbol: "USDT",
       decimals: 6,
       address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+    },
+    USDC: {
+      symbol: "USDC",
+      decimals: 6,
+      address: "0x2791bca1f2de4661ed88a30c99a7a9449aa84174",
     },
     WETH: {
       symbol: "wETH",

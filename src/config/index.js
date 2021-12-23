@@ -1,19 +1,6 @@
 import contractsMap from "@/contracts";
 import DappConfig from "@/config/dapp";
 
-// const envConfig = require("./networkConfig.js").default;
-
-// export const NODE_ENV = process.env.NODE_ENV || "development";
-
-// 开发环境下模拟生产环境，方便调试
-// export const isProd = NODE_ENV === "production" ? true : true; //条件非真时 false：访问测试接口, true: 访问线上接口
-
-// export const BASE_URL = isProd ? envConfig.production : envConfig.development;
-
-// export const PREFIX = "/api/v1";
-
-// HTTP_API 默认配置
-
 class Config {
   constructor() {
     this._HTTP_DEFAULT_CONFIG = null;
