@@ -73,7 +73,7 @@ export function requestSuccessFunc(config) {
   //         languageStr = store.state.global.language;
   // }
   config.headers["Accept-Language"] = languageStr;
-  config.headers["chain_name"] = DappConfig.config?.network?.headerChainName;
+  config.headers["chain-name"] = DappConfig.config?.network?.headerChainName;
   return config;
 }
 
