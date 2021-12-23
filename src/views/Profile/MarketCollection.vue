@@ -178,7 +178,7 @@ import Dialog from "@/components/Dialog";
 import config from "@/config/network";
 import Erc721 from "@/contracts/Erc721";
 import Mobilecomfirm from "@/components/MobileConfirm";
-import Pin from "@/contracts/Collection";
+import Pin from "@/contracts/Pin";
 import DappConfig from "@/config/dapp";
 import store from "@/store";
 import Web3 from "web3";

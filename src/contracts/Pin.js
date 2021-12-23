@@ -1,19 +1,19 @@
 import Web3 from "web3";
 import Wallet from "@/plugins/wallet";
 import DappConfig from "@/config/dapp";
-import CollectionABI from "@/contracts/abi/Collection.json";
+import PinABI from "@/contracts/abi/Pin.json";
 
-class Collection {
+class Pin {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DappConfig.config?.contracts?.Collection;
-    this.contract = new this.web3.eth.Contract(CollectionABI, this.address?.toString());
+    this.address = DappConfig.config?.contracts?.Pin;
+    this.contract = new this.web3.eth.Contract(PinABI, this.address?.toString());
   }
 
   init() {
     this.web3 = new Web3(Wallet.provider);
     this.address = DappConfig.config?.contracts?.Collection;
-    this.contract = new this.web3.eth.Contract(CollectionABI, this.address?.toString());
+    this.contract = new this.web3.eth.Contract(PinABI, this.address?.toString());
   }
 
   async gasPrice() {
@@ -46,4 +46,4 @@ class Collection {
   }
 }
 
-export default new Collection();
+export default new Pin();

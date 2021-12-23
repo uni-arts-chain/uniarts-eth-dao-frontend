@@ -3,7 +3,6 @@ import { BigNumber } from "@/plugins/bignumber";
 import Wallet from "@/plugins/wallet";
 import DappConfig from "@/config/dapp";
 import TokenLockerABI from "@/contracts/abi/TokenLocker";
-import store from "@/store";
 
 class TokenLocker {
   constructor() {
@@ -22,8 +21,7 @@ class TokenLocker {
 
   // 查询锁仓
   async queryLockPosition(i) {
-    const connectedAccount = store.state.user.info.address;
-    const contract = this.contract.methods.locks(connectedAccount, i.toString());
+    const contract = this.contract.methods.locks(this.web3.selectAddres, i.toString());
     const response = await contract.call();
     // 确定精度
     response.amount = BigNumber(response.amount)
@@ -33,8 +31,7 @@ class TokenLocker {
   }
   // 空投次数
   queryLockNum() {
-    const connectedAccount = store.state.user.info.address;
-    return this.contract.methods.numLocks(connectedAccount).call();
+    return this.contract.methods.numLocks(this.web3.selectAddres).call();
   }
 }
 

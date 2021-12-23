@@ -1,6 +1,6 @@
 import Erc20 from "./Erc20";
 import Auction from "./Auction";
-import Collection from "./Collection";
+import Pin from "./Pin";
 import Erc721 from "./Erc721";
 import IErc1155 from "./IErc1155";
 import MultiTokenAuction from "./MultiTokenAuction";
@@ -12,7 +12,7 @@ import VoteMiningV1 from "./VoteMiningV1";
 export default {
   Erc20,
   Auction,
-  Collection,
+  Pin,
   Erc721,
   IErc1155,
   MultiTokenAuction,
