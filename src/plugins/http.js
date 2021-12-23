@@ -41,11 +41,10 @@ export class MakeApi {
       const apiName = `${options.namespace}${_firstUpperCase(api.name)}`;
       Object.defineProperty(this.request, apiName, {
         value(outerParams, outerOptions) {
-          console.log(Config);
           let prefix = api.prefix || Config.HTTP_DEFAULT_CONFIG?.prefix;
           // prefix = Config.isProd ? prefix : `/test${prefix}`;
           const url = prefix + api.path;
-          api.baseURL = api.baseURL ? api.baseURL : Config.HTTP_DEFAULT_CONFIG?.baseURL;
+          const baseURL = api.baseURL ? api.baseURL : Config.HTTP_DEFAULT_CONFIG?.baseURL;
           Config.HTTP_DEFAULT_CONFIG?.debug && assert(api.name, `${url} :接口name属性不能为空`);
           Config.HTTP_DEFAULT_CONFIG?.debug &&
             assert(url.indexOf("/") === 0, `${url} :接口路径path，首字符应为/`);
@@ -84,7 +83,7 @@ export class MakeApi {
             url: URL,
             method: api.method,
           };
-          api.baseURL && (obj["baseURL"] = api.baseURL);
+          baseURL && (obj["baseURL"] = baseURL);
           return axios(_normoalize(_assign(obj, _assign({}, api.options, outerOptions)), _data));
         },
       });
