@@ -148,7 +148,7 @@ const routes = [
   },
   {
     path: "/marketplace/souvenirs/buynow",
-    name: "marketplaceBuyNow",
+    name: "marketplaceSouvenirBuyNow",
     component: () =>
       import(
         /* webpackChunkName: "souvenirs" */ "../views/Marketplace/Markets/SouvenirsMarketBuyNow.vue"
