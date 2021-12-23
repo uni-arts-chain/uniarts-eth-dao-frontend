@@ -274,6 +274,8 @@ export default defineComponent({
           color: black;
           padding: 1px 12px;
           margin-left: 10px;
+          height: 14px;
+          line-height: 12px;
         }
         .value {
           color: black;
