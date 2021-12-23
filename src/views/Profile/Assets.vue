@@ -145,9 +145,11 @@ export default defineComponent({
     const getContractVersion = (address) => {
       let version = Config.DAPP_CONTRACTS[address.toLowerCase()]?.name || "";
       let index = version.search(/V\d$/);
-      version = index ? version.substr(index) : version;
+      version = index >= 0 ? version.substr(index) : version;
       console.log(version);
-      return DappConfig.config.contracts.VoteMining !== address ? version : "";
+      return DappConfig.config.contracts.VoteMining?.toLowerCase() !== address?.toLowerCase()
+        ? version
+        : "";
     };
 
     return {

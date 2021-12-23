@@ -65,7 +65,7 @@ export function FormatRpcError(error) {
 export function getContractVersion(address, contractList) {
   let version = contractList[address]?.name || "";
   let index = version.search(/V\d$/);
-  version = index ? version.substr(index) : version;
+  version = index >= 0 ? version.substr(index) : version;
   console.log(version);
-  return contractList.contracts.VoteMining !== address ? version : "";
+  return contractList.contracts.VoteMining?.toLowerCase() !== address?.toLowerCase() ? version : "";
 }
