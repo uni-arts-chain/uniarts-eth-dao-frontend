@@ -2,7 +2,7 @@
 module.exports = {
   contracts: {
     TokenLocker: "0x8B5eEe4A93ed2929195257C16D1Ad4fb750f2d27",
-    VoteMining: "0x7610844a9424f2Fcd9FdF84536CD126335137DE8",
+    VoteMining: "0x3b6Be50e8DC061C8E43468BB3B0a4cA83cC2cd63",
     VoteMiningV1: "",
     Auction: "0x03028ca721E0fc26bD0279B3f2Be9473DdAa2806",
     TrustMarketplace: "0xdE55Bf6319fE45437D7E9978b316fA43f83fA7Db",
