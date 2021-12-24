@@ -106,6 +106,7 @@ export default defineComponent({
         .globalGetArtOrder({
           page: currentPage.value,
           per_page: perPage.value,
+          erc_type: 1,
         })
         .then((res) => {
           isLoading.value = false;

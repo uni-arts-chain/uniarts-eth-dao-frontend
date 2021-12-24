@@ -182,6 +182,7 @@ const apiList = [
       sn: "",
       page: "",
       per_page: "",
+      erc_type: "",
     },
     options: {},
   },

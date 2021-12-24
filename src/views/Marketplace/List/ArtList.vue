@@ -246,6 +246,7 @@ export default defineComponent({
         .globalGetArtOrder({
           page: buyListCurrentPage.value,
           per_page: buyListPerPage.value,
+          erc_type: 1,
         })
         .then((res) => {
           buyList.value = res.list || [];
