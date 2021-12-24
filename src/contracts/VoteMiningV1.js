@@ -93,20 +93,16 @@ class VoteMining {
       .call();
     return nftInternalId;
   }
-  async getBalances(userAddress, tokenAddress, nftId) {
-    const nftInternalId = await this.contract.methods
-      .nfts(DappConfig.config.nfts.UniartsNFT.address, nftId)
-      .call();
+  async getBalances(userAddress, tokenAddress, nftContract, nftId) {
+    const nftInternalId = await this.contract.methods.nfts(nftContract, nftId).call();
     const balances = await this.contract.methods
       .balances(userAddress, tokenAddress, nftInternalId)
       .call();
     console.log(balances);
     return balances;
   }
-  async getVotedBalances(userAddress, nftId) {
-    const nftInternalId = await this.contract.methods
-      .nfts(DappConfig.config.nfts.UniartsNFT.address, nftId)
-      .call();
+  async getVotedBalances(userAddress, nftContract, nftId) {
+    const nftInternalId = await this.contract.methods.nfts(nftContract, nftId).call();
     const balances = await this.contract.methods.votedBalances(userAddress, nftInternalId).call();
     console.log(balances);
     return balances;
@@ -124,10 +120,8 @@ class VoteMining {
     console.log(totalVotedBalances);
     return totalVotedBalances;
   }
-  async getNftVotes(nftId) {
-    const nftInternalId = await this.contract.methods
-      .nfts(DappConfig.config.nfts.UniartsNFT.address, nftId)
-      .call();
+  async getNftVotes(nftId, nftContract) {
+    const nftInternalId = await this.contract.methods.nfts(nftContract, nftId).call();
     let nftVotes = await this.contract.methods.nftVotes(nftInternalId).call();
     return nftVotes;
   }

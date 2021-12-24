@@ -28,10 +28,6 @@
         </el-col>
       </el-row>
     </el-row>
-    <div class="notices">
-      Notice:<br />
-      Rewarded and airdrop UARTs unbond will start from 15th Nov.
-    </div>
   </div>
   <div class="assets" v-else>
     <div class="no-data" v-if="assetsList.length == 0">No data</div>
@@ -60,10 +56,6 @@
         <span class="label">Available</span>
         <span class="value">{{ v.available }}</span>
       </div>
-    </div>
-    <div class="notices">
-      Notice:<br />
-      Rewarded and airdrop UARTs unbond will start from 15th Nov.
     </div>
   </div>
 </template>

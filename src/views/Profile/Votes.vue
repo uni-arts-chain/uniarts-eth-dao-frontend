@@ -242,7 +242,7 @@ export default defineComponent({
       let votedBalance = await voteMiningContract.getAvailableBalance(
         connectedAccount,
         currentToken.address,
-        DappConfig.config.nfts.UniartsNFT.address,
+        curNft.value.nft_contract,
         curNft.value.token_id
       );
       availableVotedBalance.value = new BigNumber(votedBalance)
@@ -255,7 +255,7 @@ export default defineComponent({
         Config.DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
       let votedBalance = await voteMiningContract.getUnvotableBalance(
         connectedAccount,
-        DappConfig.config.nfts.UniartsNFT.address,
+        curNft.value.nft_contract,
         curNft.value.token_id
       );
       availableBondedVotedBalance.value = new BigNumber(votedBalance)
@@ -298,7 +298,7 @@ export default defineComponent({
       const notifyId = notification.loading("Please wait for the wallet's response");
       console.log(
         connectedAccount,
-        DappConfig.config.nfts.UniartsNFT.address,
+        curNft.value.nft_contract,
         curNft.value.token_id,
         currentToken.address,
         amount.shiftedBy(currentToken.decimals)
@@ -306,7 +306,7 @@ export default defineComponent({
       voteMiningContract
         .unstake(
           connectedAccount,
-          DappConfig.config.nfts.UniartsNFT.address,
+          curNft.value.nft_contract,
           curNft.value.token_id,
           currentToken.address,
           amount.shiftedBy(currentToken.decimals),
@@ -351,14 +351,14 @@ export default defineComponent({
       const notifyId = notification.loading("Please wait for the wallet's response");
       console.log(
         connectedAccount,
-        DappConfig.config.nfts.UniartsNFT.address,
+        curNft.value.nft_contract,
         curNft.value.token_id,
         amount.shiftedBy(currentToken.decimals)
       );
       voteMiningContract
         .unvoteBonded(
           connectedAccount,
-          DappConfig.config.nfts.UniartsNFT.address,
+          curNft.value.nft_contract,
           curNft.value.token_id,
           amount.shiftedBy(currentToken.decimals),
           async (err, txHash) => {

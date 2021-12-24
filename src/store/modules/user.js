@@ -41,19 +41,20 @@ export default {
       Wallet.accountsChanged = async () => {
         if (state.info.token) {
           await dispatch("Quit");
-          // location.href = (
-          //   "/login?back=" + (location.pathname !== "/" ? encodeURIComponent(location.pathname) : "")
-          // );
-        }
-      };
-      Wallet.chainChanged = async () => {
-        if (state.info.token) {
-          console.log("----");
-          await dispatch("Quit");
           let path =
             "/login?back=" +
             (location.pathname !== "/" ? encodeURIComponent(location.pathname) : "");
           location.href = path;
+        }
+      };
+      Wallet.chainChanged = async () => {
+        if (state.info.token) {
+          // console.log("----");
+          // await dispatch("Quit");
+          // let path =
+          //   "/login?back=" +
+          //   (location.pathname !== "/" ? encodeURIComponent(location.pathname) : "");
+          // location.href = path;
         }
         DappConfig.reset();
         dispatch("global/DetectNetwork", null, { root: true });

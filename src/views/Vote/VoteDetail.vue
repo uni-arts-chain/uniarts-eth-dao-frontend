@@ -243,16 +243,11 @@ export default defineComponent({
         return;
       }
       isVoting.value = true;
-      console.log(
-        connectedAccount,
-        DappConfig.config.nfts.UniartsNFT.address,
-        artInfo.token_id,
-        currentToken.address
-      );
+      console.log(connectedAccount, artInfo.nft_contract, artInfo.token_id, currentToken.address);
       const notifyId = notification.loading("Please wait for the wallet's response");
       VoteMining.stake(
         connectedAccount,
-        DappConfig.config.nfts.UniartsNFT.address,
+        artInfo.nft_contract,
         artInfo.token_id,
         currentToken.address,
         amount.shiftedBy(currentToken.decimals),
@@ -290,6 +285,7 @@ export default defineComponent({
       let votedBalance = await VoteMining.getBalances(
         connectedAccount,
         currentToken.address,
+        artInfo.nft_contract,
         artInfo.token_id
       );
       stakeTotal.value = new BigNumber(votedBalance.available)
@@ -298,7 +294,11 @@ export default defineComponent({
         .toString();
     };
     const getBondedVoted = async () => {
-      let votedBalance = await VoteMining.getVotedBalances(connectedAccount, artInfo.token_id);
+      let votedBalance = await VoteMining.getVotedBalances(
+        connectedAccount,
+        artInfo.nft_contract,
+        artInfo.token_id
+      );
       bondedTotal.value = new BigNumber(votedBalance.available)
         .plus(votedBalance.freezed)
         .shiftedBy(-currentToken.decimals)
@@ -367,7 +367,7 @@ export default defineComponent({
       const notifyId = notification.loading("Please wait for the wallet's response");
       VoteMining.voteBonded(
         connectedAccount,
-        DappConfig.config.nfts.UniartsNFT.address,
+        artInfo.nft_contract,
         artInfo.token_id,
         amount.shiftedBy(currentToken.decimals),
         async (err, txHash) => {
