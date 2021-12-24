@@ -245,6 +245,13 @@ export default defineComponent({
       isVoting.value = true;
       console.log(connectedAccount, artInfo.nft_contract, artInfo.token_id, currentToken.address);
       const notifyId = notification.loading("Please wait for the wallet's response");
+      console.log(
+        connectedAccount,
+        artInfo.nft_contract,
+        artInfo.token_id,
+        currentToken.address,
+        amount.shiftedBy(currentToken.decimals)
+      );
       VoteMining.stake(
         connectedAccount,
         artInfo.nft_contract,
