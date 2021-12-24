@@ -15,9 +15,9 @@
         background: 'black',
         fontSize: '15px',
       }"
-      @click="onBid"
+      @click="onVote"
     >
-      Bid
+      Vote
     </button>
   </div>
 </template>
@@ -58,9 +58,10 @@ export default defineComponent({
 
     const router = useRouter();
     const onVote = () => {
-      if (recommmedInfo.value.id) {
-        router.push(`/vote/${recommmedInfo.value.id}`);
-      }
+      // if (recommmedInfo.value.id) {
+      // router.push(`/vote/${recommmedInfo.value.id}`);
+      router.push(`/vote/votelist`);
+      // }
     };
     const onBid = () => {
       return router.push("/vote/auctionlist");

@@ -22,7 +22,7 @@
           START VOTE
         </router-link> -->
         <router-link
-          :to="bidPath"
+          :to="votePath"
           :style="{
             background: 'black',
             fontSize: '14px',
@@ -32,7 +32,7 @@
             paddingRight: '90px',
           }"
         >
-          Bid
+          Vote
         </router-link>
       </div>
     </div>
@@ -94,7 +94,8 @@ export default defineComponent({
     });
 
     const votePath = computed(() => {
-      return recommmedInfo.value.id ? `/vote/${recommmedInfo.value.id}` : "";
+      // return recommmedInfo.value.id ? `/vote/${recommmedInfo.value.id}` : "/vote/votelist";
+      return "/vote/votelist";
     });
 
     const bidPath = computed(() => {
