@@ -230,6 +230,7 @@ export default defineComponent({
       const chainInfo = command;
       await wallet.switchNetwork(chainInfo);
       dialogTableVisible.value = false;
+      onClickItem();
     };
 
     const networkList = ref(Object.values(DappConfig.networks).map((v) => v.network));

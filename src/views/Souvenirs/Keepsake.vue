@@ -62,6 +62,7 @@ export default {
 <style lang="scss" scoped>
 .keepsake {
   width: 386px;
+  max-width: 100%;
   text-align: center;
 
   .thumbnail-img {
@@ -74,20 +75,24 @@ export default {
 
   .lattice {
     width: 258px;
-    height: 113px;
     line-height: 20px;
     border-radius: 4px;
     background-color: rgba(251, 250, 250, 100);
     text-align: center;
     border: 1px solid rgba(187, 187, 187, 100);
-    margin: 12px auto 0;
+    margin: 12px auto 70px;
+    padding: 10px 20px;
 
     .title {
       cursor: pointer;
       color: rgba(16, 16, 16, 100);
       font-size: 16px;
-      font-family: SourceHanSansSC-bold;
+      font-family: "Montserrat-Regular";
       line-height: 52px;
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .collect {

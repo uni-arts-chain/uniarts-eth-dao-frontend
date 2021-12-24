@@ -117,9 +117,17 @@ class Wallet {
   async addNetwork(chainInfo) {
     if (!chainInfo) return;
     try {
+      let chain = {
+        chainId: chainInfo.chainId,
+        chainName: chainInfo.chainName,
+        nativeCurrency: chainInfo.nativeCurrency,
+        rpcUrls: chainInfo.rpcUrls,
+      };
+      chainInfo.blockExplorerUrls && (chain.blockExplorerUrls = chainInfo.blockExplorerUrls);
+      chainInfo.iconUrls && (chain.iconUrls = chainInfo.iconUrls);
       await this.request({
         method: "wallet_addEthereumChain",
-        params: [chainInfo],
+        params: [chain],
       });
     } catch (addError) {
       console.log(addError);
@@ -135,7 +143,7 @@ class Wallet {
     } catch (switchError) {
       console.log(switchError);
       if (switchError.code === 4902) {
-        this.addNetwork(chainInfo);
+        await this.addNetwork(JSON.parse(JSON.stringify(chainInfo)));
       } else {
         console.log(switchError);
       }

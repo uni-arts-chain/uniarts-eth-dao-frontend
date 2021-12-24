@@ -27,7 +27,6 @@ export default defineComponent({
       isLoading.value = true;
       keepsakes.value = await http.userCollectedSouvenirs({});
       isLoading.value = false;
-      console.log(keepsakes.value);
     };
     onMounted(() => {
       getMemorialsData();
@@ -47,20 +46,32 @@ export default defineComponent({
   color: rgba(16, 16, 16, 100);
   font-size: 25px;
   text-align: center;
-  font-family: SourceHanSansSC-regular;
+  font-family: "Montserrat-Regular";
 }
 
 .list {
   width: 1160px;
-  margin: 0 auto 30px;
+  margin: 0 auto 100px;
   display: flex;
   flex-direction: row;
   @media screen and (max-width: 750px) {
     display: unset;
   }
 }
+
+.keepsake {
+  /* margin-right: 20px; */
+}
+
 .no-list {
   text-align: center;
-  line-height: 50px;
+  line-height: 200px;
+  height: 400px;
+}
+
+@media screen and (max-width: 765px) {
+  .title {
+    font-size: 22px;
+  }
 }
 </style>

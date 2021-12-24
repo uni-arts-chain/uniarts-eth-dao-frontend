@@ -115,7 +115,7 @@ export default defineComponent({
             const bonedTotal = await Config.DAPP_CONTRACTS[
               uartToken.contract.toLowerCase()
             ]?.contract.getBondedBalance(connectedAccount.value);
-            if (!bonedTotal.isZero()) {
+            if (bonedTotal && !bonedTotal.isZero()) {
               uartToken.bound = bonedTotal
                 .shiftedBy(-DappConfig.config.tokens.UART.decimals)
                 .toString();
