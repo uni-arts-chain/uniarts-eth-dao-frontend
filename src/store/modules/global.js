@@ -70,6 +70,13 @@ export default {
           loadingInstance.close();
         } catch (e) {
           console.log(e);
+          if (e?.code == 100) {
+            await Config.init(false);
+            let settings = await http.globalGetSettings({});
+            console.log(settings);
+            settings && commit("SET_SETTING", settings);
+          }
+        } finally {
           commit("SET_PAGE_LOADING", false);
           loadingInstance.close();
         }
