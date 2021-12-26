@@ -3,14 +3,17 @@ import DappConfig from "@/config/dapp";
 
 class Config {
   constructor() {
-    this._HTTP_DEFAULT_CONFIG = null;
-    this._CHAIN_DEFAULT_CONFIG = null;
-    this._DAPP_CONTRACTS = null;
+    this._HTTP_DEFAULT_CONFIG = {};
+    this._CHAIN_DEFAULT_CONFIG = {};
+    this._DAPP_CONTRACTS = {};
   }
-  async init() {
+  async init(isBuildContract = true) {
+    console.log(DappConfig.config.api);
     this._HTTP_DEFAULT_CONFIG = DappConfig.config.api;
     this._CHAIN_DEFAULT_CONFIG = window.NODE_CONFIG || {};
-    this._DAPP_CONTRACTS = await this.buildContracts();
+    if (isBuildContract) {
+      this._DAPP_CONTRACTS = await this.buildContracts();
+    }
   }
   get HTTP_DEFAULT_CONFIG() {
     return this._HTTP_DEFAULT_CONFIG;

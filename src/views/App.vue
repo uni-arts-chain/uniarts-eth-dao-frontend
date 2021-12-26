@@ -1,6 +1,6 @@
 <template>
   <nav-bar />
-  <main v-if="!isLoading && isConnected && isOnline">
+  <main v-if="!isLoading && isOnline">
     <router-view />
   </main>
   <main class="offline" v-else-if="!isLoading && (!isConnected || !isOnline)">
