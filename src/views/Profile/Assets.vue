@@ -20,11 +20,13 @@
         <el-col :span="7" class="item"
           ><span style="text-align: center">{{ v.voted }}</span></el-col
         >
-        <el-col :span="6" class="item"
-          ><span style="text-align: center">{{ v.bound }}</span>
+        <el-col :span="6" class="item">
+          <span style="text-align: center">{{ v.bound }}</span>
+          <button v-if="v.token?.toUpperCase() === 'UART'" @click="onShowDialog(v)">unBond</button>
         </el-col>
-        <el-col :span="7" class="item"
-          ><span style="text-align: center">{{ v.available }}</span>
+        <el-col :span="7" class="item">
+          <span style="text-align: right; width: initial">{{ v.available }}</span>
+          <!-- <button @click="onShowWithdrawDialog(v)">Withdraw</button> -->
         </el-col>
       </el-row>
     </el-row>
@@ -51,13 +53,86 @@
       <div class="item-col">
         <span class="label">Bonded</span>
         <span class="value">{{ v.bound }}</span>
+        <button @click="onShowDialog(v)">unBond</button>
       </div>
       <div class="item-col">
         <span class="label">Available</span>
         <span class="value">{{ v.available }}</span>
+        <!-- <button @click="onShowWithdrawDialog(v)">Withdraw</button> -->
       </div>
     </div>
   </div>
+  <Dialog
+    @close="onCloseDialog"
+    v-model="dialogTableVisible"
+    v-if="!$store.state.global.isMobile"
+    type="small"
+  >
+    <div class="dialog-content">
+      <div class="input-body">
+        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
+          >UART</span
+        >
+      </div>
+      <div class="balance">{{ selectToken.bound }} UART</div>
+      <button @click="unBond" v-loading="isUnbonding">UnBond</button>
+      <div class="notice">
+        Notice: <br />
+        Unbonding uarts can not be used for NFT vote.
+      </div>
+    </div>
+  </Dialog>
+  <MobileConfirm @close="onCloseDialog" v-else v-model="dialogTableVisible">
+    <div class="confirm-content">
+      <div class="input-body">
+        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
+          >UART</span
+        >
+      </div>
+      <div class="balance">{{ selectToken.bound }} UART</div>
+      <button @click="unBond" v-loading="isUnbonding">UnBond</button>
+      <div class="notice">
+        Notice: <br />
+        Unbonding uarts can not be used for NFT vote.
+      </div>
+    </div>
+  </MobileConfirm>
+
+  <!-- <Dialog
+    @close="onCloseWithdrawDialog"
+    v-model="dialogWithdrawVisible"
+    v-if="!$store.state.global.isMobile"
+    type="small"
+  >
+    <div class="dialog-content">
+      <div class="input-body">
+        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
+          >UART</span
+        >
+      </div>
+      <div class="balance">{{ selectToken.available || 0 }} UART</div>
+      <button @click="unBond" v-loading="isUnbonding">Withdraw</button>
+      <div class="notice">
+        Notice: <br />
+        Unbonded UARTs need to be withdraw from unbond history.
+      </div>
+    </div>
+  </Dialog>
+  <MobileConfirm @close="onCloseWithdrawDialog" v-else v-model="dialogWithdrawVisible">
+    <div class="confirm-content">
+      <div class="input-body">
+        <input type="number" placeholder="amount" v-model="inputUnbondAmount" /><span class="unit"
+          >UART</span
+        >
+      </div>
+      <div class="balance">{{ selectToken.available || 0 }} UART</div>
+      <button @click="unBond" v-loading="isUnbonding">Withdraw</button>
+      <div class="notice">
+        Notice: <br />
+        Unbonded UARTs need to be withdraw from unbond history.
+      </div>
+    </div>
+  </MobileConfirm> -->
 </template>
 
 <script>
@@ -67,9 +142,16 @@ import Config from "@/config";
 import DappConfig from "@/config/dapp";
 import http from "@/plugins/http";
 import store from "@/store";
+import VoteMining from "@/contracts/VoteMining";
 import { notification } from "@/components/Notification";
+import MobileConfirm from "@/components/MobileConfirm";
+import Dialog from "@/components/Dialog";
 export default defineComponent({
   name: "assets",
+  components: {
+    Dialog,
+    MobileConfirm,
+  },
   setup() {
     // TODO
     const isLoading = ref(false);
@@ -149,12 +231,116 @@ export default defineComponent({
       }
     };
 
+    const isUnbonding = ref(false);
+    const inputUnbondAmount = ref(null);
+    const selectToken = ref({});
+    const unBond = async () => {
+      const amount = new BigNumber(inputUnbondAmount.value);
+      if (amount.isNaN() || amount.isZero()) {
+        notification.error("Invalid value");
+        return;
+      }
+      if (amount.isNaN() || amount.lt(0)) {
+        notification.error("Invalid amount");
+        return;
+      }
+      isUnbonding.value = true;
+      const notifyId = notification.loading("Please wait for the wallet's response");
+      console.log(
+        connectedAccount.value,
+        new BigNumber(inputUnbondAmount.value)
+          .shiftedBy(DappConfig.config?.tokens.UART.decimals)
+          .toNumber()
+      );
+      VoteMining.unbond(
+        connectedAccount.value,
+        new BigNumber(inputUnbondAmount.value)
+          .shiftedBy(DappConfig.config?.tokens.UART.decimals)
+          .toNumber(),
+        async (err, txHash) => {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+          if (txHash) {
+            console.log(txHash);
+            isUnbonding.value = false;
+            notification.dismiss(notifyId);
+            notification.success(txHash);
+            onCloseDialog();
+          }
+        }
+      )
+        .then(async (receipt) => {
+          console.log("receipt: ", receipt);
+        })
+        .catch((err) => {
+          console.log(err);
+          isUnbonding.value = false;
+          notification.dismiss(notifyId);
+          notification.error(
+            (err.head && err.head.msg) || err.message || (err.data && err.data.message)
+          );
+        });
+    };
+    const onShowDialog = (item) => {
+      dialogTableVisible.value = true;
+      selectToken.value = item;
+    };
+    const onCloseDialog = () => {
+      dialogTableVisible.value = false;
+      inputUnbondAmount.value = null;
+      selectToken.value = {};
+    };
+    // const onShowWithdrawDialog = (item) => {
+    //   dialogWithdrawVisible.value = true;
+    //   selectToken.value = item;
+    // };
+    // const onCloseWithdrawDialog = () => {
+    //   dialogWithdrawVisible.value = false;
+    //   inputUnbondAmount.value = null;
+    //   selectToken.value = {};
+    // };
+    const dialogTableVisible = ref(false);
+    // const bondedBalance = ref(0);
+    // const getBondedBalance = async () => {
+    //   bondedBalance.value = (await VoteMining.getBondedBalance(connectedAccount.value))
+    //     .shiftedBy(-DappConfig.config?.tokens.UART.decimals)
+    //     .toString();
+    // };
+    // const dialogWithdrawVisible = ref(false);
+    // const availableBalance = ref(0);
+    // const getAvailableBalance = async () => {
+    //   availableBalance.value = (await VoteMining.getUnbondedBalance(connectedAccount.value))
+    //     .shiftedBy(-DappConfig.config?.tokens.UART.decimals)
+    //     .toString();
+    // };
+
+    onMounted(() => {
+      // getBondedBalance();
+      // getAvailableBalance();
+    });
+
     return {
       assetsList,
       connectedAccount,
 
       getContractVersion,
       getIcon,
+
+      unBond,
+      dialogTableVisible,
+      onShowDialog,
+      onCloseDialog,
+      isUnbonding,
+      // dialogWithdrawVisible,
+      // getBondedBalance,
+      // bondedBalance,
+      inputUnbondAmount,
+      // availableBalance,
+      // onShowWithdrawDialog,
+      // onCloseWithdrawDialog,
+      selectToken,
     };
   },
 });
@@ -248,7 +434,7 @@ export default defineComponent({
     .item {
       display: flex;
       flex-wrap: wrap;
-      align-items: center;
+      /* align-items: center; */
       border: 1px solid #ddd;
       border-radius: 6px;
       padding: 20px 10px;
@@ -362,7 +548,8 @@ export default defineComponent({
     text-align: left;
     color: #898989;
     line-height: 18px;
-    width: 343px;
+    width: 373px;
+    max-width: 100%;
     margin: 0 auto;
     margin-top: 21px;
   }
@@ -432,6 +619,7 @@ export default defineComponent({
     color: #898989;
     line-height: 18px;
     width: 343px;
+    max-width: 100%;
     margin: 0 auto;
     margin-top: 21px;
   }
