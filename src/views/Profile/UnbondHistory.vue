@@ -25,28 +25,46 @@
         >
       </el-row>
     </el-row>
-    <Dialog v-model="dialogTableVisible" v-if="!$store.state.global.isMobile" type="small">
+    <Dialog
+      @close="onCloseDialog"
+      v-model="dialogTableVisible"
+      v-if="!$store.state.global.isMobile"
+      type="small"
+    >
       <div class="dialog-content">
         <div class="balance">{{ bondedBalance }} UART</div>
-        <button @click="onWithdraw()" v-loading="isWithdrawing">Withdraw</button>
+        <button
+          @click="onWithdraw()"
+          :disabled="unableWithdraw(bondedBalance)"
+          v-loading="isWithdrawing"
+        >
+          Withdraw
+        </button>
       </div>
     </Dialog>
-    <MobileConfirm v-else v-model="dialogTableVisible">
+    <MobileConfirm @close="onCloseDialog" v-else v-model="dialogTableVisible">
       <div class="confirm-content">
         <div class="balance">{{ bondedBalance }} UART</div>
-        <button @click="onWithdraw()" v-loading="isWithdrawing">Withdraw</button>
+        <button
+          @click="onWithdraw()"
+          :disabled="unableWithdraw(bondedBalance)"
+          v-loading="isWithdrawing"
+        >
+          Withdraw
+        </button>
       </div>
     </MobileConfirm>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, watch } from "vue";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
 import Dialog from "@/components/Dialog";
 import MobileConfirm from "@/components/MobileConfirm";
 import { DateFormat } from "@/utils";
+import { BigNumber } from "@/plugins/bignumber";
 import store from "@/store";
 import VoteMining from "@/contracts/VoteMining";
 export default defineComponent({
@@ -129,9 +147,19 @@ export default defineComponent({
         });
     };
 
+    const unableWithdraw = (balance) => {
+      return new BigNumber(balance || 0).lte(0);
+    };
+
     const format = (time) => {
       return DateFormat(time);
     };
+
+    watch(dialogTableVisible, (value) => {
+      if (!value) {
+        onCloseDialog();
+      }
+    });
 
     return {
       dialogTableVisible,
@@ -144,6 +172,8 @@ export default defineComponent({
       list,
       currentIndex,
       isWithdrawing,
+
+      unableWithdraw,
     };
   },
 });
@@ -235,6 +265,9 @@ export default defineComponent({
     color: #000000;
     line-height: 50px;
     padding-left: 20px;
+  }
+  button:disabled {
+    background-color: #aaa;
   }
   button {
     width: 343px;

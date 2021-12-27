@@ -53,7 +53,7 @@
       <div class="item-col">
         <span class="label">Bonded</span>
         <span class="value">{{ v.bound }}</span>
-        <button @click="onShowDialog(v)">unBond</button>
+        <button v-if="v.token?.toUpperCase() === 'UART'" @click="onShowDialog(v)">unBond</button>
       </div>
       <div class="item-col">
         <span class="label">Available</span>
