@@ -58,7 +58,6 @@
       <div class="item-col">
         <span class="label">Available</span>
         <span class="value">{{ v.available }}</span>
-        <!-- <button @click="onShowWithdrawDialog(v)">Withdraw</button> -->
       </div>
     </div>
   </div>
