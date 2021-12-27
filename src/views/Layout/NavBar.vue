@@ -15,9 +15,9 @@
       <li :class="{ active: currentPath == '/airdrop' }">
         <router-link to="/airdrop">Airdrop</router-link>
       </li>
-      <!-- <li :class="{ active: currentPath == '/souvenirs' }">
+      <li :class="{ active: currentPath == '/souvenirs' }">
         <router-link to="/souvenirs">Souvenirs</router-link>
-      </li> -->
+      </li>
       <!--      <li>-->
       <!--        <router-link to="/marketplace"><img src="@/assets/images/search@2x.png" /></router-link>-->
       <!--      </li>-->
@@ -99,9 +99,9 @@
         <li :class="{ active: currentPath == '/airdrop' }">
           <router-link to="/airdrop" @click="onClickItem">Airdrop</router-link>
         </li>
-        <!-- <li :class="{ active: currentPath == '/souvenirs' }">
+        <li :class="{ active: currentPath == '/souvenirs' }">
           <router-link to="/souvenirs" @click="onClickItem">Souvenirs</router-link>
-        </li> -->
+        </li>
         <li>
           <router-link to="/profile" @click="onClickItem">Account</router-link>
         </li>

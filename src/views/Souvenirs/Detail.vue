@@ -22,7 +22,7 @@
             >Description</span
           >
         </div>
-        <div class="message">{{ souvenir.artist_info }}</div>
+        <div class="message" v-html="souvenir.artist_info"></div>
       </div>
       <div class="info-item">
         <div class="title">
@@ -658,7 +658,7 @@ export default defineComponent({
       }
 
       .message {
-        height: 30px;
+        min-height: 30px;
         color: black;
         font-size: 20px;
         text-align: left;
