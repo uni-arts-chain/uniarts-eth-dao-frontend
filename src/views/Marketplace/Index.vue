@@ -6,7 +6,7 @@
       <input placeholder="Please enter keywords to search work" type="text" />
       <img src="@/assets/images/market-search@2x.png" />
     </div>
-    <div class="market-category">
+    <!-- <div class="market-category">
       <router-link :class="{ title: true, select: $route.path == '/marketplace' }" to="/marketplace"
         >Arts</router-link
       >
@@ -17,7 +17,7 @@
         to="/marketplace/souvenirs"
         >Souvenirs</router-link
       >
-    </div>
+    </div> -->
     <router-view />
   </div>
   <div v-else class="index container">
@@ -26,7 +26,7 @@
       <input placeholder="Please enter keywords..." type="text" />
       <img src="@/assets/images/market-search@2x.png" />
     </div>
-    <div class="market-category">
+    <!-- <div class="market-category">
       <router-link :class="{ title: true, select: $route.path == '/marketplace' }" to="/marketplace"
         >Arts</router-link
       >
@@ -37,7 +37,7 @@
         to="/marketplace/souvenirs"
         >Souvenirs</router-link
       >
-    </div>
+    </div> -->
     <router-view />
   </div>
 </template>

@@ -1,16 +1,16 @@
 /** * Created by Lay Hunt on 2021-09-08 14:14:13. */
 <template>
   <div class="collectionList">
-    <router-link active-class="select" class="title" to="/profile/collection/arts">
+    <!-- <router-link active-class="select" class="title" to="/profile/collection/arts">
       Arts
-    </router-link>
+    </router-link> -->
     <!-- <router-link active-class="select" class="title" to="/profile/collection/collectable">
       Collectable
     </router-link> -->
-    <span class="title">Collectable</span>
+    <!-- <span class="title">Collectable</span>
     <router-link active-class="select" class="title" to="/profile/collection/souvenirs">
       Souvenirs
-    </router-link>
+    </router-link> -->
   </div>
   <router-view></router-view>
 </template>
