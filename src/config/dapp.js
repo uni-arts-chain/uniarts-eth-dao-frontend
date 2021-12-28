@@ -12,23 +12,19 @@ class DappConfig {
     });
   }
   get config() {
-    if (Wallet.isConnected) {
-      if (this.state._currentChain) {
-        return this.state._currentChain;
-      } else {
-        const currentNetwork = this.checkChainInfo(Wallet.chainId);
-        if (currentNetwork) {
-          return currentNetwork;
-        } else {
-          return {};
-        }
-      }
+    if (this.state._currentChain) {
+      return this.state._currentChain;
     } else {
-      const currentNetwork = this.checkChainInfo(Polygon.network.chainId);
+      const currentNetwork = this.checkChainInfo(Wallet.chainId);
       if (currentNetwork) {
         return currentNetwork;
       } else {
-        return {};
+        const localNetwork = this.checkChainInfo(Polygon.network.chainId);
+        if (localNetwork) {
+          return localNetwork;
+        } else {
+          return {};
+        }
       }
     }
   }
