@@ -294,7 +294,7 @@ export default defineComponent({
     AdaptiveImage,
   },
   setup() {
-    const souvenirListTokens = ref(DappConfig.config.souvenirListTokens);
+    const souvenirListTokens = ref(Object.values(DappConfig.config.souvenirListTokens));
     const router = useRouter();
     const loading = ref(false);
     const dataLoading = ref(false);
@@ -315,14 +315,14 @@ export default defineComponent({
     // 当前弹出层纪念品对象
     const selectItem = ref({});
     // 选择币种
-    const selectToken = ref(DappConfig.config.souvenirListTokens.WETH);
+    const selectToken = ref(souvenirListTokens.value[0] || {});
     // 打开弹出层事件
     const openListDialog = (item) => {
       getApproveStatus(item);
       selectItem.value = item;
       listDialog.value = true;
-      selectToken.value = DappConfig.config.souvenirListTokens.WETH;
-      selectAuctionToken.value = DappConfig.config.souvenirListTokens.WETH;
+      selectToken.value = souvenirListTokens.value[0] || {};
+      selectAuctionToken.value = souvenirListTokens.value[0] || {};
       creatAuctionData.value = {
         amount: 1,
         startBlock: blockHeight.value + 200,
@@ -639,10 +639,7 @@ export default defineComponent({
     // 错误输出
     const myNotificationErr = (err) =>
       notification.error(
-        err.message.split("{")[0] ||
-          (err.head && err.head.msg) ||
-          err.message ||
-          (err.data && err.data.message)
+        (err.head && err.head.msg) || err.message || (err.data && err.data.message)
       );
 
     const onSelectToken = (item) => {
