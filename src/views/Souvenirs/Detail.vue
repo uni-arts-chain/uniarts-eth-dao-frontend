@@ -34,12 +34,16 @@
           <div class="properties-item">
             <div class="artist">ARTIST</div>
             <div class="describe">{{ souvenir.artist_name }}</div>
-            <div class="trait"><span class="number">33%</span> have this trait</div>
+            <div class="trait">
+              <span class="number">{{ souvenir.souvenir_artist_percent }}</span> have this trait
+            </div>
           </div>
           <div class="properties-item">
             <div class="artist">ARTWORK</div>
             <div class="describe">{{ souvenir.souvenir_artist_name }}</div>
-            <div class="trait"><span class="number">33%</span> have this trait</div>
+            <div class="trait">
+              <span class="number">{{ souvenir.souvenir_artwork_percent }}</span> have this trait
+            </div>
           </div>
         </div>
       </div>
