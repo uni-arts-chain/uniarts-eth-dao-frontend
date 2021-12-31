@@ -45,7 +45,7 @@
           </div>
           <div class="properties-item">
             <div class="artist">ARTWORK</div>
-            <div class="describe">{{ souvenir.souvenir_artist_name }}</div>
+            <div class="describe">{{ souvenir.name }}</div>
             <div class="trait">
               <span class="number">{{ souvenir.souvenir_artwork_percent }}</span> have this trait
             </div>
