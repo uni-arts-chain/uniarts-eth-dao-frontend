@@ -4,14 +4,29 @@
     <div v-if="list.length <= 0" class="no-data">No data</div>
     <div v-for="v in list" :key="v" class="list">
       <div class="item">
-        <img :src="v.img_main_file1" alt="" @click="goDetail(v.id)" />
+        <!-- <img :src="v.img_main_file1" alt="" @click="goDetail(v.id)" /> -->
+        <AdaptiveView
+          v-if="!$store.state.global.isMobile"
+          :showStatus="false"
+          width="220px"
+          height="220px"
+          :isResponsive="true"
+          :nft="v"
+          @click="goDetail(v.id)"
+        />
+        <AdaptiveView
+          v-else
+          :showStatus="false"
+          width="335px"
+          height="291px"
+          :isResponsive="true"
+          :nft="v"
+          @click="goDetail(v.id)"
+        />
         <div class="info">
-          <div class="progress">
-            <Progress :value="v.number / v.total" />
-            <div class="value-group">
-              <span>Number of votes: {{ v.number }}</span>
-              <span>Total: {{ v.total }}</span>
-            </div>
+          <div class="art-information">
+            <span class="art-name">{{ v.name }}</span>
+            <span class="art-artist" v-if="!$store.state.global.isMobile">{{ v.name }}</span>
           </div>
           <div class="operate">
             <button
@@ -25,8 +40,8 @@
             <button :disabled="v.auction_order || v.buy_now_order" @click="() => openSendDialog(v)">
               Send
             </button>
-            <!-- <button @click="() => pin(v)">Pin</button> -->
-            <button disabled>Pin</button>
+            <button @click="pin(v)">Pin</button>
+            <!-- <button disabled>Pin</button> -->
           </div>
         </div>
       </div>
@@ -170,7 +185,7 @@
 
 <script>
 import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
-import Progress from "@/components/Progress";
+// import Progress from "@/components/Progress";
 import { useRouter } from "vue-router";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
@@ -185,13 +200,15 @@ import Web3 from "web3";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
 import { BigNumber } from "@/plugins/bignumber";
 import Auction from "@/contracts/Auction";
+import AdaptiveView from "@/components/AdaptiveView";
 
 export default defineComponent({
   name: "MarketCollection",
   components: {
     Mobilecomfirm,
     Dialog,
-    Progress,
+    AdaptiveView,
+    // Progress,
   },
   setup() {
     const creatAuctionData = ref({
@@ -311,7 +328,7 @@ export default defineComponent({
       let bool = false;
       try {
         const res = await erc721.getApproved(item.token_id);
-        bool = res.toString() === Pin.address.toString();
+        bool = res.toString() === DappConfig.config.contracts.Pin.toString();
       } catch (err) {
         console.log(err);
         bool = false;
@@ -320,23 +337,28 @@ export default defineComponent({
         try {
           console.log({
             sender,
-            address: Pin.address,
+            address: DappConfig.config.contracts.Pin,
             token_id: item.token_id,
           });
-          await erc721.approve(sender, Pin.address, item.token_id, (err, txHash) => {
-            if (err) {
-              console.log(err);
-              notification.dismiss(notifyId);
-              throw err;
+          await erc721.approve(
+            sender,
+            DappConfig.config.contracts.Pin,
+            item.token_id,
+            (err, txHash) => {
+              if (err) {
+                console.log(err);
+                notification.dismiss(notifyId);
+                throw err;
+              }
+              if (txHash) {
+                // isLoading.value = true;
+                console.log(txHash);
+                notification.dismiss(notifyId);
+                notification.success(txHash);
+                notifyId = notification.loading("Pinning");
+              }
             }
-            if (txHash) {
-              // isLoading.value = true;
-              console.log(txHash);
-              notification.dismiss(notifyId);
-              notification.success(txHash);
-              notifyId = notification.loading("Pinning");
-            }
-          });
+          );
           notification.dismiss(notifyId);
           notification.success("Pin Success");
         } catch (err) {
@@ -767,6 +789,7 @@ export default defineComponent({
   .item {
     display: flex;
     margin-bottom: 72px;
+    width: 100%;
 
     img {
       min-width: 400px;
@@ -777,11 +800,27 @@ export default defineComponent({
   .info {
     width: 434px;
     margin-left: 37px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .art-information {
+      display: flex;
+      flex-direction: column;
+      .art-name {
+        font-size: 19px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+      }
+      .art-artist {
+        font-size: 14px;
+      }
+    }
 
     .operate {
       display: flex;
       justify-content: space-between;
-      margin-top: 69px;
+      margin-bottom: 20px;
 
       button {
         font-size: 14px;
@@ -790,6 +829,7 @@ export default defineComponent({
         color: #ffffff;
         width: 119px;
         height: 43px;
+        cursor: pointer;
         background-color: black;
       }
 

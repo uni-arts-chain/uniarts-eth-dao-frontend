@@ -12,7 +12,7 @@ class Pin {
 
   init() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DappConfig.config?.contracts?.Collection;
+    this.address = DappConfig.config?.contracts?.Pin;
     this.contract = new this.web3.eth.Contract(PinABI, this.address?.toString());
   }
 

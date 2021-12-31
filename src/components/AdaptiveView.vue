@@ -1,7 +1,7 @@
 /** * Created by Lay Hunt on 2021-04-15 15:30:17. */
 <template>
   <div ref="adaptiveView" :style="`width: ${width};height: ${height}`" class="adaptive-view">
-    <div v-if="nft.aasm_state === 'sold'" class="status">SOLD</div>
+    <div v-if="nft.aasm_state === 'sold' && showStatus" class="status">SOLD</div>
     <div :class="{ preview: isPreview }" class="img-container">
       <AdaptiveImage
         v-if="viewType == 'img'"
@@ -131,6 +131,10 @@ export default {
     preload: {
       type: String,
       default: "metadata",
+    },
+    showStatus: {
+      type: Boolean,
+      default: true,
     },
   },
   data() {
