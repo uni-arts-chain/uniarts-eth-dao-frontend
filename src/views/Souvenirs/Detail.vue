@@ -12,13 +12,13 @@
       <span>{{ souvenir.souvenir_title }}</span>
     </div>
     <div class="keepsake">
-      <AdaptiveView
+      <AdaptiveImage
         :showStatus="false"
         v-if="!$store.state.global.isMobile"
         height="540px"
-        :nft="souvenir"
+        :url="souvenir.souvenir_sample"
       />
-      <AdaptiveView :showStatus="false" v-else height="300px" :nft="souvenir" />
+      <AdaptiveImage :showStatus="false" v-else height="300px" :url="souvenir.souvenir_sample" />
     </div>
     <div class="info">
       <div class="info-item">
@@ -253,7 +253,7 @@
 <script>
 import { defineComponent, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
-import AdaptiveView from "@/components/AdaptiveView";
+import AdaptiveImage from "@/components/AdaptiveImage";
 import Dialog from "@/components/Dialog";
 import MobileConfirm from "@/components/MobileConfirm";
 import { notification } from "@/components/Notification";
@@ -269,7 +269,7 @@ import { BigNumber } from "@/plugins/bignumber";
 export default defineComponent({
   name: "Detail",
   components: {
-    AdaptiveView,
+    AdaptiveImage,
     MobileConfirm,
     Dialog,
   },
