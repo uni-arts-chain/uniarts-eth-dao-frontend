@@ -12,8 +12,13 @@
       <span>{{ souvenir.souvenir_title }}</span>
     </div>
     <div class="keepsake">
-      <AdaptiveView v-if="!$store.state.global.isMobile" height="540px" :nft="souvenir" />
-      <AdaptiveView v-else height="300px" :nft="souvenir" />
+      <AdaptiveView
+        :showStatus="false"
+        v-if="!$store.state.global.isMobile"
+        height="540px"
+        :nft="souvenir"
+      />
+      <AdaptiveView :showStatus="false" v-else height="300px" :nft="souvenir" />
     </div>
     <div class="info">
       <div class="info-item">
@@ -278,17 +283,17 @@ export default defineComponent({
     const page = ref(1);
     const per_page = ref(6);
     const { id } = route.params;
-    const initKeepsakeData = async () => {
+    const initKeepsakeData = async (isAppend = false) => {
       souvenir.value = await http.globalGetSouvenirById({}, { id });
       console.log(souvenir.value);
       // if (store.state.user.info.address) {
       //   let list = await http.userGetSouvenirsStatus({});
       //   souvenirMineOrderList.value = list?.list || [];
       // }
-      requestOrderList();
+      requestOrderList(isAppend);
     };
     const isLoadingList = ref(false);
-    const requestOrderList = async () => {
+    const requestOrderList = async (isAppend = false) => {
       isLoadingList.value = true;
       let list = await http.globalGetSouvenirOrders(
         {
@@ -297,7 +302,9 @@ export default defineComponent({
         },
         { id }
       );
-      souvenirOrderList.value = souvenirOrderList.value.concat(list?.list || []);
+      souvenirOrderList.value = isAppend
+        ? souvenirOrderList.value.concat(list?.list || [])
+        : list?.list || [];
       souvenirOrderTotal.value = list?.total_count || [];
       isLoadingList.value = false;
     };
@@ -529,7 +536,7 @@ export default defineComponent({
       ) {
         if (Math.ceil(souvenirOrderTotal.value / per_page.value) > page.value) {
           page.value++;
-          requestOrderList();
+          requestOrderList(true);
         }
       }
     };
