@@ -11,7 +11,10 @@
       <div class="no-data" v-if="assetsList.length == 0">No data</div>
       <el-row class="row" v-for="(v, i) in assetsList" :key="i">
         <el-col :span="4" class="item" style="justify-content: flex-start">
-          <img style="width: 30px" :src="getIcon(v.token?.toLowerCase())" />
+          <img
+            style="width: 30px; max-width: 30px; max-height: 30px"
+            :src="getIcon(v.token?.toLowerCase())"
+          />
           {{ v.token }}
           <span class="version" v-if="getContractVersion(v.contract)">{{
             getContractVersion(v.contract)
@@ -37,7 +40,10 @@
       <div class="item-col" style="margin-bottom: 20px">
         <span class="label">Token</span>
         <span class="value" style="display: flex; align-center: center; justify-content: center">
-          <img style="width: 30px" :src="getIcon(v.token?.toLowerCase())" />
+          <img
+            style="width: 30px; max-width: 30px; max-height: 30px"
+            :src="getIcon(v.token?.toLowerCase())"
+          />
           <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap">{{
             v.token
           }}</span>
