@@ -603,12 +603,14 @@ export default defineComponent({
             } else if (txHash) {
               console.log(txHash);
               notification.success(txHash);
-              loading.value = false;
+
               notifyId = notification.loading("Waiting for confirmation on the chain");
-              closeDialog();
             }
           }
         );
+        loading.value = false;
+        closeDialog();
+        notification.dismiss(notifyId);
         listToAuctionApproving.value = true;
         console.log(res);
         notification.success("Transferred");
