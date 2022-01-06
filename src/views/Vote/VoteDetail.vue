@@ -43,13 +43,21 @@
           <button
             class="submit"
             v-if="isApproved"
-            :disabled="!hasStarted || hasFinished"
+            :disabled="!hasStarted || hasFinished || isVoting"
             v-loading="isVoting"
             @click="onVote"
           >
             Stake & Vote
           </button>
-          <button class="submit" v-else v-loading="isApproving" @click="onApprove">Approve</button>
+          <button
+            class="submit"
+            v-else
+            :disabled="isApproving"
+            v-loading="isApproving"
+            @click="onApprove"
+          >
+            Approve
+          </button>
           <div class="balance">
             <span>Wallet Balance</span>
             <span>{{ currentTokenBalance }} {{ currentToken.symbol }}</span>
@@ -202,23 +210,28 @@ export default defineComponent({
       }
       isApproving.value = true;
       console.log(connectedAccount, voteMiningAddress);
-      const notifyId = notification.loading("Please wait for the wallet's response");
+      let notifyId = notification.loading("Please wait for the wallet's response");
       currentErc20.value
         .approveMax(connectedAccount, voteMiningAddress, async (err, txHash) => {
           if (err) {
+            isApproving.value = false;
             console.log(err);
             throw err;
           }
           if (txHash) {
             console.log(txHash);
-            isApproving.value = false;
             notification.dismiss(notifyId);
-            notification.success(txHash);
+            notifyId = notification.loading("Waiting for confirmation on the chain");
+            // isApproving.value = false;
+            // notification.dismiss(notifyId);
+            // notification.success(txHash);
           }
         })
         .then(async (receipt) => {
           console.log("receipt: ", receipt);
-          getTokenAllowance();
+          await getTokenAllowance();
+          isApproving.value = false;
+          notification.dismiss(notifyId);
         })
         .catch((err) => {
           console.log(err);
@@ -244,7 +257,7 @@ export default defineComponent({
       }
       isVoting.value = true;
       console.log(connectedAccount, artInfo.nft_contract, artInfo.token_id, currentToken.address);
-      const notifyId = notification.loading("Please wait for the wallet's response");
+      let notifyId = notification.loading("Please wait for the wallet's response");
       console.log(
         connectedAccount,
         artInfo.nft_contract,
@@ -259,8 +272,9 @@ export default defineComponent({
         currentToken.address,
         amount.shiftedBy(currentToken.decimals),
         async (err, txHash) => {
-          isVoting.value = false;
+          // isVoting.value = false;
           if (err) {
+            isVoting.value = false;
             console.log(err);
             throw err;
           }
@@ -268,13 +282,18 @@ export default defineComponent({
             console.log(txHash);
             stakeAmount.value = null;
             notification.dismiss(notifyId);
-            notification.success(txHash);
+            notifyId = notification.loading("Waiting for confirmation on the chain");
+            // notification.success(txHash);
           }
         }
       )
         .then(async (receipt) => {
           console.log("receipt: ", receipt);
+          isVoting.value = false;
+          notification.dismiss(notifyId);
+          getTokenBalance();
           getTokenAllowance();
+          getStakeVoted();
         })
         .catch((err) => {
           console.log(err);
@@ -371,7 +390,7 @@ export default defineComponent({
       }
       isBonding.value = true;
       console.log(connectedAccount, voteMiningAddress);
-      const notifyId = notification.loading("Please wait for the wallet's response");
+      let notifyId = notification.loading("Please wait for the wallet's response");
       VoteMining.voteBonded(
         connectedAccount,
         artInfo.nft_contract,
@@ -387,13 +406,17 @@ export default defineComponent({
             console.log(txHash);
             bondAmount.value = null;
             notification.dismiss(notifyId);
-            notification.success(txHash);
+            notifyId = notification.loading("Waiting for confirmation on the chain");
+            // notification.success(txHash);
           }
         }
       )
         .then(async (receipt) => {
           console.log("receipt: ", receipt);
           getTokenAllowance();
+          getBondedVoted();
+          getTokenBalance();
+          notification.dismiss(notifyId);
         })
         .catch((err) => {
           console.log(err);
