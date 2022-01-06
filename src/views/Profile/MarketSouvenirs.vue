@@ -407,6 +407,7 @@ export default defineComponent({
             }
           }
         );
+        loading.value = false;
         listToBuyNowApproving.value = true;
         console.log(res);
         notification.success("Approved");
@@ -442,15 +443,17 @@ export default defineComponent({
               throw err;
             } else if (txHash) {
               console.log(txHash);
-              loading.value = false;
               notification.success(txHash);
               notifyId = notification.loading("Waiting for confirmation on the chain");
-              closeDialog();
-              initSouvenirs();
             }
           }
         );
+        loading.value = false;
+        closeDialog();
+        initSouvenirs();
+        notification.dismiss(notifyId);
         notification.success("Create To Buy Now List Success");
+        initSouvenirs();
       } catch (err) {
         loading.value = false;
         myNotificationErr(err);
