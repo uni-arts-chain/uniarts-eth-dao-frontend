@@ -40,7 +40,13 @@
             <button :disabled="v.auction_order || v.buy_now_order" @click="() => openSendDialog(v)">
               Send
             </button>
-            <button @click="pin(v)">Pin</button>
+            <button
+              @click="pin(v)"
+              :disabled="isPinning && selectItem.id == v.id"
+              v-loading="isPinning && selectItem.id == v.id"
+            >
+              Pin
+            </button>
             <!-- <button disabled>Pin</button> -->
           </div>
         </div>
@@ -52,7 +58,7 @@
           <span class="unit">address</span>
           <input v-model="sender" />
         </div>
-        <button v-loading="isLoading" @click="send">Send</button>
+        <button v-loading="isLoading" :disabled="isLoading" @click="send">Send</button>
       </div>
     </Dialog>
     <Mobilecomfirm v-else v-model="sendDialog" type="small">
@@ -185,12 +191,10 @@
 
 <script>
 import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
-// import Progress from "@/components/Progress";
 import { useRouter } from "vue-router";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
 import Dialog from "@/components/Dialog";
-import config from "@/config/network";
 import Erc721 from "@/contracts/Erc721";
 import Mobilecomfirm from "@/components/MobileConfirm";
 import Pin from "@/contracts/Pin";
@@ -238,7 +242,7 @@ export default defineComponent({
         .userGetMineNFT({})
         .then((res) => {
           dataLoading.value = false;
-          list.value.splice(0, 0, ...res.list);
+          list.value = res.list;
         })
         .catch((err) => {
           console.log(err);
@@ -270,12 +274,15 @@ export default defineComponent({
       sendDialog.value = false;
       selectItem.value = null;
     };
+
     const send = () => {
+      isLoading.value = true;
       const bool = Web3.utils.isAddress(sender.value);
       if (!bool) {
+        isLoading.value = false;
         return notification.info("Invalid address");
       }
-      const nft = config.nfts.UniartsNFT;
+      const nft = DappConfig.config.nfts.UniartsNFT;
       const erc721 = new Erc721(nft.address, nft.symbol);
       console.log({
         sender: sender.value,
@@ -286,6 +293,7 @@ export default defineComponent({
         .sendNft(sender.value, selectItem.value.token_id, (err, txHash) => {
           if (err) {
             console.log(err);
+            isLoading.value = false;
             notification.dismiss(notifyId);
             notification.error(
               err.message.split("{")[0] ||
@@ -304,12 +312,16 @@ export default defineComponent({
           }
         })
         .then((res) => {
+          isLoading.value = false;
           closeSendDiaLog();
           console.log(res);
+          sender.value = "";
           notification.dismiss(notifyId);
           notification.success("Asset transfer succeeded");
+          requestData();
         })
         .catch((err) => {
+          isLoading.value = false;
           notification.dismiss(notifyId);
           console.log(err);
           notification.error(
@@ -320,7 +332,11 @@ export default defineComponent({
           );
         });
     };
+    const isPinning = ref(false);
     const pin = async (item) => {
+      isLoading.value = true;
+      isPinning.value = true;
+      selectItem.value = item;
       let notifyId = notification.loading("Authorization in progress");
       const sender = store.state.user.info.address;
       const nft = DappConfig.config.nfts.UniartsNFT;
@@ -346,22 +362,26 @@ export default defineComponent({
             item.token_id,
             (err, txHash) => {
               if (err) {
+                isLoading.value = false;
+                isPinning.value = false;
                 console.log(err);
                 notification.dismiss(notifyId);
                 throw err;
               }
               if (txHash) {
-                // isLoading.value = true;
                 console.log(txHash);
                 notification.dismiss(notifyId);
                 notification.success(txHash);
-                notifyId = notification.loading("Pinning");
+                notifyId = notification.loading("Confirming");
               }
             }
           );
           notification.dismiss(notifyId);
-          notification.success("Pin Success");
+          // notification.success("Pin Success");
         } catch (err) {
+          isLoading.value = false;
+          isPinning.value = false;
+
           notification.dismiss(notifyId);
           // notification.error(err);
           notification.error(
@@ -376,6 +396,8 @@ export default defineComponent({
 
       Pin.pin(nft.address, item.token_id, (err, txHash) => {
         if (err) {
+          isLoading.value = false;
+          isPinning.value = false;
           console.log(err);
           notification.dismiss(notifyId);
           notification.error(
@@ -398,8 +420,13 @@ export default defineComponent({
           console.log(res);
           notification.dismiss(notifyId);
           notifyId = notification.success("Pin Success");
+          isLoading.value = false;
+          isPinning.value = false;
+          selectItem.value = null;
         })
         .catch((err) => {
+          isLoading.value = false;
+          isPinning.value = false;
           console.log(err);
           notification.dismiss(notifyId);
           notification.error(
@@ -779,6 +806,7 @@ export default defineComponent({
       creatAuctionData,
       removeOrder,
       dataLoading,
+      isPinning,
     };
   },
 });
