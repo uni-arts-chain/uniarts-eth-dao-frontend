@@ -287,7 +287,7 @@ export default defineComponent({
     // 链上授权buy
     const approveLinkBuy = async () => {
       isLoading.value = true;
-      const notifyId = notification.loading("Please wait for the wallet's response");
+      let notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
       const AuctionMiningAddress = auction.value.auction_contract; // DappConfig.config.contracts.Auction;
       const token = marketToken.value;
@@ -298,21 +298,29 @@ export default defineComponent({
           connectedAccount,
           AuctionMiningAddress,
           async (err, txHash) => {
-            isLoading.value = false;
+            // isLoading.value = false;
             if (err) {
+              isLoading.value = false;
               console.log(err);
               throw err;
             }
             if (txHash) {
               console.log(txHash);
-              buyApproving.value = true;
-              buyDialogVisible.value = false;
-              offerDialogVisible.value = false;
+              // buyApproving.value = true;
+              // buyDialogVisible.value = false;
+              // offerDialogVisible.value = false;
               notification.dismiss(notifyId);
-              notification.success(txHash);
+              notifyId = notification.loading("Waiting for confirmation on the chain");
+              // notification.success(txHash);
             }
           }
         );
+        isLoading.value = false;
+        buyApproving.value = true;
+        buyDialogVisible.value = false;
+        offerDialogVisible.value = false;
+        notification.dismiss(notifyId);
+        // notification.success(txHash);
         console.log("receipt: ", receipt);
       } catch (err) {
         isLoading.value = false;
@@ -330,7 +338,7 @@ export default defineComponent({
     // 链上授权bid
     const approveLinkBid = async () => {
       isLoading.value = true;
-      const notifyId = notification.loading("Please wait for the wallet's response");
+      let notifyId = notification.loading("Please wait for the wallet's response");
       const connectedAccount = store.state.user.info.address;
       const AuctionMiningAddress = auction.value.auction_contract; // DappConfig.config.contracts.Auction;
       const token = marketToken.value;
@@ -341,21 +349,28 @@ export default defineComponent({
           connectedAccount,
           AuctionMiningAddress,
           async (err, txHash) => {
-            isLoading.value = false;
             if (err) {
+              isLoading.value = false;
               console.log(err);
               throw err;
             }
             if (txHash) {
               console.log(txHash);
-              bidApproving.value = true;
-              buyDialogVisible.value = false;
-              offerDialogVisible.value = false;
+              // bidApproving.value = true;
+              // buyDialogVisible.value = false;
+              // offerDialogVisible.value = false;
               notification.dismiss(notifyId);
-              notification.success(txHash);
+              // notification.success(txHash);
+
+              notifyId = notification.loading("Waiting for confirmation on the chain");
             }
           }
         );
+        isLoading.value = false;
+        bidApproving.value = true;
+        buyDialogVisible.value = false;
+        offerDialogVisible.value = false;
+        notification.dismiss(notifyId);
         console.log("receipt: ", receipt);
       } catch (err) {
         isLoading.value = false;
@@ -433,24 +448,27 @@ export default defineComponent({
         auction.value.auction_token_index,
         toBN(amount),
         async (err, txHash) => {
-          isLoading.value = false;
+          // isLoading.value = false;
           if (err) {
+            isLoading.value = false;
             console.log(err);
             throw err;
           }
           if (txHash) {
             console.log(txHash);
-            offerDialogVisible.value = false;
+            // offerDialogVisible.value = false;
             notification.dismiss(notifyId);
-            notification.success(txHash);
+            notifyId = notification.loading("Waiting for confirmation on the chain");
+            // notification.success(txHash);
           }
         },
         auctionAddress
       )
         .then((res) => {
+          offerDialogVisible.value = false;
+          isLoading.value = false;
           notification.dismiss(notifyId);
           notification.success("Confirmed on Chain");
-          isLoading.value = false;
           console.log(res);
         })
         .catch((err) => {
@@ -471,24 +489,26 @@ export default defineComponent({
         auction.value.auction_match_id,
         auction.value.auction_token_index,
         async (err, txHash) => {
-          isLoading.value = false;
+          // isLoading.value = false;
           if (err) {
+            isLoading.value = false;
             console.log(err.message);
             throw err;
           }
           if (txHash) {
-            buyDialogVisible.value = false;
+            // buyDialogVisible.value = false;
             console.log(txHash);
             notification.dismiss(notifyId);
-            notification.success(txHash);
+            notifyId = notification.loading("Waiting for confirmation on the chain");
+            // notification.success(txHash);
           }
         }
       )
         .then((res) => {
           isLoading.value = false;
+          buyDialogVisible.value = false;
           notification.dismiss(notifyId);
           notification.success("Confirmed on Chain");
-          console.log();
           console.log(res);
         })
         .catch((err) => {
@@ -605,24 +625,26 @@ export default defineComponent({
         auction.value.auction_token_index,
         async (err, txHash) => {
           if (err) {
+            isLoading.value = false;
             console.log(err.message);
             throw err;
           }
           if (txHash) {
-            isLoading.value = false;
-            buyDialogVisible.value = false;
+            // isLoading.value = false;
+            // buyDialogVisible.value = false;
             console.log(txHash);
             notification.dismiss(notifyId);
-            notification.success(txHash);
+            notifyId = notification.loading("Waiting for confirmation on the chain");
+            // notification.success(txHash);
           }
         },
         auction.value.auction_contract
       )
         .then((res) => {
           isLoading.value = false;
+          buyDialogVisible.value = false;
           notification.dismiss(notifyId);
           notification.success("Confirmed on Chain");
-          console.log();
           console.log(res);
         })
         .catch((err) => {
