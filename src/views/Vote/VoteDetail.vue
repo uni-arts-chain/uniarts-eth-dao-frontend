@@ -88,7 +88,7 @@
           <button
             class="submit"
             v-loading="isBonding"
-            :disabled="!hasStarted || hasFinished"
+            :disabled="!hasStarted || hasFinished || isBonding"
             @click="onBonded"
           >
             Vote with Bonded
@@ -397,8 +397,8 @@ export default defineComponent({
         artInfo.token_id,
         amount.shiftedBy(currentToken.decimals),
         async (err, txHash) => {
-          isBonding.value = false;
           if (err) {
+            isBonding.value = false;
             console.log(err);
             throw err;
           }
@@ -413,6 +413,7 @@ export default defineComponent({
       )
         .then(async (receipt) => {
           console.log("receipt: ", receipt);
+          isBonding.value = false;
           getTokenAllowance();
           getBondedVoted();
           getTokenBalance();
