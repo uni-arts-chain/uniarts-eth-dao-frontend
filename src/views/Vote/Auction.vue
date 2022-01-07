@@ -94,7 +94,7 @@ export default defineComponent({
     const getMintRewards = async () => {
       if (item && item.value.token_id >= 0) {
         const tokenMint = await VoteMining.getMintRewards(
-          DappConfig.config.nfts.UniartsNFT.address,
+          item.value.nft_contract,
           item.value.token_id
         );
         if (!new BigNumber(tokenMint).isZero()) {

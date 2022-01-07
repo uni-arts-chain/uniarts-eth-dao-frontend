@@ -282,7 +282,9 @@ export default defineComponent({
         isLoading.value = false;
         return notification.info("Invalid address");
       }
-      const nft = DappConfig.config.nfts.UniartsNFT;
+      const nft = Object.values(DappConfig.config.nfts).find(
+        (v) => v.address.toLowerCase() == selectItem.value.nft_contract?.toLowerCase()
+      );
       const erc721 = new Erc721(nft.address, nft.symbol);
       console.log({
         sender: sender.value,
@@ -339,7 +341,9 @@ export default defineComponent({
       selectItem.value = item;
       let notifyId = notification.loading("Authorization in progress");
       const sender = store.state.user.info.address;
-      const nft = DappConfig.config.nfts.UniartsNFT;
+      const nft = Object.values(DappConfig.config.nfts).find(
+        (v) => v.address.toLowerCase() == selectItem.value.nft_contract?.toLowerCase()
+      );
       const erc721 = new Erc721(nft.address, nft.symbol);
       let bool = false;
       try {
@@ -462,7 +466,9 @@ export default defineComponent({
     const creatToAuctionMarket = async () => {
       isLoading.value = true;
       const sender = store.state.user.info.address;
-      const nft = DappConfig.config.nfts.UniartsNFT;
+      const nft = Object.values(DappConfig.config.nfts).find(
+        (v) => v.address.toLowerCase() == selectItem.value.nft_contract?.toLowerCase()
+      );
       const erc721 = new Erc721(nft.address, nft.symbol);
       // const contract = Auction;
       const contractAddress = selectItem.value.auction_contract_address;
@@ -582,7 +588,9 @@ export default defineComponent({
       isLoading.value = true;
       isListing.value = true;
       const sender = store.state.user.info.address;
-      const nft = DappConfig.config.nfts.UniartsNFT;
+      const nft = Object.values(DappConfig.config.nfts).find(
+        (v) => v.address.toLowerCase() == selectItem.value.nft_contract?.toLowerCase()
+      );
       const erc721 = new Erc721(nft.address, nft.symbol);
       const contract = TrustMarketplace;
       if (approving.value) {
@@ -592,7 +600,7 @@ export default defineComponent({
         // notification.success("Confirmed on Chain");
         try {
           await contract.createOrder(
-            DappConfig.config.nfts.UniartsNFT.address,
+            selectItem.value.nft_contract,
             selectItem.value.token_id,
             BigNumber(listPrice.value || 0)
               .shiftedBy(DappConfig.config.tokens.WETH.decimals)
@@ -758,7 +766,7 @@ export default defineComponent({
       } else if (auction.buy_now_order) {
         try {
           await TrustMarketplace.cancelOrder(
-            DappConfig.config.nfts.UniartsNFT.address,
+            auction.nft_contract,
             auction.token_id,
             (err, txHash) => {
               if (err) {
@@ -803,7 +811,9 @@ export default defineComponent({
     const getBuyNowApprove = async () => {
       isLoading.value = true;
       try {
-        const nft = DappConfig.config.nfts.UniartsNFT;
+        const nft = Object.values(DappConfig.config.nfts).find(
+          (v) => v.address.toLowerCase() == selectItem.value.nft_contract?.toLowerCase()
+        );
         const erc721 = new Erc721(nft.address, nft.symbol);
         const contract = TrustMarketplace;
         const res = await erc721.getApproved(selectItem.value.token_id);

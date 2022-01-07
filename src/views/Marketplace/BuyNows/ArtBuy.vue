@@ -212,7 +212,7 @@ export default defineComponent({
       let bool;
       try {
         const res = await TrustMarketplace.orderByAssetId(
-          DappConfig.config.nfts.UniartsNFT.address,
+          auction.value.art.nft_contract,
           auction.value.art.token_id
         );
         bool = new BigNumber(res[0]).toNumber();
@@ -269,7 +269,7 @@ export default defineComponent({
           new BigNumber(auction.value.price).shiftedBy(marketToken.value.decimals).toNumber()
         );
         await TrustMarketplace.safePlaceBid(
-          DappConfig.config.nfts.UniartsNFT.address,
+          auction.value.art.nft_contract,
           auction.value.art.token_id,
           amount,
           Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),

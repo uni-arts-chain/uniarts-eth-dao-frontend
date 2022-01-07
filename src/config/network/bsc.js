@@ -14,6 +14,10 @@ module.exports = {
       address: "0xB45Ab2c716f414C46c429fcCC9D85D34dB7d5b46",
       symbol: "UANFT",
     },
+    KakaNFT: {
+      address: "0x068e775b5f09b6d047e235694f15f9e3e9445a56",
+      symbol: "KRB",
+    },
   },
   voteTokens: {
     UART: {

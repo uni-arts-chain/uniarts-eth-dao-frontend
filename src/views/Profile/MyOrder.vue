@@ -74,7 +74,7 @@ export default defineComponent({
       isLoading.value = true;
       try {
         await TrustMarketplace.cancelOrder(
-          DappConfig.config.nfts.UniartsNFT.address,
+          auction.art.nft_contract,
           auction.art.token_id,
           (err, txHash) => {
             if (err) {

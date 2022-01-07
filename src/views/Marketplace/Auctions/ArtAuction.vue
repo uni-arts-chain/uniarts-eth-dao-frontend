@@ -579,10 +579,7 @@ export default defineComponent({
           console.log(Config.DAPP_CONTRACTS);
           const tokenMint = await Config.DAPP_CONTRACTS[
             auction.value.vote_contract.toLowerCase()
-          ]?.contract.getMintRewards(
-            DappConfig.config.nfts.UniartsNFT.address,
-            auction.value.token_id
-          );
+          ]?.contract.getMintRewards(auction.value.nft_contract, auction.value.token_id);
           if (!new BigNumber(tokenMint).isZero()) {
             auction.value.token_mint = new BigNumber(tokenMint)
               .shiftedBy(-DappConfig.config.tokens.UART.decimals)
