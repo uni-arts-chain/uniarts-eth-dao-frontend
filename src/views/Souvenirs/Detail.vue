@@ -353,12 +353,12 @@ export default defineComponent({
             DappConfig.config.contracts.MultiTokenTrustMarketplace,
             async (err, txHash) => {
               if (err) {
+                nftLoading.value = false;
                 console.log(err);
                 throw err;
               }
               if (txHash) {
                 console.log(txHash);
-                nftLoading.value = false;
                 notification.dismiss(notifyId);
                 notification.success(txHash);
                 notifyId = notification.loading("Waiting for confirmation on the chain");
@@ -401,16 +401,15 @@ export default defineComponent({
           }
           if (txHash) {
             console.log(txHash);
-            nftLoading.value = false;
             notification.dismiss(notifyId);
             notification.success(txHash);
             notification.success("Purchasing");
             notifyId = notification.loading("Waiting for confirmation on the chain");
-            buyDialog.value = false;
           }
         }
       )
         .then((receipt) => {
+          buyDialog.value = false;
           nftLoading.value = false;
           notification.dismiss(notifyId);
           console.log("receipt: ", receipt);
@@ -468,14 +467,16 @@ export default defineComponent({
               throw err;
             } else if (txHash) {
               console.log(txHash);
-              loading.value = false;
+
               notification.success(txHash);
               notifyId = notification.loading("Waiting for confirmation on the chain");
-              cancelOrderDialog.value = false;
-              initKeepsakeData();
             }
           }
         );
+        loading.value = false;
+        cancelOrderDialog.value = false;
+        notification.dismiss(notifyId);
+        initKeepsakeData();
         notification.success("Success");
       } catch (err) {
         loading.value = false;
@@ -701,6 +702,10 @@ export default defineComponent({
             color: black;
             font-weight: 500;
             font-size: 18px;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
 
           .trait {

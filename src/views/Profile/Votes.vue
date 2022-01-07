@@ -295,7 +295,7 @@ export default defineComponent({
         return;
       }
       isUnstaking.value = true;
-      const notifyId = notification.loading("Please wait for the wallet's response");
+      let notifyId = notification.loading("Please wait for the wallet's response");
       console.log(
         connectedAccount,
         curNft.value.nft_contract,
@@ -311,22 +311,28 @@ export default defineComponent({
           currentToken.address,
           amount.shiftedBy(currentToken.decimals),
           async (err, txHash) => {
-            isUnstaking.value = false;
             if (err) {
+              isUnstaking.value = false;
               console.log(err);
               throw err;
             }
             if (txHash) {
               console.log(txHash);
-              dialogTableVisible.value = false;
-              inputRetrieveAmount.value = null;
+              // dialogTableVisible.value = false;
+              // inputRetrieveAmount.value = null;
               notification.dismiss(notifyId);
-              notification.success(txHash);
+              notifyId = notification.loading("Waiting for confirmation on the chain");
+              // notification.success(txHash);
             }
           }
         )
         .then(async (receipt) => {
           console.log("receipt: ", receipt);
+          isUnstaking.value = false;
+          dialogTableVisible.value = false;
+          inputRetrieveAmount.value = null;
+          notification.dismiss(notifyId);
+          onRequestData();
         })
         .catch((err) => {
           console.log(err);
@@ -348,7 +354,7 @@ export default defineComponent({
         return;
       }
       isUnBonding.value = true;
-      const notifyId = notification.loading("Please wait for the wallet's response");
+      let notifyId = notification.loading("Please wait for the wallet's response");
       console.log(
         connectedAccount,
         curNft.value.nft_contract,
@@ -362,22 +368,28 @@ export default defineComponent({
           curNft.value.token_id,
           amount.shiftedBy(currentToken.decimals),
           async (err, txHash) => {
-            isUnBonding.value = false;
             if (err) {
+              isUnBonding.value = false;
               console.log(err);
               throw err;
             }
             if (txHash) {
               console.log(txHash);
-              dialogTableVisible.value = false;
-              inputUnbondAmount.value = null;
+              // dialogTableVisible.value = false;
+              // inputUnbondAmount.value = null;
               notification.dismiss(notifyId);
-              notification.success(txHash);
+              notifyId = notification.loading("Waiting for confirmation on the chain");
+              // notification.success(txHash);
             }
           }
         )
         .then(async (receipt) => {
+          isUnBonding.value = false;
+          dialogTableVisible.value = false;
+          inputUnbondAmount.value = null;
+          notification.dismiss(notifyId);
           console.log("receipt: ", receipt);
+          onRequestData();
         })
         .catch((err) => {
           console.log(err);

@@ -40,7 +40,13 @@
             <button :disabled="v.auction_order || v.buy_now_order" @click="() => openSendDialog(v)">
               Send
             </button>
-            <button @click="pin(v)">Pin</button>
+            <button
+              @click="pin(v)"
+              :disabled="isPinning && selectItem.id == v.id"
+              v-loading="isPinning && selectItem.id == v.id"
+            >
+              Pin
+            </button>
             <!-- <button disabled>Pin</button> -->
           </div>
         </div>
@@ -52,7 +58,7 @@
           <span class="unit">address</span>
           <input v-model="sender" />
         </div>
-        <button v-loading="isLoading" @click="send">Send</button>
+        <button v-loading="isLoading" :disabled="isLoading" @click="send">Send</button>
       </div>
     </Dialog>
     <Mobilecomfirm v-else v-model="sendDialog" type="small">
@@ -66,7 +72,7 @@
     </Mobilecomfirm>
     <Dialog v-if="!$store.state.global.isMobile" v-model="listDialog" type="small">
       <div class="dialog-content">
-        <div v-show="!approving" class="list-select">
+        <!-- <div v-show="!approving" class="list-select">
           <span
             :class="{ 'select-item': listSelect === 0 }"
             class="list-item"
@@ -81,7 +87,7 @@
           >
             Listing to BuyNow Market
           </span>
-        </div>
+        </div> -->
         <div v-show="listSelect === 0">
           <div class="input-body">
             <span class="unit">Start Block</span>
@@ -124,7 +130,7 @@
     </Dialog>
     <Mobilecomfirm v-else v-model="listDialog" type="small">
       <div class="dialog-content">
-        <div v-show="!approving" class="list-select">
+        <!-- <div v-show="!approving" class="list-select">
           <span
             :class="{ 'select-item': listSelect === 0 }"
             class="list-item"
@@ -139,7 +145,7 @@
           >
             Listing to BuyNow Market
           </span>
-        </div>
+        </div> -->
         <div v-show="listSelect === 0">
           <div class="input-body">
             <span class="unit">Start Block</span>
@@ -185,12 +191,10 @@
 
 <script>
 import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
-// import Progress from "@/components/Progress";
 import { useRouter } from "vue-router";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
 import Dialog from "@/components/Dialog";
-import config from "@/config/network";
 import Erc721 from "@/contracts/Erc721";
 import Mobilecomfirm from "@/components/MobileConfirm";
 import Pin from "@/contracts/Pin";
@@ -238,7 +242,7 @@ export default defineComponent({
         .userGetMineNFT({})
         .then((res) => {
           dataLoading.value = false;
-          list.value.splice(0, 0, ...res.list);
+          list.value = res.list;
         })
         .catch((err) => {
           console.log(err);
@@ -264,18 +268,23 @@ export default defineComponent({
     const openSendDialog = (v) => {
       selectItem.value = v;
       sendDialog.value = true;
-      listSelect.value = 0;
+      listSelect.value = 1;
     };
     const closeSendDiaLog = () => {
       sendDialog.value = false;
       selectItem.value = null;
     };
+
     const send = () => {
+      isLoading.value = true;
       const bool = Web3.utils.isAddress(sender.value);
       if (!bool) {
+        isLoading.value = false;
         return notification.info("Invalid address");
       }
-      const nft = config.nfts.UniartsNFT;
+      const nft = Object.values(DappConfig.config.nfts).find(
+        (v) => v.address.toLowerCase() == selectItem.value.nft_contract?.toLowerCase()
+      );
       const erc721 = new Erc721(nft.address, nft.symbol);
       console.log({
         sender: sender.value,
@@ -286,6 +295,7 @@ export default defineComponent({
         .sendNft(sender.value, selectItem.value.token_id, (err, txHash) => {
           if (err) {
             console.log(err);
+            isLoading.value = false;
             notification.dismiss(notifyId);
             notification.error(
               err.message.split("{")[0] ||
@@ -304,12 +314,16 @@ export default defineComponent({
           }
         })
         .then((res) => {
+          isLoading.value = false;
           closeSendDiaLog();
           console.log(res);
+          sender.value = "";
           notification.dismiss(notifyId);
           notification.success("Asset transfer succeeded");
+          requestData();
         })
         .catch((err) => {
+          isLoading.value = false;
           notification.dismiss(notifyId);
           console.log(err);
           notification.error(
@@ -320,10 +334,16 @@ export default defineComponent({
           );
         });
     };
+    const isPinning = ref(false);
     const pin = async (item) => {
+      isLoading.value = true;
+      isPinning.value = true;
+      selectItem.value = item;
       let notifyId = notification.loading("Authorization in progress");
       const sender = store.state.user.info.address;
-      const nft = DappConfig.config.nfts.UniartsNFT;
+      const nft = Object.values(DappConfig.config.nfts).find(
+        (v) => v.address.toLowerCase() == selectItem.value.nft_contract?.toLowerCase()
+      );
       const erc721 = new Erc721(nft.address, nft.symbol);
       let bool = false;
       try {
@@ -346,22 +366,26 @@ export default defineComponent({
             item.token_id,
             (err, txHash) => {
               if (err) {
+                isLoading.value = false;
+                isPinning.value = false;
                 console.log(err);
                 notification.dismiss(notifyId);
                 throw err;
               }
               if (txHash) {
-                // isLoading.value = true;
                 console.log(txHash);
                 notification.dismiss(notifyId);
                 notification.success(txHash);
-                notifyId = notification.loading("Pinning");
+                notifyId = notification.loading("Confirming");
               }
             }
           );
           notification.dismiss(notifyId);
-          notification.success("Pin Success");
+          // notification.success("Pin Success");
         } catch (err) {
+          isLoading.value = false;
+          isPinning.value = false;
+
           notification.dismiss(notifyId);
           // notification.error(err);
           notification.error(
@@ -376,6 +400,8 @@ export default defineComponent({
 
       Pin.pin(nft.address, item.token_id, (err, txHash) => {
         if (err) {
+          isLoading.value = false;
+          isPinning.value = false;
           console.log(err);
           notification.dismiss(notifyId);
           notification.error(
@@ -398,8 +424,13 @@ export default defineComponent({
           console.log(res);
           notification.dismiss(notifyId);
           notifyId = notification.success("Pin Success");
+          isLoading.value = false;
+          isPinning.value = false;
+          selectItem.value = null;
         })
         .catch((err) => {
+          isLoading.value = false;
+          isPinning.value = false;
           console.log(err);
           notification.dismiss(notifyId);
           notification.error(
@@ -422,9 +453,10 @@ export default defineComponent({
       selectItem.value = item;
       console.log(selectItem.value);
       listDialog.value = true;
-      auctionApproving.value = false;
-      approving.value = false;
+      // auctionApproving.value = false;
+      // approving.value = false;
       listPrice.value = "";
+      getBuyNowApprove();
     };
     const closeListDialog = () => {
       listDialog.value = false;
@@ -434,7 +466,9 @@ export default defineComponent({
     const creatToAuctionMarket = async () => {
       isLoading.value = true;
       const sender = store.state.user.info.address;
-      const nft = DappConfig.config.nfts.UniartsNFT;
+      const nft = Object.values(DappConfig.config.nfts).find(
+        (v) => v.address.toLowerCase() == selectItem.value.nft_contract?.toLowerCase()
+      );
       const erc721 = new Erc721(nft.address, nft.symbol);
       // const contract = Auction;
       const contractAddress = selectItem.value.auction_contract_address;
@@ -474,14 +508,14 @@ export default defineComponent({
                 });
                 notification.dismiss(notifyId);
                 notification.success(txHash);
-                isLoading.value = false;
-                closeListDialog();
+                // isLoading.value = false;
               }
             }
           );
           isLoading.value = false;
           notification.dismiss(notifyId);
           notification.success("Confirmed on Chain");
+          closeListDialog();
         } catch (err) {
           isLoading.value = false;
           notification.dismiss(notifyId);
@@ -549,26 +583,34 @@ export default defineComponent({
         }
       }
     };
+    const isListing = ref(false);
     const creatToBuyNowMarket = async () => {
       isLoading.value = true;
+      isListing.value = true;
       const sender = store.state.user.info.address;
-      const nft = DappConfig.config.nfts.UniartsNFT;
+      const nft = Object.values(DappConfig.config.nfts).find(
+        (v) => v.address.toLowerCase() == selectItem.value.nft_contract?.toLowerCase()
+      );
       const erc721 = new Erc721(nft.address, nft.symbol);
       const contract = TrustMarketplace;
       if (approving.value) {
         let notifyId = notification.loading("Wait For the Wallet");
-        isLoading.value = false;
-        notification.dismiss(notifyId);
-        notification.success("Confirmed on Chain");
+        // isLoading.value = false;
+        // notification.dismiss(notifyId);
+        // notification.success("Confirmed on Chain");
         try {
           await contract.createOrder(
-            DappConfig.config.nfts.UniartsNFT.address,
+            selectItem.value.nft_contract,
             selectItem.value.token_id,
-            BigNumber(listPrice.value).shiftedBy(DappConfig.config.tokens.WETH.decimals).toString(),
+            BigNumber(listPrice.value || 0)
+              .shiftedBy(DappConfig.config.tokens.WETH.decimals)
+              .toString(),
             Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
             (err, txHash) => {
               if (err) {
                 console.log(err);
+                isLoading.value = false;
+                isListing.value = false;
                 notification.dismiss(notifyId);
                 notification.error(
                   err.message.split("{")[0] ||
@@ -587,17 +629,21 @@ export default defineComponent({
                   token_id: selectItem.value.token_id,
                 });
                 notification.dismiss(notifyId);
-                notification.success(txHash);
-                isLoading.value = false;
-                closeListDialog();
+                notifyId = notification.loading("Waiting for confirmation on the chain");
+                // notification.success(txHash);
+                // isLoading.value = false;
               }
             }
           );
           isLoading.value = false;
+          isListing.value = false;
           notification.dismiss(notifyId);
           notification.success("Confirmed on Chain");
+          closeListDialog();
+          requestData();
         } catch (err) {
           isLoading.value = false;
+          isListing.value = false;
           notification.dismiss(notifyId);
           notification.error(
             err.message.split("{")[0] ||
@@ -608,16 +654,19 @@ export default defineComponent({
         }
       } else {
         let bool;
-        try {
-          const res = await erc721.getApproved(selectItem.value.token_id);
-          bool = res.toString() === contract.address.toString();
-          isLoading.value = false;
-        } catch (err) {
-          console.log(err);
-          bool = false;
-        }
+        isListing.value = true;
+        // try {
+        //   const res = await erc721.getApproved(selectItem.value.token_id);
+        //   bool = res.toString() === contract.address.toString();
+        //   // isLoading.value = false;
+        // } catch (err) {
+        //   console.log(err);
+        //   bool = false;
+        // }
         if (bool) {
           approving.value = true;
+          isLoading.value = false;
+          isListing.value = false;
           notification.success("Your Approved");
         } else {
           let notifyId = notification.loading("Wait For the Wallet");
@@ -628,6 +677,8 @@ export default defineComponent({
               selectItem.value.token_id,
               (err, txHash) => {
                 if (err) {
+                  isLoading.value = false;
+                  isListing.value = false;
                   console.log(err);
                   notification.dismiss(notifyId);
                   throw err;
@@ -642,16 +693,18 @@ export default defineComponent({
                   });
                   notification.dismiss(notifyId);
                   notification.success(txHash);
-                  isLoading.value = false;
-                  approving.value = true;
+                  notifyId = notification.loading("Waiting for confirmation on the chain");
                 }
               }
             );
             isLoading.value = false;
+            isListing.value = false;
+            approving.value = true;
             notification.dismiss(notifyId);
             notification.success("Approve Success");
           } catch (err) {
             isLoading.value = false;
+            isListing.value = false;
             notification.dismiss(notifyId);
             notification.error(
               err.message.split("{")[0] ||
@@ -713,7 +766,7 @@ export default defineComponent({
       } else if (auction.buy_now_order) {
         try {
           await TrustMarketplace.cancelOrder(
-            DappConfig.config.nfts.UniartsNFT.address,
+            auction.nft_contract,
             auction.token_id,
             (err, txHash) => {
               if (err) {
@@ -754,6 +807,27 @@ export default defineComponent({
     const goDetail = (id) => {
       router.push("/marketplace/detail/" + id);
     };
+
+    const getBuyNowApprove = async () => {
+      isLoading.value = true;
+      try {
+        const nft = Object.values(DappConfig.config.nfts).find(
+          (v) => v.address.toLowerCase() == selectItem.value.nft_contract?.toLowerCase()
+        );
+        const erc721 = new Erc721(nft.address, nft.symbol);
+        const contract = TrustMarketplace;
+        const res = await erc721.getApproved(selectItem.value.token_id);
+        const bool = res.toString() === contract.address.toString();
+        // isLoading.value = false;
+        bool ? (approving.value = true) : "";
+        isLoading.value = false;
+      } catch (err) {
+        console.log(err);
+        // bool = false;
+        approving.value = false;
+        isLoading.value = false;
+      }
+    };
     return {
       pin,
       selectItem,
@@ -779,6 +853,7 @@ export default defineComponent({
       creatAuctionData,
       removeOrder,
       dataLoading,
+      isPinning,
     };
   },
 });

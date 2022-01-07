@@ -120,22 +120,27 @@ export default defineComponent({
     const onWithdraw = async () => {
       isWithdrawing.value = true;
       console.log(connectedAccount, currentIndex.value);
-      const notifyId = notification.loading("Please wait for the wallet's response");
+      let notifyId = notification.loading("Please wait for the wallet's response");
       VoteMining.redeemUnbonding(connectedAccount, currentIndex.value, async (err, txHash) => {
-        isWithdrawing.value = false;
+        // isWithdrawing.value = false;
         if (err) {
+          isWithdrawing.value = false;
           console.log(err);
           throw err;
         }
         if (txHash) {
           console.log(txHash);
           notification.dismiss(notifyId);
-          notification.success(txHash);
-          onCloseDialog();
+          // notification.success(txHash);
+          // onCloseDialog();
+          notifyId = notification.loading("Waiting for confirmation on the chain");
         }
       })
         .then(async (receipt) => {
           console.log("receipt: ", receipt);
+          isWithdrawing.value = false;
+          notification.dismiss(notifyId);
+          onCloseDialog();
         })
         .catch((err) => {
           console.log(err);
