@@ -224,6 +224,7 @@ import Erc20 from "../../../contracts/Erc20";
 import { toBN } from "web3-utils";
 import moment from "moment";
 import Mobilecomfirm from "@/components/MobileConfirm";
+import { FormatRpcError } from "@/utils";
 
 export default defineComponent({
   name: "auction",
@@ -474,11 +475,17 @@ export default defineComponent({
         .catch((err) => {
           isLoading.value = false;
           notification.dismiss(notifyId);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
         });
     };
@@ -514,11 +521,17 @@ export default defineComponent({
         .catch((err) => {
           isLoading.value = false;
           notification.dismiss(notification);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
         });
     };
@@ -647,11 +660,17 @@ export default defineComponent({
         .catch((err) => {
           isLoading.value = false;
           notification.dismiss(notification);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
         });
     };
