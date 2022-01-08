@@ -205,6 +205,7 @@ import TrustMarketplace from "@/contracts/TrustMarketplace";
 import { BigNumber } from "@/plugins/bignumber";
 import Auction from "@/contracts/Auction";
 import AdaptiveView from "@/components/AdaptiveView";
+import { FormatRpcError } from "@/utils";
 
 export default defineComponent({
   name: "MarketCollection",
@@ -247,11 +248,17 @@ export default defineComponent({
         .catch((err) => {
           console.log(err);
           dataLoading.value = false;
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
         });
     };
@@ -326,11 +333,17 @@ export default defineComponent({
           isLoading.value = false;
           notification.dismiss(notifyId);
           console.log(err);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
         });
     };
@@ -388,11 +401,17 @@ export default defineComponent({
 
           notification.dismiss(notifyId);
           // notification.error(err);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
           return;
         }
@@ -404,11 +423,17 @@ export default defineComponent({
           isPinning.value = false;
           console.log(err);
           notification.dismiss(notifyId);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
           throw err;
         }
@@ -433,11 +458,17 @@ export default defineComponent({
           isPinning.value = false;
           console.log(err);
           notification.dismiss(notifyId);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
         });
     };
@@ -519,11 +550,17 @@ export default defineComponent({
         } catch (err) {
           isLoading.value = false;
           notification.dismiss(notifyId);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
         }
       } else {
@@ -645,11 +682,17 @@ export default defineComponent({
           isLoading.value = false;
           isListing.value = false;
           notification.dismiss(notifyId);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
         }
       } else {
@@ -753,11 +796,17 @@ export default defineComponent({
           notification.success("Confirmed on Chain");
         } catch (err) {
           console.log(err);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
         } finally {
           notification.dismiss(loadingMessage);
@@ -791,11 +840,17 @@ export default defineComponent({
           notification.success("Confirmed on Chain");
         } catch (err) {
           console.log(err);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
         } finally {
           notification.dismiss(loadingMessage);

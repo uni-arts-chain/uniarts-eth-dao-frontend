@@ -163,6 +163,7 @@ import { notification } from "@/components/Notification";
 import TrustMarketplace from "@/contracts/TrustMarketplace";
 import { BigNumber } from "@/plugins/bignumber";
 import { toBN } from "web3-utils";
+import { FormatRpcError } from "@/utils";
 // import Dialog from "@/components/Dialog";
 // import Mobilecomfirm from "@/components/MobileConfirm";
 
@@ -252,11 +253,17 @@ export default defineComponent({
         } catch (err) {
           isLoading.value = false;
           notification.dismiss(notifyId);
+          let formatError = FormatRpcError(err);
+          let result = formatError
+            ? {
+                data:
+                  (formatError.message && formatError) ||
+                  formatError?.data ||
+                  formatError?.originalError,
+              }
+            : err;
           notification.error(
-            err.message.split("{")[0] ||
-              (err.head && err.head.msg) ||
-              err.message ||
-              (err.data && err.data.message)
+            (result.head && err.head.msg) || result.message || (result.data && result.data.message)
           );
           throw err;
         }
