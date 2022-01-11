@@ -51,6 +51,12 @@ export default defineComponent({
       }
     });
 
+    watch(isLoading, (value, oldValue) => {
+      if (!value && oldValue) {
+        store.dispatch("user/GetInfo");
+      }
+    });
+
     onMounted(async () => {
       store.dispatch("global/DetectNetwork");
     });
