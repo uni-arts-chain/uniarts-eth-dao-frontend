@@ -1,2 +1,3 @@
 /src/config/network/index.js merge=ours
 build.sh merge=ours
+k8s-website.yaml merge=ours
