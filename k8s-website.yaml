@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: uni-arts-airdrop
-  name: uni-arts-airdrop
+    app: uni-arts-airdrop-demo
+  name: uni-arts-airdrop-demo
 spec:
   replicas: 1
   strategy:
@@ -13,15 +13,15 @@ spec:
       maxUnavailable: 0
   selector:
     matchLabels:
-      app: uni-arts-airdrop
+      app: uni-arts-airdrop-demo
   template:
     metadata:
       labels:
-        app: uni-arts-airdrop
+        app: uni-arts-airdrop-demo
     spec:
       containers:
-      - name: uni-arts-airdrop
-        image: registry.cn-hongkong.aliyuncs.com/tatmas/uni-arts-airdrop
+      - name: uni-arts-airdrop-demo
+        image: registry.cn-hongkong.aliyuncs.com/uniarts/uni-arts-airdrop:demo
         resources:
           requests:
             memory: "128Mi"
@@ -39,15 +39,15 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    name: uni-arts-airdrop
-  name: uni-arts-airdrop
+    name: uni-arts-airdrop-demo
+  name: uni-arts-airdrop-demo
 spec:
   ports:
   - name: nginx
     port: 80
     targetPort: 80
   selector:
-    app: uni-arts-airdrop
+    app: uni-arts-airdrop-demo
 ---
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
@@ -55,17 +55,17 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-  name: ingress-uni-arts-airdrop
+  name: ingress-uni-arts-airdrop-demo
 spec:
   tls:
   - hosts:
-    - af.uniarts.network
-    secretName: uni-arts-airdrop-tls
+    - demo.uniarts.network
+    secretName: uni-arts-airdrop-demo-tls
   rules:
-  - host: af.uniarts.network
+  - host: demo.uniarts.network
     http:
       paths:
       - path: /
         backend:
-          serviceName: uni-arts-airdrop
+          serviceName: uni-arts-airdrop-demo
           servicePort: 80
