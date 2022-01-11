@@ -303,11 +303,19 @@ export default defineComponent({
           .catch((err) => {
             isLoading.value = false;
             notification.dismiss(notifyId);
+            let formatError = FormatRpcError(err);
+            let result = formatError
+              ? {
+                  data:
+                    (formatError.message && formatError) ||
+                    formatError?.data ||
+                    formatError?.originalError,
+                }
+              : err;
             notification.error(
-              err.message.split("{")[0] ||
-                (err.head && err.head.msg) ||
-                err.message ||
-                (err.data && err.data.message)
+              (result.head && err.head.msg) ||
+                result.message ||
+                (result.data && result.data.message)
             );
             console.log(err);
           });

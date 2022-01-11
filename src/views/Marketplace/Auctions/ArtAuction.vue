@@ -586,7 +586,7 @@ export default defineComponent({
       });
       const { list } = await http.globalGetAuctionById({ aid: id2 }, { id });
       auction.value = list && list.length > 0 ? list[0] : {};
-      marketToken.value = DappConfig.config.tokens[auction.value.biding_coin.toUpperCase()];
+      // marketToken.value = DappConfig.config.tokens[auction.value.biding_coin.toUpperCase()];
       try {
         if (auction.value?.token_id >= 0 && auction.value?.vote_contract) {
           console.log(Config.DAPP_CONTRACTS);
