@@ -30,6 +30,9 @@
           </div>
         </el-carousel-item>
       </el-carousel>
+      <router-link class="last-vote-button" to="/vote/votedlist"
+        >View result of last vote round</router-link
+      >
     </div>
     <div class="banner" v-if="currentTab == 2" v-loading="isLoading">
       <div class="banner no-data" v-if="auctionList.length == 0">No auction</div>
@@ -203,8 +206,23 @@ export default defineComponent({
     }
   }
 }
+.banner a.last-vote-button {
+  width: 344px;
+  height: 47px;
+  background: #000000;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: center;
+  color: #ffffff;
+  line-height: 47px;
+  margin: 20px auto;
+  cursor: pointer;
+  display: block;
+  max-width: 90%;
+}
 .banner.no-data {
-  height: 600px;
+  height: 300px;
   display: flex;
   align-items: center;
   justify-content: center;

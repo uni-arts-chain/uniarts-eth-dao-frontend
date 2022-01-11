@@ -26,7 +26,7 @@ module.exports = {
       address: "0x5608D5159ab98881bc116ae7761c74Ad2eBb0448",
     },
     WETH: {
-      symbol: "wETH",
+      symbol: "ETH",
       decimals: 18,
       address: "0x2170ed0880ac9a755fd29b2688956bd959f933f8",
     },
@@ -55,7 +55,7 @@ module.exports = {
       address: "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
     },
     WETH: {
-      symbol: "wETH",
+      symbol: "ETH",
       decimals: 18,
       address: "0x2170ed0880ac9a755fd29b2688956bd959f933f8",
     },

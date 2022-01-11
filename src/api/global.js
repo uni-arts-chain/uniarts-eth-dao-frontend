@@ -26,6 +26,15 @@ const apiList = [
     options: {},
   },
   {
+    name: "getGroupVotedList",
+    method: "GET",
+    desc: "获取上一期投票组列表",
+    path: "/arts/lvr",
+    mockPath: "/arts/lvr",
+    params: {},
+    options: {},
+  },
+  {
     name: "getGroupVoted",
     method: "GET",
     desc: "获取投票组票数",

@@ -68,20 +68,6 @@ module.exports = {
   },
   devServer: {
     port: 8080,
-    proxy: {
-      "/test/api": {
-        target: "https://dapp.uniarts.network",
-        pathRewrite: {
-          "^/test/api": "/api",
-        },
-      },
-      "/api": {
-        target: "https://dapp.uniarts.network",
-        pathRewrite: {
-          "^api": "/api",
-        },
-      },
-    },
   },
   css: {
     loaderOptions: {
