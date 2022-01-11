@@ -1,1 +1,2 @@
 /src/config/network/index.js merge=ours
+build.sh merge=ours
