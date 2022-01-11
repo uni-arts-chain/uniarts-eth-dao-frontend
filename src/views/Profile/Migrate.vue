@@ -15,8 +15,8 @@
     <div class="dialog-content dialog-body">
       <div class="title">
         <span
-          >Please retrieve your voted wETH before migrating. Voted UARTs will be migrated into new
-          contract automatically</span
+          >Please retrieve your voted {{ weth_token.symbol }} before migrating. Voted UARTs will be
+          migrated into new contract automatically</span
         >
       </div>
       <button @click="onRetrieve">Retrieve</button>
@@ -40,6 +40,7 @@ import { defineComponent, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import store from "@/store";
 import Config from "@/config";
+import DappConfig from "@/config/dapp";
 import { notification } from "@/components/Notification";
 import Dialog from "@/components/Dialog";
 import MobileConfirm from "@/components/MobileConfirm";
@@ -53,6 +54,10 @@ export default defineComponent({
 
     const dialogInfoVisible = ref(false);
     const migrateLoading = ref(false);
+
+    const weth_token = ref(
+      Object.keys(DappConfig.config.tokens).find((v) => v.toUpperCase() == "WETH")
+    );
 
     const onMigrate = () => {
       if (store.getters["user/canRetrieve"]) {
@@ -101,7 +106,7 @@ export default defineComponent({
 
     onMounted(() => {
       if (!store.getters["user/canMigrate"]) {
-        router.push("/profile");
+        // router.push("/profile");
       }
     });
 
@@ -110,6 +115,7 @@ export default defineComponent({
       dialogInfoVisible,
       migrateLoading,
       onRetrieve,
+      weth_token,
     };
   },
 });

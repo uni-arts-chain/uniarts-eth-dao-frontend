@@ -153,7 +153,10 @@
               </div>
               <div class="order-info">
                 <div class="label">Expiration</div>
-                <div class="value">in {{ formateDate(v.expired_at) }} days</div>
+                <div class="value" v-if="formateDate(v.expired_at) > 0">
+                  in {{ formateDate(v.expired_at) }} days
+                </div>
+                <div class="value" v-else>expired</div>
               </div>
               <div class="order-info">
                 <div class="label">From</div>
