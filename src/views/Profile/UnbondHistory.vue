@@ -17,7 +17,8 @@
           ><span>{{ v.state }}</span></el-col
         >
         <el-col :span="8" class="item">
-          <span style="text-align: right">{{ v.amount }}</span
+          <span style="text-align: right"
+            >{{ formatNumber(v.amount[0]) || 0 }} / {{ formatNumber(v.amount[1]) || 0 }}</span
           ><button class="operate" @click="onShowDialog(v.index)">Withdraw</button>
         </el-col>
         <el-col :span="7" class="item"
@@ -88,7 +89,10 @@ export default defineComponent({
         .userGetUnbindHistory({})
         .then((res) => {
           isLoading.value = false;
-          list.value = res.list;
+          list.value = res.list.map((v) => {
+            v.amount = v.amount.split("/");
+            return v;
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -159,6 +163,9 @@ export default defineComponent({
     const format = (time) => {
       return DateFormat(time);
     };
+    const formatNumber = (number, decimals = 4) => {
+      return new BigNumber(new BigNumber(number || 0).toFixed(decimals, 1)).toNumber();
+    };
 
     watch(dialogTableVisible, (value) => {
       if (!value) {
@@ -179,6 +186,7 @@ export default defineComponent({
       isWithdrawing,
 
       unableWithdraw,
+      formatNumber,
     };
   },
 });
