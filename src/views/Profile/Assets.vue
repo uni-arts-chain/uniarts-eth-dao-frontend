@@ -24,7 +24,9 @@
           ><span style="text-align: center">{{ v.voted }}</span></el-col
         >
         <el-col :span="6" class="item">
-          <span style="text-align: center">{{ v.bound }}</span>
+          <span style="text-align: right; display: inline-block; max-width: 100%; width: auto">{{
+            v.bound
+          }}</span>
           <button v-if="v.token?.toUpperCase() === 'UART'" @click="onShowDialog(v)">unBond</button>
         </el-col>
         <el-col :span="7" class="item">
