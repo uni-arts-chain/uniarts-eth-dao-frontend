@@ -614,6 +614,7 @@ export default defineComponent({
     const isChartLoading = ref(false);
 
     const getSouvenirChartData = () => {
+      if (!curChartToken.value) return;
       isChartLoading.value = true;
       http
         .globalGetSouvenirChart(
