@@ -260,6 +260,18 @@ const apiList = [
     params: {},
     options: {},
   },
+  {
+    name: "getSouvenirChart",
+    method: "GET",
+    desc: "纪念品价格走势",
+    path: "/souvenirs/{:id}/charts",
+    mockPath: "/souvenirs/{:id}/charts",
+    params: {
+      period: "",
+      token: "",
+    },
+    options: {},
+  },
 ];
 
 export default apiList;
