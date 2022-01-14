@@ -182,6 +182,45 @@
           </el-scrollbar>
         </div>
       </div>
+      <div class="info-item chart-item">
+        <div class="title">
+          <div class="title-label">
+            <img class="list-icon" src="@/assets/images/chart-line.png" /><span>Price History</span>
+          </div>
+        </div>
+        <div class="details">
+          <div class="tab-select">
+            <el-dropdown trigger="click" @command="checkChartTime">
+              <span class="el-dropdown-link">
+                {{ curChartDay ? `Last ${curChartDay} Days` : `All Times` }}
+                <icon-svg icon-class="arrow" style="margin-left: 10px"></icon-svg>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item :command="null">All Time</el-dropdown-item>
+                  <el-dropdown-item :command="v" v-for="(v, i) in chartDayList" :key="i"
+                    >Last {{ v }} Days</el-dropdown-item
+                  >
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            <div class="token-buttons">
+              <button
+                :class="{ active: v == curChartToken }"
+                @click="checkChartToken(v)"
+                v-for="(v, i) in chartTokenList"
+                :key="i"
+              >
+                {{ v }}
+              </button>
+            </div>
+          </div>
+          <div class="chart-wrapper" v-loading="isChartLoading">
+            <Chart v-if="chartPriceData.length > 0" :data="chartPriceData" />
+            <div v-if="chartPriceData.length <= 0" class="chart-no-data">No data</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <Dialog
@@ -268,6 +307,7 @@ import copy from "clipboard-copy";
 import DappConfig from "@/config/dapp";
 import Erc20 from "@/contracts/Erc20";
 import { BigNumber } from "@/plugins/bignumber";
+import Chart from "./Chart";
 
 export default defineComponent({
   name: "Detail",
@@ -275,6 +315,7 @@ export default defineComponent({
     AdaptiveImage,
     MobileConfirm,
     Dialog,
+    Chart,
   },
   setup() {
     const onCopy = (v) => copy(v);
@@ -293,6 +334,9 @@ export default defineComponent({
       //   let list = await http.userGetSouvenirsStatus({});
       //   souvenirMineOrderList.value = list?.list || [];
       // }
+      chartTokenList.value = souvenir.value.souvenir_order_tokens;
+      curChartToken.value = chartTokenList.value[0] || "";
+      getSouvenirChartData();
       requestOrderList(isAppend);
     };
     const isLoadingList = ref(false);
@@ -562,6 +606,44 @@ export default defineComponent({
       }
     };
 
+    const chartTokenList = ref([]);
+    const curChartToken = ref("");
+    const chartPriceData = ref([]);
+    const chartDayList = ref([7, 14, 30, 60, 90]);
+    const curChartDay = ref(null);
+    const isChartLoading = ref(false);
+
+    const getSouvenirChartData = () => {
+      isChartLoading.value = true;
+      http
+        .globalGetSouvenirChart(
+          {
+            period: curChartDay.value,
+            token: curChartToken.value,
+          },
+          { id: souvenir.value.souvenir_id }
+        )
+        .then((res) => {
+          isChartLoading.value = false;
+          chartPriceData.value = res.list;
+        })
+        .catch((err) => {
+          console.log(err);
+          isChartLoading.value = false;
+          notification.error(err.head ? err.head.msg : err.message);
+        });
+    };
+
+    const checkChartTime = (time) => {
+      curChartDay.value = time;
+      getSouvenirChartData();
+    };
+
+    const checkChartToken = (token) => {
+      curChartToken.value = token;
+      getSouvenirChartData();
+    };
+
     return {
       onCopy,
       souvenir,
@@ -590,6 +672,14 @@ export default defineComponent({
       selectItem,
 
       getIcon,
+      chartPriceData,
+      chartDayList,
+      curChartDay,
+      checkChartTime,
+      chartTokenList,
+      curChartToken,
+      checkChartToken,
+      isChartLoading,
     };
   },
 });
@@ -991,6 +1081,63 @@ export default defineComponent({
         width: 100px;
       }
     }
+  }
+}
+.info-item.chart-item .details {
+  border-radius: 10px;
+  border: 1px solid #a2a2a2;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 0px 0px 0px 0;
+}
+.tab-select {
+  padding: 10px 0;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-top: 30px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  .token-buttons {
+    margin-left: 20px;
+    button.active {
+      background-color: black;
+      color: white;
+      border-color: transparent;
+    }
+    button {
+      min-width: 80px;
+      height: 36px;
+      cursor: pointer;
+      text-align: center;
+      border: 1px solid #a2a2a2;
+      border-radius: 10px;
+      padding: 10px 10px;
+      background-color: transparent;
+      margin-right: 10px;
+    }
+  }
+}
+.detail .chart-no-data {
+  height: 270px;
+  text-align: center;
+  line-height: 270px;
+}
+.detail .el-dropdown-link {
+  border: 1px solid #a2a2a2;
+  border-radius: 10px;
+  padding: 10px 10px;
+  display: flex;
+  cursor: pointer;
+  align-items: center;
+}
+.detail .chart-wrapper {
+  width: 100%;
+  height: 300px;
+  .chart {
+    width: 100%;
+    height: 270px;
   }
 }
 
