@@ -7,24 +7,39 @@
       <div class="desc-content" v-html="auction?.art?.details"></div>
       <div class="more">More ></div>
       <div class="token-info">
-        <!--        <div class="token">-->
-        <!--          <span> Token mint: </span>-->
-        <!--          <span class="value">{{ auction.token_mint }}</span>-->
-        <!--          <span>UART</span>-->
-        <!--        </div>-->
         <div class="bid">
           <span> Price: </span>
           <span class="value">{{ auction.price }}</span>
           <span>{{ marketToken.symbol }}</span>
         </div>
       </div>
+      <div class="bid-history token-detail" style="margin-bottom: 30px">
+        <div class="bid-title" style="margin-top: 30px">
+          <span style="font-family: Montserrat-Bold">Token Details</span>
+        </div>
+        <div>
+          <div class="token-row-detail">
+            <span>Contract Address: </span>
+            <span class="address" @click="onCopy(auction.nft_contract?.toUpperCase())">{{
+              formatAddress(auction.nft_contract?.toUpperCase())
+            }}</span>
+          </div>
+          <div class="token-row-detail">
+            <span>Token ID: </span>
+            <span>{{ auction.token_id }}</span>
+          </div>
+          <div class="token-row-detail">
+            <span>Token Standard: </span>
+            <span>{{ auction.token_standard?.toUpperCase() }}</span>
+          </div>
+          <div class="token-row-detail">
+            <span>Blockchain: </span>
+            <span>{{ auction.nft_blockchain }}</span>
+          </div>
+        </div>
+      </div>
       <div class="bid-history">
-        <!--        <div class="bid-title">-->
-        <!--          <span style="font-family: Montserrat-Bold">Bid History</span>-->
-        <!--          <span>Total {{ auctionBids.length }} Bids</span>-->
-        <!--        </div>-->
         <div class="button-group">
-          <!--          <button @click="openMakeOfferDialog">Make an Offer</button>-->
           <button v-loading="isLoading" @click="buyNow">
             {{ isApproving ? "Collect Now" : "Approve" }}
           </button>
@@ -40,10 +55,6 @@
       <div class="nft">
         <AdaptiveView :nft="auction.art ? auction.art : {}" height="515px" width="520px" />
       </div>
-      <!--      <div class="notice">-->
-      <!--        <img src="@/assets/images/date-clock.png" />-->
-      <!--        {{ getAuctionDateString }}-->
-      <!--      </div>-->
     </div>
     <div class="right">
       <div class="back">
@@ -118,6 +129,31 @@
           <span>{{ marketToken.symbol }}</span>
         </div>
       </div>
+      <div class="bid-history token-detail" style="margin-bottom: 30px">
+        <div class="bid-title" style="margin-top: 30px">
+          <span style="font-family: Montserrat-Bold">Token Details</span>
+        </div>
+        <div>
+          <div class="token-row-detail">
+            <span>Contract Address: </span>
+            <span class="address" @click="onCopy(auction.nft_contract?.toUpperCase())">{{
+              formatAddress(auction.nft_contract?.toUpperCase())
+            }}</span>
+          </div>
+          <div class="token-row-detail">
+            <span>Token ID: </span>
+            <span>{{ auction.token_id }}</span>
+          </div>
+          <div class="token-row-detail">
+            <span>Token Standard: </span>
+            <span>{{ auction.token_standard?.toUpperCase() }}</span>
+          </div>
+          <div class="token-row-detail">
+            <span>Blockchain: </span>
+            <span>{{ auction.nft_blockchain }}</span>
+          </div>
+        </div>
+      </div>
       <div class="bid-history">
         <div class="button-group">
           <button v-loading="isLoading" @click="buyNow">
@@ -164,6 +200,7 @@ import TrustMarketplace from "@/contracts/TrustMarketplace";
 import { BigNumber } from "@/plugins/bignumber";
 import { toBN } from "web3-utils";
 import { FormatRpcError } from "@/utils";
+import copy from "clipboard-copy";
 // import Dialog from "@/components/Dialog";
 // import Mobilecomfirm from "@/components/MobileConfirm";
 
@@ -321,6 +358,17 @@ export default defineComponent({
           });
       }
     };
+
+    const formatAddress = (address) => {
+      if (!address) return "";
+      return address.substr(0, 6) + "..." + address.substr(-4, 4);
+    };
+
+    const onCopy = (v) => {
+      copy(v);
+      notification.success("Copy successfully");
+    };
+
     return {
       marketCurrency,
       marketToken,
@@ -329,6 +377,9 @@ export default defineComponent({
       buyNow,
       isApproving,
       isLoading,
+
+      formatAddress,
+      onCopy,
     };
   },
 });
@@ -463,6 +514,30 @@ export default defineComponent({
           text-align: left;
           color: #595757;
           line-height: 27px;
+        }
+      }
+    }
+
+    .token-detail {
+      .token-row-detail {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 15px;
+        font-family: Montserrat-Regular;
+        font-weight: 300;
+        text-align: left;
+        color: #595757;
+        margin-bottom: 15px;
+        span.address {
+          display: block;
+          max-width: 100px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          cursor: pointer;
+          color: black;
+          font-weight: 900;
         }
       }
     }

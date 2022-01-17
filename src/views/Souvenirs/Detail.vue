@@ -318,7 +318,10 @@ export default defineComponent({
     Chart,
   },
   setup() {
-    const onCopy = (v) => copy(v);
+    const onCopy = (v) => {
+      copy(v);
+      notification.success("Copy successfully");
+    };
     const route = useRoute();
     const souvenir = ref({});
     const souvenirOrderList = ref([]);
