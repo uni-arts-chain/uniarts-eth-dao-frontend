@@ -46,7 +46,7 @@
           </div>
           <div class="token-row-detail">
             <span>Token ID: </span>
-            <span>{{ auction.token_id }}</span>
+            <span>{{ formatTokenId(auction.token_id) }}</span>
           </div>
           <div class="token-row-detail">
             <span>Token Standard: </span>
@@ -192,7 +192,7 @@
           </div>
           <div class="token-row-detail">
             <span>Token ID: </span>
-            <span>{{ auction.token_id }}</span>
+            <span>{{ formatTokenId(auction.token_id) }}</span>
           </div>
           <div class="token-row-detail">
             <span>Token Standard: </span>
@@ -731,6 +731,16 @@ export default defineComponent({
       return address.substr(0, 6) + "..." + address.substr(-4, 4);
     };
 
+    const formatTokenId = (id) => {
+      if (!id) return;
+      let tokenId = id + "";
+      if (id.length > 10) {
+        return tokenId.substr(0, 5) + "..." + tokenId.substr(-5, 5);
+      } else {
+        return id;
+      }
+    };
+
     const onCopy = (v) => {
       copy(v);
       notification.success("Copy successfully");
@@ -766,6 +776,7 @@ export default defineComponent({
       myOrder,
 
       formatAddress,
+      formatTokenId,
       onCopy,
     };
   },
@@ -881,6 +892,13 @@ export default defineComponent({
           cursor: pointer;
           color: black;
           font-weight: 900;
+        }
+        span:last-child {
+          max-width: 50%;
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
     }
