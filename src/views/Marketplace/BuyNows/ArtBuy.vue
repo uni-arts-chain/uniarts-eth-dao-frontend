@@ -26,7 +26,9 @@
           </div>
           <div class="token-row-detail">
             <span>Token ID: </span>
-            <span>{{ formatTokenId(auction.token_id) }}</span>
+            <span style="color: black; cursor: pointer" @click="onCopy(auction.token_id)">{{
+              formatTokenId(auction.token_id)
+            }}</span>
           </div>
           <div class="token-row-detail">
             <span>Token Standard: </span>
@@ -142,7 +144,9 @@
           </div>
           <div class="token-row-detail">
             <span>Token ID: </span>
-            <span>{{ formatTokenId(auction.token_id) }}</span>
+            <span style="color: black; cursor: pointer" @click="onCopy(auction.token_id)">{{
+              formatTokenId(auction.token_id)
+            }}</span>
           </div>
           <div class="token-row-detail">
             <span>Token Standard: </span>

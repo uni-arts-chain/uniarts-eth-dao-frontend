@@ -72,6 +72,11 @@ const routes = [
         ],
       },
       {
+        path: "vault",
+        name: "myVault",
+        component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/Vault.vue"),
+      },
+      {
         path: "my_order",
         name: "myOrder",
         component: () => import(/* webpackChunkName: "profile" */ "../views/Profile/MyOrder.vue"),

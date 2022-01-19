@@ -169,6 +169,15 @@ const apiList = [
     },
     options: {},
   },
+  {
+    name: "getPinnedList",
+    method: "GET",
+    desc: "已pin艺术品列表",
+    path: "/arts/pinned",
+    mockPath: "/arts/pinned",
+    params: {},
+    options: {},
+  },
 ];
 
 export default apiList;
