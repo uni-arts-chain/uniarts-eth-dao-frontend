@@ -18,6 +18,9 @@
           <li class="menu-li">
             <router-link class="link" to="/profile/collection/arts">My Collection</router-link>
           </li>
+          <li class="menu-li">
+            <router-link class="link" to="/profile/vault">My Vault</router-link>
+          </li>
           <!--          <li class="menu-li">-->
           <!--            <router-link class="link" to="/profile/my_order">My Order</router-link>-->
           <!--          </li>-->
@@ -37,7 +40,7 @@
     </div>
     <div class="info" v-else>
       <div class="info-wrapper">
-        <el-tabs v-model="curTab" @tab-click="handleClick">
+        <el-tabs v-model="curTab">
           <el-tab-pane label="My Assets" name="1">
             <template #label>
               <router-link class="link" to="/profile">My Assets</router-link>
@@ -53,9 +56,14 @@
               <router-link class="link" to="/profile/history">My Rewards</router-link>
             </template>
           </el-tab-pane>
-          <el-tab-pane label="My Colloection" name="3">
+          <el-tab-pane label="My Collection" name="7">
             <template #label>
               <router-link class="link" to="/profile/collection/arts">My Collection</router-link>
+            </template>
+          </el-tab-pane>
+          <el-tab-pane label="My Vault" name="8">
+            <template #label>
+              <router-link class="link" to="/profile/vault">My Vault</router-link>
             </template>
           </el-tab-pane>
           <!--          <el-tab-pane label="My Colloection" name="6">-->
@@ -106,10 +114,13 @@ export default defineComponent({
       case "/profile/collection/souvenirs":
       case "/profile/collection/collectable":
       case "/profile/collection":
-        curTab.value = "3";
+        curTab.value = "7";
+        break;
+      case "/profile/vault":
+        curTab.value = "8";
         break;
       case "/profile/history":
-        curTab.value = "3";
+        curTab.value = "5";
         break;
     }
 
