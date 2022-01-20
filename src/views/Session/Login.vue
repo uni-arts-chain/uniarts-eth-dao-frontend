@@ -34,7 +34,7 @@
           />
         </div>
       </div>
-      <button class="register-button" @click="onLogin">SIGN UP</button>
+      <button v-loading="isLoading" class="register-button" @click="onLogin">SIGN UP</button>
     </div>
   </div>
 </template>
