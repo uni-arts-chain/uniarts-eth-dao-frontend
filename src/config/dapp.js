@@ -12,6 +12,9 @@ class DappConfig {
     });
   }
   get config() {
+    console.log("-------------");
+    console.log("Wallet.chainId: ", Wallet.chainId);
+    console.log("-------------");
     if (this.state._currentChain) {
       return this.state._currentChain;
     } else {

@@ -4,7 +4,8 @@ import { reactive } from "vue";
 import { getChainByChainId } from "evm-chains";
 class Wallet {
   constructor() {
-    this.provider = window.ethereum || window.BinanceChain;
+    // this.provider = window.ethereum || window.BinanceChain || window.onto;
+    this.provider = "";
     this.state = reactive({
       connectedAccount: "",
       chainId: "",
@@ -42,7 +43,7 @@ class Wallet {
         code: 300,
       };
     }
-    console.log(1);
+    console.log("account: ", account);
     let address = account[0];
     this.state.connectedAccount = address;
     this.state.chainId = parseInt(this.provider.chainId);
@@ -55,6 +56,13 @@ class Wallet {
     }
     this.state.isConnected = true;
     return;
+  }
+  async setProvider(provider) {
+    this.provider = provider;
+    this.state.connectedAccount = "";
+    this.state.chainId = "";
+    this.state.accountBalance = "";
+    this.state.isConnected = false;
   }
   async setListener() {
     if (!this.provider) {
@@ -74,7 +82,7 @@ class Wallet {
     }
   }
   async connect() {
-    this.provider = window.ethereum || window.BinanceChain;
+    // this.provider = window.ethereum || window.BinanceChain || window.onto;
     if (!this.provider) {
       throw {
         code: 100,

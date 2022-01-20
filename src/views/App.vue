@@ -52,13 +52,17 @@ export default defineComponent({
     });
 
     watch(isLoading, (value, oldValue) => {
-      if (!value && oldValue) {
+      if (!value && oldValue && connectAccount.value) {
         store.dispatch("user/GetInfo");
       }
     });
 
     onMounted(async () => {
-      store.dispatch("global/DetectNetwork");
+      try {
+        store.dispatch("global/DetectNetwork");
+      } catch (e) {
+        console.log(e);
+      }
     });
 
     return {

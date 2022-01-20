@@ -224,6 +224,11 @@ const routes = [
   {
     path: "/login",
     name: "login",
+    component: () => import(/* webpackChunkName: "session" */ "../views/Session/SelectWallet.vue"),
+  },
+  {
+    path: "/login/:wallet/:address",
+    name: "loginAddress",
     component: () => import(/* webpackChunkName: "session" */ "../views/Session/Login.vue"),
   },
   {

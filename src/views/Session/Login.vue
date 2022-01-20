@@ -1,60 +1,7 @@
 /** * Created by Lay Hunt on 2021-09-13 16:02:21. */
 <template>
   <div class="login container">
-    <div v-if="!isChecked" class="select-wallet">
-      <img src="@/assets/images/banner-logo@2x.png" />
-      <p>Welcome ! Please sign in</p>
-      <button v-loading="isLoading" @click="onConnectMetaMask">Sign in</button>
-      <div class="support-wallet-info" v-if="!$store.state.global.isMobile">
-        <span class="info-title">Connect with one of our available wallet providers </span>
-        <div class="wallet-icon">
-          <a
-            href="https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn"
-            target="_blank"
-            class="wallet-item"
-          >
-            <icon-svg icon-class="metamask" />
-          </a>
-          <a
-            href="https://chrome.google.com/webstore/detail/bitkeep/jiidiaalihmmhddjgbnbgdfflelocpak"
-            target="_blank"
-            class="wallet-item"
-          >
-            <icon-svg icon-class="bitkeep" style="font-size: 77px" />
-          </a>
-        </div>
-      </div>
-      <Dialog
-        v-model="dialogTableVisible"
-        customClass="retrieve-dialog"
-        v-if="!$store.state.global.isMobile"
-        type="small"
-        width="380px"
-      >
-        <div class="dialog-content">
-          <div class="dialog-title">You need an Ethereum wallet to use Art Formula.</div>
-          <div class="wallet-list">
-            <a
-              class="wallet"
-              href="https://chrome.google.com/webstore/detail/nkbihfbeogaeaoehlefnkodbefgpgknn"
-              target="_blank"
-            >
-              <icon-svg style="font-size: 45px" icon-class="metamask" />
-              <span>MetaMask</span>
-            </a>
-            <a
-              class="wallet"
-              href="https://chrome.google.com/webstore/detail/bitkeep/jiidiaalihmmhddjgbnbgdfflelocpak"
-              target="_blank"
-            >
-              <icon-svg style="font-size: 44px" icon-class="bitkeep" />
-              <span>BitKeep</span>
-            </a>
-          </div>
-        </div>
-      </Dialog>
-    </div>
-    <div v-if="!isNeedSignUp && isChecked" class="sign-in">
+    <div v-if="!isNeedSignUp" class="sign-in">
       <p>Welcome back</p>
       <p>@{{ userIntro.nickname }}!</p>
       <div class="info">
@@ -63,7 +10,7 @@
         <button v-loading="isLoading" class="sign-in-button" @click="onLogin">SIGN IN</button>
       </div>
     </div>
-    <div v-else-if="isNeedSignUp && isChecked" class="register">
+    <div v-else-if="isNeedSignUp" class="register">
       <img src="@/assets/images/banner-logo@2x.png" />
       <div class="info">
         <div class="label">ADDRESS</div>
@@ -93,24 +40,24 @@
 </template>
 
 <script>
-import { defineComponent, ref, reactive } from "vue";
+import { defineComponent, ref, reactive, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { notification } from "@/components/Notification";
 import http from "@/plugins/http";
 import wallet from "@/plugins/wallet";
 import store from "@/store";
-import Dialog from "@/components/Dialog";
 
 export default defineComponent({
   name: "login",
-  components: {
-    Dialog,
-  },
+
   setup() {
     // TODO
     const router = useRouter();
     const route = useRoute();
     const back = route.query.back ? decodeURIComponent(route.query.back) : "";
+
+    const currentWallet = route.params.wallet;
+    const currentAddress = route.params.address;
 
     const isLoading = ref(false);
     const isChecked = ref(false);
@@ -163,6 +110,7 @@ export default defineComponent({
         }
 
         await store.dispatch("user/SetInfo", info);
+        await store.dispatch("user/SetWallet", currentWallet);
         isLoading.value = true;
         notification.success("Logged");
         isLoading.value = false;
@@ -171,6 +119,7 @@ export default defineComponent({
         } else {
           router.push("/");
         }
+        await store.dispatch("global/DetectNetwork", false);
       } catch (error) {
         notification.dismiss(notifyId);
         isLoading.value = false;
@@ -179,7 +128,7 @@ export default defineComponent({
     };
     const checkAddress = () => {
       return http.userCheckAddress({
-        address: address.value,
+        address: currentAddress,
       });
     };
 
@@ -189,8 +138,16 @@ export default defineComponent({
     });
 
     const userIntro = reactive({});
-    const onConnectMetaMask = () => {
+    const onConnectMetaMask = async () => {
       isLoading.value = true;
+      switch (currentWallet) {
+        case "metamask":
+          await wallet.setProvider(window.ethereum || window.BinanceChain);
+          break;
+        case "onto":
+          await wallet.setProvider(window.onto);
+          break;
+      }
       store
         .dispatch("user/ConnectWallet")
         .then(async () => {
@@ -198,28 +155,22 @@ export default defineComponent({
           const intro = await checkAddress();
           userIntro.nickname = intro.nickname;
           userIntro.address = intro.address;
-          isChecked.value = true;
           isLoading.value = false;
         })
         .catch((err) => {
           console.log(err);
           isLoading.value = false;
-          if (err.code === 100) {
-            if (!store.state.global.isMobile) {
-              dialogTableVisible.value = true;
-            } else {
-              notification.error("Please install the selected wallet");
-            }
-          } else if (err.head && err.head.code === 6010) {
+          if (err.head && err.head.code === 6010) {
             isNeedSignUp.value = true;
-            isChecked.value = true;
           } else {
             notification.error(err.head ? err.head.msg : err.message);
           }
         });
     };
 
-    const dialogTableVisible = ref(false);
+    onMounted(() => {
+      onConnectMetaMask();
+    });
 
     return {
       isLoading,
@@ -231,8 +182,6 @@ export default defineComponent({
       address,
       userIntro,
       registerForm,
-
-      dialogTableVisible,
     };
   },
   beforeRouteEnter(to, from, next) {
@@ -287,6 +236,7 @@ export default defineComponent({
 
   .support-wallet-info {
     margin-top: 100px;
+    text-align: center;
     .info-title {
       font-weight: 400;
       font-size: 17px;
@@ -436,6 +386,7 @@ export default defineComponent({
       justify-content: center;
       align-items: center;
       padding: 5px 30px;
+      cursor: pointer;
     }
     .wallet > span {
       margin-left: 20px;
