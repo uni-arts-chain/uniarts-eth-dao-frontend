@@ -105,8 +105,11 @@
         <li :class="{ active: currentPath == '/souvenirs' }">
           <router-link to="/souvenirs" @click="onClickItem">Souvenirs</router-link>
         </li>
-        <li>
+        <li v-if="$store.state.user.info.address">
           <router-link to="/profile" @click="onClickItem">Account</router-link>
+        </li>
+        <li v-else>
+          <router-link class="login" to="/profile" @click="onClickItem">SIGN IN</router-link>
         </li>
         <li v-if="$store.getters['user/canMigrate']" class="icon-link">
           <router-link to="/migrate" @click="onClickItem"
@@ -419,6 +422,14 @@ export default defineComponent({
   }
   li:focus {
     background-color: none;
+  }
+  li > a.login {
+    font-size: 16px;
+    border-radius: 6px;
+    padding: 4px 15px;
+    color: #606266;
+    line-height: 18px;
+    border: 1px solid #606266;
   }
   li.icon-link {
     > a {

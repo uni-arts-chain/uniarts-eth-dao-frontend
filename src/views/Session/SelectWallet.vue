@@ -4,7 +4,8 @@
     <div class="select-wallet">
       <img src="@/assets/images/banner-logo@2x.png" />
       <p>Welcome ! Please sign in</p>
-      <button @click="onSelectWallet">Sign in</button>
+      <button v-if="!$store.state.global.isMobile" @click="onSelectWallet">Sign in</button>
+      <button v-else v-loading="isAppLoading" @click="onAppConnect">Sign in</button>
       <div class="support-wallet-info" v-if="!$store.state.global.isMobile">
         <span class="info-title">Connect with one of our available wallet providers </span>
         <div class="wallet-icon">
@@ -83,7 +84,7 @@
               href="https://chrome.google.com/webstore/detail/onto-wallet/ifckdpamphokdglkkdomedpdegcjhjdp"
               target="_blank"
             >
-              <icon-svg style="font-size: 44px" icon-class="onto" />
+              <icon-svg style="font-size: 45px" icon-class="onto" />
               <span>ONTO</span>
             </a>
           </div>
@@ -99,6 +100,7 @@ import { useRouter, useRoute } from "vue-router";
 import wallet from "@/plugins/wallet";
 import store from "@/store";
 import Dialog from "@/components/Dialog";
+import { notification } from "@/components/Notification";
 
 export default defineComponent({
   name: "login",
@@ -113,9 +115,27 @@ export default defineComponent({
 
     const isMetamaskLoading = ref(false);
     const isOntoLoading = ref(false);
+    const isAppLoading = ref(false);
 
     const onSelectWallet = () => {
       dialogLoginVisible.value = true;
+    };
+    const onAppConnect = async () => {
+      try {
+        let name = window.ethereum.isONTO ? "onto" : "metamask";
+        isAppLoading.value = true;
+        await store.dispatch("user/ConnectWallet", null, { root: true });
+        isAppLoading.value = false;
+        router.push(
+          "/login/" + name + "/" + wallet.connectedAccount + (back ? "?back=" + back : "")
+        );
+      } catch (e) {
+        console.log(e);
+        isAppLoading.value = false;
+        if (e.code === 100) {
+          notification.error("Please install wallet");
+        }
+      }
     };
     const selectWallet = async (name) => {
       try {
@@ -140,6 +160,15 @@ export default defineComponent({
         console.log(e);
         isMetamaskLoading.value = false;
         isOntoLoading.value = false;
+        if (e.code === 100) {
+          if (!store.state.global.isMobile) {
+            dialogTableVisible.value = true;
+            dialogLoginVisible.value = false;
+          } else {
+            notification.error("Please install the selected wallet");
+            dialogLoginVisible.value = false;
+          }
+        }
       }
     };
 
@@ -154,6 +183,7 @@ export default defineComponent({
       dialogLoginVisible,
       onSelectWallet,
       selectWallet,
+      onAppConnect,
     };
   },
   beforeRouteEnter(to, from, next) {

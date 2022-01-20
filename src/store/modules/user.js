@@ -36,8 +36,11 @@ export default {
     },
   },
   actions: {
-    async ConnectWallet({ dispatch, state }) {
-      if (state.wallet) {
+    async ConnectWallet({ dispatch, state, rootState }) {
+      if (rootState.global.isMobile) {
+        let wallet = window.ethereum || window.BinanceChain;
+        await Wallet.setProvider(wallet);
+      } else if (state.wallet) {
         let wallet = "";
         switch (state.wallet) {
           case "metamask":
@@ -49,7 +52,6 @@ export default {
         }
         await Wallet.setProvider(wallet);
       }
-      console.log(Wallet.isConnected);
       if (!Wallet.isConnected) {
         await Wallet.connect();
       }
