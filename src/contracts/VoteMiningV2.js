@@ -3,7 +3,7 @@ import { BigNumber } from "@/plugins/bignumber";
 import { toBN } from "web3-utils";
 import Wallet from "@/plugins/wallet";
 import DappConfig from "@/config/dapp";
-import VoteMiningABI from "@/contracts/abi/VoteMining";
+import VoteMiningABI from "@/contracts/abi/VoteMiningV2";
 import { FormatRpcError } from "@/utils";
 // import store from "@/store";
 

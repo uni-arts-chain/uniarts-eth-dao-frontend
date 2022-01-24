@@ -73,7 +73,7 @@ export default {
           loadingInstance.close();
         } catch (e) {
           console.log(e);
-          if (e?.code == 100) {
+          if (e?.code == 100 || e?.code == 4001) {
             await Config.init(false);
             let settings = await http.globalGetSettings({});
             console.log(settings);

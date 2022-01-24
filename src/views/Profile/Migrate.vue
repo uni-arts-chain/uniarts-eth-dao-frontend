@@ -2,7 +2,9 @@
 <template>
   <div class="migrate">
     <div class="item">
-      <div class="title">Migrate the Bonded balance in contract V1 to V2</div>
+      <div class="title">
+        Migrate the Bonded balance in contract {{ migrateInfo?.contract_version }} to Latest
+      </div>
       <button @click="onMigrate" v-loading="migrateLoading">Migrate</button>
     </div>
   </div>
@@ -36,7 +38,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import store from "@/store";
 import Config from "@/config";
@@ -65,7 +67,7 @@ export default defineComponent({
         return;
       }
       migrateLoading.value = true;
-      let info = store.state.user.migrateInfo;
+      const info = store.state.user.migrateInfo;
       let migrateItem = info.find((v) => v.can_migrate);
       if (!migrateItem) {
         migrateLoading.value = false;
@@ -104,9 +106,13 @@ export default defineComponent({
       router.push("/profile/votes");
     };
 
+    const migrateInfo = computed(() => {
+      return store.state.user.migrateInfo.find((v) => v.can_migrate);
+    });
+
     onMounted(() => {
       if (!store.getters["user/canMigrate"]) {
-        // router.push("/profile");
+        router.push("/profile");
       }
     });
 
@@ -116,6 +122,7 @@ export default defineComponent({
       migrateLoading,
       onRetrieve,
       weth_token,
+      migrateInfo,
     };
   },
 });

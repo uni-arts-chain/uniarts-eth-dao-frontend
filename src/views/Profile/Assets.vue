@@ -193,9 +193,12 @@ export default defineComponent({
             (v) => v.token.toLowerCase() === DappConfig.config.tokens.UART.symbol.toLowerCase()
           );
           if (uartToken) {
-            const bonedTotal = await Config.DAPP_CONTRACTS[
-              uartToken.contract.toLowerCase()
-            ]?.contract.getBondedBalance(connectedAccount.value);
+            const voteminingContract =
+              Config.DAPP_CONTRACTS[uartToken.contract.toLowerCase()]?.contract;
+            console.log(voteminingContract.getBondedBalance);
+            console.log(voteminingContract);
+            console.log(connectedAccount.value);
+            const bonedTotal = await voteminingContract.getBondedBalance(connectedAccount.value);
             if (bonedTotal && !bonedTotal.isZero()) {
               uartToken.bound = bonedTotal
                 .shiftedBy(-DappConfig.config.tokens.UART.decimals)

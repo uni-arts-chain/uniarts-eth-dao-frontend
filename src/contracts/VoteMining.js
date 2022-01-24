@@ -113,6 +113,7 @@ class VoteMining {
   }
   async getUnbondedBalance(userAddress) {
     let balances = await this.contract.methods.unbondedBalances(userAddress).call();
+    console.log(balances);
     return new BigNumber(balances);
   }
   async getTotalVotedBalances(userAddress) {
