@@ -110,7 +110,7 @@ export default defineComponent({
     const onShowDialog = (index) => {
       dialogTableVisible.value = true;
       currentIndex.value = index;
-      bondedBalance.value = list.value.find((v) => v.index == index).amount.split("/")[0];
+      bondedBalance.value = list.value.find((v) => v.index == index).amount[0];
     };
 
     const onCloseDialog = () => {
