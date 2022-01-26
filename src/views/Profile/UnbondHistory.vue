@@ -55,11 +55,24 @@
         </button>
       </div>
     </MobileConfirm>
+    <Dialog v-model="dialogMigrateVisible" v-if="!$store.state.global.isMobile" type="small">
+      <div class="dialog-content">
+        <div class="balance">The contract has been upgraded, please migrate.</div>
+        <button @click="onMigrate()">Migrate</button>
+      </div>
+    </Dialog>
+    <MobileConfirm v-else v-model="dialogMigrateVisible">
+      <div class="confirm-content">
+        <div class="balance">The contract has been upgraded, please migrate.</div>
+        <button @click="onMigrate()">Migrate</button>
+      </div>
+    </MobileConfirm>
   </div>
 </template>
 
 <script>
 import { defineComponent, ref, onMounted, watch } from "vue";
+import { useRouter } from "vue-router";
 import http from "@/plugins/http";
 import { notification } from "@/components/Notification";
 import Dialog from "@/components/Dialog";
@@ -76,7 +89,11 @@ export default defineComponent({
   },
   setup() {
     // TODO
+
+    const router = useRouter();
+
     const dialogTableVisible = ref(false);
+    const dialogMigrateVisible = ref(false);
     const isUnbonding = ref(false);
     const bondedBalance = ref(0);
 
@@ -108,9 +125,13 @@ export default defineComponent({
     });
 
     const onShowDialog = (index) => {
+      if (store.getters["user/canMigrate"]) {
+        dialogMigrateVisible.value = true;
+        return;
+      }
       dialogTableVisible.value = true;
       currentIndex.value = index;
-      bondedBalance.value = list.value.find((v) => v.index == index).amount.split("/")[0];
+      bondedBalance.value = list.value.find((v) => v.index == index).amount[0];
     };
 
     const onCloseDialog = () => {
@@ -173,12 +194,19 @@ export default defineComponent({
       }
     });
 
+    const onMigrate = () => {
+      dialogMigrateVisible.value = false;
+      router.push("/profile/migrate");
+    };
+
     return {
       dialogTableVisible,
       isUnbonding,
       bondedBalance,
       onWithdraw,
       onShowDialog,
+      dialogMigrateVisible,
+      onMigrate,
 
       format,
       list,
