@@ -3,20 +3,20 @@ import { BigNumber } from "@/plugins/bignumber";
 import { toBN } from "web3-utils";
 import Wallet from "@/plugins/wallet";
 import DappConfig from "@/config/dapp";
-import VoteMiningABI from "@/contracts/abi/VoteMining";
+import VoteMiningABI from "@/contracts/abi/VoteMiningV2";
 import { FormatRpcError } from "@/utils";
 // import store from "@/store";
 
 class VoteMining {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DappConfig.config?.contracts?.VoteMining;
+    this.address = DappConfig.config?.contracts?.VoteMiningV2;
     this.contract = new this.web3.eth.Contract(VoteMiningABI, this.address?.toString());
     this.defaultGasPrice = 20000000000;
   }
   init() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DappConfig.config?.contracts?.VoteMining;
+    this.address = DappConfig.config?.contracts?.VoteMiningV2;
     this.contract = new this.web3.eth.Contract(VoteMiningABI, this.address?.toString());
   }
   async gasPrice() {
@@ -113,7 +113,6 @@ class VoteMining {
   }
   async getUnbondedBalance(userAddress) {
     let balances = await this.contract.methods.unbondedBalances(userAddress).call();
-    console.log(balances);
     return new BigNumber(balances);
   }
   async getTotalVotedBalances(userAddress) {

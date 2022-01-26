@@ -52,7 +52,7 @@ export default {
     WindowResize({ commit }) {
       commit("SET_DEVICE", Detect.getInstance().getDevice().type);
     },
-    DetectNetwork({ dispatch, commit }) {
+    DetectNetwork({ dispatch, commit }, isConnect = true) {
       dispatch("WindowResize");
       commit("SET_PAGE_LOADING", true);
       const loadingInstance = ElLoading.service({
@@ -61,16 +61,25 @@ export default {
       });
       setTimeout(async () => {
         try {
-          await dispatch("user/ConnectWallet", null, { root: true });
+          if (isConnect) {
+            await dispatch("user/ConnectWallet", null, { root: true });
+          }
           await Config.init();
           let settings = await http.globalGetSettings({});
           console.log(settings);
           settings && commit("SET_SETTING", settings);
           commit("SET_PAGE_LOADING", false);
+
           loadingInstance.close();
         } catch (e) {
           console.log(e);
           if (e?.code == 100) {
+            await Config.init(false);
+            let settings = await http.globalGetSettings({});
+            console.log(settings);
+            settings && commit("SET_SETTING", settings);
+          } else if (e?.code == 4001) {
+            dispatch("user/Quit", null, { root: true });
             await Config.init(false);
             let settings = await http.globalGetSettings({});
             console.log(settings);

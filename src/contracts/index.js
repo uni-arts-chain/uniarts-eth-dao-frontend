@@ -9,6 +9,7 @@ import TokenLocker from "./TokenLocker";
 import TrustMarketplace from "./TrustMarketplace";
 import VoteMining from "./VoteMining";
 import VoteMiningV1 from "./VoteMiningV1";
+import VoteMiningV2 from "./VoteMiningV2";
 export default {
   Erc20,
   Auction,
@@ -21,6 +22,7 @@ export default {
   TrustMarketplace,
   VoteMining,
   VoteMiningV1,
+  VoteMiningV2,
 };
 
 export {
@@ -35,4 +37,5 @@ export {
   TrustMarketplace,
   VoteMining,
   VoteMiningV1,
+  VoteMiningV2,
 };

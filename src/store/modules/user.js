@@ -11,6 +11,7 @@ export default {
       {},
       JSON.parse(getLocalStore("user_token") || '{ "token": "", "expire_at": "", "address": "" }')
     ),
+    wallet: getLocalStore("wallet") || "",
     migrateInfo: [],
   },
   mutations: {
@@ -19,6 +20,9 @@ export default {
     },
     SET_MIGRATE_INFO(state, info) {
       state.migrateInfo = info;
+    },
+    SET_WALLET(state, wallet) {
+      state.wallet = wallet;
     },
   },
   getters: {
@@ -32,8 +36,25 @@ export default {
     },
   },
   actions: {
-    async ConnectWallet({ dispatch }) {
-      await Wallet.connect();
+    async ConnectWallet({ dispatch, state, rootState }) {
+      if (rootState.global.isMobile) {
+        let wallet = window.ethereum || window.BinanceChain;
+        await Wallet.setProvider(wallet);
+      } else if (state.wallet) {
+        let wallet = "";
+        switch (state.wallet) {
+          case "metamask":
+            wallet = window.ethereum || window.BinanceChain;
+            break;
+          case "onto":
+            wallet = window.onto;
+            break;
+        }
+        await Wallet.setProvider(wallet);
+      }
+      if (!Wallet.isConnected) {
+        await Wallet.connect();
+      }
       return dispatch("InitWallet");
     },
     async InitWallet({ state, dispatch }) {
@@ -42,8 +63,8 @@ export default {
         if (state.info.token) {
           await dispatch("Quit");
           let path =
-            "/login?back=" +
-            (location.pathname !== "/" ? encodeURIComponent(location.pathname) : "");
+            "/login" +
+            (location.pathname !== "/" ? "?back=" + encodeURIComponent(location.pathname) : "");
           location.href = path;
         }
       };
@@ -89,6 +110,10 @@ export default {
           console.log(err);
         });
     },
+    SetWallet({ commit }, wallet) {
+      commit("SET_WALLET", wallet);
+      setLocalStore("wallet", wallet);
+    },
     SetInfo({ commit }, info) {
       let tokens = {
         token: info.token,
@@ -107,6 +132,9 @@ export default {
           .userLogout({})
           .then(() => {
             removeLocalStore("user_token");
+            removeLocalStore("wallet");
+            commit("SET_WALLET", "");
+            Wallet.setProvider("");
             commit("SET_INFO", {
               token: "",
               expire_at: "",
@@ -115,6 +143,9 @@ export default {
           })
           .catch(() => {
             removeLocalStore("user_token");
+            removeLocalStore("wallet");
+            commit("SET_WALLET", "");
+            Wallet.setProvider("");
             commit("SET_INFO", {
               token: "",
               expire_at: "",

@@ -21,8 +21,11 @@
       <!--      <li>-->
       <!--        <router-link to="/marketplace"><img src="@/assets/images/search@2x.png" /></router-link>-->
       <!--      </li>-->
-      <li>
+      <li v-if="$store.state.user.info.address">
         <router-link to="/profile"><img src="@/assets/images/profile@2x.png" /></router-link>
+      </li>
+      <li v-else class="login">
+        <router-link to="/login">SIGN IN</router-link>
       </li>
       <li class="network">
         <el-dropdown trigger="click" @command="onNetworkChange">
@@ -102,8 +105,11 @@
         <li :class="{ active: currentPath == '/souvenirs' }">
           <router-link to="/souvenirs" @click="onClickItem">Souvenirs</router-link>
         </li>
-        <li>
+        <li v-if="$store.state.user.info.address">
           <router-link to="/profile" @click="onClickItem">Account</router-link>
+        </li>
+        <li v-else>
+          <router-link class="login" to="/profile" @click="onClickItem">SIGN IN</router-link>
         </li>
         <li v-if="$store.getters['user/canMigrate']" class="icon-link">
           <router-link to="/migrate" @click="onClickItem"
@@ -197,7 +203,10 @@ export default defineComponent({
 
     const currentChainInfo = ref({});
     const getCurrentChainInfo = (currentChainId) => {
-      if (!wallet.provider) return;
+      if (!wallet.provider) {
+        currentChainInfo.value = {};
+        return;
+      }
       const item = Object.values(DappConfig.networks).find(
         (v) => v.network.chainId == currentChainId
       );
@@ -232,6 +241,16 @@ export default defineComponent({
       dialogTableVisible.value = false;
       onClickItem();
     };
+
+    const currentChainId = computed(() => {
+      return wallet.chainId;
+    });
+
+    watch(currentChainId, (value) => {
+      console.log(value);
+      console.log("0x " + new Number(value).toString(16) + "--------------");
+      getCurrentChainInfo("0x" + new Number(value).toString(16));
+    });
 
     const networkList = ref(Object.values(DappConfig.networks).map((v) => v.network));
 
@@ -288,6 +307,14 @@ export default defineComponent({
   }
   li.active {
     color: $--theme-primary;
+  }
+  li.login {
+    font-size: 14px;
+    border-radius: 6px;
+    padding: 4px 15px;
+    color: #606266;
+    line-height: 18px;
+    border: 1px solid #606266;
   }
   li.network {
     display: flex;
@@ -395,6 +422,14 @@ export default defineComponent({
   }
   li:focus {
     background-color: none;
+  }
+  li > a.login {
+    font-size: 16px;
+    border-radius: 6px;
+    padding: 4px 15px;
+    color: #606266;
+    line-height: 18px;
+    border: 1px solid #606266;
   }
   li.icon-link {
     > a {
