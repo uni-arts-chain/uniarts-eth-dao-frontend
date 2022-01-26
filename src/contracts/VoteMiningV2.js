@@ -10,13 +10,13 @@ import { FormatRpcError } from "@/utils";
 class VoteMining {
   constructor() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DappConfig.config?.contracts?.VoteMining;
+    this.address = DappConfig.config?.contracts?.VoteMiningV2;
     this.contract = new this.web3.eth.Contract(VoteMiningABI, this.address?.toString());
     this.defaultGasPrice = 20000000000;
   }
   init() {
     this.web3 = new Web3(Wallet.provider);
-    this.address = DappConfig.config?.contracts?.VoteMining;
+    this.address = DappConfig.config?.contracts?.VoteMiningV2;
     this.contract = new this.web3.eth.Contract(VoteMiningABI, this.address?.toString());
   }
   async gasPrice() {

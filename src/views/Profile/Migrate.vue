@@ -74,23 +74,27 @@ export default defineComponent({
         return;
       }
       let contractModule = Config.DAPP_CONTRACTS[migrateItem?.vote_contract?.toLowerCase()];
-      const notifyId = notification.loading("Please wait for the wallet's response");
+      let notifyId = notification.loading("Please wait for the wallet's response");
       console.log(migrateItem?.vote_contract?.toLowerCase());
       console.log(Config.DAPP_CONTRACTS);
       contractModule?.contract
         ?.migrate((err, txHash) => {
-          migrateLoading.value = false;
           if (err) {
             console.log(err);
+            migrateLoading.value = false;
           }
           if (txHash) {
             console.log(txHash);
             notification.dismiss(notifyId);
-            notification.success(txHash);
+            notifyId = notification.loading("Waiting for confirmation on the chain");
           }
         })
         .then(async (receipt) => {
           console.log("receipt: ", receipt);
+          migrateLoading.value = false;
+          notification.dismiss(notifyId);
+          router.push("/profile");
+          store.dispatch("user/GetMigrateInfo");
         })
         .catch((err) => {
           migrateLoading.value = false;

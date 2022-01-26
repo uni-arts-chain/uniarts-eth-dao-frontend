@@ -238,13 +238,21 @@ export default defineComponent({
     const getStakeVoted = async () => {
       const voteMiningContract =
         Config.DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
-      console.log(voteMiningContract);
+      console.log(curNft.value?.vote_contract?.toLowerCase());
+      console.log(Config.DAPP_CONTRACTS);
+      console.log(
+        connectedAccount,
+        currentToken.address,
+        curNft.value.nft_contract,
+        curNft.value.token_id
+      );
       let votedBalance = await voteMiningContract.getAvailableBalance(
         connectedAccount,
         currentToken.address,
         curNft.value.nft_contract,
         curNft.value.token_id
       );
+      console.log(votedBalance);
       availableVotedBalance.value = new BigNumber(votedBalance)
         .shiftedBy(-currentToken.decimals)
         .toString();
@@ -289,6 +297,7 @@ export default defineComponent({
     const unStake = async () => {
       const voteMiningContract =
         Config.DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract;
+      console.log(Config.DAPP_CONTRACTS[curNft.value?.vote_contract?.toLowerCase()].contract);
       const amount = new BigNumber(inputRetrieveAmount.value);
       if (amount.isNaN() || amount.isZero()) {
         notification.error("Invalid value");
