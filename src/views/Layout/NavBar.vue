@@ -109,7 +109,7 @@
           <router-link to="/profile" @click="onClickItem">Account</router-link>
         </li>
         <li v-else>
-          <router-link class="login" to="/profile" @click="onClickItem">SIGN IN</router-link>
+          <router-link class="login" to="/login" @click="onClickItem">SIGN IN</router-link>
         </li>
         <li v-if="$store.getters['user/canMigrate']" class="icon-link">
           <router-link to="/migrate" @click="onClickItem"
@@ -159,7 +159,6 @@ import { defineComponent, computed, ref, watch, onMounted } from "vue";
 import MobileConfirm from "@/components/MobileConfirm";
 import { useRoute, useRouter } from "vue-router";
 import DappConfig from "@/config/dapp";
-import { notification } from "@/components/Notification";
 import wallet from "@/plugins/wallet";
 import store from "@/store";
 export default defineComponent({
@@ -234,7 +233,7 @@ export default defineComponent({
 
     const onNetworkChange = async (command) => {
       if (!wallet.provider) {
-        notification.error("Please install the wallet first");
+        router.push("/login");
       }
       const chainInfo = command;
       await wallet.switchNetwork(chainInfo);
