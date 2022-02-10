@@ -15,6 +15,10 @@ module.exports = {
       address: "0x5F48872D2F81d555c287F1dc2379B6E5fe1346C8",
       symbol: "UANFT",
     },
+    UniArtsDaoNFT: {
+      address: "0xBf6D6849F0CBb2aC2e8E928D287905dDba4C3fd6",
+      symbol: "UANFT",
+    },
   },
   voteTokens: {
     UART: {
