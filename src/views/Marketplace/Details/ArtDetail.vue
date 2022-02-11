@@ -59,6 +59,28 @@
             </div>
           </div>
         </div>
+        <div class="votes" v-if="info.is_couple && info.mate_couple">
+          <div class="nft-desc">
+            <div class="title">COUPLE SERIES</div>
+            <div class="nft-desc-body">
+              <div class="name-body">
+                <div class="name">{{ info.mate_couple.name }}</div>
+                <div class="artist-name">Artist: {{ info.mate_couple.artist_name }}</div>
+              </div>
+              <div class="desc-body">
+                <div class="nft-desc-body-item" @click="goCouple(info.mate_couple.art_id)">
+                  <AdaptiveImage
+                    width="100%"
+                    height="100%"
+                    :isPreview="true"
+                    :isOrigin="false"
+                    :url="info.mate_couple.property_url"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="artist-info">
         <div class="title">ABOUT ARTIST</div>
@@ -133,7 +155,8 @@
 import { defineComponent, ref, onMounted } from "vue";
 import { notification } from "@/components/Notification";
 import AdaptiveView from "@/components/AdaptiveView";
-import { useRoute } from "vue-router";
+import AdaptiveImage from "@/components/AdaptiveImage";
+import { useRoute, useRouter } from "vue-router";
 import store from "@/store";
 import http from "@/plugins/http";
 import Qrcode from "@/components/Qrcode";
@@ -145,6 +168,7 @@ export default defineComponent({
     Qrcode,
     // Progress,
     AdaptiveView,
+    AdaptiveImage,
   },
   setup() {
     // TODO
@@ -152,6 +176,7 @@ export default defineComponent({
     store.dispatch("global/SetNavText", "Detail");
 
     const route = useRoute();
+    const router = useRouter();
 
     const onCopy = (value) => {
       copy(value);
@@ -184,6 +209,13 @@ export default defineComponent({
           notification.error(err.head ? err.head.msg : err.message);
         });
     };
+    const goCouple = (id) => {
+      if (info.value.mate_couple?.for_sale) {
+        router.push("/marketplace/buy/" + id);
+      } else {
+        router.push("/marketplace/detail/" + id);
+      }
+    };
 
     onMounted(() => {
       requestData();
@@ -196,6 +228,7 @@ export default defineComponent({
       isLoading,
 
       requestData,
+      goCouple,
     };
   },
 });
@@ -364,6 +397,30 @@ export default defineComponent({
         font-weight: 300;
         color: #898989;
         line-height: 18px;
+      }
+      .nft-desc-body-item {
+        width: 200px;
+        height: 200px;
+        cursor: pointer;
+      }
+      .nft-desc-body-detail {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 40px;
+      }
+      .nft-desc-body-detail-artist {
+        margin-top: 40px;
+        display: flex;
+        align-items: center;
+        .avatar {
+          width: 30px;
+          margin-right: 10px;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
       }
     }
   }
