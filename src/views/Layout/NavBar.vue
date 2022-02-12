@@ -15,6 +15,9 @@
       <li :class="{ active: currentPath == '/airdrop' }">
         <router-link to="/airdrop">Airdrop</router-link>
       </li>
+      <li>
+        <a target="_blank" href="https://mint.uniarts.network">Couple Airdrop</a>
+      </li>
       <li :class="{ active: currentPath == '/souvenirs' }">
         <router-link to="/souvenirs">Souvenirs</router-link>
       </li>
@@ -101,6 +104,9 @@
         </li>
         <li :class="{ active: currentPath == '/airdrop' }">
           <router-link to="/airdrop" @click="onClickItem">Airdrop</router-link>
+        </li>
+        <li>
+          <a target="_blank" href="https://mint.uniarts.network">Couple Airdrop</a>
         </li>
         <li :class="{ active: currentPath == '/souvenirs' }">
           <router-link to="/souvenirs" @click="onClickItem">Souvenirs</router-link>
