@@ -289,6 +289,7 @@ export default defineComponent({
             }
           );
           isLoading.value = false;
+          isApproving.value = true;
           notification.dismiss(notifyId);
           console.log("receipt: ", receipt);
         } catch (err) {

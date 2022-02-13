@@ -1,6 +1,6 @@
 /** * Created by Lay Hunt on 2021-09-08 23:08:43. */
 <template>
-  <div class="detail" v-if="!$store.state.global.isMobile">
+  <div class="detail" v-loading="isLoading" v-if="!$store.state.global.isMobile">
     <div class="head">
       <span>{{ info.name }}</span>
       <button @click="onBack">Back</button>
@@ -8,7 +8,7 @@
     <div class="nft">
       <AdaptiveView width="100%" height="100%" :nft="info" />
     </div>
-    <div class="info" v-loading="isLoading">
+    <div class="info">
       <div class="nft-info">
         <div class="title">Additional Info</div>
         <div class="address">
@@ -21,9 +21,9 @@
               text-overflow: ellipsis;
               white-space: nowrap;
             "
-            >{{ info.tx_hash }}</span
+            >{{ info.nft_contract }}</span
           >
-          <div class="copy" @click="onCopy(info.tx_hash)">Copy</div>
+          <div class="copy" @click="onCopy(info.nft_contract)">Copy</div>
           <el-popover placement="top" width="80" trigger="hover">
             <template #reference>
               <img class="qr" src="@/assets/images/qr@2x.png" />
@@ -33,11 +33,11 @@
               style="border: none"
               :scale="5"
               :typeNumber="7"
-              :data="info.tx_hash"
+              :data="info.nft_contract"
             />
           </el-popover>
         </div>
-        <div class="address">
+        <div class="address" v-if="info.token_id !== null">
           <span>Token ID:</span
           ><span style="left: 10px; position: relative">{{ info.token_id }}</span>
         </div>
@@ -59,10 +59,32 @@
             </div>
           </div>
         </div>
+        <div class="votes" v-if="info.is_couple && info.mate_couple?.art_id">
+          <div class="nft-desc">
+            <div class="title">COUPLE SERIES</div>
+            <div class="nft-desc-body">
+              <div class="name-body">
+                <div class="name">{{ info.mate_couple.name }}</div>
+                <div class="artist-name">Artist: {{ info.mate_couple.artist_name }}</div>
+              </div>
+              <div class="desc-body">
+                <div class="nft-desc-body-item" @click="goCouple(info.mate_couple)">
+                  <AdaptiveImage
+                    width="100%"
+                    height="100%"
+                    :isPreview="true"
+                    :isOrigin="false"
+                    :url="info.mate_couple.property_url"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="artist-info">
         <div class="title">ABOUT ARTIST</div>
-        <div class="avatar">
+        <div class="avatar" v-if="info.artist_avatar">
           <img :src="info.artist_avatar" />
         </div>
         <div class="username">{{ info.artist_name }}</div>
@@ -79,8 +101,8 @@
         <div class="title">Additional Info</div>
         <div class="address">
           <span>NFT Address:</span>
-          <span class="address-span">{{ info.tx_hash }}</span>
-          <div class="copy" @click="onCopy(info.tx_hash)">Copy</div>
+          <span class="address-span">{{ info.nft_contract }}</span>
+          <div class="copy" @click="onCopy(info.nft_contract)">Copy</div>
           <el-popover placement="top" width="80" trigger="hover">
             <template #reference>
               <img class="qr" src="@/assets/images/qr@2x.png" />
@@ -90,11 +112,11 @@
               style="border: none"
               :scale="5"
               :typeNumber="7"
-              :data="info.tx_hash"
+              :data="info.nft_contract"
             />
           </el-popover>
         </div>
-        <div class="address" style="justify-content: flex-start">
+        <div class="address" style="justify-content: flex-start" v-if="info.token_id !== null">
           <span>Token ID:</span>
           <span style="left: 10px; position: relative">{{ info.token_id }}</span>
         </div>
@@ -115,9 +137,31 @@
             </div>
           </div>
         </div>
+        <div class="votes" v-if="info.is_couple && info.mate_couple?.art_id">
+          <div class="nft-desc">
+            <div class="title">COUPLE SERIES</div>
+            <div class="nft-desc-body">
+              <div class="name-body">
+                <div class="name">{{ info.mate_couple.name }}</div>
+                <div class="artist-name">Artist: {{ info.mate_couple.artist_name }}</div>
+              </div>
+              <div class="desc-body">
+                <div class="nft-desc-body-item" @click="goCouple(info.mate_couple)">
+                  <AdaptiveImage
+                    width="100%"
+                    height="100%"
+                    :isPreview="true"
+                    :isOrigin="false"
+                    :url="info.mate_couple.property_url"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="artist-info">
           <div class="title">ABOUT ARTIST</div>
-          <div class="avatar">
+          <div class="avatar" v-if="info.artist_avatar">
             <img :src="info.artist_avatar" />
           </div>
           <div class="username">{{ info.artist_name }}</div>
@@ -130,10 +174,11 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, computed, watch } from "vue";
 import { notification } from "@/components/Notification";
 import AdaptiveView from "@/components/AdaptiveView";
-import { useRoute } from "vue-router";
+import AdaptiveImage from "@/components/AdaptiveImage";
+import { useRoute, useRouter } from "vue-router";
 import store from "@/store";
 import http from "@/plugins/http";
 import Qrcode from "@/components/Qrcode";
@@ -145,6 +190,7 @@ export default defineComponent({
     Qrcode,
     // Progress,
     AdaptiveView,
+    AdaptiveImage,
   },
   setup() {
     // TODO
@@ -152,6 +198,7 @@ export default defineComponent({
     store.dispatch("global/SetNavText", "Detail");
 
     const route = useRoute();
+    const router = useRouter();
 
     const onCopy = (value) => {
       copy(value);
@@ -163,14 +210,16 @@ export default defineComponent({
 
     const info = ref({});
     const isLoading = ref(false);
+    const artId = computed(() => route.params.id);
 
     const requestData = () => {
       isLoading.value = true;
+      info.value = {};
       http
         .globalGetArtDetail(
           {},
           {
-            id: route.params.id,
+            id: artId.value,
           }
         )
         .then((res) => {
@@ -184,10 +233,19 @@ export default defineComponent({
           notification.error(err.head ? err.head.msg : err.message);
         });
     };
+    const goCouple = (mate_couple) => {
+      if (mate_couple?.for_sale_id) {
+        router.push("/marketplace/buy/" + mate_couple.for_sale_id);
+      } else {
+        router.push("/marketplace/detail/" + mate_couple?.art_id);
+      }
+    };
 
     onMounted(() => {
       requestData();
     });
+
+    watch(artId, requestData);
 
     return {
       onCopy,
@@ -196,6 +254,7 @@ export default defineComponent({
       isLoading,
 
       requestData,
+      goCouple,
     };
   },
 });
@@ -365,6 +424,30 @@ export default defineComponent({
         color: #898989;
         line-height: 18px;
       }
+      .nft-desc-body-item {
+        width: 200px;
+        height: 200px;
+        cursor: pointer;
+      }
+      .nft-desc-body-detail {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 40px;
+      }
+      .nft-desc-body-detail-artist {
+        margin-top: 40px;
+        display: flex;
+        align-items: center;
+        .avatar {
+          width: 30px;
+          margin-right: 10px;
+          img {
+            width: 100%;
+            height: 100%;
+          }
+        }
+      }
     }
   }
   .artist-info {
@@ -433,6 +516,11 @@ export default defineComponent({
     margin-top: 0;
     width: 100%;
     height: 270px;
+  }
+  .info .votes .nft-desc-body .nft-desc-body-item {
+    width: 150px;
+    height: 150px;
+    cursor: pointer;
   }
   .info {
     margin-top: 20px;

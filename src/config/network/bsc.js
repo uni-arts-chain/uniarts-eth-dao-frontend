@@ -19,6 +19,10 @@ module.exports = {
       address: "0x068e775b5f09b6d047e235694f15f9e3e9445a56",
       symbol: "KRB",
     },
+    UniArtsDaoNFT: {
+      address: "0xee841a4982b69622a2bf89f9dba0e0cbdbcbde89",
+      symbol: "UADNFT",
+    },
   },
   voteTokens: {
     UART: {

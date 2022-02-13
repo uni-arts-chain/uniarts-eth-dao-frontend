@@ -15,6 +15,9 @@
       <li :class="{ active: currentPath == '/airdrop' }">
         <router-link to="/airdrop">Airdrop</router-link>
       </li>
+      <li v-if="currentChainInfo.chainId === '0x38'">
+        <a target="_blank" href="https://mint.uniarts.network">Couple Airdrop</a>
+      </li>
       <li :class="{ active: currentPath == '/souvenirs' }">
         <router-link to="/souvenirs">Souvenirs</router-link>
       </li>
@@ -101,6 +104,9 @@
         </li>
         <li :class="{ active: currentPath == '/airdrop' }">
           <router-link to="/airdrop" @click="onClickItem">Airdrop</router-link>
+        </li>
+        <li v-if="currentChainInfo.chainId === '0x38'">
+          <a target="_blank" href="https://mint.uniarts.network">Couple Airdrop</a>
         </li>
         <li :class="{ active: currentPath == '/souvenirs' }">
           <router-link to="/souvenirs" @click="onClickItem">Souvenirs</router-link>
@@ -302,7 +308,7 @@ export default defineComponent({
   color: $--theme-sub;
   line-height: 24px;
   li {
-    margin-left: 60px;
+    margin-left: 35px;
   }
   li.active {
     color: $--theme-primary;
@@ -472,7 +478,7 @@ export default defineComponent({
   }
   li.parter {
     margin: 0 auto;
-    margin-top: 120px;
+    margin-top: 5px;
     display: flex;
     flex-direction: column;
     line-height: 23px;
