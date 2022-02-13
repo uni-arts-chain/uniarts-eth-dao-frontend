@@ -308,7 +308,7 @@ export default defineComponent({
   color: $--theme-sub;
   line-height: 24px;
   li {
-    margin-left: 60px;
+    margin-left: 35px;
   }
   li.active {
     color: $--theme-primary;
@@ -478,7 +478,7 @@ export default defineComponent({
   }
   li.parter {
     margin: 0 auto;
-    margin-top: 120px;
+    margin-top: 5px;
     display: flex;
     flex-direction: column;
     line-height: 23px;
