@@ -15,7 +15,7 @@
       <li :class="{ active: currentPath == '/airdrop' }">
         <router-link to="/airdrop">Airdrop</router-link>
       </li>
-      <li>
+      <li v-if="currentChainInfo.chainId === '0x38'">
         <a target="_blank" href="https://mint.uniarts.network">Couple Airdrop</a>
       </li>
       <li :class="{ active: currentPath == '/souvenirs' }">
@@ -105,7 +105,7 @@
         <li :class="{ active: currentPath == '/airdrop' }">
           <router-link to="/airdrop" @click="onClickItem">Airdrop</router-link>
         </li>
-        <li>
+        <li v-if="currentChainInfo.chainId === '0x38'">
           <a target="_blank" href="https://mint.uniarts.network">Couple Airdrop</a>
         </li>
         <li :class="{ active: currentPath == '/souvenirs' }">
