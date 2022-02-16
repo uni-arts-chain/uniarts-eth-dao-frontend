@@ -69,3 +69,21 @@ export function getContractVersion(address, contractList) {
   console.log(version);
   return contractList.contracts.VoteMining?.toLowerCase() !== address?.toLowerCase() ? version : "";
 }
+
+export function scrollTop(from = window.pageYOffset, to = 0, duration = 1000) {
+  // 距离
+  const difference = Math.abs(from - to);
+  // 速度
+  const step = Math.ceil((difference / duration) * 50);
+  const scroll = (start, end, step) => {
+    if (start === end) {
+      // complete;
+      return;
+    }
+    // 每经过requestAnimationFrame执行一次（16.666ms）剩下的距离
+    let d = start - step < end ? end : start - step;
+    window.scrollTo(d, d);
+    requestAnimationFrame(() => scroll(d, end, step));
+  };
+  scroll(from, to, step);
+}

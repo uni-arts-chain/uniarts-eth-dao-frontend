@@ -2,10 +2,10 @@
 <template>
   <div v-if="!$store.state.global.isMobile" class="index container">
     <h3 class="title">Market</h3>
-    <div class="search">
+    <!-- <div class="search">
       <input placeholder="Please enter keywords to search work" type="text" />
       <img src="@/assets/images/market-search@2x.png" />
-    </div>
+    </div> -->
     <div class="market-category">
       <router-link :class="{ title: true, select: $route.path == '/marketplace' }" to="/marketplace"
         >Arts</router-link
@@ -22,10 +22,10 @@
   </div>
   <div v-else class="index container">
     <h3 class="title">Market</h3>
-    <div class="search">
+    <!-- <div class="search">
       <input placeholder="Please enter keywords..." type="text" />
       <img src="@/assets/images/market-search@2x.png" />
-    </div>
+    </div> -->
     <div class="market-category">
       <router-link :class="{ title: true, select: $route.path == '/marketplace' }" to="/marketplace"
         >Arts</router-link

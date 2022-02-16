@@ -152,7 +152,7 @@
               :isResponsive="true"
               :nft="item.art"
               height="200px"
-              width="335px"
+              width="100%"
             />
           </router-link>
           <div class="info">
