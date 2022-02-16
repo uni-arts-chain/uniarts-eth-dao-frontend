@@ -1,6 +1,6 @@
 /** * Created by Lay Hunt on 2021-09-08 17:27:09. */
 <template>
-  <div class="index container">
+  <div class="index container" v-loading="isLoading">
     <div class="artist">
       <img class="avatar" :src="info.artist_avatar ? info.artist_avatar : Avatar" />
       <div class="username">{{ info.artist_name }}</div>
@@ -9,7 +9,7 @@
     <div class="collection">
       <div class="title">CREATIONS</div>
       <div class="list">
-        <div class="item" v-for="item in list" :key="item.id" @click="goDetail(item.id)">
+        <div class="item" v-for="item in listData" :key="item.id" @click="goDetail(item.id)">
           <AdaptiveView
             width="100%"
             height="100%"
@@ -19,18 +19,23 @@
           />
         </div>
       </div>
+      <div class="button-group" v-if="listData.length > 1">
+        <button style="margin-right: 40px" @click="load(true)" :disabled="!isPrev">Previous</button>
+        <button style="margin-left: 40px" @click="load(false)" :disabled="!isNext">Next</button>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, computed } from "vue";
 import store from "@/store";
 import { useRoute, useRouter } from "vue-router";
 import http from "@/plugins/http";
 import notification from "@/components/Notification";
 import Avatar from "@/assets/images/avatar@2x.png";
 import AdaptiveView from "@/components/AdaptiveView";
+import { scrollTop } from "@/utils";
 export default defineComponent({
   name: "index",
   components: {
@@ -46,8 +51,12 @@ export default defineComponent({
     const isLoading = ref(false);
     let info = ref({});
     const list = ref([]);
+    const currentPage = ref(1);
+    const perPage = ref(6);
+    const listData = ref([]);
 
     const requestData = () => {
+      isLoading.value = true;
       http
         .globalGetArtistDetail({
           uid: route.params.id,
@@ -57,6 +66,7 @@ export default defineComponent({
           isLoading.value = false;
           info.value = res;
           list.value = res.arts;
+          getScrollList();
         })
         .catch((err) => {
           console.log(err);
@@ -73,12 +83,39 @@ export default defineComponent({
       router.push("/marketplace/detail/" + id);
     };
 
+    const getScrollList = () => {
+      listData.value = list.value.filter(
+        (v, i) =>
+          i >= (currentPage.value - 1) * perPage.value && i < currentPage.value * perPage.value
+      );
+    };
+
+    const load = (onPrev = false) => {
+      if (currentPage.value + 1 > Math.ceil(list.value.length / perPage.value)) return;
+      if (currentPage.value <= 0) return;
+      onPrev ? currentPage.value-- : currentPage.value++;
+      getScrollList();
+      scrollTop();
+    };
+
+    const isNext = computed(() => {
+      return currentPage.value + 1 < Math.ceil(list.value.length / perPage.value);
+    });
+
+    const isPrev = computed(() => {
+      return currentPage.value > 1;
+    });
+
     return {
-      list,
       info,
 
       Avatar,
       goDetail,
+      load,
+      listData,
+      isLoading,
+      isNext,
+      isPrev,
     };
   },
 });
@@ -150,6 +187,30 @@ export default defineComponent({
       /* background-color: black; */
       margin-bottom: 16px;
     }
+  }
+}
+
+.button-group {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 80px;
+  button {
+    border: 3px solid #ddd;
+    background: transparent;
+    width: 160px;
+    height: 49px;
+    font-size: 14px;
+    font-family: Montserrat-Medium;
+    font-weight: 600;
+    text-align: center;
+    color: #595757;
+    cursor: pointer;
+  }
+  button[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
