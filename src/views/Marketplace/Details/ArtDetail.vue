@@ -12,15 +12,9 @@
       <div class="nft-info">
         <div class="title">Additional Info</div>
         <div class="address">
-          <span>NFT Address:</span>
+          <span class="address-label">NFT Address:</span>
           <span
-            style="
-              margin-left: 31px;
-              width: 280px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              white-space: nowrap;
-            "
+            style="width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap"
             >{{ info.nft_contract }}</span
           >
           <div class="copy" @click="onCopy(info.nft_contract)">Copy</div>
@@ -38,8 +32,7 @@
           </el-popover>
         </div>
         <div class="address" v-if="info.token_id !== null">
-          <span>Token ID:</span
-          ><span style="left: 10px; position: relative">{{ info.token_id }}</span>
+          <span class="address-label">Token ID:</span><span>{{ info.token_id }}</span>
         </div>
         <div class="votes">
           <!-- <div class="title">Number of votes obtained</div> -->
@@ -57,6 +50,7 @@
               </div>
               <div class="desc-body" v-html="info.artist_info"></div>
             </div>
+            <button v-if="info.for_sale_type" class="buy-button" @click="goMarket">Buy Now</button>
           </div>
         </div>
         <div class="votes" v-if="info.is_couple && info.mate_couple?.art_id">
@@ -100,7 +94,7 @@
       <div class="nft-info">
         <div class="title">Additional Info</div>
         <div class="address">
-          <span>NFT Address:</span>
+          <span class="address-label">NFT Address:</span>
           <span class="address-span">{{ info.nft_contract }}</span>
           <div class="copy" @click="onCopy(info.nft_contract)">Copy</div>
           <el-popover placement="top" width="80" trigger="hover">
@@ -117,8 +111,8 @@
           </el-popover>
         </div>
         <div class="address" style="justify-content: flex-start" v-if="info.token_id !== null">
-          <span>Token ID:</span>
-          <span style="left: 10px; position: relative">{{ info.token_id }}</span>
+          <span class="address-label">Token ID:</span>
+          <span>{{ info.token_id }}</span>
         </div>
         <div class="votes">
           <!-- <div class="title">Number of votes obtained</div> -->
@@ -135,6 +129,7 @@
               </div>
               <div class="desc-body" v-html="info.artist_info"></div>
             </div>
+            <button v-if="info.for_sale_type" class="buy-button" @click="goMarket">Buy Now</button>
           </div>
         </div>
         <div class="votes" v-if="info.is_couple && info.mate_couple?.art_id">
@@ -234,10 +229,19 @@ export default defineComponent({
         });
     };
     const goCouple = (mate_couple) => {
-      if (mate_couple?.for_sale_id) {
-        router.push("/marketplace/buy/" + mate_couple.for_sale_id);
-      } else {
-        router.push("/marketplace/detail/" + mate_couple?.art_id);
+      // if (mate_couple?.for_sale_id) {
+      //   router.push("/marketplace/buy/" + mate_couple.for_sale_id);
+      // } else {
+      router.push("/marketplace/detail/" + mate_couple?.art_id);
+      // }
+    };
+
+    const goMarket = () => {
+      let id = info.value.for_sale_id;
+      if (info.value.for_sale_type == "buy_now") {
+        router.push("/marketplace/buy/" + id);
+      } else if (info.value.for_sale_type == "auction") {
+        router.push("/marketplace/auction/" + id + "/" + info.value.id);
       }
     };
 
@@ -255,6 +259,7 @@ export default defineComponent({
 
       requestData,
       goCouple,
+      goMarket,
     };
   },
 });
@@ -506,6 +511,27 @@ export default defineComponent({
   }
 }
 
+.address-label {
+  display: block;
+  width: 80px;
+  margin-right: 31px;
+}
+
+.buy-button {
+  width: 100%;
+  border: 2px solid #000000;
+  border-radius: 7px;
+  font-weight: bold;
+  background: transparent;
+  color: black;
+  line-height: 18px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 0;
+  margin-top: 30px;
+}
+
 @media screen and (max-width: 750px) {
   .detail {
     width: 100%;
@@ -567,6 +593,9 @@ export default defineComponent({
         .nft-desc-body .name-body {
           width: 45%;
         }
+      }
+      .address-label {
+        width: 100px;
       }
     }
     .artist-info {

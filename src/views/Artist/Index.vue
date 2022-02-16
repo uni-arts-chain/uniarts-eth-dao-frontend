@@ -19,7 +19,7 @@
           />
         </div>
       </div>
-      <div class="button-group" v-if="listData.length > 1">
+      <div class="button-group" v-if="isPrev || isNext">
         <button style="margin-right: 40px" @click="load(true)" :disabled="!isPrev">Previous</button>
         <button style="margin-left: 40px" @click="load(false)" :disabled="!isNext">Next</button>
       </div>

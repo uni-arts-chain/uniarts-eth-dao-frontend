@@ -5,7 +5,13 @@
       <div class="title">{{ auction?.art?.name }}</div>
       <div class="desc-title">Artwork description</div>
       <div class="desc-content" v-html="auction?.art?.details"></div>
-      <div class="more">More ></div>
+      <div
+        class="more"
+        style="cursor: pointer"
+        @click="$router.push('/marketplace/detail/' + auction?.art?.id)"
+      >
+        More >
+      </div>
       <div class="token-info">
         <div class="bid">
           <span> Price: </span>
@@ -106,7 +112,13 @@
     <div class="left">
       <div class="title">{{ auction?.art?.name }}</div>
       <div class="desc-content" v-html="auction?.art?.details"></div>
-      <div class="more">More ></div>
+      <div
+        class="more"
+        style="cursor: pointer"
+        @click="$router.push('/marketplace/detail/' + auction?.art?.id)"
+      >
+        More >
+      </div>
       <div class="right">
         <div class="title">ABOUT ARTIST</div>
         <div class="avatar">

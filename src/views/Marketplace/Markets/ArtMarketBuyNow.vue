@@ -5,10 +5,11 @@
     <div class="search">
       <input
         v-model="searchContent"
+        @keyup.enter="onSearch()"
         placeholder="Please enter keywords to search work"
         type="text"
       />
-      <img @click="getAuctionListData()" src="@/assets/images/market-search@2x.png" />
+      <img @click="onSearch()" src="@/assets/images/market-search@2x.png" />
     </div>
     <div v-loading="isLoading" class="buy-now">
       <div class="list" v-if="buyList?.length">
@@ -50,10 +51,11 @@
     <div class="search">
       <input
         v-model="searchContent"
+        @keyup.enter="onSearch()"
         placeholder="Please enter keywords to search work"
         type="text"
       />
-      <img @click="getAuctionListData()" src="@/assets/images/market-search@2x.png" />
+      <img @click="onSearch()" src="@/assets/images/market-search@2x.png" />
     </div>
     <div class="buy-now" v-loading="isLoading">
       <div v-if="buyList?.length" class="list">
@@ -98,6 +100,7 @@ import store from "@/store";
 import AdaptiveView from "@/components/AdaptiveView";
 import http from "@/plugins/http";
 import DappConfig from "@/config/dapp";
+import { scrollTop } from "@/utils";
 
 export default defineComponent({
   name: "index",
@@ -118,6 +121,7 @@ export default defineComponent({
     const isLoading = ref(false);
 
     const getAuctionListData = () => {
+      buyList.value = [];
       isLoading.value = true;
       let params = {
         page: currentPage.value,
@@ -142,16 +146,23 @@ export default defineComponent({
     };
     onMounted(() => getAuctionListData());
 
+    const onSearch = () => {
+      currentPage.value = 1;
+      getAuctionListData();
+    };
+
     const onPrev = () => {
       if (currentPage.value > 1) {
         currentPage.value--;
         getAuctionListData();
+        scrollTop(window.pageYOffset, 317);
       }
     };
     const onNext = () => {
       if (currentPage.value < totalPage.value) {
         currentPage.value++;
         getAuctionListData();
+        scrollTop(window.pageYOffset, 317, 500);
       }
     };
     return {
@@ -165,6 +176,7 @@ export default defineComponent({
       marketToken,
       searchContent,
       getAuctionListData,
+      onSearch,
     };
   },
 });
