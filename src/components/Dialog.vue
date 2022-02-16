@@ -2,6 +2,7 @@
 <template>
   <el-dialog
     :modal="true"
+    :width="width"
     v-model="dialogVisible"
     :append-to-body="true"
     :lock-scroll="true"
@@ -29,6 +30,10 @@ export default defineComponent({
       default: false,
     },
     customClass: {
+      type: String,
+      default: "",
+    },
+    width: {
       type: String,
       default: "",
     },

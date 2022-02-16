@@ -70,7 +70,7 @@
         <button v-loading="isLoading" @click="send">Send</button>
       </div>
     </Mobilecomfirm>
-    <Dialog v-if="!$store.state.global.isMobile" v-model="listDialog" type="small">
+    <Dialog width="647px" v-if="!$store.state.global.isMobile" v-model="listDialog" type="small">
       <div class="dialog-content">
         <!-- <div v-show="!approving" class="list-select">
           <span
@@ -121,6 +121,22 @@
           <div class="input-body">
             <input v-model="listPrice" />
             <span class="unit unit2">{{ marketToken.symbol }}</span>
+          </div>
+          <div class="input-body">
+            <el-dropdown trigger="click" @command="onItemDayClick">
+              <span>
+                {{ currentDuration }}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item v-for="(v, i) in dayList" :key="i" :command="v">{{
+                    v
+                  }}</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            <span class="unit unit2">Day</span>
           </div>
           <button v-loading="isLoading" @click="creatToBuyNowMarket">
             {{ approving ? "Creat on Buynow Market" : "Approve" }}
@@ -180,6 +196,22 @@
             <input v-model="listPrice" />
             <span class="unit unit2">{{ marketToken.symbol }}</span>
           </div>
+          <div class="input-body">
+            <el-dropdown trigger="click" @command="onItemDayClick">
+              <span>
+                {{ currentDuration }}
+                <i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item v-for="(v, i) in dayList" :key="i" :command="v">{{
+                    v
+                  }}</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
+            <span class="unit unit2">Day</span>
+          </div>
           <button v-loading="isLoading" @click="creatToBuyNowMarket">
             {{ approving ? "Creat on Buynow Market" : "Approve" }}
           </button>
@@ -237,6 +269,8 @@ export default defineComponent({
     const approving = ref(false);
     const auctionApproving = ref(false);
     const dataLoading = ref(false);
+    const dayList = ref([7, 15, 30, 90]);
+    const currentDuration = ref(7);
     const requestData = () => {
       dataLoading.value = true;
       http
@@ -642,7 +676,7 @@ export default defineComponent({
             BigNumber(listPrice.value || 0)
               .shiftedBy(DappConfig.config.tokens.WETH.decimals)
               .toString(),
-            Number((new Date().getTime() / 1000 + 60 * 60 * 24 * 7).toFixed(0)),
+            Number((new Date().getTime() / 1000 + 60 * 60 * 24 * currentDuration.value).toFixed(0)),
             (err, txHash) => {
               if (err) {
                 console.log(err);
@@ -872,6 +906,8 @@ export default defineComponent({
         const erc721 = new Erc721(nft.address, nft.symbol);
         const contract = TrustMarketplace;
         const res = await erc721.getApproved(selectItem.value.token_id);
+        console.log(res.toString());
+        console.log(contract.address.toString());
         const bool = res.toString() === contract.address.toString();
         // isLoading.value = false;
         bool ? (approving.value = true) : "";
@@ -882,6 +918,10 @@ export default defineComponent({
         approving.value = false;
         isLoading.value = false;
       }
+    };
+
+    const onItemDayClick = (day) => {
+      currentDuration.value = day;
     };
     return {
       pin,
@@ -909,6 +949,9 @@ export default defineComponent({
       removeOrder,
       dataLoading,
       isPinning,
+      dayList,
+      onItemDayClick,
+      currentDuration,
     };
   },
 });
@@ -983,6 +1026,11 @@ export default defineComponent({
   }
 }
 
+.el-dropdown-menu__item {
+  width: 300px;
+  text-align: center;
+}
+
 @media screen and (max-width: 750px) {
   .list .item {
     display: flex;
@@ -1012,6 +1060,10 @@ export default defineComponent({
     button {
       width: 30%;
     }
+  }
+  .el-dropdown-menu__item {
+    width: 257px;
+    text-align: center;
   }
 }
 
@@ -1077,6 +1129,20 @@ export default defineComponent({
       font-size: 17px;
       border: none;
       padding: 0 15px;
+    }
+
+    :deep .el-dropdown {
+      width: calc(100% - 50px);
+      background-color: white;
+      text-align: center;
+      height: 100%;
+      cursor: pointer;
+      .el-dropdown-selfdefine {
+        width: 100%;
+        display: block;
+        height: 100%;
+        line-height: 50px;
+      }
     }
 
     .unit {
