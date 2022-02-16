@@ -2,6 +2,14 @@
 <template>
   <div v-if="!$store.state.global.isMobile" class="index container">
     <h3 class="title">Timed Auctions</h3>
+    <div class="search">
+      <input
+        v-model="searchContent"
+        placeholder="Please enter keywords to search work"
+        type="text"
+      />
+      <img @click="getAuctionListData" src="@/assets/images/market-search@2x.png" />
+    </div>
     <div v-loading="isLoading" class="buy-now">
       <div class="list" v-if="buyList?.length">
         <div v-for="item in buyList" :key="item.id" class="item">
@@ -47,13 +55,21 @@
   </div>
   <div v-else class="index container">
     <h3 class="title">Timed Auctions</h3>
+    <div class="search">
+      <input
+        v-model="searchContent"
+        placeholder="Please enter keywords to search work"
+        type="text"
+      />
+      <img @click="getAuctionListData" src="@/assets/images/market-search@2x.png" />
+    </div>
     <div class="buy-now" v-loading="isLoading">
       <div v-if="buyList?.length" class="list">
         <div v-for="item in buyList" :key="item.id" class="item">
           <router-link :to="`/marketplace/auction/${item.auction_id}/${item.id}`">
             <AdaptiveView
               :nft="item"
-              width="335px"
+              width="100%"
               height="200px"
               :isResponsive="true"
               :isPreview="true"
@@ -110,16 +126,21 @@ export default defineComponent({
     const currentPage = ref(1);
     const perPage = ref(9);
     const totalPage = ref(1);
+    const searchContent = ref("");
 
     const isLoading = ref(false);
 
     const getAuctionListData = () => {
       isLoading.value = true;
+      let params = {
+        page: currentPage.value,
+        per_page: perPage.value,
+      };
+      if (searchContent.value) {
+        params.name = searchContent.value;
+      }
       http
-        .globalGetAuctions({
-          page: currentPage.value,
-          per_page: perPage.value,
-        })
+        .globalGetAuctions(params)
         .then((res) => {
           isLoading.value = false;
           buyList.value = res.list || [];
@@ -153,6 +174,8 @@ export default defineComponent({
       isLoading,
       onPrev,
       onNext,
+      getAuctionListData,
+      searchContent,
     };
   },
 });
