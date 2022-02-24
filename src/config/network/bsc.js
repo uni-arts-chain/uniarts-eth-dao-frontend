@@ -23,6 +23,10 @@ module.exports = {
       address: "0xee841a4982b69622a2bf89f9dba0e0cbdbcbde89",
       symbol: "UADNFT",
     },
+    CeltSupreme: {
+      address: "0x144966B2251C6c115C71765dE08b1E5a8517D151",
+      symbol: "CELTS",
+    },
   },
   voteTokens: {
     UART: {
