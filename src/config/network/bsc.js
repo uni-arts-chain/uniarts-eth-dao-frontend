@@ -27,6 +27,10 @@ module.exports = {
       address: "0x144966B2251C6c115C71765dE08b1E5a8517D151",
       symbol: "CELTS",
     },
+    TowerNFT: {
+      address: "0x3dC01bB1bDFf0864C1D0Ea212e982Ac5ea01b08C",
+      symbol: "TOWER",
+    },
   },
   voteTokens: {
     UART: {
